@@ -1,0 +1,33 @@
+{
+  "name": "@shop/cart-service",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsup",
+    "start": "node dist/server.js",
+    "typecheck": "tsc --noEmit",
+    "test": "echo \"no tests yet\""
+  },
+  "dependencies": {
+    "@shop/auth": "workspace:*",
+    "@shop/config": "workspace:*",
+    "@shop/database": "workspace:*",
+    "@shop/events": "workspace:*",
+    "@shop/logger": "workspace:*",
+    "@shop/types": "workspace:*",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "helmet": "^8.0.0",
+    "mongoose": "^8.8.0",
+    "pino": "^9.5.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "tsup": "^8.3.0",
+    "tsx": "^4.19.0"
+  }
+}

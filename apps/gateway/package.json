@@ -1,0 +1,27 @@
+{
+  "name": "@shop/gateway",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsup",
+    "start": "node dist/server.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@shop/config": "workspace:*",
+    "@shop/logger": "workspace:*",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "helmet": "^8.0.0",
+    "http-proxy-middleware": "^3.0.3",
+    "pino": "^9.5.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "tsup": "^8.3.0",
+    "tsx": "^4.19.0"
+  }
+}
