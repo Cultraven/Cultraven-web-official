@@ -54,7 +54,7 @@ export default async function HomePage() {
       : { newArrivals: [], bestsellers: [], categorySpotlight: [] };
 
   const siteUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ?? "https://cultraven.com";
+    process.env.NEXT_PUBLIC_SITE_URL || "https://cultraven.com";
 
   // Map product rail configs to their data
   const railProducts: Record<string, typeof featuredData.newArrivals> = {
