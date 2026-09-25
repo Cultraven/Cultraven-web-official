@@ -9,6 +9,7 @@
     "dev:admin": "turbo run dev --filter=@shop/admin",
     "dev:delivery": "turbo run dev --filter=@shop/delivery",
     "build": "turbo run build",
+    "build:web": "pnpm --filter=@shop/web build",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "format": "prettier --write .",

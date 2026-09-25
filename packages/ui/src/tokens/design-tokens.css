@@ -1,0 +1,84 @@
+/* =============================================================================
+   CULTRAVEN Design Tokens
+   Premium Men's D2C Brand — Black / Off-White / Gold palette
+   =============================================================================*/
+
+:root {
+  /* ── Colour palette ──────────────────────────────────────────────────────── */
+  --color-ink:        #0A0A0A; /* near-black — primary bg, heavy text           */
+  --color-charcoal:   #1C1C1C; /* cards, header, dark surfaces                  */
+  --color-stone:      #8A8078; /* secondary text, muted borders                 */
+  --color-gold:       #C9A84C; /* brand accent — CTAs, highlights               */
+  --color-gold-light: #E8D08A; /* hover tint of gold                            */
+  --color-cream:      #F5F0EB; /* light page background, reversed text          */
+  --color-mist:       #EAE5DF; /* dividers, subtle bg inside light sections     */
+  --color-white:      #FFFFFF;
+  --color-error:      #D64B4B;
+  --color-success:    #4CAF68;
+
+  /* ── Typography ─────────────────────────────────────────────────────────── */
+  /* Fonts loaded via next/font/google in layout.tsx */
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body:    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* Type scale (fluid: clamp) */
+  --text-xs:   clamp(0.688rem, 0.65rem  + 0.19vw, 0.75rem);
+  --text-sm:   clamp(0.813rem, 0.77rem  + 0.22vw, 0.875rem);
+  --text-base: clamp(0.938rem, 0.9rem   + 0.19vw, 1rem);
+  --text-lg:   clamp(1.063rem, 1rem     + 0.31vw, 1.125rem);
+  --text-xl:   clamp(1.188rem, 1.1rem   + 0.44vw, 1.25rem);
+  --text-2xl:  clamp(1.375rem, 1.2rem   + 0.88vw, 1.5rem);
+  --text-3xl:  clamp(1.688rem, 1.4rem   + 1.44vw, 2rem);
+  --text-4xl:  clamp(2.25rem,  1.8rem   + 2.25vw, 3rem);
+  --text-5xl:  clamp(3rem,     2.3rem   + 3.5vw,  4.5rem);
+
+  /* ── Spacing (8-pt grid) ─────────────────────────────────────────────────── */
+  --space-1:  0.25rem;  /*  4px */
+  --space-2:  0.5rem;   /*  8px */
+  --space-3:  0.75rem;  /* 12px */
+  --space-4:  1rem;     /* 16px */
+  --space-5:  1.25rem;  /* 20px */
+  --space-6:  1.5rem;   /* 24px */
+  --space-8:  2rem;     /* 32px */
+  --space-10: 2.5rem;   /* 40px */
+  --space-12: 3rem;     /* 48px */
+  --space-16: 4rem;     /* 64px */
+  --space-20: 5rem;     /* 80px */
+  --space-24: 6rem;     /* 96px */
+
+  /* ── Layout ──────────────────────────────────────────────────────────────── */
+  --max-width:        1440px;
+  --content-width:    1280px;
+  --gutter:           clamp(1rem, 4vw, 2rem);
+  --header-height:    64px;
+  --announcement-height: 40px;
+
+  /* ── Borders & Radii ─────────────────────────────────────────────────────── */
+  --radius-sm:   2px;  /* luxury: sharp corners */
+  --radius-md:   4px;
+  --radius-lg:   8px;
+  --radius-full: 9999px;
+  --border-color: rgba(138, 128, 120, 0.3); /* --color-stone at 30% */
+
+  /* ── Shadows ─────────────────────────────────────────────────────────────── */
+  --shadow-sm:  0 1px 3px 0 rgba(0,0,0,.12), 0 1px 2px -1px rgba(0,0,0,.12);
+  --shadow-md:  0 4px 12px -2px rgba(0,0,0,.2),  0 2px 4px -2px rgba(0,0,0,.12);
+  --shadow-lg:  0 16px 48px -8px rgba(0,0,0,.3), 0 4px 8px -4px rgba(0,0,0,.15);
+  --shadow-gold: 0 0 0 2px var(--color-gold);
+
+  /* ── Transitions ─────────────────────────────────────────────────────────── */
+  --ease-luxury: cubic-bezier(0.25, 0, 0.1, 1);
+  --duration-fast:   150ms;
+  --duration-normal: 300ms;
+  --duration-slow:   500ms;
+
+  /* ── Z-index layers ──────────────────────────────────────────────────────── */
+  --z-below:       -1;
+  --z-base:         0;
+  --z-card:        10;
+  --z-dropdown:   100;
+  --z-sticky:     200;
+  --z-overlay:    300;
+  --z-modal:      400;
+  --z-toast:      500;
+}

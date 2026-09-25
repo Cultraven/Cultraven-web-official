@@ -1,0 +1,186 @@
+/* ── Google Fonts ─────────────────────────────────────────────────────────── */
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Inter:wght@400;500;600;700;800;900&display=swap");
+@import "tailwindcss";
+
+
+@theme {
+  /* ── CULTRAVEN Brand Palette ──────────────────────────────────────────── */
+  --color-cream:   #F5F1E8; /* 60% — primary bg */
+  --color-navy:    #172545; /* 30% — headings, buttons, footer */
+  --color-crimson: #C94227; /* 10% — accents, CTAs, badges */
+  --color-mist:    #EAE6DB; /* off-cream for alternating sections */
+  --color-white:   #FFFFFF;
+  --color-gray:    #6B7280;
+  --color-border:  #D9D3C4;
+
+  /* Convenience aliases that components use */
+  --color-black: var(--color-navy);
+  --color-stone: var(--color-mist);
+  --color-accent: var(--color-crimson);
+
+  /* Typography */
+  --font-sans:    var(--font-inter, "Inter", "Helvetica Neue", sans-serif);
+  --font-display: var(--font-cormorant, "Cormorant Garamond", Georgia, serif);
+
+  /* Border-radius */
+  --radius-none: 0px;
+  --radius-sm:   4px;
+  --radius-md:   8px;
+
+  /* Z-index */
+  --z-dropdown: 40;
+  --z-overlay:  50;
+  --z-modal:    60;
+  --z-header:   70;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(23, 37, 69, 0.08);
+  --shadow-md: 0 4px 16px rgba(23, 37, 69, 0.12);
+  --shadow-lg: 0 12px 40px rgba(23, 37, 69, 0.18);
+}
+
+/* ── Base resets ──────────────────────────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-navy);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: var(--color-navy);
+  }
+
+  a { text-decoration: none; color: inherit; }
+  img, svg { display: block; max-width: 100%; }
+  button { cursor: pointer; font-family: inherit; }
+}
+
+/* ── Layout utilities ─────────────────────────────────────────────────────── */
+@layer utilities {
+  /* Full-bleed wrapper (no max-width) */
+  .container-full {
+    width: 100%;
+  }
+
+  /* Constrained wrapper */
+  .container {
+    width: 100%;
+    max-width: 1440px;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 4vw, 5rem);
+  }
+
+  /* Section vertical padding */
+  .section-pad {
+    padding-block: clamp(4rem, 8vw, 8rem);
+  }
+
+  /* ── Typography scales ──────────────────────────────────────────────────── */
+  /* Display serif — hero headlines */
+  .heading-mega {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 8vw, 7.5rem);
+    font-weight: 900;
+    font-style: italic;
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+    color: var(--color-navy);
+  }
+
+  /* Section headings */
+  .heading-display {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4.5vw, 3.75rem);
+    font-weight: 600;
+    font-style: italic;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--color-navy);
+  }
+
+  /* Small uppercase labels / eyebrows */
+  .label-tag {
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-crimson);
+  }
+
+  /* ── Buttons ─────────────────────────────────────────────────────────────── */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.875rem 2rem;
+    background-color: var(--color-navy);
+    color: var(--color-cream);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border: 2px solid var(--color-navy);
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    white-space: nowrap;
+  }
+  .btn-primary:hover {
+    background-color: var(--color-crimson);
+    border-color: var(--color-crimson);
+    color: var(--color-cream);
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.875rem 2rem;
+    background-color: transparent;
+    color: var(--color-navy);
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border: 2px solid var(--color-navy);
+    transition: background-color 0.2s ease, color 0.2s ease;
+    white-space: nowrap;
+  }
+  .btn-secondary:hover {
+    background-color: var(--color-navy);
+    color: var(--color-cream);
+  }
+
+  /* ── Scrollbar hiding ──────────────────────────────────────────────────── */
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .hide-scrollbar::-webkit-scrollbar { display: none; }
+
+  /* ── Snap scrolling ────────────────────────────────────────────────────── */
+  .snap-x { scroll-snap-type: x mandatory; }
+  .snap-item { scroll-snap-align: start; }
+
+  /* ── Transitions ─────────────────────────────────────────────────────── */
+  .transition-fast { transition: all 0.15s ease; }
+  .transition-std  { transition: all 0.25s ease; }
+  .transition-slow { transition: all 0.45s ease; }
+}
