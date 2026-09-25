@@ -43,11 +43,7 @@ const organizationJsonLd = {
 
 // ─── Default Metadata ─────────────────────────────────────────────────────────
 export const metadata = {
-  metadataBase: new URL(
-    (process.env.NEXT_PUBLIC_SITE_URL && process.env.NEXT_PUBLIC_SITE_URL.startsWith("http"))
-      ? process.env.NEXT_PUBLIC_SITE_URL
-      : "https://cultraven.com"
-  ),
+  metadataBase: new URL("https://cultraven.com"),
   title: {
     default: "CULTRAVEN — Wear Your Difference | Gen Z Streetwear India",
     template: "%s | CULTRAVEN",
