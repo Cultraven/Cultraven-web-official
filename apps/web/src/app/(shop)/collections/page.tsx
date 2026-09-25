@@ -7,6 +7,8 @@ export const metadata: Metadata = {
   description: "Browse all seasonal drops and limited streetwear capsules by CULTRAVEN.",
 };
 
+export const dynamic = "force-static";
+
 export default function CollectionsPage() {
   return (
     <ComingSoon

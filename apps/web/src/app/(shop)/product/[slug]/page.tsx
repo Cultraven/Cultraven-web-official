@@ -13,6 +13,10 @@ function formatTitle(slug: string): string {
     .join(" ");
 }
 
+export function generateStaticParams() {
+  return []; // Products will be generated on demand
+}
+
 export async function generateMetadata({
   params,
 }: ProductPageProps): Promise<Metadata> {

@@ -13,6 +13,10 @@ function formatTitle(slug: string): string {
     .join(" ");
 }
 
+export function generateStaticParams() {
+  return [{ slug: "shirts" }, { slug: "tshirts" }, { slug: "jeans" }, { slug: "accessories" }, { slug: "suits" }, { slug: "blazers" }];
+}
+
 export async function generateMetadata({
   params,
 }: CategoryPageProps): Promise<Metadata> {

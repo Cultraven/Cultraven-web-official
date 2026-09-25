@@ -13,6 +13,10 @@ function formatTitle(slug: string): string {
     .join(" ");
 }
 
+export function generateStaticParams() {
+  return [{ slug: "about" }, { slug: "contact" }, { slug: "faq" }, { slug: "returns" }, { slug: "shipping-policy" }, { slug: "privacy-policy" }, { slug: "terms" }];
+}
+
 export async function generateMetadata({
   params,
 }: CmsPageProps): Promise<Metadata> {
