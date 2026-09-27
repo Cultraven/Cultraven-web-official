@@ -30,6 +30,18 @@ interface SlideData {
 
 const SLIDES: SlideData[] = [
   {
+    id: "s1",
+    bgImage:
+      "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=1920&auto=format&fit=crop&q=85",
+    tag: "AW2026 — NEW DROP",
+    headline: "NOT MADE TO\nBLEND IN.",
+    subline: "Built for the generation creating its own culture.",
+    cta1Text: "SHOP NEW DROP",
+    cta1Href: "/collections/new-in",
+    cta2Text: "EXPLORE COLLECTION",
+    cta2Href: "/collections/all",
+  },
+  {
     id: "s2",
     bgImage:
       "https://images.unsplash.com/photo-1529391409740-59f2cea08bc6?w=1920&auto=format&fit=crop&q=85",
@@ -37,7 +49,7 @@ const SLIDES: SlideData[] = [
     headline: "WASHED.\nRAW.\nDIFFERENT.",
     subline: "Pre-washed distressed 260 GSM heavyweights.\nEvery piece tells a story no one else can copy.",
     cta1Text: "SHOP ACID STATE",
-    cta1Href: "/category/acid-state",
+    cta1Href: "/collections/acid-state",
     cta2Text: "VIEW LOOKBOOK",
     cta2Href: "/collections/lookbook",
   },
@@ -49,7 +61,7 @@ const SLIDES: SlideData[] = [
     headline: "YOUR\nMYTH.\nYOUR\nARMOR.",
     subline: "Original Indian mythological screen-prints\non heavyweight cotton. Wear what they can't understand.",
     cta1Text: "SHOP DHARMA",
-    cta1Href: "/category/dharma",
+    cta1Href: "/collections/dharma",
     cta2Text: "OUR STORY",
     cta2Href: "/pages/our-heritage",
   },

@@ -1,41 +1,41 @@
-import React from "react";
 import type { Metadata } from "next";
-import { ComingSoon } from "@/components/ComingSoon";
+import CollectionClient from "./CollectionClient";
 
-interface CollectionPageProps {
-  params: Promise<{ slug: string }>;
-}
+interface Props { params: Promise<{ slug: string }> }
 
-function formatTitle(slug: string): string {
-  return slug
-    .split("-")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-}
+const COLLECTION_META: Record<string, { name: string; description: string; image: string }> = {
+  "new-in": { name: "New In", description: "The freshest pieces from CULTRAVEN — new drops, updated silhouettes and limited editions.", image: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=1400&auto=format&fit=crop&q=85" },
+  "street": { name: "Street", description: "A collection built for movement, individuality and everyday rebellion.", image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1400&auto=format&fit=crop&q=85" },
+  "bestsellers": { name: "Bestsellers", description: "The ones everyone keeps coming back for — our most loved styles.", image: "https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=1400&auto=format&fit=crop&q=85" },
+  "essentials": { name: "Essentials", description: "Clean, heavyweight basics built to outlast every trend.", image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=1400&auto=format&fit=crop&q=85" },
+  "all": { name: "All Products", description: "Every piece from CULTRAVEN — filter, sort and discover.", image: "https://images.unsplash.com/photo-1529391409740-59f2cea08bc6?w=1400&auto=format&fit=crop&q=85" },
+};
 
-export function generateStaticParams() {
-  return [{ slug: "all" }, { slug: "new-in" }, { slug: "bestsellers" }];
-}
-
-export async function generateMetadata({
-  params,
-}: CollectionPageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const name = formatTitle(slug);
-  return {
-    title: `${name} Capsule Drop | CULTRAVEN`,
-    description: `Shop the ${name} capsule drop from CULTRAVEN. Gen Z oversized apparel, acid washes, and mythic graphic silhouettes.`,
+function getMeta(slug: string) {
+  return COLLECTION_META[slug] ?? {
+    name: slug.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" "),
+    description: `Shop the ${slug} collection from CULTRAVEN.`,
+    image: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=1400&auto=format&fit=crop&q=85",
   };
 }
 
-export default async function CollectionPage({ params }: CollectionPageProps) {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const collectionName = formatTitle(slug);
+  const { name, description } = getMeta(slug);
+  return {
+    title: `${name} | CULTRAVEN`,
+    description,
+    alternates: { canonical: `/collections/${slug}` },
+    openGraph: { title: `${name} | CULTRAVEN`, description, type: "website" },
+  };
+}
 
-  return (
-    <ComingSoon
-      page={`${collectionName} Drop`}
-      description={`The ${collectionName} drop capsule is unlocking soon. Heavyweight cottons, acid washes, and exclusive graphic artworks.`}
-    />
-  );
+export function generateStaticParams() {
+  return Object.keys(COLLECTION_META).map((slug) => ({ slug }));
+}
+
+export default async function CollectionPage({ params }: Props) {
+  const { slug } = await params;
+  const { name, description, image } = getMeta(slug);
+  return <CollectionClient collectionName={name} collectionSlug={slug} description={description} heroImage={image} />;
 }

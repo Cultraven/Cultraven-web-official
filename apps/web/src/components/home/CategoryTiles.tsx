@@ -18,46 +18,71 @@ interface Category {
 
 const CATEGORIES: Category[] = [
   {
-    id: "essentials",
-    title: "ESSENTIALS.260",
-    subtitle: "HEAVYWEIGHT EVERYDAY BASICS",
-    href: "/category/essentials",
+    id: "t-shirts",
+    title: "T-SHIRTS",
+    subtitle: "OVERSIZED · GRAPHIC · ESSENTIAL",
+    href: "/shop/t-shirts",
     image:
       "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&auto=format&fit=crop&q=80",
   },
   {
-    id: "lava-stripe",
-    title: "LAVA STRIPE",
-    subtitle: "SPRAYED WASH STREETWEAR",
-    href: "/category/lava-stripe",
+    id: "shirts",
+    title: "SHIRTS",
+    subtitle: "RELAXED · LINEN · OXFORD",
+    href: "/shop/shirts",
+    image:
+      "https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "hoodies",
+    title: "HOODIES",
+    subtitle: "HEAVYWEIGHT · WASHED · GRAPHIC",
+    href: "/shop/hoodies",
+    image:
+      "https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "sweatshirts",
+    title: "SWEATSHIRTS",
+    subtitle: "ACID-STATE · CREW · DROPPED",
+    href: "/shop/sweatshirts",
     image:
       "https://images.unsplash.com/photo-1529391409740-59f2cea08bc6?w=600&auto=format&fit=crop&q=80",
   },
   {
-    id: "acid-state",
-    title: "ACID STATE",
-    subtitle: "VINTAGE WASH STATEMENTS",
-    href: "/category/acid-state",
+    id: "cargos",
+    title: "CARGOS",
+    subtitle: "WIDE-LEG · MILITARY · BAGGY",
+    href: "/shop/cargos",
     image:
-      "https://images.unsplash.com/photo-1523398002811-999aa8e9f5b9?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&auto=format&fit=crop&q=80",
   },
   {
-    id: "dharma",
-    title: "DHARMA // EP01",
-    subtitle: "MYTHOLOGY REIMAGINED",
-    href: "/category/dharma",
+    id: "jeans",
+    title: "JEANS",
+    subtitle: "STRAIGHT · RELAXED · DISTRESSED",
+    href: "/shop/jeans",
+    image:
+      "https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "trousers",
+    title: "TROUSERS",
+    subtitle: "WIDE · PLEATED · UTILITY",
+    href: "/shop/trousers",
+    image:
+      "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&auto=format&fit=crop&q=80",
+  },
+  {
+    id: "outerwear",
+    title: "OUTERWEAR",
+    subtitle: "BOMBER · COACH · FLEECE",
+    href: "/shop/outerwear",
     image:
       "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=600&auto=format&fit=crop&q=80",
   },
-  {
-    id: "dragon-blood",
-    title: "DRAGON BLOOD",
-    subtitle: "ORIGINAL MYTHIC GRAPHICS",
-    href: "/category/dragon-blood",
-    image:
-      "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=600&auto=format&fit=crop&q=80",
-  },
 ];
+
 
 export function CategoryTiles() {
   return (
@@ -112,7 +137,7 @@ export function CategoryTiles() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(5, 1fr)",
+            gridTemplateColumns: "repeat(4, 1fr)",
             gap: "1rem",
           }}
           className="cat-grid"
@@ -124,8 +149,8 @@ export function CategoryTiles() {
       </div>
 
       <style>{`
-        @media (max-width: 1024px) { .cat-grid { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 640px)  { .cat-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 1024px) { .cat-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (max-width: 768px)  { .cat-grid { grid-template-columns: repeat(2, 1fr); } }
       `}</style>
     </section>
   );

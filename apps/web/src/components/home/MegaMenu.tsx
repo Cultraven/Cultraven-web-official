@@ -122,7 +122,7 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
                     transform: openId === item.id ? "translateY(0)" : "translateY(4px)",
                     pointerEvents: openId === item.id ? "auto" : "none",
                   }}
-                  className="absolute top-full left-1/2 -translate-x-1/2 mt-6 w-screen max-w-4xl bg-[var(--color-white)] text-[var(--color-black)] p-12 z-[var(--z-dropdown)] shadow-xl"
+                  className="absolute top-full left-1/2 -translate-x-1/2 mt-6 w-screen max-w-6xl bg-[var(--color-white)] text-[var(--color-black)] p-12 z-[var(--z-dropdown)] shadow-xl"
                 >
                   <MegaPanel item={item} onClose={() => setOpenId(null)} />
                 </div>
@@ -194,10 +194,21 @@ function MegaPanel({
   item: NavItem;
   onClose: () => void;
 }) {
+  const hasFeatured = item.id === "men" || item.id === "women";
+  const featuredSrc =
+    item.id === "men"
+      ? "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=480&auto=format&fit=crop&q=80"
+      : "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=480&auto=format&fit=crop&q=80";
+  const featuredLabel =
+    item.id === "men" ? "NEW DROP — MEN" : "NEW DROP — WOMEN";
+  const featuredHref =
+    item.id === "men" ? "/collections/new-in" : "/collections/women/new-in";
+
   return (
-    <div className="flex gap-16 justify-center text-left">
+    <div className="flex gap-12 justify-start text-left">
+      {/* Category columns */}
       {item.columns?.map((col) => (
-        <div key={col.heading} className="min-w-[160px]">
+        <div key={col.heading} className="min-w-[150px]">
           <h3 className="font-display text-[11px] font-black uppercase tracking-widest text-[var(--color-gray)] mb-6">
             {col.heading}
           </h3>
@@ -221,6 +232,66 @@ function MegaPanel({
           </ul>
         </div>
       ))}
+
+      {/* Featured editorial image — men/women only */}
+      {hasFeatured && (
+        <div className="ml-auto flex-shrink-0" style={{ width: "200px" }}>
+          <Link
+            href={featuredHref}
+            onClick={onClose}
+            style={{ display: "block", position: "relative", aspectRatio: "3/4", overflow: "hidden", backgroundColor: "#EAE6DB" }}
+            className="group"
+          >
+            <img
+              src={featuredSrc}
+              alt={featuredLabel}
+              style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.6s ease" }}
+              className="group-hover:scale-105"
+            />
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                background: "linear-gradient(to top, rgba(23,37,69,0.75) 0%, transparent 50%)",
+              }}
+            />
+            <div
+              style={{
+                position: "absolute",
+                bottom: "1rem",
+                left: "1rem",
+                right: "1rem",
+              }}
+            >
+              <p
+                style={{
+                  fontFamily: "Inter, sans-serif",
+                  fontSize: "9px",
+                  fontWeight: 800,
+                  letterSpacing: "0.16em",
+                  textTransform: "uppercase",
+                  color: "rgba(245,241,232,0.7)",
+                  marginBottom: "4px",
+                }}
+              >
+                FEATURED
+              </p>
+              <p
+                style={{
+                  fontFamily: "Inter, sans-serif",
+                  fontSize: "11px",
+                  fontWeight: 900,
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  color: "#F5F1E8",
+                }}
+              >
+                {featuredLabel}
+              </p>
+            </div>
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,41 +1,24 @@
-import React from "react";
 import type { Metadata } from "next";
-import { ComingSoon } from "@/components/ComingSoon";
+import ProductDetailClient from "./ProductClient";
 
-interface ProductPageProps {
-  params: Promise<{ slug: string }>;
+interface Props { params: Promise<{ slug: string }> }
+
+function fmtName(slug: string) {
+  return slug.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
 }
 
-function formatTitle(slug: string): string {
-  return slug
-    .split("-")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-}
-
-export function generateStaticParams() {
-  return []; // Products will be generated on demand
-}
-
-export async function generateMetadata({
-  params,
-}: ProductPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const name = formatTitle(slug);
+  const name = fmtName(slug);
   return {
-    title: `${name} | CULTRAVEN Official Drop`,
-    description: `Official drop page for ${name}. Handcrafted heavyweight streetwear by CULTRAVEN.`,
+    title: `${name} | CULTRAVEN`,
+    description: `Shop ${name} — premium heavyweight streetwear by CULTRAVEN. Free shipping above ₹1,999.`,
+    alternates: { canonical: `/products/${slug}` },
+    openGraph: { title: `${name} | CULTRAVEN`, description: `Premium Gen-Z streetwear. Shop ${name}.`, type: "website" },
   };
 }
 
-export default async function ProductPage({ params }: ProductPageProps) {
+export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
-  const productName = formatTitle(slug);
-
-  return (
-    <ComingSoon
-      page={productName}
-      description={`"${productName}" is in final artisan production. Custom wash, oversized silhouette, premium ribbing. Register your email for priority early access when this drop goes live.`}
-    />
-  );
+  return <ProductDetailClient productName={fmtName(slug)} />;
 }
