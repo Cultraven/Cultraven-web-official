@@ -50,7 +50,7 @@ const ALL_PRODUCTS: Product[] = [
   {
     id: "p2", title: "DHARMA GRAPHIC HOODIE — STONE",
     href: "/products/dharma-graphic-hoodie-stone",
-    image: "https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&auto=format&fit=crop&q=80",
     hoverImage: "https://images.unsplash.com/photo-1578768079052-aa76e52ff62e?w=600&auto=format&fit=crop&q=80",
     pricePaise: 299900, mrpPaise: 399900, rating: 4, reviewCount: 88,
     colors: [{ hex: "#EAE6DB", label: "Stone" }, { hex: "#172545", label: "Navy" }],
@@ -96,7 +96,7 @@ const ALL_PRODUCTS: Product[] = [
     id: "p7", title: "ESSENTIALS HOODIE — JET BLACK",
     href: "/products/essentials-hoodie-jet-black",
     image: "https://images.unsplash.com/photo-1578768079052-aa76e52ff62e?w=600&auto=format&fit=crop&q=80",
-    hoverImage: "https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=600&auto=format&fit=crop&q=80",
+    hoverImage: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&auto=format&fit=crop&q=80",
     pricePaise: 319900, mrpPaise: 399900, rating: 4, reviewCount: 76,
     colors: [{ hex: "#0A0A0A", label: "Jet Black" }, { hex: "#2C2C2C", label: "Charcoal" }],
     sizes: ["S", "M", "L", "XL", "XXL"], category: "Hoodies", fit: "Regular", inStock: true,
@@ -174,6 +174,37 @@ export default function CollectionPageClient({
   description: string;
   heroImage: string;
 }) {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  React.useEffect(() => {
+    fetch("/api/products")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.products) {
+          const mapped = data.products.map((p: any) => ({
+            id: p.id,
+            title: p.title,
+            href: `/products/${p.slug}`,
+            image: p.image || "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&auto=format&fit=crop&q=80",
+            hoverImage: p.hoverImage || p.image || "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&auto=format&fit=crop&q=80",
+            pricePaise: p.pricePaise || 199900,
+            mrpPaise: p.mrpPaise || 249900,
+            rating: 5,
+            reviewCount: 42,
+            colors: [{ hex: "#0A0A0A", label: "Black" }],
+            sizes: ["S", "M", "L", "XL"],
+            category: p.category || "T-Shirts",
+            fit: p.fit || "Regular",
+            badge: p.badge,
+            inStock: p.inStock ?? true,
+          }));
+          setProducts(mapped);
+        }
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
   const [sort, setSort] = useState("popular");
   const [filterCategory, setFilterCategory] = useState<string[]>([]);
   const [filterSize, setFilterSize] = useState<string[]>([]);
@@ -184,7 +215,7 @@ export default function CollectionPageClient({
 
   // Apply filters
   const filtered = useMemo(() => {
-    let list = [...ALL_PRODUCTS];
+    let list = [...products];
     if (filterCategory.length) list = list.filter((p) => filterCategory.includes(p.category));
     if (filterSize.length) list = list.filter((p) => p.sizes.some((s) => filterSize.includes(s)));
     if (filterFit.length) list = list.filter((p) => filterFit.includes(p.fit));
@@ -194,7 +225,7 @@ export default function CollectionPageClient({
     else if (sort === "price-desc") list.sort((a, b) => b.pricePaise - a.pricePaise);
     else if (sort === "bestselling") list.sort((a, b) => b.reviewCount - a.reviewCount);
     return list;
-  }, [filterCategory, filterSize, filterFit, filterInStock, sort]);
+  }, [filterCategory, filterSize, filterFit, filterInStock, sort, products]);
 
   const activeCount = filterCategory.length + filterSize.length + filterFit.length + (filterInStock ? 1 : 0);
 
@@ -209,10 +240,10 @@ export default function CollectionPageClient({
   return (
     <div style={{ backgroundColor: "#F5F1E8", minHeight: "100vh" }}>
       {/* ── Collection Hero ── */}
-      <div style={{ position: "relative", height: "360px", overflow: "hidden", backgroundColor: "#EAE6DB" }}>
+      <div style={{ position: "relative", height: "400px", overflow: "hidden", backgroundColor: "#EAE6DB" }}>
         <Image src={heroImage} alt={collectionName} fill style={{ objectFit: "cover" }} priority />
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(23,37,69,0.75) 0%, rgba(23,37,69,0.35) 60%, transparent 100%)" }} />
-        <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "clamp(2rem,4vw,4rem)" }}>
+        <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "center", padding: "clamp(2rem,4vw,4rem)", paddingTop: "80px" }}>
           {/* Breadcrumb */}
           <nav aria-label="Breadcrumb" style={{ marginBottom: "1rem", display: "flex", gap: "0.5rem", alignItems: "center" }}>
             {[{ label: "Home", href: "/" }, { label: "Collections", href: "/collections" }, { label: collectionName, href: "#" }].map((crumb, i, arr) => (
@@ -239,7 +270,7 @@ export default function CollectionPageClient({
             </button>
             {/* Active filter chips */}
             {activeCount > 0 && (
-              <button onClick={clearAll} style={{ fontFamily: "Inter, sans-serif", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#C94227", borderBottom: "1px solid #C94227", background: "none", border: "none", borderBottom: "1px solid #C94227", cursor: "pointer", paddingBottom: "1px" }}>CLEAR ALL</button>
+              <button onClick={clearAll} style={{ fontFamily: "Inter, sans-serif", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#C94227", background: "none", border: "none", borderBottom: "1px solid #C94227", cursor: "pointer", paddingBottom: "1px" }}>CLEAR ALL</button>
             )}
           </div>
           {/* Sort */}

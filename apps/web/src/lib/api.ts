@@ -28,7 +28,20 @@ const api = createApiClient({
  */
 export async function getHomepageCms(): Promise<HomepageCms> {
   try {
-    return await api.get<HomepageCms>("/cms/home");
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+    const res = await fetch(`${baseUrl}/api/cms/hero`, { cache: 'no-store' });
+    if (res.ok) {
+      const data = await res.json();
+      const dbBanners = data.banners || [];
+      // If DB has banners, use them. Otherwise fallback to fixture.
+      if (dbBanners.length > 0) {
+        return {
+          ...HOMEPAGE_CMS_FIXTURE,
+          heroSlide: dbBanners[0], // using first active banner
+        };
+      }
+    }
+    return HOMEPAGE_CMS_FIXTURE;
   } catch {
     return HOMEPAGE_CMS_FIXTURE;
   }
@@ -44,7 +57,32 @@ export interface FeaturedProductsPayload {
 
 export async function getFeaturedProducts(): Promise<FeaturedProductsPayload> {
   try {
-    return await api.get<FeaturedProductsPayload>("/products/featured");
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+    const res = await fetch(`${baseUrl}/api/products`, { cache: 'no-store' });
+    if (res.ok) {
+      const data = await res.json();
+      const products = data.products || [];
+      if (products.length > 0) {
+        // Map DB structure to frontend Product structure
+        const mapped = products.map((p: any) => ({
+          id: p.id,
+          title: p.title,
+          slug: p.slug,
+          pricePaise: p.pricePaise,
+          mrpPaise: p.mrpPaise,
+          category: p.category,
+          image: p.image,
+          hoverImage: p.hoverImage || p.image,
+          badge: p.badge,
+        }));
+        return {
+          newArrivals: mapped.slice(0, 4),
+          bestsellers: mapped.slice(0, 8),
+          categorySpotlight: mapped.slice(0, 4),
+        };
+      }
+    }
+    return FEATURED_PRODUCTS_FIXTURE;
   } catch {
     return FEATURED_PRODUCTS_FIXTURE;
   }

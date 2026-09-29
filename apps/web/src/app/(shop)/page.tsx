@@ -71,13 +71,7 @@ export default async function HomePage() {
       {/* 4 — Bestsellers: "THE ONES EVERYONE WANTS." */}
       <BestsellersSection />
 
-      {/* 5 — Editorial Campaign banner */}
-      {cmsData?.editorialBanner && (
-        <EditorialBanner banner={cmsData.editorialBanner} />
-      )}
-
-      {/* 6 — Featured Collection: Street — editorial split */}
-      <FeaturedCollectionSection />
+      {/* Sections 5 & 6 removed per user request */}
 
       {/* 7 — Shop The Look: model image + shoppable product list */}
       <ShopTheLookSection />

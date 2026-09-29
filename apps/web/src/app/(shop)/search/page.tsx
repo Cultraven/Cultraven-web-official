@@ -13,7 +13,7 @@ const TRENDING = ["Oversized T-Shirts", "Cargos", "Hoodies", "New Drop", "Black"
 
 const ALL_PRODUCTS = [
   { id: "sp1", title: "RAVEN OVERSIZED TEE — ACID BLACK", pricePaise: 199900, category: "T-Shirts", image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=200&auto=format&fit=crop&q=80", href: "/products/raven-oversized-tee-acid-black" },
-  { id: "sp2", title: "DHARMA GRAPHIC HOODIE — STONE", pricePaise: 299900, category: "Hoodies", image: "https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=200&auto=format&fit=crop&q=80", href: "/products/dharma-graphic-hoodie-stone" },
+  { id: "sp2", title: "DHARMA GRAPHIC HOODIE — STONE", pricePaise: 299900, category: "Hoodies", image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=200&auto=format&fit=crop&q=80", href: "/products/dharma-graphic-hoodie-stone" },
   { id: "sp3", title: "CARGO WIDE LEG — MILITARY OLIVE", pricePaise: 349900, category: "Cargos", image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=200&auto=format&fit=crop&q=80", href: "/products/cargo-wide-leg-military-olive" },
   { id: "sp4", title: "ACID STATE SWEATSHIRT", pricePaise: 249900, category: "Sweatshirts", image: "https://images.unsplash.com/photo-1529391409740-59f2cea08bc6?w=200&auto=format&fit=crop&q=80", href: "/products/acid-state-sweatshirt-washed-grey" },
   { id: "sp5", title: "CLASSIC OVERSIZED TEE — WHITE", pricePaise: 189900, category: "T-Shirts", image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=200&auto=format&fit=crop&q=80", href: "/products/classic-oversized-tee-white" },

@@ -24,7 +24,7 @@ interface DropProduct {
   badge?: string;
 }
 
-const PRODUCTS: DropProduct[] = [
+const fallbackProducts = [
   {
     id: "nd-1",
     title: "RAVEN OVERSIZED TEE — ACID BLACK",
@@ -47,7 +47,7 @@ const PRODUCTS: DropProduct[] = [
     title: "DHARMA GRAPHIC HOODIE — STONE WASH",
     href: "/products/dharma-graphic-hoodie-stone",
     image:
-      "https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&auto=format&fit=crop&q=80",
     hoverImage:
       "https://images.unsplash.com/photo-1578768079052-aa76e52ff62e?w=600&auto=format&fit=crop&q=80",
     pricePaise: 299900,
@@ -96,11 +96,34 @@ const PRODUCTS: DropProduct[] = [
   },
 ];
 
-const fmt = (p: number) => `\u20b9${(p / 100).toLocaleString("en-IN")}`;
+const fmt = (p: number) => `₹${(p / 100).toLocaleString("en-IN")}`;
 
 // ─── Section ──────────────────────────────────────────────────────────────────
 
 export function NewDropSection() {
+  const [products, setProducts] = React.useState<DropProduct[]>(fallbackProducts);
+
+  React.useEffect(() => {
+    fetch("/api/products")
+      .then(res => res.json())
+      .then(data => {
+        if (data.products && data.products.length > 0) {
+          const mapped = data.products.slice(0, 4).map((p: any) => ({
+            id: p.id || p._id,
+            title: p.title,
+            href: `/products/${p.slug || p.id}`,
+            image: p.image || fallbackProducts[0].image,
+            hoverImage: p.hoverImage || p.image || fallbackProducts[0].hoverImage,
+            pricePaise: p.pricePaise || 199900,
+            mrpPaise: p.mrpPaise || 249900,
+            colors: p.colors || [{ hex: "#0A0A0A", label: "Black" }],
+            isNew: true,
+          }));
+          setProducts(mapped);
+        }
+      })
+      .catch(console.error);
+  }, []);
   return (
     <section
       aria-labelledby="new-drop-heading"
@@ -190,7 +213,7 @@ export function NewDropSection() {
           }}
           className="nd-grid"
         >
-          {PRODUCTS.map((p) => (
+          {products.map((p) => (
             <NewDropCard key={p.id} product={p} />
           ))}
         </div>

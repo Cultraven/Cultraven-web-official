@@ -50,9 +50,9 @@ const BESTSELLERS: BestProduct[] = [
     title: "DRAGON BLOOD GRAPHIC — CHARCOAL",
     href: "/products/dragon-blood-graphic-charcoal",
     image:
-      "https://images.unsplash.com/photo-1503341341355-6b1f2d7b8640?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=80",
     hoverImage:
-      "https://images.unsplash.com/photo-1529139574466-a303027814a5?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600&auto=format&fit=crop&q=80",
     pricePaise: 249900,
     mrpPaise: 299900,
     rating: 5,
@@ -68,7 +68,7 @@ const BESTSELLERS: BestProduct[] = [
     title: "ESSENTIALS HOODIE — WASHED NAVY",
     href: "/products/essentials-hoodie-washed-navy",
     image:
-      "https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&auto=format&fit=crop&q=80",
     hoverImage:
       "https://images.unsplash.com/photo-1578768079052-aa76e52ff62e?w=600&auto=format&fit=crop&q=80",
     pricePaise: 319900,
@@ -138,12 +138,39 @@ const BESTSELLERS: BestProduct[] = [
   },
 ];
 
+const fallbackProducts = BESTSELLERS;
+
 const fmt = (p: number) => `\u20b9${(p / 100).toLocaleString("en-IN")}`;
 
 // ─── Section ──────────────────────────────────────────────────────────────────
 
 export function BestsellersSection() {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [products, setProducts] = useState<BestProduct[]>(fallbackProducts);
+
+  React.useEffect(() => {
+    fetch("/api/products")
+      .then(res => res.json())
+      .then(data => {
+        if (data.products && data.products.length > 0) {
+          const mapped = data.products.slice(0, 6).map((p: any) => ({
+            id: p.id || p._id,
+            title: p.title,
+            href: `/products/${p.slug || p.id}`,
+            image: p.image || fallbackProducts[0].image,
+            hoverImage: p.hoverImage || p.image || fallbackProducts[0].hoverImage,
+            pricePaise: p.pricePaise || 199900,
+            mrpPaise: p.mrpPaise || 249900,
+            rating: 5,
+            reviewCount: Math.floor(Math.random() * 200) + 10,
+            colors: p.colors || [{ hex: "#0A0A0A", label: "Black" }],
+            badge: "BESTSELLER" as const,
+          }));
+          setProducts(mapped);
+        }
+      })
+      .catch(console.error);
+  }, []);
 
   const scroll = (dir: "left" | "right") => {
     const el = scrollRef.current;
@@ -281,7 +308,7 @@ export function BestsellersSection() {
           }}
           className="bs-scroll"
         >
-          {BESTSELLERS.map((p) => (
+          {products.map((p) => (
             <BestsellerCard key={p.id} product={p} />
           ))}
         </div>

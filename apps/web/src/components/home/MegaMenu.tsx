@@ -72,11 +72,11 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
       <nav
         ref={menuRef}
         aria-label="Main navigation"
-        className="hidden lg:block"
+        className="hide-mobile"
       >
-        <ul className="flex items-center gap-6" role="menubar">
+        <ul style={{ display: "flex", alignItems: "center", gap: "1.5rem", listStyle: "none", margin: 0, padding: 0 }} role="menubar">
           {navMenu.items.map((item) => (
-            <li key={item.id} role="none" className="relative group">
+            <li key={item.id} role="none">
               {item.columns?.length ? (
                 <button
                   id={`nav-trigger-${item.id}`}
@@ -89,20 +89,25 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
                   onFocus={() => setOpenId(item.id)}
                   onClick={() => toggle(item.id)}
                   onKeyDown={(e) => handleTriggerKey(e, item.id)}
-                  className={`flex items-center gap-1 font-display text-[13px] font-black tracking-wider uppercase transition-opacity focus-visible:outline-none ${textColor} ${hoverColor}`}
+                  style={{ display: "flex", alignItems: "center", gap: "0.25rem", fontFamily: "'Inter', sans-serif", fontSize: "13px", fontWeight: 900, letterSpacing: "0.05em", textTransform: "uppercase", background: "none", border: "none", cursor: "pointer", color: isScrolled ? "#172545" : "#F5F1E8", transition: "opacity 0.2s" }}
+                  onMouseOver={(e) => (e.currentTarget.style.opacity = "0.6")}
+                  onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
                 >
                   {item.label}
                   <ChevronDown
-                    className={`transition-transform duration-200 ${
-                      openId === item.id ? "rotate-180" : ""
-                    }`}
+                    style={{
+                      transition: "transform 200ms ease",
+                      transform: openId === item.id ? "rotate(180deg)" : "rotate(0deg)",
+                    }}
                   />
                 </button>
               ) : (
                 <Link
                   href={item.href ?? "#"}
                   role="menuitem"
-                  className={`block font-display text-[13px] font-black tracking-wider uppercase transition-opacity ${textColor} ${hoverColor}`}
+                  style={{ display: "block", fontFamily: "'Inter', sans-serif", fontSize: "13px", fontWeight: 900, letterSpacing: "0.05em", textTransform: "uppercase", color: isScrolled ? "#172545" : "#F5F1E8", textDecoration: "none", transition: "opacity 0.2s" }}
+                  onMouseOver={(e) => (e.currentTarget.style.opacity = "0.6")}
+                  onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
                 >
                   {item.label}
                 </Link>
@@ -121,10 +126,20 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
                     opacity: openId === item.id ? 1 : 0,
                     transform: openId === item.id ? "translateY(0)" : "translateY(4px)",
                     pointerEvents: openId === item.id ? "auto" : "none",
+                    position: "absolute",
+                    top: "100%",
+                    left: 0,
+                    width: "100%",
+                    backgroundColor: "#F5F1E8",
+                    color: "#172545",
+                    zIndex: 100,
+                    boxShadow: "0 8px 24px rgba(23,37,69,0.12)",
+                    borderTop: "1px solid #D9D3C4"
                   }}
-                  className="absolute top-full left-1/2 -translate-x-1/2 mt-6 w-screen max-w-6xl bg-[var(--color-white)] text-[var(--color-black)] p-12 z-[var(--z-dropdown)] shadow-xl"
                 >
-                  <MegaPanel item={item} onClose={() => setOpenId(null)} />
+                  <div style={{ maxWidth: "1152px", margin: "0 auto", padding: "3rem" }}>
+                    <MegaPanel item={item} onClose={() => setOpenId(null)} />
+                  </div>
                 </div>
               )}
             </li>
@@ -205,24 +220,26 @@ function MegaPanel({
     item.id === "men" ? "/collections/new-in" : "/collections/women/new-in";
 
   return (
-    <div className="flex gap-12 justify-start text-left">
+    <div style={{ display: "flex", gap: "3rem", justifyContent: "flex-start", textAlign: "left" }}>
       {/* Category columns */}
       {item.columns?.map((col) => (
-        <div key={col.heading} className="min-w-[150px]">
-          <h3 className="font-display text-[11px] font-black uppercase tracking-widest text-[var(--color-gray)] mb-6">
+        <div key={col.heading} style={{ minWidth: "150px" }}>
+          <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: "11px", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.1em", color: "#6B7280", margin: "0 0 1.5rem 0" }}>
             {col.heading}
           </h3>
-          <ul className="space-y-4">
+          <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "1rem" }}>
             {col.items.map((sub) => (
               <li key={sub.href}>
                 <Link
                   href={sub.href}
                   onClick={onClose}
-                  className="font-display text-sm font-bold uppercase tracking-wide text-[var(--color-black)] hover:text-[var(--color-gray)] transition-colors flex items-center"
+                  style={{ fontFamily: "'Inter', sans-serif", fontSize: "14px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: "#172545", textDecoration: "none", display: "flex", alignItems: "center", transition: "color 0.2s" }}
+                  onMouseOver={(e) => (e.currentTarget.style.color = "#6B7280")}
+                  onMouseOut={(e) => (e.currentTarget.style.color = "#172545")}
                 >
                   {sub.label}
                   {sub.isNew && (
-                    <span className="ml-3 text-[9px] font-black uppercase text-[var(--color-white)] bg-[var(--color-black)] px-1.5 py-0.5 tracking-widest">
+                    <span style={{ marginLeft: "0.75rem", fontSize: "9px", fontWeight: 900, textTransform: "uppercase", color: "#fff", backgroundColor: "#000", padding: "2px 6px", letterSpacing: "0.1em" }}>
                       New
                     </span>
                   )}
@@ -235,18 +252,24 @@ function MegaPanel({
 
       {/* Featured editorial image — men/women only */}
       {hasFeatured && (
-        <div className="ml-auto flex-shrink-0" style={{ width: "200px" }}>
+        <div style={{ marginLeft: "auto", flexShrink: 0, width: "200px", display: "flex", flexDirection: "column" }}>
           <Link
             href={featuredHref}
             onClick={onClose}
             style={{ display: "block", position: "relative", aspectRatio: "3/4", overflow: "hidden", backgroundColor: "#EAE6DB" }}
-            className="group"
+            onMouseOver={(e) => {
+              const img = e.currentTarget.querySelector('img');
+              if(img) img.style.transform = "scale(1.05)";
+            }}
+            onMouseOut={(e) => {
+              const img = e.currentTarget.querySelector('img');
+              if(img) img.style.transform = "scale(1)";
+            }}
           >
             <img
               src={featuredSrc}
               alt={featuredLabel}
               style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.6s ease" }}
-              className="group-hover:scale-105"
             />
             <div
               style={{
@@ -374,9 +397,9 @@ function MobileNavItem({
   );
 }
 
-function ChevronDown({ className = "" }: { className?: string }) {
+function ChevronDown({ className = "", style }: { className?: string; style?: React.CSSProperties }) {
   return (
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" className={className}>
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" className={className} style={style}>
       <path d="M2 4L6 8L10 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );

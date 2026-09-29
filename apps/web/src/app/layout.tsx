@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Cormorant_Garamond, Inter } from "next/font/google";
 import "@/styles/globals.css";
+import { ChatWidget } from "@/components/common/ChatWidget";
 
 // ─── Font loading (next/font — zero layout shift) ─────────────────────────────
 const inter = Inter({
@@ -110,8 +111,27 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
+        {/* Analytics placeholders (fired after cookie consent) */}
+        <script
+          id="ga4-init"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              window.addEventListener('cookie_consent', (e) => {
+                if(e.detail.accepted) {
+                  gtag('js', new Date());
+                  gtag('config', process.env.NEXT_PUBLIC_GA_ID || 'G-XXXXXXXXXX');
+                }
+              });
+            `,
+          }}
+        />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <ChatWidget />
+      </body>
     </html>
   );
 }

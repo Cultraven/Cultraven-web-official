@@ -131,9 +131,15 @@ importers:
       '@shop/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      mongoose:
+        specifier: ^8.8.0
+        version: 8.24.4
       next:
         specifier: ^15.1.0
         version: 15.5.26(@types/node@22.20.4)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      razorpay:
+        specifier: ^2.9.5
+        version: 2.9.8
       react:
         specifier: ^19.0.0
         version: 19.3.0

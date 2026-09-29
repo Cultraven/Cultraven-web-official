@@ -39,7 +39,7 @@ const CATEGORIES: Category[] = [
     subtitle: "HEAVYWEIGHT · WASHED · GRAPHIC",
     href: "/shop/hoodies",
     image:
-      "https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&auto=format&fit=crop&q=80",
   },
   {
     id: "sweatshirts",

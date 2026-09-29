@@ -32,7 +32,7 @@ const UGC_IMAGES: UGCImage[] = [
   },
   {
     id: "ugc-3",
-    src: "https://images.unsplash.com/photo-1529139574466-a303027814a5?w=600&auto=format&fit=crop&q=80",
+    src: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600&auto=format&fit=crop&q=80",
     alt: "CULTRAVEN community — editorial",
   },
   {
@@ -43,12 +43,12 @@ const UGC_IMAGES: UGCImage[] = [
   },
   {
     id: "ugc-5",
-    src: "https://images.unsplash.com/photo-1503341341355-6b1f2d7b8640?w=600&auto=format&fit=crop&q=80",
+    src: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=80",
     alt: "CULTRAVEN graphic tee",
   },
   {
     id: "ugc-6",
-    src: "https://images.unsplash.com/photo-1556906781-9a412961a28c?w=600&auto=format&fit=crop&q=80",
+    src: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&auto=format&fit=crop&q=80",
     alt: "CULTRAVEN hoodie street style",
   },
 ];

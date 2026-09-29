@@ -48,7 +48,7 @@ const LOOK_PRODUCTS: LookProduct[] = [
     category: "HOODIE",
     href: "/products/essentials-hoodie-washed-navy",
     image:
-      "https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=200&auto=format&fit=crop&q=80",
     pricePaise: 319900,
     color: "Washed Navy",
   },
