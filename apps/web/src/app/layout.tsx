@@ -96,6 +96,13 @@ export const metadata = {
       "max-image-preview": "large",
     },
   },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon", type: "image/png", sizes: "32x32" },
+    ],
+    apple: [{ url: "/icon", sizes: "32x32", type: "image/png" }],
+  },
 };
 
 // ─── Root Layout ──────────────────────────────────────────────────────────────

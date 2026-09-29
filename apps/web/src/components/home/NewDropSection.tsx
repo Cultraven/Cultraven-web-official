@@ -116,7 +116,11 @@ export function NewDropSection() {
             hoverImage: p.hoverImage || p.image || fallbackProducts[0].hoverImage,
             pricePaise: p.pricePaise || 199900,
             mrpPaise: p.mrpPaise || 249900,
-            colors: p.colors || [{ hex: "#0A0A0A", label: "Black" }],
+            colors: Array.isArray(p.colors)
+              ? p.colors
+                  .filter((c: any) => c && typeof c.hex === "string" && typeof c.label === "string")
+                  .map((c: any) => ({ hex: String(c.hex), label: String(c.label) }))
+              : [{ hex: "#0A0A0A", label: "Black" }],
             isNew: true,
           }));
           setProducts(mapped);
@@ -419,7 +423,7 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
           style={{ display: "flex", gap: "6px", marginBottom: "8px" }}
           aria-label="Available colors"
         >
-          {p.colors.map((c) => (
+          {(p.colors ?? []).filter((c) => c?.hex).map((c) => (
             <div
               key={c.hex}
               title={c.label}

@@ -71,6 +71,23 @@ const config: NextConfig = {
       },
     ];
   },
+  // Permanent redirects for canonical URL aliases
+  async redirects() {
+    return [
+      // /size-guide → /pages/size-guide (links in Footer, ProductClient, CMS use /size-guide)
+      {
+        source: "/size-guide",
+        destination: "/pages/size-guide",
+        permanent: true,
+      },
+      // /shop/t-shirts → /shop/category/t-shirts (canonical for social links)
+      {
+        source: "/shop/:slug",
+        destination: "/category/:slug",
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default config;

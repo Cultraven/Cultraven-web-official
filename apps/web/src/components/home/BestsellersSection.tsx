@@ -163,7 +163,11 @@ export function BestsellersSection() {
             mrpPaise: p.mrpPaise || 249900,
             rating: 5,
             reviewCount: Math.floor(Math.random() * 200) + 10,
-            colors: p.colors || [{ hex: "#0A0A0A", label: "Black" }],
+            colors: Array.isArray(p.colors)
+              ? p.colors
+                  .filter((c: any) => c && typeof c.hex === "string" && typeof c.label === "string")
+                  .map((c: any) => ({ hex: String(c.hex), label: String(c.label) }))
+              : [{ hex: "#0A0A0A", label: "Black" }],
             badge: "BESTSELLER" as const,
           }));
           setProducts(mapped);
@@ -502,7 +506,7 @@ function BestsellerCard({ product: p }: { product: BestProduct }) {
 
         {/* Colors */}
         <div style={{ display: "flex", gap: "5px", marginBottom: "7px" }}>
-          {p.colors.map((c) => (
+          {(p.colors ?? []).filter((c) => c?.hex).map((c) => (
             <div
               key={c.hex}
               title={c.label}

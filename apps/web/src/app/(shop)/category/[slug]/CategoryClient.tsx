@@ -386,7 +386,7 @@ function CategoryClientInner({ slug, categoryName }: CategoryClientProps) {
               <div style={{ marginBottom: "1.5rem" }}>
                 <h3 style={{ fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.68rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#172545", marginBottom: "0.75rem" }}>COLOR</h3>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                  {allColors.map(({ label, hex }) => (
+                  {allColors.filter((c) => c?.hex && c?.label).map(({ label, hex }) => (
                     <button key={label} onClick={() => toggleColor(label)} style={{ display: "flex", alignItems: "center", gap: "0.75rem", fontFamily: "Inter, sans-serif", fontSize: "0.78rem", color: "#172545", background: "none", border: "none", cursor: "pointer", textAlign: "left", fontWeight: selectedColors.includes(label) ? 800 : 400 }}>
                       <span style={{ width: "18px", height: "18px", borderRadius: "50%", backgroundColor: hex, border: selectedColors.includes(label) ? "2px solid #172545" : "1px solid #D9D3C4", flexShrink: 0 }} />
                       {label}
