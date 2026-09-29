@@ -21,7 +21,7 @@ const CATEGORIES: Category[] = [
     id: "t-shirts",
     title: "T-SHIRTS",
     subtitle: "OVERSIZED · GRAPHIC · ESSENTIAL",
-    href: "/shop/t-shirts",
+    href: "/category/t-shirts",
     image:
       "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&auto=format&fit=crop&q=80",
   },
@@ -29,7 +29,7 @@ const CATEGORIES: Category[] = [
     id: "shirts",
     title: "SHIRTS",
     subtitle: "RELAXED · LINEN · OXFORD",
-    href: "/shop/shirts",
+    href: "/category/shirts",
     image:
       "https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?w=600&auto=format&fit=crop&q=80",
   },
@@ -37,7 +37,7 @@ const CATEGORIES: Category[] = [
     id: "hoodies",
     title: "HOODIES",
     subtitle: "HEAVYWEIGHT · WASHED · GRAPHIC",
-    href: "/shop/hoodies",
+    href: "/category/hoodies",
     image:
       "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&auto=format&fit=crop&q=80",
   },
@@ -45,7 +45,7 @@ const CATEGORIES: Category[] = [
     id: "sweatshirts",
     title: "SWEATSHIRTS",
     subtitle: "ACID-STATE · CREW · DROPPED",
-    href: "/shop/sweatshirts",
+    href: "/category/sweatshirts",
     image:
       "https://images.unsplash.com/photo-1529391409740-59f2cea08bc6?w=600&auto=format&fit=crop&q=80",
   },
@@ -53,7 +53,7 @@ const CATEGORIES: Category[] = [
     id: "cargos",
     title: "CARGOS",
     subtitle: "WIDE-LEG · MILITARY · BAGGY",
-    href: "/shop/cargos",
+    href: "/category/cargos",
     image:
       "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&auto=format&fit=crop&q=80",
   },
@@ -61,7 +61,7 @@ const CATEGORIES: Category[] = [
     id: "jeans",
     title: "JEANS",
     subtitle: "STRAIGHT · RELAXED · DISTRESSED",
-    href: "/shop/jeans",
+    href: "/category/jeans",
     image:
       "https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&auto=format&fit=crop&q=80",
   },
@@ -69,7 +69,7 @@ const CATEGORIES: Category[] = [
     id: "trousers",
     title: "TROUSERS",
     subtitle: "WIDE · PLEATED · UTILITY",
-    href: "/shop/trousers",
+    href: "/category/trousers",
     image:
       "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&auto=format&fit=crop&q=80",
   },
@@ -77,7 +77,7 @@ const CATEGORIES: Category[] = [
     id: "outerwear",
     title: "OUTERWEAR",
     subtitle: "BOMBER · COACH · FLEECE",
-    href: "/shop/outerwear",
+    href: "/category/outerwear",
     image:
       "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=80",
   },
