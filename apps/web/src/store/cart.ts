@@ -66,11 +66,7 @@ export const useCartStore = create<CartState>()(
 
       removeItem: (sku) =>
         set((state) => ({
-          items: state.items
-            .map((i) =>
-              i.sku === sku ? { ...i, quantity: i.quantity - 1 } : i
-            )
-            .filter((i) => i.quantity > 0),
+          items: state.items.filter((i) => i.sku !== sku),
         })),
 
       setQuantity: (sku, qty) =>

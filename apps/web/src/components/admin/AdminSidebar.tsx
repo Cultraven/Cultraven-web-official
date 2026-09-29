@@ -332,11 +332,14 @@ export function AdminSidebar() {
         })}
       </nav>
 
-      {/* Bottom: view storefront */}
+      {/* Bottom: storefront link + logout */}
       <div
         style={{
           padding: "1rem 1.5rem",
           borderTop: "1px solid rgba(255,255,255,0.06)",
+          display: "flex",
+          flexDirection: "column",
+          gap: "0.5rem",
         }}
       >
         <a
@@ -367,7 +370,58 @@ export function AdminSidebar() {
           </svg>
           View Storefront
         </a>
+
+        {/* Admin Logout */}
+        <AdminLogout />
       </div>
     </aside>
   );
 }
+
+function AdminLogout() {
+  const [loading, setLoading] = React.useState(false);
+
+  const handleLogout = async () => {
+    setLoading(true);
+    try {
+      await fetch("/api/auth/admin-logout", { method: "POST" });
+    } finally {
+      window.location.href = "/admin-login";
+    }
+  };
+
+  return (
+    <button
+      onClick={handleLogout}
+      disabled={loading}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "0.5rem",
+        background: "none",
+        border: "none",
+        cursor: loading ? "not-allowed" : "pointer",
+        fontFamily: "Inter, sans-serif",
+        fontSize: "0.72rem",
+        fontWeight: 600,
+        color: "rgba(201,66,39,0.7)",
+        padding: 0,
+        transition: "color 0.15s ease",
+      }}
+      onMouseEnter={(e) =>
+        ((e.currentTarget as HTMLButtonElement).style.color = "#C94227")
+      }
+      onMouseLeave={(e) =>
+        ((e.currentTarget as HTMLButtonElement).style.color = "rgba(201,66,39,0.7)")
+      }
+    >
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+        <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+        <polyline points="16 17 21 12 16 7" />
+        <line x1="21" y1="12" x2="9" y2="12" />
+      </svg>
+      {loading ? "Signing out..." : "Sign Out"}
+    </button>
+  );
+}
+

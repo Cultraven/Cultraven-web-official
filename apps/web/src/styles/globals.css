@@ -8,6 +8,8 @@
   --color-cream:   #F5F1E8; /* 60% — primary bg */
   --color-navy:    #172545; /* 30% — headings, buttons, footer */
   --color-crimson: #C94227; /* 10% — accents, CTAs, badges */
+  --color-yellow:  #DAB205; /* PDF brand yellow — star ratings, gold accents */
+  --color-gold:    #DAB205; /* alias */
   --color-mist:    #EAE6DB; /* off-cream for alternating sections */
   --color-white:   #FFFFFF;
   --color-gray:    #6B7280;
@@ -17,6 +19,7 @@
   --color-black: var(--color-navy);
   --color-stone: var(--color-mist);
   --color-accent: var(--color-crimson);
+  --color-star:   var(--color-yellow);
 
   /* Typography */
   --font-sans:    var(--font-inter, "Inter", "Helvetica Neue", sans-serif);

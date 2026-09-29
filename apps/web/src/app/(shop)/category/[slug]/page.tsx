@@ -1,6 +1,5 @@
-import React from "react";
 import type { Metadata } from "next";
-import { ComingSoon } from "@/components/ComingSoon";
+import CategoryClient from "./CategoryClient";
 
 interface CategoryPageProps {
   params: Promise<{ slug: string }>;
@@ -14,28 +13,31 @@ function formatTitle(slug: string): string {
 }
 
 export function generateStaticParams() {
-  return [{ slug: "shirts" }, { slug: "tshirts" }, { slug: "jeans" }, { slug: "accessories" }, { slug: "suits" }, { slug: "blazers" }];
+  return [
+    { slug: "shirts" }, { slug: "tshirts" }, { slug: "t-shirts" },
+    { slug: "jeans" }, { slug: "accessories" }, { slug: "hoodies" },
+    { slug: "oversized-tees" }, { slug: "acid-wash" }, { slug: "oversized" },
+    { slug: "relaxed" }, { slug: "boxy" }, { slug: "sale" }, { slug: "all" },
+  ];
 }
 
-export async function generateMetadata({
-  params,
-}: CategoryPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const { slug } = await params;
   const name = formatTitle(slug);
   return {
     title: `${name} | CULTRAVEN Drops`,
-    description: `Explore the limited ${name} drop from CULTRAVEN. Gen Z heavyweight streetwear crafted for the uncommon.`,
+    description: `Explore the ${name} collection from CULTRAVEN. Gen Z heavyweight streetwear crafted for the uncommon. Free shipping above ₹999.`,
+    alternates: { canonical: `/category/${slug}` },
+    openGraph: {
+      title: `${name} | CULTRAVEN`,
+      description: `Shop ${name} — premium Gen-Z streetwear.`,
+      type: "website",
+    },
   };
 }
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const { slug } = await params;
   const categoryName = formatTitle(slug);
-
-  return (
-    <ComingSoon
-      page={`${categoryName} Collection`}
-      description={`The ${categoryName} drop is currently being curated in limited quantities with 260+ GSM heavyweights, custom dyes, and mythic graphic details. Drop notification list is open.`}
-    />
-  );
+  return <CategoryClient slug={slug} categoryName={categoryName} />;
 }

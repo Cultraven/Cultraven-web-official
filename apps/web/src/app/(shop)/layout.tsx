@@ -83,9 +83,22 @@ export default async function ShopLayout({ children }: ShopLayoutProps) {
     badgeLogos: [],
   };
 
+  const defaultAnnouncement = {
+    items: [
+      { id: "a1", text: "Free Shipping on orders above ₹999" },
+      { id: "a2", text: "Express delivery in 2–4 business days" },
+      { id: "a3", text: "Easy 15-day hassle-free returns" },
+      { id: "a4", text: "Exclusive member offers — Join the Cultraven Circle" },
+    ],
+    bgColor: "#172545",
+    textColor: "#F5F1E8",
+    intervalMs: 4000,
+  };
+
   return (
     <>
-      {/* ── Sticky header ─────────────────────────────────────────────── */}
+      {/* ── Announcement ticker bar ────────────────────────────────────── */}
+      <AnnouncementBar data={cms?.announcementBar ?? defaultAnnouncement} />
 
       {/* ── Sticky header ─────────────────────────────────────────────── */}
       <Header
