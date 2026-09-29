@@ -18,7 +18,7 @@ export function ProductCarousel({ config, products, loading = false }: ProductCa
 
   return (
     <section style={{ backgroundColor: "#F5F1E8", padding: "clamp(4rem,8vw,8rem) 0" }}>
-      <div style={{ paddingInline: "clamp(1.25rem,4vw,5rem)", maxWidth: "1600px", margin: "0 auto", width: "100%" }}>
+      <div style={{ paddingInline: "clamp(1.25rem,4vw,5rem)" }}>
         {/* Header */}
         <div
           style={{

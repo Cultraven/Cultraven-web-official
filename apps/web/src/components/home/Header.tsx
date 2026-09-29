@@ -51,9 +51,6 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai", hasHer
           alignItems: "center",
           justifyContent: "space-between",
           paddingInline: "clamp(1.25rem,4vw,5rem)",
-          maxWidth: "1600px",
-          margin: "0 auto",
-          width: "100%",
         }}
       >
         {/* Logo */}
