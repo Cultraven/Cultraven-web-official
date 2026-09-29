@@ -204,7 +204,11 @@ function CategoryClientInner({ slug, categoryName }: CategoryClientProps) {
               mrpPaise: Number(p.mrpPaise || p.pricePaise) || 0,
               rating: Number(p.rating) || 4,
               reviewCount: Number(p.reviewCount) || 0,
-              colors: Array.isArray(p.colors) ? p.colors.filter((c: any) => c && c.hex && c.label) : [],
+              colors: Array.isArray(p.colors)
+                ? p.colors
+                    .filter((c: any) => c && typeof c.hex === "string" && typeof c.label === "string")
+                    .map((c: any) => ({ hex: String(c.hex), label: String(c.label) }))
+                : [],
               sizes: Array.isArray(p.sizes) ? p.sizes.filter(Boolean) : [],
               category: p.category || "",
               badge: p.badge,
