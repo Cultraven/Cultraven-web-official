@@ -101,6 +101,7 @@ export default async function ShopLayout({ children }: ShopLayoutProps) {
       <Header
         navMenu={cms?.navMenu ?? defaultNav}
         deliveryCity="Delhi"
+        hasHero={!!(cms?.heroSlide)}
       />
 
       {/* ── Page content ──────────────────────────────────────────────── */}

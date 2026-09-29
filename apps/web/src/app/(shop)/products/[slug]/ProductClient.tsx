@@ -104,7 +104,7 @@ export default function ProductDetailClient({ slug, productName }: { slug: strin
   return (
     <div style={{ backgroundColor: "#F5F1E8", minHeight: "100vh" }}>
       {/* Breadcrumb */}
-      <div style={{ paddingInline: "clamp(1.25rem,4vw,5rem)", paddingTop: "1.5rem", paddingBottom: "0.5rem" }}>
+      <div style={{ paddingInline: "clamp(1.25rem,4vw,5rem)", paddingTop: "calc(80px + 1.5rem)", paddingBottom: "0.5rem" }}>
         <nav style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
           {[{ label: "Home", href: "/" }, { label: "Shop", href: "/collections/all" }, { label: finalName }].map((c, i, arr) => (
             <React.Fragment key={i}>

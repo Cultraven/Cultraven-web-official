@@ -9,17 +9,22 @@ import { CartBadge } from "./CartBadge";
 interface HeaderProps {
   navMenu: NavMenu;
   deliveryCity?: string;
+  hasHero?: boolean;
 }
 
-export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: HeaderProps) {
-  const [isScrolled, setIsScrolled] = useState(false);
+export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai", hasHero = false }: HeaderProps) {
+  const [isScrolled, setIsScrolled] = useState(!hasHero);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
+    if (!hasHero) {
+      setIsScrolled(true);
+      return;
+    }
     const onScroll = () => setIsScrolled(window.scrollY > 60);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [hasHero]);
 
   const headerBg = isScrolled ? "#F5F1E8" : "transparent";
   const headerColor = isScrolled ? "#172545" : "#F5F1E8";

@@ -115,7 +115,7 @@ export default function RegisterPage() {
 
   return (
     <div style={{ backgroundColor: "#F5F1E8", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem" }}>
-      <div style={{ maxWidth: "480px", width: "100%", backgroundColor: "#FFFFFF", padding: "clamp(2.5rem,5vw,4rem)", border: "1px solid #D9D3C4" }}>
+      <div style={{ maxWidth: "480px", width: "100%", backgroundColor: "#FFFFFF", padding: "clamp(2.5rem,5vw,4rem)", paddingBottom: "clamp(2.5rem,5vw,4rem)", border: "1px solid #D9D3C4" }}>
 
         <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
           <Link href="/" style={{ textDecoration: "none" }}>
