@@ -15,9 +15,10 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
   }
 
   // Convert ObjectIds to strings to pass to Client Component
+  const p = product as any;
   const serializedProduct = {
-    ...product,
-    _id: product._id.toString(),
+    ...p,
+    _id: p._id.toString(),
   };
 
   return (

@@ -89,8 +89,7 @@ function loadRazorpayScript(): Promise<void> {
   });
 }
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
-const fmt = (p: number) => `₹${(p / 100).toLocaleString("en-IN")}`;
+import { useCartStore } from "@/store/cart";
 
 // ── Component ──────────────────────────────────────────────────────────────────
 export default function CheckoutPage() {
