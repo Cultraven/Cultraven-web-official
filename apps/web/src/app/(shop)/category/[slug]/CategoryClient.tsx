@@ -183,18 +183,22 @@ export default function CategoryClient({ slug, categoryName }: CategoryClientPro
   }, [slug, categoryName]);
 
   // ── All sizes / colors from loaded products ───────────────────────────────────
-  const allSizes = useMemo(() => [...new Set(products.flatMap((p) => p.sizes))], [products]);
+  const allSizes = useMemo(() => [...new Set(products.flatMap((p) => p.sizes || []))], [products]);
   const allColors = useMemo(() => {
     const map = new Map<string, string>();
-    products.flatMap((p) => p.colors).forEach(({ hex, label }) => map.set(label, hex));
+    products.flatMap((p) => p.colors || []).forEach((color) => {
+      if (color && color.hex && color.label) {
+        map.set(color.label, color.hex);
+      }
+    });
     return [...map.entries()].map(([label, hex]) => ({ label, hex }));
   }, [products]);
 
   // ── Filtered + sorted ─────────────────────────────────────────────────────────
   const filtered = useMemo(() => {
     let list = [...products];
-    if (selectedSizes.length > 0) list = list.filter((p) => selectedSizes.some((s) => p.sizes.includes(s)));
-    if (selectedColors.length > 0) list = list.filter((p) => selectedColors.some((c) => p.colors.some((col) => col.label === c)));
+    if (selectedSizes.length > 0) list = list.filter((p) => selectedSizes.some((s) => (p.sizes || []).includes(s)));
+    if (selectedColors.length > 0) list = list.filter((p) => selectedColors.some((c) => (p.colors || []).some((col) => col.label === c)));
     if (inStockOnly) list = list.filter((p) => p.inStock);
     list = list.filter((p) => p.pricePaise <= priceMax * 100);
     if (sortBy === "price-asc") list.sort((a, b) => a.pricePaise - b.pricePaise);
@@ -217,9 +221,9 @@ export default function CategoryClient({ slug, categoryName }: CategoryClientPro
       slug: p.slug,
       title: p.title,
       image: p.image,
-      sku: `${p.id}-${p.sizes[0] || "M"}-default`,
-      size: p.sizes[0] || "M",
-      color: p.colors[0]?.label || "",
+      sku: `${p.id}-${(p.sizes && p.sizes[0]) ? p.sizes[0] : "M"}-default`,
+      size: (p.sizes && p.sizes[0]) ? p.sizes[0] : "M",
+      color: (p.colors && p.colors[0]) ? p.colors[0].label : "",
       pricePaise: p.pricePaise,
     });
     setAddedId(p.id);
@@ -435,10 +439,10 @@ export default function CategoryClient({ slug, categoryName }: CategoryClientPro
                       </div>
                       {/* Color swatches */}
                       <div style={{ display: "flex", gap: "4px", marginTop: "0.4rem" }}>
-                        {p.colors.slice(0, 4).map(({ hex, label }) => (
+                        {(p.colors || []).slice(0, 4).map(({ hex, label }) => (
                           <span key={label} title={label} style={{ width: "14px", height: "14px", borderRadius: "50%", backgroundColor: hex, border: "1px solid #D9D3C4" }} />
                         ))}
-                        {p.colors.length > 4 && <span style={{ fontFamily: "Inter, sans-serif", fontSize: "0.6rem", color: "#6B7280", alignSelf: "center" }}>+{p.colors.length - 4}</span>}
+                        {(p.colors || []).length > 4 && <span style={{ fontFamily: "Inter, sans-serif", fontSize: "0.6rem", color: "#6B7280", alignSelf: "center" }}>+{(p.colors || []).length - 4}</span>}
                       </div>
                     </div>
                   </div>
