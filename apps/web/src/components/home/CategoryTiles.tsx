@@ -90,7 +90,7 @@ export function CategoryTiles() {
       aria-labelledby="cat-heading"
       style={{ backgroundColor: "var(--color-mist)", padding: "clamp(4rem,8vw,8rem) 0" }}
     >
-      <div style={{ paddingInline: "clamp(1.25rem,4vw,5rem)" }}>
+      <div style={{ paddingInline: "clamp(1.25rem,4vw,5rem)", maxWidth: "1600px", margin: "0 auto" }}>
         {/* Header */}
         <div
           style={{
@@ -137,7 +137,7 @@ export function CategoryTiles() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(4, 1fr)",
+            gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
             gap: "1rem",
           }}
           className="cat-grid"
@@ -149,8 +149,9 @@ export function CategoryTiles() {
       </div>
 
       <style>{`
-        @media (max-width: 1024px) { .cat-grid { grid-template-columns: repeat(4, 1fr); } }
-        @media (max-width: 768px)  { .cat-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 1024px) { .cat-grid { grid-template-columns: repeat(4, 1fr) !important; } }
+        @media (max-width: 850px)  { .cat-grid { grid-template-columns: repeat(3, 1fr) !important; } }
+        @media (max-width: 600px)  { .cat-grid { grid-template-columns: repeat(2, 1fr) !important; } }
       `}</style>
     </section>
   );

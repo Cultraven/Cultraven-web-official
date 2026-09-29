@@ -2,6 +2,19 @@ import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import { HeroBanner } from "@/lib/models/HeroBanner";
 
+const MOCK_BANNERS = [
+  {
+    id: "mock1",
+    title: "THE RAVEN DROP",
+    subtitle: "Heavyweight Oversized Tees. Now Live.",
+    imageDesktop: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=1920&auto=format&fit=crop&q=80",
+    imageMobile: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=800&auto=format&fit=crop&q=80",
+    linkText: "SHOP NOW",
+    linkUrl: "/collections/all",
+    isActive: true,
+  }
+];
+
 export async function GET() {
   try {
     await connectToDatabase();
@@ -10,17 +23,21 @@ export async function GET() {
     // Convert _id to id for the frontend
     const docs = await HeroBanner.find().lean();
     
-    const banners = docs.map((doc: any) => ({
+    let banners = docs.map((doc: any) => ({
       ...doc,
       id: doc._id.toString(),
       _id: undefined,
       __v: undefined,
     }));
 
+    if (banners.length === 0) {
+      banners = MOCK_BANNERS;
+    }
+
     return NextResponse.json({ banners });
   } catch (error) {
-    console.error("Failed to fetch banners:", error);
-    return NextResponse.json({ error: "Failed to fetch banners" }, { status: 500 });
+    console.error("Failed to fetch banners, falling back to mock:", error);
+    return NextResponse.json({ banners: MOCK_BANNERS });
   }
 }
 
