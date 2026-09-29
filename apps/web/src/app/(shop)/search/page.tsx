@@ -12,14 +12,14 @@ const fmt = (p: number) => `₹${(p / 100).toLocaleString("en-IN")}`;
 const TRENDING = ["Oversized T-Shirts", "Cargos", "Hoodies", "New Drop", "Black", "Streetwear"];
 
 const ALL_PRODUCTS = [
-  { id: "sp1", title: "RAVEN OVERSIZED TEE — ACID BLACK", pricePaise: 199900, category: "T-Shirts", image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=200&auto=format&fit=crop&q=80", href: "/products/raven-oversized-tee-acid-black" },
-  { id: "sp2", title: "DHARMA GRAPHIC HOODIE — STONE", pricePaise: 299900, category: "Hoodies", image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=200&auto=format&fit=crop&q=80", href: "/products/dharma-graphic-hoodie-stone" },
-  { id: "sp3", title: "CARGO WIDE LEG — MILITARY OLIVE", pricePaise: 349900, category: "Cargos", image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=200&auto=format&fit=crop&q=80", href: "/products/cargo-wide-leg-military-olive" },
-  { id: "sp4", title: "ACID STATE SWEATSHIRT", pricePaise: 249900, category: "Sweatshirts", image: "https://images.unsplash.com/photo-1529391409740-59f2cea08bc6?w=200&auto=format&fit=crop&q=80", href: "/products/acid-state-sweatshirt-washed-grey" },
-  { id: "sp5", title: "CLASSIC OVERSIZED TEE — WHITE", pricePaise: 189900, category: "T-Shirts", image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=200&auto=format&fit=crop&q=80", href: "/products/classic-oversized-tee-white" },
+  { id: "sp1", title: "RAVEN OVERSIZED TEE — ACID BLACK", pricePaise: 199900, category: "T-Shirts", image: "https://images.unsplash.com/photo-1572491295326-72d829dc7482?w=200&auto=format&fit=crop&q=80", href: "/products/raven-oversized-tee-acid-black" },
+  { id: "sp2", title: "DHARMA GRAPHIC HOODIE — STONE", pricePaise: 299900, category: "Hoodies", image: "https://images.unsplash.com/photo-1600091166860-93a5dbfa01c1?w=200&auto=format&fit=crop&q=80", href: "/products/dharma-graphic-hoodie-stone" },
+  { id: "sp3", title: "CARGO WIDE LEG — MILITARY OLIVE", pricePaise: 349900, category: "Cargos", image: "https://images.unsplash.com/photo-1600091166860-93a5dbfa01c1?w=200&auto=format&fit=crop&q=80", href: "/products/cargo-wide-leg-military-olive" },
+  { id: "sp4", title: "ACID STATE SWEATSHIRT", pricePaise: 249900, category: "Sweatshirts", image: "https://images.unsplash.com/photo-1618886487325-f98f121b6192?w=200&auto=format&fit=crop&q=80", href: "/products/acid-state-sweatshirt-washed-grey" },
+  { id: "sp5", title: "CLASSIC OVERSIZED TEE — WHITE", pricePaise: 189900, category: "T-Shirts", image: "https://images.unsplash.com/photo-1591557301712-421ce8e142ab?w=200&auto=format&fit=crop&q=80", href: "/products/classic-oversized-tee-white" },
   { id: "sp6", title: "CULTRAVEN RELAXED SHIRT — CREAM", pricePaise: 299900, category: "Shirts", image: "https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?w=200&auto=format&fit=crop&q=80", href: "/products/relaxed-shirt-cream" },
-  { id: "sp7", title: "STREET CARGO — WASHED NAVY", pricePaise: 379900, category: "Cargos", image: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=200&auto=format&fit=crop&q=80", href: "/products/street-cargo-washed-navy" },
-  { id: "sp8", title: "BOMBER JACKET — OLIVE BLACK", pricePaise: 599900, category: "Outerwear", image: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=200&auto=format&fit=crop&q=80", href: "/products/bomber-jacket-olive-black" },
+  { id: "sp7", title: "STREET CARGO — WASHED NAVY", pricePaise: 379900, category: "Cargos", image: "https://images.unsplash.com/photo-1591557301548-522194d216f4?w=200&auto=format&fit=crop&q=80", href: "/products/street-cargo-washed-navy" },
+  { id: "sp8", title: "BOMBER JACKET — OLIVE BLACK", pricePaise: 599900, category: "Outerwear", image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&auto=format&fit=crop&q=80", href: "/products/bomber-jacket-olive-black" },
 ];
 
 export default function SearchPage() {

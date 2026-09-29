@@ -9,8 +9,8 @@ const ORDERS = [
   { 
     id: "CR-89241", date: "Sep 24, 2026", status: "Shipped", total: 549800,
     items: [
-      { name: "RAVEN OVERSIZED TEE — ACID BLACK", qty: 1, price: 199900, image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=200&auto=format&fit=crop&q=80" },
-      { name: "CARGO WIDE LEG — MILITARY OLIVE", qty: 1, price: 349900, image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=200&auto=format&fit=crop&q=80" }
+      { name: "RAVEN OVERSIZED TEE — ACID BLACK", qty: 1, price: 199900, image: "https://images.unsplash.com/photo-1572491295326-72d829dc7482?w=200&auto=format&fit=crop&q=80" },
+      { name: "CARGO WIDE LEG — MILITARY OLIVE", qty: 1, price: 349900, image: "https://images.unsplash.com/photo-1600091166860-93a5dbfa01c1?w=200&auto=format&fit=crop&q=80" }
     ],
     trackingLink: "#"
   },

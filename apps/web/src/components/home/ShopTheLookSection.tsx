@@ -28,7 +28,7 @@ const LOOK_PRODUCTS: LookProduct[] = [
     category: "T-SHIRT",
     href: "/products/raven-oversized-tee-acid-black",
     image:
-      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1572491295326-72d829dc7482?w=200&auto=format&fit=crop&q=80",
     pricePaise: 199900,
     color: "Acid Black",
   },
@@ -38,7 +38,7 @@ const LOOK_PRODUCTS: LookProduct[] = [
     category: "CARGO",
     href: "/products/cargo-wide-leg-military-olive",
     image:
-      "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1600091166860-93a5dbfa01c1?w=200&auto=format&fit=crop&q=80",
     pricePaise: 349900,
     color: "Military Olive",
   },
@@ -48,7 +48,7 @@ const LOOK_PRODUCTS: LookProduct[] = [
     category: "HOODIE",
     href: "/products/essentials-hoodie-washed-navy",
     image:
-      "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1600091166860-93a5dbfa01c1?w=200&auto=format&fit=crop&q=80",
     pricePaise: 319900,
     color: "Washed Navy",
   },

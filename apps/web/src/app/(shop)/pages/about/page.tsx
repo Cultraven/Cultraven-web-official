@@ -11,7 +11,7 @@ export default function AboutPage() {
       tag: "THE BEGINNING",
       heading: "It started with a tee.",
       body: "CULTRAVEN was born out of frustration. Frustration at fashion that asked you to blend in. Frustration at streetwear that was either too cheap or too corporate. We wanted something different — clothes that felt like they belonged to us.",
-      image: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=1200&auto=format&fit=crop&q=85",
+      image: "https://images.unsplash.com/photo-1512316694639-50ab2ce7b767?w=1200&auto=format&fit=crop&q=85",
       reverse: false,
     },
     {
@@ -25,14 +25,14 @@ export default function AboutPage() {
       tag: "THE DESIGN",
       heading: "Every detail is a decision.",
       body: "260 GSM pre-shrunk heavyweight cotton. Acid wash processes done in small batches. Screen prints that survive a hundred washes. We're obsessive about quality because the people who wear our clothes are obsessive about their identity.",
-      image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=1200&auto=format&fit=crop&q=85",
+      image: "https://images.unsplash.com/photo-1572491295326-72d829dc7482?w=1200&auto=format&fit=crop&q=85",
       reverse: false,
     },
     {
       tag: "THE FUTURE",
       heading: "Not made to blend in.",
       body: "We're just getting started. More drops. More stories. More collaborations with artists, photographers and creators who refuse to be ordinary. CULTRAVEN is a movement, not a moment.",
-      image: "https://images.unsplash.com/photo-1529391409740-59f2cea08bc6?w=1200&auto=format&fit=crop&q=85",
+      image: "https://images.unsplash.com/photo-1618886487325-f98f121b6192?w=1200&auto=format&fit=crop&q=85",
       reverse: true,
     },
   ];

@@ -32,7 +32,7 @@ const SLIDES: SlideData[] = [
   {
     id: "s1",
     bgImage:
-      "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=1920&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1512316694639-50ab2ce7b767?w=1920&auto=format&fit=crop&q=85",
     tag: "AW2026 — NEW DROP",
     headline: "NOT MADE TO\nBLEND IN.",
     subline: "Built for the generation creating its own culture.",
@@ -44,7 +44,7 @@ const SLIDES: SlideData[] = [
   {
     id: "s2",
     bgImage:
-      "https://images.unsplash.com/photo-1529391409740-59f2cea08bc6?w=1920&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1618886487325-f98f121b6192?w=1920&auto=format&fit=crop&q=85",
     tag: "ACID STATE — VINTAGE WASH COLLECTION",
     headline: "WASHED.\nRAW.\nDIFFERENT.",
     subline: "Pre-washed distressed 260 GSM heavyweights.\nEvery piece tells a story no one else can copy.",
@@ -56,7 +56,7 @@ const SLIDES: SlideData[] = [
   {
     id: "s3",
     bgImage:
-      "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=1920&auto=format&fit=crop&q=85",
+      "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=1920&auto=format&fit=crop&q=85",
     tag: "DHARMA EP01 — MYTHOLOGY REIMAGINED",
     headline: "YOUR\nMYTH.\nYOUR\nARMOR.",
     subline: "Original Indian mythological screen-prints\non heavyweight cotton. Wear what they can't understand.",

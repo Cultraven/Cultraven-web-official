@@ -9,8 +9,8 @@ const MOCK_PRODUCTS = [
     title: "RAVEN OVERSIZED TEE — ACID BLACK",
     pricePaise: 199900,
     mrpPaise: 249900,
-    image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=900&auto=format&fit=crop&q=85",
-    hoverImage: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=900&auto=format&fit=crop&q=85",
+    image: "https://images.unsplash.com/photo-1572491295326-72d829dc7482?w=900&auto=format&fit=crop&q=85",
+    hoverImage: "https://images.unsplash.com/photo-1591557301712-421ce8e142ab?w=900&auto=format&fit=crop&q=85",
     category: "tees"
   },
   {
@@ -19,8 +19,8 @@ const MOCK_PRODUCTS = [
     title: "DHARMA GRAPHIC HOODIE — STONE WASH",
     pricePaise: 299900,
     mrpPaise: 399900,
-    image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=900&auto=format&fit=crop&q=85",
-    hoverImage: "https://images.unsplash.com/photo-1578768079052-aa76e52ff62e?w=900&auto=format&fit=crop&q=85",
+    image: "https://images.unsplash.com/photo-1600091166860-93a5dbfa01c1?w=900&auto=format&fit=crop&q=85",
+    hoverImage: "https://images.unsplash.com/photo-1606914707708-51805e340843?w=900&auto=format&fit=crop&q=85",
     category: "hoodies"
   },
   {
@@ -29,7 +29,7 @@ const MOCK_PRODUCTS = [
     title: "CARGO WIDE LEG — MILITARY OLIVE",
     pricePaise: 349900,
     mrpPaise: 499900,
-    image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=900&auto=format&fit=crop&q=85",
+    image: "https://images.unsplash.com/photo-1600091166860-93a5dbfa01c1?w=900&auto=format&fit=crop&q=85",
     category: "bottoms"
   }
 ];

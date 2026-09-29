@@ -6,10 +6,10 @@ import Link from "next/link";
 const fmt = (p: number) => `₹${(p / 100).toLocaleString("en-IN")}`;
 
 const INITIAL_WISHLIST = [
-  { id: "w1", title: "RAVEN OVERSIZED TEE — ACID BLACK", pricePaise: 199900, mrpPaise: 249900, image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&auto=format&fit=crop&q=80", href: "/products/raven-oversized-tee-acid-black", inStock: true },
-  { id: "w2", title: "CARGO WIDE LEG — MILITARY OLIVE", pricePaise: 349900, mrpPaise: 499900, image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=400&auto=format&fit=crop&q=80", href: "/products/cargo-wide-leg-military-olive", inStock: true },
-  { id: "w3", title: "BOMBER JACKET — OLIVE BLACK", pricePaise: 599900, mrpPaise: 799900, image: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=400&auto=format&fit=crop&q=80", href: "/products/bomber-jacket-olive-black", inStock: false },
-  { id: "w4", title: "DRAGON BLOOD GRAPHIC TEE — CHARCOAL", pricePaise: 229900, mrpPaise: 279900, image: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=400&auto=format&fit=crop&q=80", href: "/products/dragon-blood-graphic-tee-charcoal", inStock: true },
+  { id: "w1", title: "RAVEN OVERSIZED TEE — ACID BLACK", pricePaise: 199900, mrpPaise: 249900, image: "https://images.unsplash.com/photo-1572491295326-72d829dc7482?w=400&auto=format&fit=crop&q=80", href: "/products/raven-oversized-tee-acid-black", inStock: true },
+  { id: "w2", title: "CARGO WIDE LEG — MILITARY OLIVE", pricePaise: 349900, mrpPaise: 499900, image: "https://images.unsplash.com/photo-1600091166860-93a5dbfa01c1?w=400&auto=format&fit=crop&q=80", href: "/products/cargo-wide-leg-military-olive", inStock: true },
+  { id: "w3", title: "BOMBER JACKET — OLIVE BLACK", pricePaise: 599900, mrpPaise: 799900, image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&auto=format&fit=crop&q=80", href: "/products/bomber-jacket-olive-black", inStock: false },
+  { id: "w4", title: "DRAGON BLOOD GRAPHIC TEE — CHARCOAL", pricePaise: 229900, mrpPaise: 279900, image: "https://images.unsplash.com/photo-1512316694639-50ab2ce7b767?w=400&auto=format&fit=crop&q=80", href: "/products/dragon-blood-graphic-tee-charcoal", inStock: true },
 ];
 
 export default function WishlistPage() {

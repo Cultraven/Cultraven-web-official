@@ -25,11 +25,11 @@ import { toast } from "@/components/common/Toast";
 const fmt = (p: number) => `₹${(p / 100).toLocaleString("en-IN")}`;
 
 const GALLERY_IMAGES = [
-  "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=900&auto=format&fit=crop&q=85",
-  "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=900&auto=format&fit=crop&q=85",
-  "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=900&auto=format&fit=crop&q=85",
-  "https://images.unsplash.com/photo-1529391409740-59f2cea08bc6?w=900&auto=format&fit=crop&q=85",
-  "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=900&auto=format&fit=crop&q=85",
+  "https://images.unsplash.com/photo-1572491295326-72d829dc7482?w=900&auto=format&fit=crop&q=85",
+  "https://images.unsplash.com/photo-1591557301712-421ce8e142ab?w=900&auto=format&fit=crop&q=85",
+  "https://images.unsplash.com/photo-1512316694639-50ab2ce7b767?w=900&auto=format&fit=crop&q=85",
+  "https://images.unsplash.com/photo-1618886487325-f98f121b6192?w=900&auto=format&fit=crop&q=85",
+  "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=900&auto=format&fit=crop&q=85",
 ];
 
 const COLORS = [
@@ -41,10 +41,10 @@ const SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
 const SOLD_OUT_SIZES = ["XS"];
 
 const ALSO_LIKE = [
-  { id: "al1", title: "DHARMA GRAPHIC HOODIE", price: 299900, image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=400&auto=format&fit=crop&q=80", href: "/products/dharma-graphic-hoodie-stone" },
-  { id: "al2", title: "CARGO WIDE LEG", price: 349900, image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=400&auto=format&fit=crop&q=80", href: "/products/cargo-wide-leg-military-olive" },
-  { id: "al3", title: "CLASSIC TEE WHITE", price: 189900, image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&auto=format&fit=crop&q=80", href: "/products/classic-oversized-tee-white" },
-  { id: "al4", title: "ESSENTIALS HOODIE", price: 319900, image: "https://images.unsplash.com/photo-1578768079052-aa76e52ff62e?w=400&auto=format&fit=crop&q=80", href: "/products/essentials-hoodie-jet-black" },
+  { id: "al1", title: "DHARMA GRAPHIC HOODIE", price: 299900, image: "https://images.unsplash.com/photo-1600091166860-93a5dbfa01c1?w=400&auto=format&fit=crop&q=80", href: "/products/dharma-graphic-hoodie-stone" },
+  { id: "al2", title: "CARGO WIDE LEG", price: 349900, image: "https://images.unsplash.com/photo-1600091166860-93a5dbfa01c1?w=400&auto=format&fit=crop&q=80", href: "/products/cargo-wide-leg-military-olive" },
+  { id: "al3", title: "CLASSIC TEE WHITE", price: 189900, image: "https://images.unsplash.com/photo-1591557301712-421ce8e142ab?w=400&auto=format&fit=crop&q=80", href: "/products/classic-oversized-tee-white" },
+  { id: "al4", title: "ESSENTIALS HOODIE", price: 319900, image: "https://images.unsplash.com/photo-1606914707708-51805e340843?w=400&auto=format&fit=crop&q=80", href: "/products/essentials-hoodie-jet-black" },
 ];
 
 const ACCORDIONS = [

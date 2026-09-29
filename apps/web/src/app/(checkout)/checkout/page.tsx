@@ -36,7 +36,7 @@ const CART_ITEMS = [
     title: "RAVEN OVERSIZED TEE — ACID BLACK",
     pricePaise: 199900,
     qty: 1,
-    image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=200&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1572491295326-72d829dc7482?w=200&auto=format&fit=crop&q=80",
     size: "L",
   },
   {
@@ -44,7 +44,7 @@ const CART_ITEMS = [
     title: "CARGO WIDE LEG — MILITARY OLIVE",
     pricePaise: 349900,
     qty: 1,
-    image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=200&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1600091166860-93a5dbfa01c1?w=200&auto=format&fit=crop&q=80",
     size: "M",
   },
 ];
