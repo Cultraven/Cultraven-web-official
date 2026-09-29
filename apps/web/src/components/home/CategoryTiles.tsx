@@ -23,7 +23,7 @@ const CATEGORIES: Category[] = [
     subtitle: "OVERSIZED · GRAPHIC · ESSENTIAL",
     href: "/shop/t-shirts",
     image:
-      "https://images.unsplash.com/photo-1572491295326-72d829dc7482?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&auto=format&fit=crop&q=80",
   },
   {
     id: "shirts",
@@ -39,7 +39,7 @@ const CATEGORIES: Category[] = [
     subtitle: "HEAVYWEIGHT · WASHED · GRAPHIC",
     href: "/shop/hoodies",
     image:
-      "https://images.unsplash.com/photo-1600091166860-93a5dbfa01c1?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&auto=format&fit=crop&q=80",
   },
   {
     id: "sweatshirts",
@@ -47,7 +47,7 @@ const CATEGORIES: Category[] = [
     subtitle: "ACID-STATE · CREW · DROPPED",
     href: "/shop/sweatshirts",
     image:
-      "https://images.unsplash.com/photo-1618886487325-f98f121b6192?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1529391409740-59f2cea08bc6?w=600&auto=format&fit=crop&q=80",
   },
   {
     id: "cargos",
@@ -55,7 +55,7 @@ const CATEGORIES: Category[] = [
     subtitle: "WIDE-LEG · MILITARY · BAGGY",
     href: "/shop/cargos",
     image:
-      "https://images.unsplash.com/photo-1600091166860-93a5dbfa01c1?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&auto=format&fit=crop&q=80",
   },
   {
     id: "jeans",
@@ -63,7 +63,7 @@ const CATEGORIES: Category[] = [
     subtitle: "STRAIGHT · RELAXED · DISTRESSED",
     href: "/shop/jeans",
     image:
-      "https://images.unsplash.com/photo-1582216513901-27178f561563?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&auto=format&fit=crop&q=80",
   },
   {
     id: "trousers",
@@ -71,7 +71,7 @@ const CATEGORIES: Category[] = [
     subtitle: "WIDE · PLEATED · UTILITY",
     href: "/shop/trousers",
     image:
-      "https://images.unsplash.com/photo-1591557301548-522194d216f4?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&auto=format&fit=crop&q=80",
   },
   {
     id: "outerwear",
@@ -79,7 +79,7 @@ const CATEGORIES: Category[] = [
     subtitle: "BOMBER · COACH · FLEECE",
     href: "/shop/outerwear",
     image:
-      "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=80",
   },
 ];
 

@@ -212,7 +212,7 @@ function MegaPanel({
   const hasFeatured = item.id === "men" || item.id === "women";
   const featuredSrc =
     item.id === "men"
-      ? "https://images.unsplash.com/photo-1512316694639-50ab2ce7b767?w=480&auto=format&fit=crop&q=80"
+      ? "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=480&auto=format&fit=crop&q=80"
       : "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=480&auto=format&fit=crop&q=80";
   const featuredLabel =
     item.id === "men" ? "NEW DROP — MEN" : "NEW DROP — WOMEN";

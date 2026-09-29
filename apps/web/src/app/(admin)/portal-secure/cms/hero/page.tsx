@@ -27,7 +27,7 @@ const INITIAL_BANNERS: HeroBanner[] = [
   {
     id: "h1",
     type: "image",
-    srcDesktop: "https://images.unsplash.com/photo-1512316694639-50ab2ce7b767?w=1400&auto=format&fit=crop&q=85",
+    srcDesktop: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=1400&auto=format&fit=crop&q=85",
     headline: "BUILT FOR THE MOVEMENT",
     subheadline: "260 GSM heavyweight streetwear. Not made to blend in.",
     ctaLabel: "SHOP NEW ARRIVALS",
@@ -38,7 +38,7 @@ const INITIAL_BANNERS: HeroBanner[] = [
   {
     id: "h2",
     type: "image",
-    srcDesktop: "https://images.unsplash.com/photo-1618886487325-f98f121b6192?w=1400&auto=format&fit=crop&q=85",
+    srcDesktop: "https://images.unsplash.com/photo-1529391409740-59f2cea08bc6?w=1400&auto=format&fit=crop&q=85",
     headline: "THE RAVEN COLLECTION",
     subheadline: "Oversized silhouettes. Premium cotton. Zero compromises.",
     ctaLabel: "EXPLORE COLLECTION",
