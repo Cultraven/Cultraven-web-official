@@ -116,9 +116,9 @@ export default function ProductDetailClient({ slug, productName }: { slug: strin
       </div>
 
       {/* Main PDP grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4rem", paddingInline: "clamp(1.25rem,4vw,5rem)", paddingBottom: "6rem" }} className="pdp-grid">
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4rem", alignItems: "start", paddingInline: "clamp(1.25rem,4vw,5rem)", paddingBottom: "6rem" }} className="pdp-grid">
         {/* ── LEFT: Gallery ── */}
-        <div style={{ display: "flex", gap: "1rem" }}>
+        <div style={{ display: "flex", gap: "1rem", alignItems: "start" }}>
           {/* Thumbnails */}
           <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", width: "80px", flexShrink: 0 }}>
             {[product?.image || GALLERY_IMAGES[0], product?.hoverImage || GALLERY_IMAGES[1]].filter(Boolean).map((src, i) => (
@@ -128,7 +128,7 @@ export default function ProductDetailClient({ slug, productName }: { slug: strin
             ))}
           </div>
           {/* Main image */}
-          <div style={{ position: "relative", flex: 1, aspectRatio: "3/4", overflow: "hidden", backgroundColor: "#EAE6DB" }}>
+          <div style={{ position: "relative", flex: 1, minWidth: 0, width: "100%", aspectRatio: "3/4", overflow: "hidden", backgroundColor: "#EAE6DB" }}>
             <Image src={[product?.image || GALLERY_IMAGES[0], product?.hoverImage || GALLERY_IMAGES[1]][activeImage]} alt={finalName} fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: "cover", transition: "opacity 0.3s ease" }} priority />
             {/* Discount badge */}
             <span style={{ position: "absolute", top: "16px", left: "16px", backgroundColor: "#C94227", color: "#F5F1E8", fontFamily: "Inter, sans-serif", fontSize: "10px", fontWeight: 900, letterSpacing: "0.15em", textTransform: "uppercase", padding: "5px 10px" }}>{disc}% OFF</span>
