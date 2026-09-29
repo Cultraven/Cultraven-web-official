@@ -97,9 +97,6 @@ export default async function ShopLayout({ children }: ShopLayoutProps) {
 
   return (
     <>
-      {/* ── Announcement ticker bar ────────────────────────────────────── */}
-      <AnnouncementBar data={cms?.announcementBar ?? defaultAnnouncement} />
-
       {/* ── Sticky header ─────────────────────────────────────────────── */}
       <Header
         navMenu={cms?.navMenu ?? defaultNav}

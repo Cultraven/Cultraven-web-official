@@ -11,6 +11,7 @@ function AdminLoginForm() {
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/admin";
 
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -24,7 +25,7 @@ function AdminLoginForm() {
       const res = await fetch("/api/auth/admin-login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ email, password }),
       });
 
       if (res.ok) {
@@ -72,6 +73,24 @@ function AdminLoginForm() {
         </div>
 
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+          <div>
+            <label
+              htmlFor="admin-email"
+              style={{ display: "block", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(245,241,232,0.6)", marginBottom: "0.5rem" }}
+            >
+              Admin Email
+            </label>
+            <input
+              id="admin-email"
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
+              placeholder="Enter admin email"
+              style={{ width: "100%", padding: "0.875rem 1rem", backgroundColor: "#0F1419", border: "1.5px solid rgba(245,241,232,0.15)", color: "#F5F1E8", fontFamily: "Inter, sans-serif", fontSize: "0.9rem", outline: "none", boxSizing: "border-box" }}
+            />
+          </div>
           <div>
             <label
               htmlFor="admin-password"

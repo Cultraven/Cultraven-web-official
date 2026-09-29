@@ -13,6 +13,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 const BodySchema = z.object({
+  email: z.string().email("Invalid email").min(1, "Email required"),
   password: z.string().min(1, "Password required").max(128),
 });
 
@@ -56,20 +57,27 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Password required" }, { status: 400 });
   }
 
-  const { password } = result.data;
+  const { email, password } = result.data;
 
+  const adminEmail = process.env.ADMIN_EMAIL;
   const adminPassword = process.env.ADMIN_PASSWORD;
   const adminToken = process.env.ADMIN_SECRET_TOKEN;
 
-  if (!adminPassword || !adminToken) {
-    console.error("[admin-login] ADMIN_PASSWORD or ADMIN_SECRET_TOKEN not set");
+  if (!adminEmail || !adminPassword || !adminToken) {
+    console.error("[admin-login] ADMIN_EMAIL, ADMIN_PASSWORD, or ADMIN_SECRET_TOKEN not set");
     return NextResponse.json(
       { error: "Admin authentication not configured." },
       { status: 500 }
     );
   }
 
-  // Constant-time comparison to prevent timing attacks
+  // Check email
+  if (email.toLowerCase() !== adminEmail.toLowerCase()) {
+    console.warn(`[admin-login] Failed attempt (email mismatch) from IP: ${ip}`);
+    return NextResponse.json({ error: "Invalid credentials." }, { status: 401 });
+  }
+
+  // Constant-time comparison for password to prevent timing attacks
   const passwordBuffer = Buffer.from(password);
   const expectedBuffer = Buffer.from(adminPassword);
   
@@ -85,7 +93,7 @@ export async function POST(req: NextRequest) {
 
   if (!passwordMatch) {
     // Log failed attempt (server-side only)
-    console.warn(`[admin-login] Failed attempt from IP: ${ip}`);
+    console.warn(`[admin-login] Failed attempt (password mismatch) from IP: ${ip}`);
     return NextResponse.json({ error: "Invalid credentials." }, { status: 401 });
   }
 
