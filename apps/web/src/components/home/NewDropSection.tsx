@@ -208,7 +208,8 @@ export function NewDropSection() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(4,1fr)",
+            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 360px))",
+            justifyContent: "center",
             gap: "1.25rem",
           }}
           className="nd-grid"
@@ -220,8 +221,8 @@ export function NewDropSection() {
       </div>
 
       <style>{`
-        @media (max-width: 1024px) { .nd-grid { grid-template-columns: repeat(2,1fr) !important; } }
-        @media (max-width: 480px)  { .nd-grid { gap: 0.75rem !important; } }
+        @media (max-width: 1024px) { .nd-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 360px)) !important; } }
+        @media (max-width: 480px)  { .nd-grid { gap: 0.75rem !important; grid-template-columns: repeat(2, 1fr) !important; } }
       `}</style>
     </section>
   );

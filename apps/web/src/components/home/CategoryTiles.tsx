@@ -90,7 +90,7 @@ export function CategoryTiles() {
       aria-labelledby="cat-heading"
       style={{ backgroundColor: "var(--color-mist)", padding: "clamp(4rem,8vw,8rem) 0" }}
     >
-      <div style={{ paddingInline: "clamp(1.25rem,4vw,5rem)", maxWidth: "1600px", margin: "0 auto" }}>
+      <div style={{ paddingInline: "clamp(1.25rem,4vw,5rem)" }}>
         {/* Header */}
         <div
           style={{
@@ -137,7 +137,8 @@ export function CategoryTiles() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(180px, 320px))",
+            justifyContent: "center",
             gap: "1rem",
           }}
           className="cat-grid"
