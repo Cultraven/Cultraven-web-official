@@ -229,11 +229,28 @@ function CategoryClientInner({ slug, categoryName }: CategoryClientProps) {
   }, [slug, categoryName]);
 
   // ── All sizes / colors from loaded products ───────────────────────────────────
-  const allSizes = useMemo(() => [...new Set(products.flatMap(safeSizes))], [products]);
+  const allSizes = useMemo(() => {
+    const set = new Set<string>();
+    products.forEach((p) => {
+      const sizes = safeSizes(p);
+      sizes.forEach((s) => { if (s) set.add(s); });
+    });
+    return Array.from(set);
+  }, [products]);
+
   const allColors = useMemo(() => {
     const map = new Map<string, string>();
-    products.flatMap(safeColors).forEach((c) => map.set(c.label, c.hex));
-    return [...map.entries()].map(([label, hex]) => ({ label, hex }));
+    products.forEach((p) => {
+      const colors = safeColors(p);
+      colors.forEach((c) => {
+        if (c && c.label && c.hex) map.set(c.label, c.hex);
+      });
+    });
+    const result: { label: string; hex: string }[] = [];
+    map.forEach((hex, label) => {
+      result.push({ label, hex });
+    });
+    return result;
   }, [products]);
 
   // ── Filtered + sorted ─────────────────────────────────────────────────────────
