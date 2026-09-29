@@ -36,7 +36,7 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
       ...formData,
       pricePaise: parseInt(formData.pricePaise.toString()),
       mrpPaise: parseInt(formData.mrpPaise.toString()),
-      sizes: formData.sizes.split(",").map((s) => s.trim()).filter(Boolean),
+      sizes: formData.sizes.split(",").map((s: string) => s.trim()).filter(Boolean),
     };
 
     try {
