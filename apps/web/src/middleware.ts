@@ -12,7 +12,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 // ── Route patterns ─────────────────────────────────────────────────────────────
-const ADMIN_PATHS = ["/admin"];
+const ADMIN_PATHS = ["/portal-secure"];
 const AUTH_PATHS = ["/account"];
 const PUBLIC_PATHS = ["/login", "/register", "/forgot-password"];
 
@@ -31,7 +31,7 @@ export function middleware(req: NextRequest) {
     if (!adminToken || adminToken !== process.env.ADMIN_SECRET_TOKEN) {
       // Redirect to admin login page
       const loginUrl = req.nextUrl.clone();
-      loginUrl.pathname = "/admin-login";
+      loginUrl.pathname = "/portal-access";
       loginUrl.searchParams.set("redirect", pathname);
       return NextResponse.redirect(loginUrl);
     }

@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Cormorant_Garamond, Inter } from "next/font/google";
 import "@/styles/globals.css";
 import { ChatWidget } from "@/components/common/ChatWidget";
+import { ToastProvider } from "@/components/common/Toast";
 
 // ─── Font loading (next/font — zero layout shift) ─────────────────────────────
 const inter = Inter({
@@ -129,8 +130,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
       </head>
       <body>
-        {children}
-        <ChatWidget />
+        <ToastProvider>
+          {children}
+          <ChatWidget />
+        </ToastProvider>
       </body>
     </html>
   );

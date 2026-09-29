@@ -19,6 +19,8 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useCartStore } from "@/store/cart";
+import { toast } from "@/components/common/Toast";
 
 const fmt = (p: number) => `₹${(p / 100).toLocaleString("en-IN")}`;
 
@@ -88,8 +90,26 @@ export default function ProductDetailClient({ slug, productName }: { slug: strin
   const reviewCount = 124;
 
   const handleAddToBag = () => {
-    if (!selectedSize) { setSizeError(true); setTimeout(() => setSizeError(false), 2000); return; }
+    if (!selectedSize) { 
+      setSizeError(true); 
+      setTimeout(() => setSizeError(false), 2000); 
+      return; 
+    }
+    
+    // Add to cart store
+    useCartStore.getState().addItem({
+      productId: product?.id || "fallback-id",
+      slug: slug,
+      title: finalName,
+      image: product?.image || GALLERY_IMAGES[0],
+      sku: `${slug}-${selectedSize}-${COLORS[selectedColor].label.toUpperCase().replace(/\s+/g, '-')}`,
+      size: selectedSize,
+      color: COLORS[selectedColor].label,
+      pricePaise: pricePaise,
+    }, qty);
+
     setAdded(true);
+    toast.success("Added to bag!");
     setTimeout(() => setAdded(false), 2000);
   };
 
