@@ -2,6 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
   "buildCommand": "pnpm --filter=@shop/web... build",
-  "outputDirectory": ".next",
+  "outputDirectory": "web/.next",
   "installCommand": "pnpm install"
 }
