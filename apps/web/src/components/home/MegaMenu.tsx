@@ -63,6 +63,20 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
     }
   };
 
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleMouseEnter = (id: string) => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setOpenId(id);
+  };
+
+  const handleMouseLeave = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => {
+      setOpenId(null);
+    }, 200);
+  };
+
   const textColor = isScrolled ? "text-[var(--color-black)]" : "text-[var(--color-white)]";
   const hoverColor = "hover:opacity-60";
 
@@ -76,7 +90,7 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
       >
         <ul style={{ display: "flex", alignItems: "center", gap: "1.5rem", listStyle: "none", margin: 0, padding: 0 }} role="menubar">
           {navMenu.items.map((item) => (
-            <li key={item.id} role="none">
+            <li key={item.id} role="none" onMouseEnter={() => handleMouseEnter(item.id)} onMouseLeave={handleMouseLeave}>
               {item.columns?.length ? (
                 <button
                   id={`nav-trigger-${item.id}`}
@@ -84,9 +98,7 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
                   aria-haspopup="true"
                   aria-expanded={openId === item.id}
                   aria-controls={`nav-panel-${item.id}`}
-                  onMouseEnter={() => setOpenId(item.id)}
-                  onMouseLeave={() => setOpenId(null)}
-                  onFocus={() => setOpenId(item.id)}
+                  onFocus={() => handleMouseEnter(item.id)}
                   onClick={() => toggle(item.id)}
                   onKeyDown={(e) => handleTriggerKey(e, item.id)}
                   style={{ display: "flex", alignItems: "center", gap: "0.25rem", fontFamily: "'Inter', sans-serif", fontSize: "13px", fontWeight: 900, letterSpacing: "0.05em", textTransform: "uppercase", background: "none", border: "none", cursor: "pointer", color: "#F5F1E8", transition: "opacity 0.2s" }}
@@ -119,8 +131,6 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
                   id={`nav-panel-${item.id}`}
                   role="region"
                   aria-labelledby={`nav-trigger-${item.id}`}
-                  onMouseEnter={() => setOpenId(item.id)}
-                  onMouseLeave={() => setOpenId(null)}
                   style={{
                     transition: "opacity 200ms ease, transform 200ms ease",
                     opacity: openId === item.id ? 1 : 0,
