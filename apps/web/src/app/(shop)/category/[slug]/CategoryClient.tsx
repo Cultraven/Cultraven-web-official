@@ -501,8 +501,8 @@ function CategoryClientInner({ slug, categoryName }: CategoryClientProps) {
                       {/* Color swatches */}
                       {safeColors(p).length > 0 && (
                         <div style={{ display: "flex", gap: "4px", marginTop: "0.4rem" }}>
-                          {safeColors(p).slice(0, 4).map(({ hex, label }) => (
-                            <span key={label} title={label} style={{ width: "14px", height: "14px", borderRadius: "50%", backgroundColor: hex, border: "1px solid #D9D3C4" }} />
+                          {safeColors(p).slice(0, 4).map((c) => (
+                            <span key={c.label} title={c.label} style={{ width: "14px", height: "14px", borderRadius: "50%", backgroundColor: c.hex, border: "1px solid #D9D3C4" }} />
                           ))}
                           {safeColors(p).length > 4 && <span style={{ fontFamily: "Inter, sans-serif", fontSize: "0.6rem", color: "#6B7280", alignSelf: "center" }}>+{safeColors(p).length - 4}</span>}
                         </div>
