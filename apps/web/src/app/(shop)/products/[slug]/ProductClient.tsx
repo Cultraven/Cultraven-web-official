@@ -128,8 +128,8 @@ export default function ProductDetailClient({ slug, productName }: { slug: strin
             ))}
           </div>
           {/* Main image */}
-          <div style={{ position: "relative", flex: 1, minWidth: 0, width: "100%", aspectRatio: "3/4", overflow: "hidden", backgroundColor: "#EAE6DB" }}>
-            <Image src={[product?.image || GALLERY_IMAGES[0], product?.hoverImage || GALLERY_IMAGES[1]][activeImage]} alt={finalName} fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: "cover", transition: "opacity 0.3s ease" }} priority />
+          <div style={{ flex: 1, minWidth: 0, width: "100%", backgroundColor: "#EAE6DB", position: "relative" }}>
+            <Image src={[product?.image || GALLERY_IMAGES[0], product?.hoverImage || GALLERY_IMAGES[1]][activeImage]} alt={finalName} width={900} height={1200} sizes="(max-width: 768px) 100vw, 50vw" style={{ width: "100%", height: "auto", display: "block", objectFit: "cover", transition: "opacity 0.3s ease" }} priority />
             {/* Discount badge */}
             <span style={{ position: "absolute", top: "16px", left: "16px", backgroundColor: "#C94227", color: "#F5F1E8", fontFamily: "Inter, sans-serif", fontSize: "10px", fontWeight: 900, letterSpacing: "0.15em", textTransform: "uppercase", padding: "5px 10px" }}>{disc}% OFF</span>
           </div>
