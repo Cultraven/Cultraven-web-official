@@ -5,13 +5,13 @@ import { HeroBanner } from "@/lib/models/HeroBanner";
 const MOCK_BANNERS = [
   {
     id: "mock1",
-    title: "THE RAVEN DROP",
-    subtitle: "Heavyweight Oversized Tees. Now Live.",
-    imageDesktop: "https://images.unsplash.com/photo-1550614000-4b95d4ed79fb?w=1920&auto=format&fit=crop&q=80",
+    headline: "THE RAVEN DROP",
+    subheadline: "Heavyweight Oversized Tees. Now Live.",
+    srcDesktop: "https://images.unsplash.com/photo-1550614000-4b95d4ed79fb?w=1920&auto=format&fit=crop&q=80",
     imageMobile: "https://images.unsplash.com/photo-1550614000-4b95d4ed79fb?w=800&auto=format&fit=crop&q=80",
-    linkText: "SHOP NOW",
-    linkUrl: "/collections/all",
-    isActive: true,
+    ctaLabel: "SHOP NOW",
+    ctaHref: "/collections/all",
+    active: true,
   }
 ];
 
