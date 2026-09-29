@@ -32,7 +32,7 @@ const fallbackProducts = [
     image:
       "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&auto=format&fit=crop&q=80",
     hoverImage:
-      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=600&auto=format&fit=crop&q=80",
     pricePaise: 199900,
     mrpPaise: 249900,
     colors: [
@@ -47,9 +47,9 @@ const fallbackProducts = [
     title: "DHARMA GRAPHIC HOODIE — STONE WASH",
     href: "/products/dharma-graphic-hoodie-stone",
     image:
-      "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600&auto=format&fit=crop&q=80",
     hoverImage:
-      "https://images.unsplash.com/photo-1578768079052-aa76e52ff62e?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1512411933099-b1d5565538e1?w=600&auto=format&fit=crop&q=80",
     pricePaise: 299900,
     mrpPaise: 399900,
     colors: [
@@ -64,9 +64,9 @@ const fallbackProducts = [
     title: "CARGO WIDE LEG — MILITARY OLIVE",
     href: "/products/cargo-wide-leg-military-olive",
     image:
-      "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=600&auto=format&fit=crop&q=80",
     hoverImage:
-      "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=600&auto=format&fit=crop&q=80",
     pricePaise: 349900,
     mrpPaise: 499900,
     colors: [
@@ -82,9 +82,9 @@ const fallbackProducts = [
     title: "ACID STATE SWEATSHIRT — WASHED GREY",
     href: "/products/acid-state-sweatshirt-washed-grey",
     image:
-      "https://images.unsplash.com/photo-1529391409740-59f2cea08bc6?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1578681994506-b8f463449011?w=600&auto=format&fit=crop&q=80",
     hoverImage:
-      "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1503342394128-c104d54dba01?w=600&auto=format&fit=crop&q=80",
     pricePaise: 249900,
     mrpPaise: 299900,
     colors: [

@@ -26,9 +26,10 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai", hasHer
     return () => window.removeEventListener("scroll", onScroll);
   }, [hasHero]);
 
-  const headerBg = isScrolled ? "#F5F1E8" : "transparent";
-  const headerColor = isScrolled ? "#172545" : "#F5F1E8";
-  const borderBottom = isScrolled ? "1px solid #D9D3C4" : "none";
+  const headerBg = isScrolled ? "rgba(23, 37, 69, 0.95)" : "transparent";
+  const headerColor = "#F5F1E8";
+  const borderBottom = isScrolled ? "1px solid rgba(245, 241, 232, 0.1)" : "none";
+  const backdropFilter = isScrolled ? "blur(8px)" : "none";
 
   return (
     <header
@@ -41,7 +42,9 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai", hasHer
         backgroundColor: headerBg,
         color: headerColor,
         borderBottom,
-        transition: "background-color 0.3s ease, color 0.3s ease, border-bottom 0.3s ease",
+        backdropFilter,
+        WebkitBackdropFilter: backdropFilter,
+        transition: "background-color 0.3s ease, color 0.3s ease, border-bottom 0.3s ease, backdrop-filter 0.3s ease",
         padding: isScrolled ? "1rem 0" : "1.5rem 0",
       }}
     >

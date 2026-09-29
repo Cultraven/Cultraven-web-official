@@ -10,7 +10,7 @@ import { CartDrawer } from "@/components/cart/CartDrawer";
 
 export function CartBadge({ isScrolled = false }: { isScrolled?: boolean }) {
   const count = useCartStore((s) => s.totalItems());
-  const iconColor = isScrolled ? "#172545" : "#F5F1E8";
+  const iconColor = "#F5F1E8";
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   return (

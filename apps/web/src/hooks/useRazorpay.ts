@@ -111,7 +111,7 @@ export function useRazorpay() {
         await loadRazorpaySdk();
 
         // 2 — Create server-side Razorpay order
-        const res = await fetch("/api/payment/create-order", {
+        const res = await fetch("/api/razorpay/create-order", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ amountPaise }),
@@ -132,7 +132,7 @@ export function useRazorpay() {
           handler: async (response: RazorpaySuccessResponse) => {
             try {
               // 4 — Verify signature server-side
-              const vRes = await fetch("/api/payment/verify", {
+              const vRes = await fetch("/api/razorpay/verify", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(response),

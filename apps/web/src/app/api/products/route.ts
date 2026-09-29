@@ -10,7 +10,7 @@ const MOCK_PRODUCTS = [
     pricePaise: 199900,
     mrpPaise: 249900,
     image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=900&auto=format&fit=crop&q=85",
-    hoverImage: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=900&auto=format&fit=crop&q=85",
+    hoverImage: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=900&auto=format&fit=crop&q=85",
     category: "tees"
   },
   {
@@ -19,8 +19,8 @@ const MOCK_PRODUCTS = [
     title: "DHARMA GRAPHIC HOODIE — STONE WASH",
     pricePaise: 299900,
     mrpPaise: 399900,
-    image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=900&auto=format&fit=crop&q=85",
-    hoverImage: "https://images.unsplash.com/photo-1578768079052-aa76e52ff62e?w=900&auto=format&fit=crop&q=85",
+    image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=900&auto=format&fit=crop&q=85",
+    hoverImage: "https://images.unsplash.com/photo-1512411933099-b1d5565538e1?w=900&auto=format&fit=crop&q=85",
     category: "hoodies"
   },
   {
@@ -29,7 +29,8 @@ const MOCK_PRODUCTS = [
     title: "CARGO WIDE LEG — MILITARY OLIVE",
     pricePaise: 349900,
     mrpPaise: 499900,
-    image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=900&auto=format&fit=crop&q=85",
+    image: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=900&auto=format&fit=crop&q=85",
+    hoverImage: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=900&auto=format&fit=crop&q=85",
     category: "bottoms"
   }
 ];

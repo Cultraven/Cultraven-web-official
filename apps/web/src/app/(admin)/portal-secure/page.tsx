@@ -26,10 +26,10 @@ const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
 };
 
 const QUICK_ACTIONS = [
-  { label: "Add New Product", href: "/admin/products/new", icon: "+" },
-  { label: "Edit Hero Banner", href: "/admin/cms/hero", icon: "🎨" },
-  { label: "Manage Orders", href: "/admin/orders", icon: "📦" },
-  { label: "View Analytics", href: "/admin", icon: "📊" },
+  { label: "Add New Product", href: "/portal-secure/products/new", icon: "+" },
+  { label: "Edit Hero Banner", href: "/portal-secure/cms/hero", icon: "🎨" },
+  { label: "Manage Orders", href: "/portal-secure/orders", icon: "📦" },
+  { label: "View Analytics", href: "/portal-secure", icon: "📊" },
 ];
 
 export default function AdminDashboardPage() {
@@ -207,7 +207,7 @@ export default function AdminDashboardPage() {
               Recent Orders
             </h2>
             <Link
-              href="/admin/orders"
+              href="/portal-secure/orders"
               style={{
                 fontFamily: "Inter, sans-serif",
                 fontSize: "0.72rem",

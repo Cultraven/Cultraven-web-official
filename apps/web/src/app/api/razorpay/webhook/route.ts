@@ -15,6 +15,8 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
+import { connectToDatabase } from "@/lib/db";
+import { Order } from "@/lib/models/Order";
 
 // ── Webhook event shape (minimal — extend as needed) ──────────────────────────
 interface RazorpayWebhookPayload {
@@ -75,12 +77,31 @@ async function handlePaymentCaptured(payload: RazorpayWebhookPayload) {
     email: payment.email,
   });
 
-  // TODO: Mark order as PAID in your database
-  // e.g.: await OrderService.markPaid({ razorpayPaymentId: payment.id, razorpayOrderId: payment.order_id! })
-  //
+  // 1. Mark order as PAID in database
+  try {
+    await connectToDatabase();
+    await Order.findOneAndUpdate(
+      { razorpayOrderId: payment.order_id },
+      {
+        $set: {
+          paymentStatus: "paid",
+          razorpayPaymentId: payment.id,
+        },
+        $push: {
+          statusHistory: {
+            status: "payment_captured",
+            note: `Payment captured successfully via Razorpay (${payment.id})`,
+            at: new Date(),
+          },
+        },
+      }
+    );
+    console.log(`[webhook] Order ${payment.order_id} marked as paid`);
+  } catch (err) {
+    console.error("[webhook] Failed to update order status:", err);
+  }
+
   // TODO: Send order confirmation email to customer
-  // e.g.: await EmailService.sendOrderConfirmation({ to: payment.email!, orderId: payment.notes?.orderId })
-  //
   // TODO: Trigger inventory deduction via inventory-service
 }
 
@@ -91,7 +112,26 @@ async function handlePaymentFailed(payload: RazorpayWebhookPayload) {
     orderId: payment?.order_id,
   });
 
-  // TODO: Mark order as PAYMENT_FAILED in your database
+  // Mark order as failed in database
+  try {
+    await connectToDatabase();
+    await Order.findOneAndUpdate(
+      { razorpayOrderId: payment?.order_id },
+      {
+        $set: { paymentStatus: "failed" },
+        $push: {
+          statusHistory: {
+            status: "payment_failed",
+            note: `Payment failed (${payment?.id})`,
+            at: new Date(),
+          },
+        },
+      }
+    );
+  } catch (err) {
+    console.error("[webhook] Failed to update failed order:", err);
+  }
+
   // TODO: Send payment failure notification to customer
 }
 

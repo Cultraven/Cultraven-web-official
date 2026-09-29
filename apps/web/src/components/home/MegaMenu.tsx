@@ -89,7 +89,7 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
                   onFocus={() => setOpenId(item.id)}
                   onClick={() => toggle(item.id)}
                   onKeyDown={(e) => handleTriggerKey(e, item.id)}
-                  style={{ display: "flex", alignItems: "center", gap: "0.25rem", fontFamily: "'Inter', sans-serif", fontSize: "13px", fontWeight: 900, letterSpacing: "0.05em", textTransform: "uppercase", background: "none", border: "none", cursor: "pointer", color: isScrolled ? "#172545" : "#F5F1E8", transition: "opacity 0.2s" }}
+                  style={{ display: "flex", alignItems: "center", gap: "0.25rem", fontFamily: "'Inter', sans-serif", fontSize: "13px", fontWeight: 900, letterSpacing: "0.05em", textTransform: "uppercase", background: "none", border: "none", cursor: "pointer", color: "#F5F1E8", transition: "opacity 0.2s" }}
                   onMouseOver={(e) => (e.currentTarget.style.opacity = "0.6")}
                   onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
                 >
@@ -105,7 +105,7 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
                 <Link
                   href={item.href ?? "#"}
                   role="menuitem"
-                  style={{ display: "block", fontFamily: "'Inter', sans-serif", fontSize: "13px", fontWeight: 900, letterSpacing: "0.05em", textTransform: "uppercase", color: isScrolled ? "#172545" : "#F5F1E8", textDecoration: "none", transition: "opacity 0.2s" }}
+                  style={{ display: "block", fontFamily: "'Inter', sans-serif", fontSize: "13px", fontWeight: 900, letterSpacing: "0.05em", textTransform: "uppercase", color: "#F5F1E8", textDecoration: "none", transition: "opacity 0.2s" }}
                   onMouseOver={(e) => (e.currentTarget.style.opacity = "0.6")}
                   onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
                 >

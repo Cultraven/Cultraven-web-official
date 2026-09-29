@@ -16,23 +16,28 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import Razorpay from "razorpay";
+import { connectToDatabase } from "@/lib/db";
+import { Order } from "@/lib/models/Order";
 
 // ── Zod schema ────────────────────────────────────────────────────────────────
 const BodySchema = z.object({
-  /** Total amount in paise (₹1 = 100 paise). Must be > 0. */
+  userId: z.string().optional().default("guest"),
+  items: z.array(z.any()), // Assuming cart items match OrderItem shape for now
+  subtotalPaise: z.number().int().min(0),
+  shippingPaise: z.number().int().min(0),
   amountPaise: z.number().int().min(100, "Minimum order amount is ₹1"),
   currency: z.string().default("INR"),
-  /** Optional internal reference to your DB order ID */
   receipt: z.string().trim().max(40).optional(),
-  /** Buyer's name for Razorpay prefill */
-  name: z.string().trim().max(100).optional(),
-  /** Buyer's email for Razorpay prefill */
-  email: z.string().email().optional(),
-  /** Buyer's phone for Razorpay prefill */
-  phone: z
-    .string()
-    .regex(/^\d{10}$/, "Invalid phone")
-    .optional(),
+  name: z.string().trim().max(100),
+  email: z.string().email(),
+  phone: z.string().regex(/^\d{10}$/, "Invalid phone"),
+  address: z.object({
+    line1: z.string(),
+    line2: z.string().optional(),
+    city: z.string(),
+    state: z.string(),
+    pincode: z.string(),
+  }),
 });
 
 // ── Rate limiting (production: use Upstash Redis) ─────────────────────────────
@@ -89,9 +94,10 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { amountPaise, currency, receipt, name, email, phone } = result.data;
+  const { amountPaise, currency, receipt, name, email, phone, items, subtotalPaise, shippingPaise, address, userId } = result.data;
 
   try {
+    await connectToDatabase();
     const razorpay = getRazorpayClient();
 
     const order = await razorpay.orders.create({
@@ -99,10 +105,32 @@ export async function POST(req: NextRequest) {
       currency,
       receipt: receipt ?? `rcpt_${Date.now()}`,
       notes: {
-        ...(name && { customer_name: name }),
-        ...(email && { customer_email: email }),
-        ...(phone && { customer_phone: phone }),
+        customer_name: name,
+        customer_email: email,
+        customer_phone: phone,
       },
+    });
+
+    // Create DB order linked to Razorpay order ID
+    await Order.create({
+      userId,
+      items,
+      subtotalPaise,
+      shippingPaise,
+      totalPaise: amountPaise,
+      deliveryAddress: {
+        name,
+        email,
+        phone,
+        line1: address.line1,
+        line2: address.line2 || "",
+        city: address.city,
+        state: address.state,
+        pincode: address.pincode,
+      },
+      razorpayOrderId: order.id,
+      paymentStatus: "pending",
+      fulfillmentStatus: "processing",
     });
 
     // Return ONLY safe data to client

@@ -41,7 +41,33 @@ export async function GET() {
   }
 }
 
+import crypto from "crypto";
+
+function verifyAdminToken(req: Request): boolean {
+  // @ts-ignore
+  const cookies = req.headers.get("cookie") || "";
+  const match = cookies.match(/cultraven_session=([^;]+)/);
+  if (!match) return false;
+  const session = match[1];
+  if (!session || !session.includes(".")) return false;
+  const [encodedPayload, signature] = session.split(".");
+  try {
+    const secret = process.env.SESSION_SECRET || "cultraven-dev-secret-change-in-prod";
+    const expectedSig = crypto.createHmac("sha256", secret).update(encodedPayload).digest("base64url");
+    if (signature !== expectedSig) return false;
+    const payload = JSON.parse(Buffer.from(encodedPayload, "base64url").toString("utf-8"));
+    if (payload.exp && payload.exp < Date.now()) return false;
+    return payload.role === "admin";
+  } catch {
+    return false;
+  }
+}
+
 export async function PUT(req: Request) {
+  if (!verifyAdminToken(req)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     await connectToDatabase();
     const body = await req.json();

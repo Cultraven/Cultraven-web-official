@@ -89,6 +89,9 @@ function loadRazorpayScript(): Promise<void> {
   });
 }
 
+// ── Helpers ──────────────────────────────────────────────────────────────────
+const fmt = (p: number) => `₹${(p / 100).toLocaleString("en-IN")}`;
+
 // ── Component ──────────────────────────────────────────────────────────────────
 export default function CheckoutPage() {
   const router = useRouter();
@@ -108,7 +111,17 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [paymentError, setPaymentError] = useState("");
 
-  const subtotal = CART_ITEMS.reduce((s, i) => s + i.pricePaise * i.qty, 0);
+  // ── Use Zustand cart items (localStorage-persisted) ────────────────────────
+  const cartItems = useCartStore((s) => s.items);
+
+  // Redirect to cart page if nothing in cart
+  useEffect(() => {
+    if (cartItems.length === 0) {
+      router.replace("/cart");
+    }
+  }, [cartItems, router]);
+
+  const subtotal = cartItems.reduce((s, i) => s + i.pricePaise * i.quantity, 0);
   const shipping = subtotal >= 199900 ? 0 : 9900;
   const total = subtotal + shipping;
 
@@ -148,6 +161,26 @@ export default function CheckoutPage() {
           name: `${form.firstName} ${form.lastName}`,
           email: form.email,
           phone: form.phone,
+          items: cartItems.map(item => ({
+            productId: item.productId,
+            sku: item.sku,
+            title: item.title,
+            image: item.image,
+            size: item.size || "Free Size",
+            color: item.color || "Default",
+            pricePaise: item.pricePaise,
+            quantity: item.quantity
+          })),
+          subtotalPaise: subtotal,
+          shippingPaise: shipping,
+          address: {
+            line1: form.address,
+            line2: "",
+            city: form.city,
+            state: form.state,
+            pincode: form.pincode
+          },
+          userId: "guest", // Could fetch from session if logged in
         }),
       });
 

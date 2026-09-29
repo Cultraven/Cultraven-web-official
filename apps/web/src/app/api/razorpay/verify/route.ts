@@ -1,0 +1,100 @@
+/**
+ * POST /api/razorpay/verify
+ *
+ * Server-side payment verification after Razorpay checkout completes.
+ * NEVER trust the frontend alone — always verify signature here.
+ *
+ * Security:
+ * - HMAC-SHA256 signature verification using Razorpay order_id + payment_id
+ * - Marks order as paid in DB only after successful verification
+ */
+
+import { NextRequest, NextResponse } from "next/server";
+import crypto from "crypto";
+import { z } from "zod";
+import { connectToDatabase } from "@/lib/db";
+import { Order } from "@/lib/models/Order";
+
+const VerifySchema = z.object({
+  razorpay_order_id: z.string().min(1),
+  razorpay_payment_id: z.string().min(1),
+  razorpay_signature: z.string().min(1),
+});
+
+export async function POST(req: NextRequest) {
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  }
+
+  const result = VerifySchema.safeParse(body);
+  if (!result.success) {
+    return NextResponse.json(
+      { error: "Missing required payment fields", issues: result.error.flatten().fieldErrors },
+      { status: 422 }
+    );
+  }
+
+  const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = result.data;
+
+  const keySecret = process.env.RAZORPAY_KEY_SECRET;
+  if (!keySecret) {
+    console.error("[verify] RAZORPAY_KEY_SECRET not set");
+    return NextResponse.json({ error: "Payment configuration error" }, { status: 500 });
+  }
+
+  // Generate expected signature: HMAC-SHA256 of "orderId|paymentId"
+  const expectedSignature = crypto
+    .createHmac("sha256", keySecret)
+    .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+    .digest("hex");
+
+  // Timing-safe comparison to prevent timing attacks
+  let isValid = false;
+  try {
+    isValid = crypto.timingSafeEqual(
+      Buffer.from(expectedSignature, "hex"),
+      Buffer.from(razorpay_signature, "hex")
+    );
+  } catch {
+    // Buffers of different length — definitely invalid
+    isValid = false;
+  }
+
+  if (!isValid) {
+    console.warn(`[verify] Signature mismatch for order ${razorpay_order_id}`);
+    return NextResponse.json({ verified: false, error: "Invalid payment signature" }, { status: 400 });
+  }
+
+  // Signature valid — mark order paid in DB
+  try {
+    await connectToDatabase();
+    await Order.findOneAndUpdate(
+      { razorpayOrderId: razorpay_order_id },
+      {
+        $set: {
+          paymentStatus: "paid",
+          razorpayPaymentId: razorpay_payment_id,
+        },
+        $push: {
+          statusHistory: {
+            status: "payment_verified",
+            note: `Payment verified client-side (${razorpay_payment_id})`,
+            at: new Date(),
+          },
+        },
+      }
+    );
+  } catch (err) {
+    console.error("[verify] DB update failed:", err);
+    // Still return verified: true — payment is real, webhook will handle DB
+  }
+
+  return NextResponse.json({ verified: true }, { status: 200 });
+}
+
+export async function GET() {
+  return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
+}

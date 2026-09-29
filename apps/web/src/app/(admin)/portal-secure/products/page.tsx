@@ -144,7 +144,7 @@ export default function AdminProductsPage() {
           </h1>
         </div>
         <Link
-          href="/admin/products/new"
+          href="/portal-secure/products/new"
           id="admin-add-product-btn"
           style={{
             display: "inline-flex",

@@ -1,13 +1,24 @@
 /**
  * POST /api/auth/register
- * POST /api/auth/logout
+ *
+ * Self-contained registration — creates user in MongoDB with bcrypt-hashed password.
+ * Issues a session token cookie on success.
+ *
+ * Security:
+ * - Zod validation (email, password strength)
+ * - bcryptjs password hashing (cost factor 12)
+ * - Rate limited: 3 registrations / 15 min per IP
+ * - HttpOnly + Secure + SameSite=Lax cookie
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import bcrypt from "bcryptjs";
 import crypto from "crypto";
+import { connectToDatabase } from "@/lib/db";
+import { User } from "@/lib/models/User";
 
-// ─── Register ─────────────────────────────────────────────────────────────────
+// ─── Register Schema ─────────────────────────────────────────────────────────
 
 const RegisterSchema = z.object({
   firstName: z.string().trim().min(1, "First name required").max(50),
@@ -36,9 +47,9 @@ function isRateLimited(ip: string, max = 5, windowMs = 15 * 60 * 1000): boolean 
   return false;
 }
 
-function createSessionToken(userId: string, email: string): string {
-  const secret = process.env.SESSION_SECRET || "cultraven-fallback-secret";
-  const payload = JSON.stringify({ userId, email, iat: Date.now() });
+function createSessionToken(userId: string, email: string, role: string): string {
+  const secret = process.env.SESSION_SECRET || "cultraven-dev-secret-change-in-prod";
+  const payload = JSON.stringify({ userId, email, role, iat: Date.now(), exp: Date.now() + 7 * 24 * 60 * 60 * 1000 });
   const encoded = Buffer.from(payload).toString("base64url");
   const sig = crypto.createHmac("sha256", secret).update(encoded).digest("base64url");
   return `${encoded}.${sig}`;
@@ -73,37 +84,33 @@ export async function POST(req: NextRequest) {
   const { firstName, lastName, email, password } = result.data;
 
   try {
-    const authServiceUrl =
-      process.env.AUTH_SERVICE_URL ?? "http://localhost:4001/api/v1";
+    await connectToDatabase();
 
-    const authRes = await fetch(`${authServiceUrl}/auth/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ firstName, lastName, email, password }),
-      signal: AbortSignal.timeout(5000),
-    });
-
-    if (!authRes.ok) {
-      const errData = await authRes.json().catch(() => ({}));
-      const msg = (errData as { error?: string }).error;
-      // Common case: email already registered
-      if (authRes.status === 409 || msg?.toLowerCase().includes("exist")) {
-        return NextResponse.json(
-          { error: "An account with this email already exists." },
-          { status: 409 }
-        );
-      }
+    // Check duplicate email
+    const existing = await User.findOne({ email });
+    if (existing) {
       return NextResponse.json(
-        { error: msg || "Registration failed. Please try again." },
-        { status: authRes.status }
+        { error: "An account with this email already exists." },
+        { status: 409 }
       );
     }
 
-    const data = (await authRes.json()) as { userId: string; email: string };
-    const sessionToken = createSessionToken(data.userId, data.email);
+    // Hash password with cost factor 12
+    const passwordHash = await bcrypt.hash(password, 12);
+
+    const user = await User.create({
+      firstName,
+      lastName,
+      email,
+      passwordHash,
+      role: "customer",
+      emailVerified: false,
+    });
+
+    const sessionToken = createSessionToken(user._id.toString(), user.email, user.role);
 
     const response = NextResponse.json(
-      { ok: true, email: data.email },
+      { ok: true, email: user.email, firstName: user.firstName },
       { status: 201 }
     );
 
@@ -119,8 +126,8 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     console.error("[auth/register] error:", err);
     return NextResponse.json(
-      { error: "Registration service unavailable. Please try again." },
-      { status: 503 }
+      { error: "Registration failed. Please try again." },
+      { status: 500 }
     );
   }
 }

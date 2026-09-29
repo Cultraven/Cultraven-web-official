@@ -1,21 +1,29 @@
 /**
  * POST /api/auth/login
  *
- * Authenticates a user with email + password.
- * Sets a secure HttpOnly session cookie on success.
+ * Self-contained auth — reads directly from MongoDB.
+ * Validates email + password (bcryptjs), issues a proper HMAC-signed JWT,
+ * sets a secure HttpOnly cookie. No external microservice dependency.
  *
- * For a real production app, integrate with auth-service
- * (packages/auth) or NextAuth.js. This implementation uses
- * a JWT signed with NEXTAUTH_SECRET stored in a cookie.
+ * Security:
+ * - Zod validation
+ * - Constant-time bcrypt comparison (prevents timing attacks)
+ * - HMAC-SHA256 signed token (HS256 style)
+ * - Rate limited: 10 attempts / 15 min per IP
+ * - HttpOnly + Secure + SameSite=Lax cookie
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import bcrypt from "bcryptjs";
 import crypto from "crypto";
+import { connectToDatabase } from "@/lib/db";
+import { User } from "@/lib/models/User";
 
+// ── Zod schema ────────────────────────────────────────────────────────────────
 const BodySchema = z.object({
-  email: z.string().email("Invalid email"),
-  password: z.string().min(6, "Password too short").max(128),
+  email: z.string().trim().email("Invalid email").toLowerCase(),
+  password: z.string().min(1, "Password required").max(128),
 });
 
 // ── Rate limiting ─────────────────────────────────────────────────────────────
@@ -35,22 +43,23 @@ function isRateLimited(ip: string): boolean {
   return false;
 }
 
-/** Create a simple signed session token */
-function createSessionToken(userId: string, email: string): string {
-  const secret = process.env.SESSION_SECRET || "cultraven-fallback-secret";
-  const payload = JSON.stringify({ userId, email, iat: Date.now() });
+// ── Session token (HMAC-SHA256, base64url encoded) ────────────────────────────
+function createSessionToken(userId: string, email: string, role: string): string {
+  const secret = process.env.SESSION_SECRET || "cultraven-dev-secret-change-in-prod";
+  const payload = JSON.stringify({ userId, email, role, iat: Date.now(), exp: Date.now() + 7 * 24 * 60 * 60 * 1000 });
   const encoded = Buffer.from(payload).toString("base64url");
   const sig = crypto.createHmac("sha256", secret).update(encoded).digest("base64url");
   return `${encoded}.${sig}`;
 }
 
+// ── Handler ───────────────────────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
   const ip =
     req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
 
   if (isRateLimited(ip)) {
     return NextResponse.json(
-      { error: "Too many attempts. Try again in 15 minutes." },
+      { error: "Too many login attempts. Try again in 15 minutes." },
       { status: 429 }
     );
   }
@@ -59,7 +68,7 @@ export async function POST(req: NextRequest) {
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 
   const result = BodySchema.safeParse(body);
@@ -73,34 +82,42 @@ export async function POST(req: NextRequest) {
   const { email, password } = result.data;
 
   try {
-    // ── Call the auth-service (or user-service) ──────────────────────────────
-    const authServiceUrl =
-      process.env.AUTH_SERVICE_URL ?? "http://localhost:4001/api/v1";
+    await connectToDatabase();
 
-    const authRes = await fetch(`${authServiceUrl}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-      signal: AbortSignal.timeout(5000),
-    });
+    // Retrieve user including passwordHash (select: false by default)
+    const user = await User.findOne({ email }).select("+passwordHash");
 
-    if (!authRes.ok) {
-      const errData = await authRes.json().catch(() => ({}));
+    // Always run bcrypt — prevents timing attacks even when user not found
+    const DUMMY_HASH = "$2a$10$abcdefghijklmnopqrstuuABCDEFGHIJKLMNOPQRSTUVWXYZ01234";
+    const hashToCompare = user?.passwordHash || DUMMY_HASH;
+    const isValid = await bcrypt.compare(password, hashToCompare);
+
+    if (!user) {
       return NextResponse.json(
-        { error: (errData as { error?: string }).error || "Invalid email or password." },
+        { error: "Account not found." },
         { status: 401 }
       );
     }
 
-    const data = (await authRes.json()) as { userId: string; email: string };
-    const sessionToken = createSessionToken(data.userId, data.email);
+    if (!isValid) {
+      return NextResponse.json(
+        { error: "Invalid password." },
+        { status: 401 }
+      );
+    }
+
+    const token = createSessionToken(
+      user._id.toString(),
+      user.email,
+      user.role || "customer"
+    );
 
     const response = NextResponse.json(
-      { ok: true, email: data.email },
+      { ok: true, email: user.email, firstName: user.firstName },
       { status: 200 }
     );
 
-    response.cookies.set("cultraven_session", sessionToken, {
+    response.cookies.set("cultraven_session", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
@@ -112,8 +129,8 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     console.error("[auth/login] error:", err);
     return NextResponse.json(
-      { error: "Authentication service unavailable. Please try again." },
-      { status: 503 }
+      { error: "An error occurred. Please try again later." },
+      { status: 500 }
     );
   }
 }
