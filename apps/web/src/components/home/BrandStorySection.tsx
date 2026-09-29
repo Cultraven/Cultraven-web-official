@@ -54,7 +54,6 @@ export function BrandStorySection() {
           position: "relative",
           zIndex: 10,
           paddingInline: "clamp(1.25rem,4vw,5rem)",
-          maxWidth: "1600px",
           margin: "0 auto",
           width: "100%",
           paddingBlock: "clamp(5rem,10vw,10rem)",
