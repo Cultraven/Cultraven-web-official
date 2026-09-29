@@ -11,7 +11,7 @@
  * - Active filter chips + clear all
  * - Loads real products from /api/products filtered by category
  */
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, Component } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useCartStore } from "@/store/cart";
@@ -33,6 +33,33 @@ interface Product {
   badge?: string;
   inStock: boolean;
 }
+
+// ── Error Boundary ────────────────────────────────────────────────────────────
+class PLPErrorBoundary extends Component<
+  { children: React.ReactNode; slug: string },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode; slug: string }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() { return { hasError: true }; }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ backgroundColor: "#F5F1E8", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "1.5rem" }}>
+          <p style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", fontSize: "2rem", color: "#172545", textAlign: "center", padding: "0 2rem" }}>Something went wrong loading this collection.</p>
+          <Link href="/" style={{ fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.72rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#F5F1E8", backgroundColor: "#172545", padding: "0.875rem 2rem", textDecoration: "none" }}>BACK TO HOME</Link>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+// ── Safe array helpers (root-cause fix for hex destructuring crash) ────────────
+const safeColors = (p: Product) => Array.isArray(p.colors) ? p.colors.filter((c) => c && c.hex && c.label) : [];
+const safeSizes  = (p: Product) => Array.isArray(p.sizes)  ? p.sizes.filter(Boolean) : [];
 
 // ── Fixtures for offline/fallback ─────────────────────────────────────────────
 const FIXTURE_PRODUCTS: Product[] = [
@@ -140,7 +167,7 @@ interface CategoryClientProps {
   categoryName: string;
 }
 
-export default function CategoryClient({ slug, categoryName }: CategoryClientProps) {
+function CategoryClientInner({ slug, categoryName }: CategoryClientProps) {
   const { addItem } = useCartStore();
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -164,16 +191,35 @@ export default function CategoryClient({ slug, categoryName }: CategoryClientPro
         const res = await fetch(`/api/products?category=${encodeURIComponent(categoryName)}&limit=24`);
         if (res.ok) {
           const data = await res.json();
-          if (data.products?.length > 0) {
-            setProducts(data.products);
+          if (Array.isArray(data.products) && data.products.length > 0) {
+            // Normalize to ensure colors/sizes are always safe arrays
+            const normalized: Product[] = data.products.map((p: any) => ({
+              id: String(p.id || p._id || Math.random()),
+              title: p.title || "",
+              slug: p.slug || "",
+              href: p.href || `/products/${p.slug || ""}`,
+              image: p.image || "",
+              hoverImage: p.hoverImage || p.image || "",
+              pricePaise: Number(p.pricePaise) || 0,
+              mrpPaise: Number(p.mrpPaise || p.pricePaise) || 0,
+              rating: Number(p.rating) || 4,
+              reviewCount: Number(p.reviewCount) || 0,
+              colors: Array.isArray(p.colors) ? p.colors.filter((c: any) => c && c.hex && c.label) : [],
+              sizes: Array.isArray(p.sizes) ? p.sizes.filter(Boolean) : [],
+              category: p.category || "",
+              badge: p.badge,
+              inStock: p.inStock !== false,
+            }));
+            setProducts(normalized);
             setLoading(false);
             return;
           }
         }
       } catch {/* fallback */}
       // Filter fixtures by slug/category match
+      const catWord = slug.replace(/-/g, " ").split(" ")[0].toLowerCase();
       const filtered = FIXTURE_PRODUCTS.filter((p) =>
-        p.category.toLowerCase().includes(slug.replace(/-/g, " ").split(" ")[0]) ||
+        p.category.toLowerCase().includes(catWord) ||
         slug === "all" || slug === "new-in" || slug === "bestsellers"
       );
       setProducts(filtered.length > 0 ? filtered : FIXTURE_PRODUCTS);
@@ -183,22 +229,18 @@ export default function CategoryClient({ slug, categoryName }: CategoryClientPro
   }, [slug, categoryName]);
 
   // ── All sizes / colors from loaded products ───────────────────────────────────
-  const allSizes = useMemo(() => [...new Set(products.flatMap((p) => p.sizes || []))], [products]);
+  const allSizes = useMemo(() => [...new Set(products.flatMap(safeSizes))], [products]);
   const allColors = useMemo(() => {
     const map = new Map<string, string>();
-    products.flatMap((p) => p.colors || []).forEach((color) => {
-      if (color && color.hex && color.label) {
-        map.set(color.label, color.hex);
-      }
-    });
+    products.flatMap(safeColors).forEach((c) => map.set(c.label, c.hex));
     return [...map.entries()].map(([label, hex]) => ({ label, hex }));
   }, [products]);
 
   // ── Filtered + sorted ─────────────────────────────────────────────────────────
   const filtered = useMemo(() => {
     let list = [...products];
-    if (selectedSizes.length > 0) list = list.filter((p) => selectedSizes.some((s) => (p.sizes || []).includes(s)));
-    if (selectedColors.length > 0) list = list.filter((p) => selectedColors.some((c) => (p.colors || []).some((col) => col.label === c)));
+    if (selectedSizes.length > 0) list = list.filter((p) => selectedSizes.some((s) => safeSizes(p).includes(s)));
+    if (selectedColors.length > 0) list = list.filter((p) => selectedColors.some((c) => safeColors(p).some((col) => col.label === c)));
     if (inStockOnly) list = list.filter((p) => p.inStock);
     list = list.filter((p) => p.pricePaise <= priceMax * 100);
     if (sortBy === "price-asc") list.sort((a, b) => a.pricePaise - b.pricePaise);
@@ -216,14 +258,16 @@ export default function CategoryClient({ slug, categoryName }: CategoryClientPro
   };
 
   const handleQuickAdd = (p: Product) => {
+    const pSizes = safeSizes(p);
+    const pColors = safeColors(p);
     addItem({
       productId: p.id,
       slug: p.slug,
       title: p.title,
       image: p.image,
-      sku: `${p.id}-${(p.sizes && p.sizes[0]) ? p.sizes[0] : "M"}-default`,
-      size: (p.sizes && p.sizes[0]) ? p.sizes[0] : "M",
-      color: (p.colors && p.colors[0]) ? p.colors[0].label : "",
+      sku: `${p.id}-${pSizes[0] || "M"}-default`,
+      size: pSizes[0] || "M",
+      color: pColors[0]?.label || "",
       pricePaise: p.pricePaise,
     });
     setAddedId(p.id);
@@ -354,7 +398,7 @@ export default function CategoryClient({ slug, categoryName }: CategoryClientPro
           {/* ── Product Grid ── */}
           <div>
             {loading ? (
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "1.5rem", paddingTop: "1.5rem" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1.5rem", paddingTop: "1.5rem" }}>
                 {[...Array(8)].map((_, i) => (
                   <div key={i}>
                     <div style={{ aspectRatio: "3/4", backgroundColor: "#EAE6DB", animation: "pulse 1.5s ease-in-out infinite" }} />
@@ -371,7 +415,7 @@ export default function CategoryClient({ slug, categoryName }: CategoryClientPro
                 </button>
               </div>
             ) : (
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "1.5rem", paddingTop: "1.5rem" }} className="prod-grid">
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1.5rem", paddingTop: "1.5rem" }} className="prod-grid">
                 {filtered.map((p) => (
                   <div key={p.id} style={{ position: "relative" }}
                     onMouseEnter={() => setHoveredId(p.id)}
@@ -438,12 +482,14 @@ export default function CategoryClient({ slug, categoryName }: CategoryClientPro
                         )}
                       </div>
                       {/* Color swatches */}
-                      <div style={{ display: "flex", gap: "4px", marginTop: "0.4rem" }}>
-                        {(p.colors || []).slice(0, 4).map(({ hex, label }) => (
-                          <span key={label} title={label} style={{ width: "14px", height: "14px", borderRadius: "50%", backgroundColor: hex, border: "1px solid #D9D3C4" }} />
-                        ))}
-                        {(p.colors || []).length > 4 && <span style={{ fontFamily: "Inter, sans-serif", fontSize: "0.6rem", color: "#6B7280", alignSelf: "center" }}>+{(p.colors || []).length - 4}</span>}
-                      </div>
+                      {safeColors(p).length > 0 && (
+                        <div style={{ display: "flex", gap: "4px", marginTop: "0.4rem" }}>
+                          {safeColors(p).slice(0, 4).map(({ hex, label }) => (
+                            <span key={label} title={label} style={{ width: "14px", height: "14px", borderRadius: "50%", backgroundColor: hex, border: "1px solid #D9D3C4" }} />
+                          ))}
+                          {safeColors(p).length > 4 && <span style={{ fontFamily: "Inter, sans-serif", fontSize: "0.6rem", color: "#6B7280", alignSelf: "center" }}>+{safeColors(p).length - 4}</span>}
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -455,9 +501,18 @@ export default function CategoryClient({ slug, categoryName }: CategoryClientPro
 
       <style>{`
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+        @media(max-width:1024px){.prod-grid{grid-template-columns:repeat(3,1fr)!important}}
         @media(max-width:768px){.plp-grid{grid-template-columns:1fr!important}.filter-panel{position:relative!important;top:auto!important}}
-        @media(max-width:640px){.prod-grid{grid-template-columns:repeat(2,1fr)!important}}
+        @media(max-width:640px){.prod-grid{grid-template-columns:repeat(2,1fr)!important; gap:1rem!important}}
       `}</style>
     </div>
+  );
+}
+
+export default function CategoryClient(props: CategoryClientProps) {
+  return (
+    <PLPErrorBoundary slug={props.slug}>
+      <CategoryClientInner {...props} />
+    </PLPErrorBoundary>
   );
 }

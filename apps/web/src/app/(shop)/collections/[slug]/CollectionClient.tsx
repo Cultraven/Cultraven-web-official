@@ -11,9 +11,36 @@
  */
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, Component } from "react";
 import Image from "next/image";
 import Link from "next/link";
+
+// ─── Error Boundary ────────────────────────────────────────────────────────────
+class PLPErrorBoundary extends Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() { return { hasError: true }; }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ backgroundColor: "#F5F1E8", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "1.5rem" }}>
+          <p style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", fontSize: "2rem", color: "#172545", textAlign: "center", padding: "0 2rem" }}>Something went wrong loading this collection.</p>
+          <Link href="/" style={{ fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.72rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#F5F1E8", backgroundColor: "#172545", padding: "0.875rem 2rem", textDecoration: "none" }}>BACK TO HOME</Link>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+// ─── Safe array helpers ────────────────────────────────────────────────────────
+const safeColors = (p: Partial<Product>) => Array.isArray(p.colors) ? p.colors.filter((c: any) => c && c.hex && c.label) : [];
+const safeSizes  = (p: Partial<Product>) => Array.isArray(p.sizes)  ? p.sizes.filter(Boolean) : [];
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -163,7 +190,7 @@ const SORT_OPTIONS = [
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-export default function CollectionPageClient({
+function CollectionPageClientInner({
   collectionName,
   collectionSlug,
   description,
@@ -190,10 +217,10 @@ export default function CollectionPageClient({
             hoverImage: p.hoverImage || p.image || "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&auto=format&fit=crop&q=80",
             pricePaise: p.pricePaise || 199900,
             mrpPaise: p.mrpPaise || 249900,
-            rating: 5,
-            reviewCount: 42,
-            colors: [{ hex: "#0A0A0A", label: "Black" }],
-            sizes: ["S", "M", "L", "XL"],
+            rating: Number(p.rating) || 5,
+            reviewCount: Number(p.reviewCount) || 42,
+            colors: safeColors(p),
+            sizes: safeSizes(p),
             category: p.category || "T-Shirts",
             fit: p.fit || "Regular",
             badge: p.badge,
@@ -329,6 +356,14 @@ export default function CollectionPageClient({
   );
 }
 
+export default function CollectionPageClient(props: any) {
+  return (
+    <PLPErrorBoundary>
+      <CollectionPageClientInner {...props} />
+    </PLPErrorBoundary>
+  );
+}
+
 // ─── Filter Block ──────────────────────────────────────────────────────────────
 
 function FilterBlock({ title, options, selected, onToggle, pills = false }: {
@@ -389,7 +424,7 @@ function PLPCard({ product: p }: { product: Product }) {
       </Link>
       <div>
         <div style={{ display: "flex", gap: "5px", marginBottom: "6px" }}>
-          {p.colors.map((c) => <div key={c.hex} title={c.label} style={{ width: "11px", height: "11px", borderRadius: "50%", backgroundColor: c.hex, border: "1.5px solid rgba(23,37,69,0.2)" }} />)}
+          {safeColors(p).map((c) => <div key={c.hex} title={c.label} style={{ width: "11px", height: "11px", borderRadius: "50%", backgroundColor: c.hex, border: "1.5px solid rgba(23,37,69,0.2)" }} />)}
         </div>
         <Link href={p.href} style={{ display: "block", fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.7rem", letterSpacing: "0.05em", textTransform: "uppercase", color: "#172545", marginBottom: "5px", lineHeight: 1.35 }}>{p.title}</Link>
         <div style={{ display: "flex", alignItems: "center", gap: "7px" }}>
