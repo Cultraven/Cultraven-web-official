@@ -134,20 +134,22 @@ export function HeroBanner({ slide: _slide, siteUrl: _siteUrl }: HeroBannerProps
         }}
       />
 
-      {/* ── Content ── */}
-      <div
-        style={{
-          position: "relative",
-          zIndex: 10,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          minHeight: "100vh",
-          padding: "clamp(1.5rem, 4vw, 6rem)",
-          paddingTop: "100px", // clear sticky header
-          maxWidth: "760px",
-        }}
-      >
+      {/* ── Content Wrapper ── */}
+      <div style={{ maxWidth: "1600px", margin: "0 auto", position: "relative", width: "100%", minHeight: "100vh" }}>
+        {/* ── Content ── */}
+        <div
+          style={{
+            position: "relative",
+            zIndex: 10,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            minHeight: "100vh",
+            padding: "clamp(1.5rem, 4vw, 6rem)",
+            paddingTop: "100px", // clear sticky header
+            maxWidth: "760px",
+          }}
+        >
         {/* Tag */}
         <span
           style={{
@@ -371,6 +373,7 @@ export function HeroBanner({ slide: _slide, siteUrl: _siteUrl }: HeroBannerProps
         }}
       >
         {String(active + 1).padStart(2, "0")} / {String(SLIDES.length).padStart(2, "0")}
+      </div>
       </div>
     </section>
   );

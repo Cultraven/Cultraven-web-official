@@ -34,7 +34,7 @@ export function PigmentumCollection({
 
   return (
     <section style={{ backgroundColor: "#EAE6DB", padding: "clamp(4rem,8vw,8rem) 0" }}>
-      <div style={{ paddingInline: "clamp(1.25rem,4vw,5rem)" }}>
+      <div style={{ paddingInline: "clamp(1.25rem,4vw,5rem)", maxWidth: "1600px", margin: "0 auto", width: "100%" }}>
         {/* Header */}
         <div
           style={{

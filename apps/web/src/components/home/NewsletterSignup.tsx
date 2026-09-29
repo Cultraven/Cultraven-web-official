@@ -37,6 +37,9 @@ export function NewsletterSignup({ config }: { config: NewsletterConfig }) {
       <div
         style={{
           paddingInline: "clamp(1.25rem,4vw,5rem)",
+          maxWidth: "1600px",
+          margin: "0 auto",
+          width: "100%",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",

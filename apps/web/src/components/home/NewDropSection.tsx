@@ -129,7 +129,7 @@ export function NewDropSection() {
       aria-labelledby="new-drop-heading"
       style={{ backgroundColor: "#F5F1E8", padding: "clamp(4rem,8vw,8rem) 0" }}
     >
-      <div style={{ paddingInline: "clamp(1.25rem,4vw,5rem)" }}>
+      <div style={{ paddingInline: "clamp(1.25rem,4vw,5rem)", maxWidth: "1600px", margin: "0 auto", width: "100%" }}>
         {/* Header */}
         <div style={{ marginBottom: "3rem" }}>
           <span
@@ -220,8 +220,8 @@ export function NewDropSection() {
       </div>
 
       <style>{`
-        @media (max-width: 1024px) { .nd-grid { grid-template-columns: repeat(2,1fr) !important; } }
-        @media (max-width: 480px)  { .nd-grid { gap: 0.75rem !important; } }
+        @media (max-width: 1024px) { .nd-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important; } }
+        @media (max-width: 480px)  { .nd-grid { gap: 0.75rem !important; grid-template-columns: repeat(2, 1fr) !important; } }
       `}</style>
     </section>
   );

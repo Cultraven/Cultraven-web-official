@@ -13,7 +13,7 @@ export function TrendingNow({ items = TRENDING_NOW_ITEMS }: { items?: TrendingIt
         padding: "clamp(4rem,8vw,8rem) 0",
       }}
     >
-      <div style={{ paddingInline: "clamp(1.25rem,4vw,5rem)" }}>
+      <div style={{ paddingInline: "clamp(1.25rem,4vw,5rem)", maxWidth: "1600px", margin: "0 auto", width: "100%" }}>
         {/* Section heading */}
         <h2
           style={{

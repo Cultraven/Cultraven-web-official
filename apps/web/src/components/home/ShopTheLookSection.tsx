@@ -62,7 +62,7 @@ export function ShopTheLookSection() {
       aria-labelledby="stl-heading"
       style={{ backgroundColor: "#F5F1E8", padding: "clamp(4rem,8vw,8rem) 0" }}
     >
-      <div style={{ paddingInline: "clamp(1.25rem,4vw,5rem)" }}>
+      <div style={{ paddingInline: "clamp(1.25rem,4vw,5rem)", maxWidth: "1600px", margin: "0 auto", width: "100%" }}>
         {/* Heading */}
         <div style={{ marginBottom: "2.5rem" }}>
           <span

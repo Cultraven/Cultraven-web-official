@@ -17,6 +17,9 @@ export function EditorialBanner({ banner }: EditorialBannerProps) {
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
           minHeight: "70vh",
+          maxWidth: "1600px",
+          margin: "0 auto",
+          width: "100%",
         }}
         className="editorial-grid"
       >

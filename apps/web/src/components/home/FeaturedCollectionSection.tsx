@@ -22,6 +22,9 @@ export function FeaturedCollectionSection() {
           display: "grid",
           gridTemplateColumns: "3fr 2fr",
           minHeight: "80vh",
+          maxWidth: "1600px",
+          margin: "0 auto",
+          width: "100%",
         }}
         className="fc-grid"
       >
