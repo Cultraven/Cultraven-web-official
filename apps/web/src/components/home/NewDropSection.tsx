@@ -9,6 +9,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useCartStore } from "@/store/cart";
 
 interface DropProduct {
   id: string;
@@ -210,6 +211,8 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
   const [hovered, setHovered] = useState(false);
   const [wishlisted, setWishlisted] = useState(false);
   const [added, setAdded] = useState(false);
+  const addItem = useCartStore((s) => s.addItem);
+  const slug = p.href.replace(/^\/products\//, "");
 
   const disc = p.mrpPaise > p.pricePaise
     ? Math.round(((p.mrpPaise - p.pricePaise) / p.mrpPaise) * 100)
@@ -227,7 +230,8 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
         style={{
           position: "relative",
           display: "block",
-          aspectRatio: "3/4",
+          aspectRatio: "4/5",
+          maxHeight: "360px",
           overflow: "hidden",
           backgroundColor: "var(--color-bone)",
           marginBottom: "0.9rem",
@@ -361,6 +365,17 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
           <button
             onClick={(e) => {
               e.preventDefault();
+              addItem({
+                productId: p.id,
+                slug,
+                title: p.title,
+                image: p.image,
+                sku: `${p.id}-free`,
+                size: "Free Size",
+                color: p.colors?.[0]?.label ?? "Default",
+                pricePaise: p.pricePaise,
+                mrpPaise: p.mrpPaise,
+              });
               setAdded(true);
               setTimeout(() => setAdded(false), 1800);
             }}

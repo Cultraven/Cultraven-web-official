@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { formatPriceINR, lowestMrp, lowestPrice } from "@shop/types";
 import type { Product } from "@shop/types";
+import { useCartStore } from "@/store/cart";
 
 interface ProductCardProps {
   product: Product;
@@ -13,6 +14,8 @@ interface ProductCardProps {
 
 export function ProductCard({ product, cardWidth = "100%" }: ProductCardProps) {
   const [hovered, setHovered] = useState(false);
+  const [added, setAdded] = useState(false);
+  const addItem = useCartStore((s) => s.addItem);
 
   const img1 = product.images[0] ?? "";
   const img2 = product.images[1] ?? img1;
@@ -74,7 +77,8 @@ export function ProductCard({ product, cardWidth = "100%" }: ProductCardProps) {
         style={{
           position: "relative",
           display: "block",
-          aspectRatio: "3/4",
+          aspectRatio: "4/5",
+          maxHeight: "360px",
           overflow: "hidden",
           backgroundColor: "var(--color-mist)",
           borderBottom: "var(--border-thick)",
@@ -139,21 +143,42 @@ export function ProductCard({ product, cardWidth = "100%" }: ProductCardProps) {
             justifyContent: "center"
           }}
         >
-          <button style={{
-            width: "100%",
-            backgroundColor: "var(--color-cream)",
-            color: "var(--color-navy)",
-            border: "2px solid var(--color-navy)",
-            boxShadow: "2px 2px 0px 0px var(--color-navy)",
-            padding: "8px",
-            fontFamily: "var(--font-sans)",
-            fontWeight: 900,
-            fontSize: "11px",
-            textTransform: "uppercase",
-            letterSpacing: "0.05em",
-            cursor: "pointer",
-          }}>
-            JALDI ADD KAR
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              const price = lowestPrice(product.variants);
+              const mrp = lowestMrp(product.variants);
+              addItem({
+                productId: product.id,
+                slug: product.slug,
+                title: product.title,
+                image: product.images[0] ?? "",
+                sku: product.variants[0]?.sku ?? `${product.id}-free`,
+                size: product.variants[0]?.size ?? "Free Size",
+                color: product.variants[0]?.color ?? "Default",
+                pricePaise: price,
+                mrpPaise: mrp,
+              });
+              setAdded(true);
+              setTimeout(() => setAdded(false), 1800);
+            }}
+            style={{
+              width: "100%",
+              backgroundColor: added ? "var(--color-lava)" : "var(--color-cream)",
+              color: "var(--color-navy)",
+              border: "2px solid var(--color-navy)",
+              boxShadow: "2px 2px 0px 0px var(--color-navy)",
+              padding: "8px",
+              fontFamily: "var(--font-sans)",
+              fontWeight: 900,
+              fontSize: "11px",
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
+              cursor: "pointer",
+              transition: "background-color 0.2s ease",
+            }}
+          >
+            {added ? "ADDED ✓" : "QUICK ADD"}
           </button>
         </div>
       </Link>

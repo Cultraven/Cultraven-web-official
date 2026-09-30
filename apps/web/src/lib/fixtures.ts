@@ -226,33 +226,61 @@ export const HOMEPAGE_CMS_FIXTURE: HomepageCms = {
 
   navMenu: {
     items: [
-      { id: "new", label: "New", href: "/collections/new" },
+      { id: "new", label: "NEW", href: "/collections/new-in" },
       {
         id: "shop",
-        label: "Shop",
+        label: "SHOP",
         columns: [
           {
             heading: "Categories",
             items: [
-              { label: "Tees", href: "/collections/tees" },
-              { label: "Hoodies & Sweats", href: "/collections/hoodies-sweats" },
+              { label: "T-Shirts & Tees", href: "/collections/tees", isNew: true },
+              { label: "Hoodies & Sweats", href: "/collections/hoodies" },
               { label: "Shirts", href: "/collections/shirts" },
-              { label: "Bottoms", href: "/collections/bottoms" },
+              { label: "Cargo & Bottoms", href: "/collections/bottoms", isNew: true },
               { label: "Outerwear", href: "/collections/outerwear" },
               { label: "Accessories", href: "/collections/accessories" },
             ],
           },
           {
-            heading: "Featured",
+            heading: "By Fit",
             items: [
-              { label: "Sale", href: "/collections/sale" },
-              { label: "Essentials.260", href: "/collections/essentials" },
+              { label: "Oversized", href: "/collections/oversized" },
+              { label: "Relaxed Fit", href: "/collections/relaxed" },
+              { label: "Boxy", href: "/collections/boxy" },
+              { label: "Baggy", href: "/collections/baggy" },
             ],
           },
         ],
       },
-      { id: "drops", label: "Drops", href: "/collections/drops" },
-      { id: "about", label: "About", href: "/pages/about" },
+      {
+        id: "drops",
+        label: "DROPS",
+        columns: [
+          {
+            heading: "Collections",
+            items: [
+              { label: "Dharma // EP01", href: "/collections/dharma", isNew: true },
+              { label: "Dragon Blood", href: "/collections/dragon-blood" },
+              { label: "Acid State", href: "/collections/acid-state" },
+              { label: "Lava Stripe", href: "/collections/lava-stripe" },
+              { label: "Core Essentials", href: "/collections/core" },
+              { label: "All Collections", href: "/collections" },
+            ],
+          },
+          {
+            heading: "Explore",
+            items: [
+              { label: "Best Sellers", href: "/collections/bestsellers" },
+              { label: "Under ₹1,999", href: "/collections/sale" },
+              { label: "Lookbook", href: "/pages/lookbook" },
+              { label: "The Culture Files (Blog)", href: "/pages/blog" },
+            ],
+          },
+        ],
+      },
+      { id: "sale", label: "SALE", href: "/collections/sale" },
+      { id: "about", label: "ABOUT", href: "/pages/about" },
     ],
   },
 

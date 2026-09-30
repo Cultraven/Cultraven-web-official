@@ -10,6 +10,7 @@
 import React, { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useCartStore } from "@/store/cart";
 
 interface BestProduct {
   id: string;
@@ -338,6 +339,8 @@ function BestsellerCard({ product: p }: { product: BestProduct }) {
   const [hovered, setHovered] = useState(false);
   const [wishlisted, setWishlisted] = useState(false);
   const [added, setAdded] = useState(false);
+  const addItem = useCartStore((s) => s.addItem);
+  const slug = p.href.replace(/^\/products\//, "");
 
   const disc = Math.round(((p.mrpPaise - p.pricePaise) / p.mrpPaise) * 100);
 
@@ -360,7 +363,8 @@ function BestsellerCard({ product: p }: { product: BestProduct }) {
         style={{
           position: "relative",
           display: "block",
-          aspectRatio: "3/4",
+          aspectRatio: "4/5",
+          maxHeight: "360px",
           overflow: "hidden",
           backgroundColor: "var(--color-cream)",
           marginBottom: "0.85rem",
@@ -456,6 +460,17 @@ function BestsellerCard({ product: p }: { product: BestProduct }) {
           <button
             onClick={(e) => {
               e.preventDefault();
+              addItem({
+                productId: p.id,
+                slug,
+                title: p.title,
+                image: p.image,
+                sku: `${p.id}-free`,
+                size: "Free Size",
+                color: p.colors?.[0]?.label ?? "Default",
+                pricePaise: p.pricePaise,
+                mrpPaise: p.mrpPaise,
+              });
               setAdded(true);
               setTimeout(() => setAdded(false), 1800);
             }}

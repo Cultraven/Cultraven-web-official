@@ -158,25 +158,25 @@ export function ChatWidget() {
             height: "52px",
             paddingInline: "1.25rem",
             borderRadius: "0px",
-            backgroundColor: open ? "var(--color-crimson)" : "var(--color-navy)",
+            backgroundColor: "var(--color-navy)",
             color: "var(--color-cream)",
-            border: open ? "2px solid var(--color-crimson)" : "2px solid var(--color-navy)",
+            border: "2px solid var(--color-navy)",
             cursor: "pointer",
             display: "flex",
             alignItems: "center",
             gap: "0.6rem",
-            boxShadow: open ? "4px 4px 0px 0px var(--color-navy)" : "4px 4px 0px 0px var(--color-lava)",
-            transition: "transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease",
+            boxShadow: "4px 4px 0px 0px var(--color-lava)",
+            transition: "transform 0.2s ease, box-shadow 0.2s ease",
             whiteSpace: "nowrap",
             position: "relative",
           }}
           onMouseEnter={(e) => {
             (e.currentTarget as HTMLButtonElement).style.transform = "translate(-2px,-2px)";
-            (e.currentTarget as HTMLButtonElement).style.boxShadow = open ? "6px 6px 0px 0px var(--color-navy)" : "6px 6px 0px 0px var(--color-lava)";
+            (e.currentTarget as HTMLButtonElement).style.boxShadow = "6px 6px 0px 0px var(--color-lava)";
           }}
           onMouseLeave={(e) => {
             (e.currentTarget as HTMLButtonElement).style.transform = "translate(0,0)";
-            (e.currentTarget as HTMLButtonElement).style.boxShadow = open ? "4px 4px 0px 0px var(--color-navy)" : "4px 4px 0px 0px var(--color-lava)";
+            (e.currentTarget as HTMLButtonElement).style.boxShadow = "4px 4px 0px 0px var(--color-lava)";
           }}
         >
           {open ? (

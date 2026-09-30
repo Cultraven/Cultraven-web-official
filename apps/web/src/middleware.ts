@@ -13,7 +13,7 @@ import type { NextRequest } from "next/server";
 
 // ── Route patterns ─────────────────────────────────────────────────────────────
 const ADMIN_PATHS = ["/portal-secure"];
-const AUTH_PATHS = ["/account"];
+const AUTH_PATHS = ["/account", "/checkout"];
 const PUBLIC_PATHS = ["/login", "/register", "/forgot-password"];
 
 function isMatch(pathname: string, patterns: string[]): boolean {

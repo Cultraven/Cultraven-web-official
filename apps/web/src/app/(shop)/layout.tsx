@@ -84,8 +84,7 @@ export default async function ShopLayout({ children }: ShopLayoutProps) {
         ],
       },
       { id: "sale", label: "SALE", href: "/collections/sale" },
-      { id: "blog", label: "BLOG", href: "/pages/blog" },
-      { id: "about", label: "ABOUT", href: "/pages/our-heritage" },
+      { id: "about", label: "ABOUT", href: "/pages/about" },
     ],
   };
 

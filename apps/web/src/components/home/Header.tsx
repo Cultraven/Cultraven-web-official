@@ -26,8 +26,8 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
       setIsScrolled(true);
       return;
     }
-    setIsScrolled(window.scrollY > 123);
-    const onScroll = () => setIsScrolled(window.scrollY > 123);
+    setIsScrolled(window.scrollY > 80);
+    const onScroll = () => setIsScrolled(window.scrollY > 80);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, [isHomepage]);
@@ -44,14 +44,14 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
-    background:   transparent ? "rgba(255,255,255,0.12)" : "var(--color-cream)",
-    border:       transparent ? "1.5px solid rgba(255,255,255,0.55)" : "2px solid var(--color-navy)",
+    background:   transparent ? "rgba(255,255,255,0.12)" : "transparent",
+    border:       transparent ? "1.5px solid rgba(255,255,255,0.55)" : "none",
     color:        fg,
     cursor: "pointer",
-    width: "40px",
-    height: "40px",
+    width: "36px",
+    height: "36px",
     textDecoration: "none",
-    boxShadow:    transparent ? "none" : "2px 2px 0px 0px var(--color-lava)",
+    boxShadow: "none",
     borderRadius: "0px",
     transition: "all 0.2s ease",
     flexShrink: 0,
@@ -64,11 +64,13 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
           position: "sticky",
           top: 0,
           zIndex: 70,
+          height: "80px",
+          overflow: "visible",
           backgroundColor: bg,
           color: fg,
           borderBottom: border,
           boxShadow: shadow,
-          padding: "0.35rem 0",
+          padding: "0",
           transition: "background-color 0.4s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease",
         }}
       >
@@ -103,7 +105,7 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
               height={66}
               style={{
                 objectFit: "contain",
-                height: "112px",
+                height: "120px",
                 width: "auto",
                 filter: transparent ? "brightness(0) invert(1)" : "none",
                 transition: "filter 0.4s ease",
@@ -123,7 +125,7 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
           </nav>
 
           {/* Right actions */}
-          <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexShrink: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.25rem", flexShrink: 0 }}>
             <Link href="/search" aria-label="Search" style={iconStyle} className="action-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square">
                 <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
@@ -227,15 +229,11 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
           .bottom-nav-item svg { width: 20px; height: 20px; }
         }
         .action-icon:hover {
-          transform: translate(-2px, -2px);
-          box-shadow: 4px 4px 0px 0px var(--color-lava) !important;
-          background: var(--color-navy) !important;
-          color: var(--color-cream) !important;
-          border-color: var(--color-navy) !important;
+          color: var(--color-lava) !important;
+          opacity: 0.8;
         }
         .action-icon:active {
-          transform: translate(0, 0);
-          box-shadow: 0px 0px 0px 0px var(--color-navy) !important;
+          opacity: 1;
         }
       `}</style>
     </>
