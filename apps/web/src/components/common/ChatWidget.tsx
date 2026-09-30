@@ -130,55 +130,72 @@ export function ChatWidget() {
   return (
     <>
       {/* ── Floating button ── */}
-      <button
-        id="chat-widget-toggle"
-        aria-label={open ? "Close support" : "Open chat support"}
-        aria-expanded={open}
-        onClick={() => setOpen((o) => !o)}
+      <div
         style={{
           position: "fixed",
-          bottom: "calc(env(safe-area-inset-bottom) + 80px)",
+          bottom: "calc(env(safe-area-inset-bottom) + 88px)",
           right: "1.25rem",
           zIndex: 9990,
-          height: "48px",
-          paddingInline: open ? "1rem" : "1.1rem",
-          borderRadius: "0px",
-          backgroundColor: "var(--color-navy)",
-          color: "var(--color-cream)",
-          border: "2px solid var(--color-navy)",
-          cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
-          gap: "0.5rem",
-          boxShadow: "4px 4px 0px 0px var(--color-lava)",
-          transition: "transform 0.2s ease, box-shadow 0.2s ease",
-          whiteSpace: "nowrap",
-        }}
-        onMouseEnter={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.transform = "translate(-2px,-2px)";
-          (e.currentTarget as HTMLButtonElement).style.boxShadow = "6px 6px 0px 0px var(--color-lava)";
-        }}
-        onMouseLeave={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.transform = "translate(0,0)";
-          (e.currentTarget as HTMLButtonElement).style.boxShadow = "4px 4px 0px 0px var(--color-lava)";
         }}
       >
-        {open ? (
-          <>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-            <span style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase" }}>CLOSE</span>
-          </>
-        ) : (
-          <>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-            </svg>
-            <span style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase" }}>NEED HELP?</span>
-          </>
+        {!open && (
+          <span
+            style={{
+              position: "absolute",
+              inset: "-4px",
+              border: "2px solid var(--color-lava)",
+              animation: "chatPulse 2.4s ease-out infinite",
+              pointerEvents: "none",
+            }}
+          />
         )}
-      </button>
+        <button
+          id="chat-widget-toggle"
+          aria-label={open ? "Close support" : "Open chat support"}
+          aria-expanded={open}
+          onClick={() => setOpen((o) => !o)}
+          style={{
+            height: "52px",
+            paddingInline: "1.25rem",
+            borderRadius: "0px",
+            backgroundColor: open ? "var(--color-crimson)" : "var(--color-navy)",
+            color: "var(--color-cream)",
+            border: open ? "2px solid var(--color-crimson)" : "2px solid var(--color-navy)",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: "0.6rem",
+            boxShadow: open ? "4px 4px 0px 0px var(--color-navy)" : "4px 4px 0px 0px var(--color-lava)",
+            transition: "transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease",
+            whiteSpace: "nowrap",
+            position: "relative",
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.transform = "translate(-2px,-2px)";
+            (e.currentTarget as HTMLButtonElement).style.boxShadow = open ? "6px 6px 0px 0px var(--color-navy)" : "6px 6px 0px 0px var(--color-lava)";
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.transform = "translate(0,0)";
+            (e.currentTarget as HTMLButtonElement).style.boxShadow = open ? "4px 4px 0px 0px var(--color-navy)" : "4px 4px 0px 0px var(--color-lava)";
+          }}
+        >
+          {open ? (
+            <>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square">
+                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+              <span style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "11px", letterSpacing: "0.12em", textTransform: "uppercase" }}>CLOSE</span>
+            </>
+          ) : (
+            <>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
+              <span style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "11px", letterSpacing: "0.12em", textTransform: "uppercase" }}>NEED HELP?</span>
+            </>
+          )}
+        </button>
+      </div>
 
       {/* ── Popup panel ── */}
       {open && (
@@ -188,7 +205,7 @@ export function ChatWidget() {
           aria-label="Chat support"
           style={{
             position: "fixed",
-            bottom: "calc(env(safe-area-inset-bottom) + 140px)",
+            bottom: "calc(env(safe-area-inset-bottom) + 152px)",
             right: "1.25rem",
             zIndex: 9989,
             width: "360px",
@@ -640,6 +657,14 @@ export function ChatWidget() {
         @keyframes typingDot {
           0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
           30% { transform: translateY(-6px); opacity: 1; }
+        }
+        @keyframes chatPulse {
+          0% { opacity: 0.8; transform: scale(1); }
+          70% { opacity: 0; transform: scale(1.5); }
+          100% { opacity: 0; transform: scale(1.5); }
+        }
+        @media (max-width: 1023px) {
+          #chat-widget-toggle { bottom: calc(env(safe-area-inset-bottom) + 80px) !important; }
         }
       `}</style>
     </>

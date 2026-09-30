@@ -26,8 +26,8 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
       setIsScrolled(true);
       return;
     }
-    setIsScrolled(window.scrollY > 120);
-    const onScroll = () => setIsScrolled(window.scrollY > 120);
+    setIsScrolled(window.scrollY > 144);
+    const onScroll = () => setIsScrolled(window.scrollY > 144);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, [isHomepage]);
@@ -42,15 +42,19 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
 
   const iconStyle: React.CSSProperties = {
     display: "inline-flex",
-    background:   transparent ? "transparent"                    : "var(--color-cream)",
-    border:       transparent ? "1.5px solid rgba(255,255,255,0.65)" : "2px solid var(--color-navy)",
+    alignItems: "center",
+    justifyContent: "center",
+    background:   transparent ? "rgba(255,255,255,0.12)" : "var(--color-cream)",
+    border:       transparent ? "1.5px solid rgba(255,255,255,0.55)" : "2px solid var(--color-navy)",
     color:        fg,
     cursor: "pointer",
-    padding: "8px",
+    width: "40px",
+    height: "40px",
     textDecoration: "none",
-    boxShadow:    transparent ? "none" : "2px 2px 0px 0px var(--color-navy)",
+    boxShadow:    transparent ? "none" : "2px 2px 0px 0px var(--color-lava)",
     borderRadius: "0px",
     transition: "all 0.2s ease",
+    flexShrink: 0,
   };
 
   return (
@@ -99,7 +103,7 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
               height={66}
               style={{
                 objectFit: "contain",
-                height: "88px",
+                height: "112px",
                 width: "auto",
                 filter: transparent ? "brightness(0) invert(1)" : "none",
                 transition: "filter 0.4s ease",
@@ -224,7 +228,10 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
         }
         .action-icon:hover {
           transform: translate(-2px, -2px);
-          box-shadow: 4px 4px 0px 0px var(--color-navy) !important;
+          box-shadow: 4px 4px 0px 0px var(--color-lava) !important;
+          background: var(--color-navy) !important;
+          color: var(--color-cream) !important;
+          border-color: var(--color-navy) !important;
         }
         .action-icon:active {
           transform: translate(0, 0);
