@@ -1,7 +1,13 @@
 import dns from "dns";
 import mongoose from "mongoose";
 
-const MONGODB_URI = process.env.MONGODB_URI;
+/** Env values are often pasted with stray quotes, spaces/newlines or the "MONGODB_URI=" prefix — tolerate those. */
+function cleanUri(raw: string | undefined): string | undefined {
+  if (!raw) return raw;
+  return raw.trim().replace(/^MONGODB_URI\s*=\s*/i, "").replace(/^["']+|["']+$/g, "").trim();
+}
+
+const MONGODB_URI = cleanUri(process.env.MONGODB_URI);
 
 // Global is used here to maintain a cached connection across hot reloads in development.
 let cached = (global as any).mongoose;

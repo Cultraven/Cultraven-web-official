@@ -247,7 +247,7 @@
 /* ── components/home/Header.tsx ── */
 /* Logo PNG is square with transparent padding. Desktop: 150px box (+50%),
            negative margins cancel the extra box so header height/nav position shrink-wrap to 60px. */
-        .site-logo { height: 64px; }
+        .site-logo { height: 64px; pointer-events: none; } /* the oversized logo box overhangs the header; its transparent area must never intercept clicks */
         @media (min-width: 1024px) {
           .site-logo { height: 195px; margin: -67px -87px -68px -8px; }
         }

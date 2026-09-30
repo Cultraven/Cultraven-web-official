@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { getCurrentCustomer } from "@/lib/customer-auth";
 import { AccountNav } from "@/components/account/AccountNav";
+import { SiteChrome } from "@/components/home/SiteChrome";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +12,7 @@ export default async function AccountLayout({ children }: { children: ReactNode 
   const initial = (me?.firstName || me?.email || "C").trim().charAt(0).toUpperCase();
 
   return (
+    <SiteChrome>
     <div className="acct">
       <div className="acct-grid">
         <aside className="acct-side" aria-label="Account">
@@ -26,5 +28,6 @@ export default async function AccountLayout({ children }: { children: ReactNode 
         <section aria-live="polite">{children}</section>
       </div>
     </div>
+    </SiteChrome>
   );
 }

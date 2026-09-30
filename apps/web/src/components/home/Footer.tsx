@@ -97,6 +97,7 @@ export function Footer({ config }: FooterProps) {
 
   return (
     <footer aria-label="Site footer" className="cv-auto">
+      <div className="footer-divider" aria-hidden="true" />
 
 
       {/* ── Main footer body ─────────────────────────────────────────────── */}
