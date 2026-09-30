@@ -86,11 +86,11 @@ export default function RegisterPage() {
   const inputStyle = (field: string): React.CSSProperties => ({
     width: "100%",
     padding: "0.875rem 1rem",
-    border: `1.5px solid ${fieldErrors[field] ? "#C94227" : "#D9D3C4"}`,
-    backgroundColor: "#F5F1E8",
+    border: `1.5px solid ${fieldErrors[field] ? "var(--color-crimson)" : "var(--color-border)"}`,
+    backgroundColor: "var(--color-cream)",
     fontFamily: "var(--font-sans)",
     fontSize: "0.9rem",
-    color: "#172545",
+    color: "var(--color-navy)",
     outline: "none",
     boxSizing: "border-box",
   });
@@ -102,27 +102,27 @@ export default function RegisterPage() {
     fontSize: "0.68rem",
     letterSpacing: "0.14em",
     textTransform: "uppercase",
-    color: "#172545",
+    color: "var(--color-navy)",
     marginBottom: "0.5rem",
   };
 
   const errStyle: React.CSSProperties = {
     fontFamily: "var(--font-sans)",
     fontSize: "0.68rem",
-    color: "#C94227",
+    color: "var(--color-crimson)",
     marginTop: "0.3rem",
   };
 
   return (
-    <div style={{ backgroundColor: "#F5F1E8", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem" }}>
-      <div style={{ maxWidth: "480px", width: "100%", backgroundColor: "#F5F1E8", padding: "clamp(2.5rem,5vw,4rem)", paddingBottom: "clamp(2.5rem,5vw,4rem)", border: "var(--border-thick)", boxShadow: "var(--shadow-md)" }}>
+    <div style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem" }}>
+      <div style={{ maxWidth: "480px", width: "100%", backgroundColor: "var(--color-cream)", padding: "clamp(2.5rem,5vw,4rem)", paddingBottom: "clamp(2.5rem,5vw,4rem)", border: "var(--border-thick)", boxShadow: "var(--shadow-md)" }}>
 
         <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
           <Link href="/" style={{ textDecoration: "none" }}>
-            <h1 style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "1.2rem", letterSpacing: "0.2em", color: "#172545", textTransform: "uppercase", marginBottom: "1rem" }}>CULTRAVEN</h1>
+            <h1 style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "1.2rem", letterSpacing: "0.2em", color: "var(--color-navy)", textTransform: "uppercase", marginBottom: "1rem" }}>CULTRAVEN</h1>
           </Link>
-          <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "2rem", color: "#172545" }}>Create Account</h2>
-          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.85rem", color: "#6B7280", marginTop: "0.5rem" }}>Join the movement and get 10% off your first order.</p>
+          <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "2rem", color: "var(--color-navy)" }}>Create Account</h2>
+          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.85rem", color: "var(--color-gray)", marginTop: "0.5rem" }}>Join the movement and get 10% off your first order.</p>
         </div>
 
         <form onSubmit={handleRegister} noValidate style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
@@ -150,7 +150,7 @@ export default function RegisterPage() {
             <input id="reg-password" type="password" autoComplete="new-password" value={form.password} onChange={update("password")} disabled={loading} style={inputStyle("password")} />
             {fieldErrors.password
               ? <p style={errStyle}>{fieldErrors.password}</p>
-              : <p style={{ ...errStyle, color: "#6B7280" }}>Min 8 chars, uppercase, lowercase &amp; number</p>
+              : <p style={{ ...errStyle, color: "var(--color-gray)" }}>Min 8 chars, uppercase, lowercase &amp; number</p>
             }
           </div>
 
@@ -161,7 +161,7 @@ export default function RegisterPage() {
           </div>
 
           {error && (
-            <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.78rem", color: "#C94227", fontWeight: 600, padding: "0.75rem 1rem", backgroundColor: "rgba(201,66,39,0.06)", border: "1px solid rgba(201,66,39,0.25)" }}>
+            <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.78rem", color: "var(--color-crimson)", fontWeight: 600, padding: "0.75rem 1rem", backgroundColor: "rgba(201,66,39,0.06)", border: "1px solid rgba(201,66,39,0.25)" }}>
               {error}
             </p>
           )}
@@ -169,21 +169,21 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            style={{ width: "100%", padding: "1rem", backgroundColor: loading ? "#9fa8c0" : "#172545", color: "#F5F1E8", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.78rem", letterSpacing: "0.14em", textTransform: "uppercase", border: "none", cursor: loading ? "not-allowed" : "pointer", transition: "background-color 0.2s" }}
+            style={{ width: "100%", padding: "1rem", backgroundColor: loading ? "#9fa8c0" : "var(--color-navy)", color: "var(--color-cream)", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.78rem", letterSpacing: "0.14em", textTransform: "uppercase", border: "none", cursor: loading ? "not-allowed" : "pointer", transition: "background-color 0.2s" }}
           >
             {loading ? "CREATING ACCOUNT..." : "CREATE ACCOUNT"}
           </button>
 
-          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "#6B7280", textAlign: "center", lineHeight: 1.6 }}>
+          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "var(--color-gray)", textAlign: "center", lineHeight: 1.6 }}>
             By registering you agree to our{" "}
-            <Link href="/pages/terms" style={{ color: "#172545", textDecoration: "underline" }}>Terms</Link>{" "}and{" "}
-            <Link href="/pages/privacy" style={{ color: "#172545", textDecoration: "underline" }}>Privacy Policy</Link>.
+            <Link href="/pages/terms" style={{ color: "var(--color-navy)", textDecoration: "underline" }}>Terms</Link>{" "}and{" "}
+            <Link href="/pages/privacy" style={{ color: "var(--color-navy)", textDecoration: "underline" }}>Privacy Policy</Link>.
           </p>
         </form>
 
-        <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "#6B7280", textAlign: "center", marginTop: "2rem" }}>
+        <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "var(--color-gray)", textAlign: "center", marginTop: "2rem" }}>
           Already have an account?{" "}
-          <Link href="/login" style={{ color: "#172545", fontWeight: 700, textDecoration: "underline" }}>Sign in</Link>
+          <Link href="/login" style={{ color: "var(--color-navy)", fontWeight: 700, textDecoration: "underline" }}>Sign in</Link>
         </p>
       </div>
     </div>

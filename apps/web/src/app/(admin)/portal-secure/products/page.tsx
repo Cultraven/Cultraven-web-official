@@ -136,10 +136,10 @@ export default function AdminProductsPage() {
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "2rem" }}>
         <div>
-          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#C94227", marginBottom: "0.4rem" }}>
+          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-crimson)", marginBottom: "0.4rem" }}>
             Catalog
           </p>
-          <h1 style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "1.75rem", color: "#F5F1E8", letterSpacing: "-0.02em" }}>
+          <h1 style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "1.75rem", color: "var(--color-cream)", letterSpacing: "-0.02em" }}>
             Products
           </h1>
         </div>
@@ -151,8 +151,8 @@ export default function AdminProductsPage() {
             alignItems: "center",
             gap: "0.5rem",
             padding: "0.75rem 1.5rem",
-            backgroundColor: "#C94227",
-            color: "#F5F1E8",
+            backgroundColor: "var(--color-crimson)",
+            color: "var(--color-cream)",
             fontFamily: "var(--font-sans)",
             fontWeight: 700,
             fontSize: "0.78rem",
@@ -163,7 +163,7 @@ export default function AdminProductsPage() {
             transition: "background-color 0.15s ease",
           }}
           onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = "#a8361f")}
-          onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = "#C94227")}
+          onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = "var(--color-crimson)")}
         >
           + Add Product
         </Link>
@@ -205,7 +205,7 @@ export default function AdminProductsPage() {
               borderRadius: "4px",
               fontFamily: "var(--font-sans)",
               fontSize: "0.82rem",
-              color: "#F5F1E8",
+              color: "var(--color-cream)",
               outline: "none",
             }}
           />
@@ -218,15 +218,15 @@ export default function AdminProductsPage() {
             onClick={() => setStatusFilter(s)}
             style={{
               padding: "0.625rem 1.25rem",
-              backgroundColor: statusFilter === s ? "#C94227" : "rgba(255,255,255,0.04)",
-              color: statusFilter === s ? "#F5F1E8" : "rgba(245,241,232,0.55)",
+              backgroundColor: statusFilter === s ? "var(--color-crimson)" : "rgba(255,255,255,0.04)",
+              color: statusFilter === s ? "var(--color-cream)" : "rgba(245,241,232,0.55)",
               fontFamily: "var(--font-sans)",
               fontWeight: 600,
               fontSize: "0.72rem",
               letterSpacing: "0.08em",
               textTransform: "capitalize",
               border: "1px solid",
-              borderColor: statusFilter === s ? "#C94227" : "rgba(255,255,255,0.08)",
+              borderColor: statusFilter === s ? "var(--color-crimson)" : "rgba(255,255,255,0.08)",
               borderRadius: "4px",
               cursor: "pointer",
               transition: "all 0.15s ease",
@@ -251,7 +251,7 @@ export default function AdminProductsPage() {
             marginBottom: "1rem",
           }}
         >
-          <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.78rem", fontWeight: 700, color: "#C94227" }}>
+          <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.78rem", fontWeight: 700, color: "var(--color-crimson)" }}>
             {selected.size} selected
           </span>
           <button
@@ -284,7 +284,7 @@ export default function AdminProductsPage() {
                 setSelected(new Set());
               } catch (e) { alert("Failed to delete some products"); }
             }}
-            style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", fontWeight: 600, color: "#C94227", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+            style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", fontWeight: 600, color: "var(--color-crimson)", background: "none", border: "none", cursor: "pointer", padding: 0 }}
           >
             Delete Selected
           </button>
@@ -314,7 +314,7 @@ export default function AdminProductsPage() {
                   type="checkbox"
                   checked={selected.size === filtered.length && filtered.length > 0}
                   onChange={toggleAll}
-                  style={{ accentColor: "#C94227", width: "16px", height: "16px" }}
+                  style={{ accentColor: "var(--color-crimson)", width: "16px", height: "16px" }}
                 />
               </th>
               {["Product", "Category", "Price", "Stock", "Status", "Updated", "Actions"].map((h) => (
@@ -356,7 +356,7 @@ export default function AdminProductsPage() {
                         type="checkbox"
                         checked={isSelected}
                         onChange={() => toggleSelect(product.id)}
-                        style={{ accentColor: "#C94227", width: "16px", height: "16px" }}
+                        style={{ accentColor: "var(--color-crimson)", width: "16px", height: "16px" }}
                       />
                     </td>
                     <td style={CELL}>
@@ -368,7 +368,7 @@ export default function AdminProductsPage() {
                           style={{ width: "44px", height: "56px", objectFit: "cover", borderRadius: "2px", flexShrink: 0 }}
                         />
                         <div>
-                          <p style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.82rem", color: "#F5F1E8", marginBottom: "3px" }}>
+                          <p style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.82rem", color: "var(--color-cream)", marginBottom: "3px" }}>
                             {product.title}
                           </p>
                           <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", color: "rgba(245,241,232,0.35)" }}>
@@ -379,7 +379,7 @@ export default function AdminProductsPage() {
                     </td>
                     <td style={CELL}>{product.category}</td>
                     <td style={{ ...CELL, fontWeight: 700 }}>{product.price}</td>
-                    <td style={{ ...CELL, color: product.stock === 0 ? "#C94227" : "rgba(245,241,232,0.75)", fontWeight: product.stock === 0 ? 700 : 400 }}>
+                    <td style={{ ...CELL, color: product.stock === 0 ? "var(--color-crimson)" : "rgba(245,241,232,0.75)", fontWeight: product.stock === 0 ? 700 : 400 }}>
                       {product.stock === 0 ? "Out of stock" : product.stock}
                     </td>
                     <td style={CELL}>
@@ -419,7 +419,7 @@ export default function AdminProductsPage() {
                         <button
                           title="Delete"
                           onClick={() => deleteProduct(product.id)}
-                          style={{ padding: "5px 10px", backgroundColor: "rgba(201,66,39,0.1)", color: "#C94227", fontFamily: "var(--font-sans)", fontSize: "0.68rem", fontWeight: 600, border: "none", borderRadius: "3px", cursor: "pointer" }}
+                          style={{ padding: "5px 10px", backgroundColor: "rgba(201,66,39,0.1)", color: "var(--color-crimson)", fontFamily: "var(--font-sans)", fontSize: "0.68rem", fontWeight: 600, border: "none", borderRadius: "3px", cursor: "pointer" }}
                         >
                           Delete
                         </button>

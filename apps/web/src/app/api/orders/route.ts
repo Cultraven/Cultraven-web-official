@@ -1,46 +1,37 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import { Order } from "@/lib/models/Order";
 
-const MOCK_ORDERS = [
-  {
-    id: "ORD-9283",
-    customer: "Aditya Sharma",
-    email: "aditya@example.com",
-    items: 2,
-    total: "₹4,998",
-    status: "Processing",
-    paymentMethod: "UPI",
-    date: "Oct 24, 2023",
-  },
-  {
-    id: "ORD-9284",
-    customer: "Priya Patel",
-    email: "priya@example.com",
-    items: 1,
-    total: "₹1,999",
-    status: "Shipped",
-    paymentMethod: "Credit Card",
-    date: "Oct 23, 2023",
-  }
-];
-
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    await connectToDatabase();
-    const orders = await Order.find().sort({ createdAt: -1 }).limit(100).lean();
-    if (!orders || orders.length === 0) {
-      return NextResponse.json({ orders: MOCK_ORDERS });
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader || authHeader !== `Bearer ${process.env.ADMIN_SECRET_TOKEN}`) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    await connectToDatabase();
+    
+    // Whitelist fields for security/performance
+    const orders = await Order.find()
+      .select("orderNumber userId subtotalPaise discountPaise shippingPaise codFeePaise totalPaise paymentMethod paymentStatus fulfillmentStatus createdAt deliveryAddress.name deliveryAddress.email")
+      .sort({ createdAt: -1 })
+      .limit(100)
+      .lean();
+      
     return NextResponse.json({ orders });
   } catch (error) {
-    console.error("Failed to fetch orders, falling back to mock:", error);
-    return NextResponse.json({ orders: MOCK_ORDERS });
+    console.error("Failed to fetch orders:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader || authHeader !== `Bearer ${process.env.ADMIN_SECRET_TOKEN}`) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     await connectToDatabase();
     const body = await req.json();
     const newOrder = await Order.create(body);

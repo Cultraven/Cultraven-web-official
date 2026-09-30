@@ -25,6 +25,7 @@ export interface CartItem {
 
 interface CartState {
   items: CartItem[];
+  couponCode: string | null;
 
   /** Add or increment quantity of a cart item */
   addItem: (item: Omit<CartItem, "quantity">, qty?: number) => void;
@@ -43,12 +44,16 @@ interface CartState {
 
   /** Total price in paise */
   totalPaise: () => number;
+
+  /** Set applied coupon code */
+  setCouponCode: (code: string | null) => void;
 }
 
 export const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({
       items: [],
+      couponCode: null,
 
       addItem: (incoming, qty = 1) =>
         set((state) => {
@@ -80,7 +85,9 @@ export const useCartStore = create<CartState>()(
                 ),
         })),
 
-      clearCart: () => set({ items: [] }),
+      clearCart: () => set({ items: [], couponCode: null }),
+
+      setCouponCode: (code) => set({ couponCode: code }),
 
       totalItems: () =>
         get().items.reduce((acc, i) => acc + i.quantity, 0),

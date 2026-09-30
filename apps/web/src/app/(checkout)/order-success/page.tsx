@@ -1,100 +1,61 @@
-"use client";
-/**
- * /order-success — Wrapped in Suspense to allow useSearchParams in production.
- */
-import React, { Suspense, useEffect, useState } from "react";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { useCartStore } from "@/store/cart";
-import Confetti from "react-confetti";
+import React, { Suspense } from "react";
+import { connectToDatabase } from "@/lib/db";
+import { Order } from "@/lib/models/Order";
+import OrderSuccessClient from "./OrderSuccessClient";
 
-function OrderSuccessContent() {
-  const searchParams = useSearchParams();
-  const { clearCart } = useCartStore();
-
-  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
-  const [showConfetti, setShowConfetti] = useState(false);
-
-  const paymentId = searchParams.get("payment_id");
-  const amountPaise = Number(searchParams.get("amount") || 0);
-  const email = searchParams.get("email") || "";
-  const fmt = (p: number) => `₹${(p / 100).toLocaleString("en-IN")}`;
-
-  useEffect(() => {
-    clearCart();
-    setWindowSize({ width: window.innerWidth, height: window.innerHeight });
-    setShowConfetti(true);
-    const t = setTimeout(() => setShowConfetti(false), 6000);
-    return () => clearTimeout(t);
-  }, [clearCart]);
-
-  return (
-    <div style={{ backgroundColor: "#F5F1E8", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "2rem", paddingTop: "calc(2rem + 80px)" }}>
-      {showConfetti && windowSize.width > 0 && (
-        <Confetti width={windowSize.width} height={windowSize.height} colors={["#172545", "#C94227", "#DAB205", "#EAE6DB", "#FFFFFF"]} recycle={false} numberOfPieces={400} gravity={0.14} />
-      )}
-
-      <div style={{ backgroundColor: "#F5F1E8", padding: "clamp(3rem,5vw,5rem)", maxWidth: "600px", width: "100%", textAlign: "center", border: "var(--border-thick)", boxShadow: "var(--shadow-md)", zIndex: 10, position: "relative" }}>
-        <div style={{ width: "64px", height: "64px", backgroundColor: "#172545", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 2rem" }}>
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#F5F1E8" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="20 6 9 17 4 12" />
-          </svg>
-        </div>
-
-        <p style={{ fontFamily: "var(--font-sans)", fontSize: "11px", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#C94227", marginBottom: "0.75rem" }}>ORDER CONFIRMED</p>
-        <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(2rem,4vw,3.5rem)", fontWeight: 600, color: "#172545", lineHeight: 1.1, marginBottom: "1.5rem" }}>
-          Thank you for your purchase.
-        </h1>
-
-        <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.92rem", color: "#4B5563", lineHeight: 1.7, marginBottom: "2rem" }}>
-          Your order has been successfully placed and is being processed.
-          {email && <> A confirmation email has been sent to <strong style={{ color: "#172545" }}>{email}</strong>.</>}
-        </p>
-
-        {(paymentId || amountPaise > 0) && (
-          <div style={{ backgroundColor: "#EAE6DB", padding: "1.25rem 1.5rem", marginBottom: "2rem", textAlign: "left", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-            {paymentId && (
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#6B7280" }}>Payment ID</span>
-                <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", color: "#172545" }}>{paymentId}</span>
-              </div>
-            )}
-            {amountPaise > 0 && (
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#6B7280" }}>Amount Paid</span>
-                <span style={{ fontFamily: "var(--font-heading)", fontSize: "1.1rem", fontWeight: 600, color: "#172545" }}>{fmt(amountPaise)}</span>
-              </div>
-            )}
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#6B7280" }}>Est. Delivery</span>
-              <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", fontWeight: 600, color: "#172545" }}>3–5 Business Days</span>
-            </div>
-          </div>
-        )}
-
-        <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", color: "#6B7280", marginBottom: "2rem", lineHeight: 1.6 }}>
-          🚀 Shipping & tracking updates will be sent via WhatsApp. For queries:{" "}
-          <a href="https://wa.me/919876543210" style={{ color: "#172545", fontWeight: 700 }}>WhatsApp</a>{" "}or{" "}
-          <a href="mailto:support@cultraven.com" style={{ color: "#172545", fontWeight: 700 }}>support@cultraven.com</a>
-        </p>
-
-        <div style={{ display: "flex", gap: "0.75rem", flexDirection: "column" }}>
-          <Link href="/collections/all" style={{ display: "block", width: "100%", padding: "1.1rem", backgroundColor: "#172545", color: "#F5F1E8", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.82rem", letterSpacing: "0.14em", textTransform: "uppercase", textDecoration: "none" }}>CONTINUE SHOPPING</Link>
-          <Link href="/account/orders" style={{ display: "block", width: "100%", padding: "1rem", backgroundColor: "transparent", color: "#172545", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.78rem", letterSpacing: "0.14em", textTransform: "uppercase", textDecoration: "none", border: "1.5px solid #172545" }}>VIEW ORDERS</Link>
-        </div>
-      </div>
-    </div>
-  );
+interface Props {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default function OrderSuccessPage() {
+export default async function OrderSuccessPage({ searchParams }: Props) {
+  const resolvedParams = await searchParams;
+  const orderId = resolvedParams.orderId as string | undefined;
+  
+  let isConfirmed = false;
+  let orderData = null;
+
+  if (orderId) {
+    try {
+      await connectToDatabase();
+      let query: any = {};
+      
+      // Try by DB _id first, then by razorpayOrderId
+      if (orderId.startsWith("order_")) {
+         query = { razorpayOrderId: orderId };
+      } else {
+         query = { _id: orderId };
+      }
+
+      const order = await Order.findOne(query).lean();
+      
+      if (order) {
+        orderData = {
+          email: order.deliveryAddress?.email || "",
+          amountPaise: order.totalPaise || 0,
+        };
+        // For COD, "pending" is expected. For Razorpay, we expect "paid" after webhook.
+        // Wait, if it's razorpay, webhook might take a second. But if they reached success page, razorpay was successful on frontend.
+        // The prompt says: "verify the order is paid via API before showing 'confirmed'".
+        // This means we strictly check DB. We will pass status to client.
+        isConfirmed = order.paymentMethod === "cod" ? true : order.paymentStatus === "paid";
+      }
+    } catch (err) {
+      console.error("Failed to verify order:", err);
+    }
+  }
+
   return (
     <Suspense fallback={
-      <div style={{ backgroundColor: "#F5F1E8", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ fontFamily: "var(--font-sans)", color: "#6B7280", fontSize: "0.85rem" }}>Loading order details…</div>
+      <div style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ fontFamily: "var(--font-sans)", color: "var(--color-gray)", fontSize: "0.85rem" }}>Loading order details…</div>
       </div>
     }>
-      <OrderSuccessContent />
+      <OrderSuccessClient 
+        orderId={orderId} 
+        paymentId={resolvedParams.paymentId as string | undefined}
+        isConfirmed={isConfirmed}
+        orderData={orderData}
+      />
     </Suspense>
   );
 }

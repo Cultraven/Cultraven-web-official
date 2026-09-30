@@ -33,7 +33,7 @@ export function NewsletterSignup({ config }: { config: NewsletterConfig }) {
   };
 
   return (
-    <section style={{ backgroundColor: "#EAE6DB", padding: "clamp(4rem,8vw,8rem) 0" }}>
+    <section style={{ backgroundColor: "var(--color-mist)", padding: "clamp(4rem,8vw,8rem) 0" }}>
       <div
         style={{
           paddingInline: "clamp(1.25rem,4vw,5rem)",
@@ -50,7 +50,7 @@ export function NewsletterSignup({ config }: { config: NewsletterConfig }) {
             fontSize: "0.7rem",
             letterSpacing: "0.2em",
             textTransform: "uppercase",
-            color: "#C94227",
+            color: "var(--color-crimson)",
             marginBottom: "1rem",
             display: "block",
           }}
@@ -64,7 +64,7 @@ export function NewsletterSignup({ config }: { config: NewsletterConfig }) {
             
             fontSize: "clamp(2rem,4.5vw,3.75rem)",
             fontWeight: 600,
-            color: "#172545",
+            color: "var(--color-navy)",
             marginBottom: "1rem",
             lineHeight: 1.05,
             maxWidth: "700px",
@@ -78,7 +78,7 @@ export function NewsletterSignup({ config }: { config: NewsletterConfig }) {
             style={{
               fontFamily: "var(--font-sans)",
               fontSize: "0.95rem",
-              color: "#6B7280",
+              color: "var(--color-gray)",
               marginBottom: "2.5rem",
               maxWidth: "500px",
               lineHeight: 1.6,
@@ -92,8 +92,8 @@ export function NewsletterSignup({ config }: { config: NewsletterConfig }) {
           <div
             style={{
               padding: "1rem 2rem",
-              backgroundColor: "#172545",
-              color: "#F5F1E8",
+              backgroundColor: "var(--color-navy)",
+              color: "var(--color-cream)",
               fontFamily: "var(--font-sans)",
               fontWeight: 800,
               fontSize: "0.75rem",
@@ -117,10 +117,10 @@ export function NewsletterSignup({ config }: { config: NewsletterConfig }) {
               style={{
                 flex: 1,
                 padding: "1rem 1.25rem",
-                border: "2px solid #172545",
+                border: "2px solid var(--color-navy)",
                 borderRight: "none",
-                backgroundColor: "#F5F1E8",
-                color: "#172545",
+                backgroundColor: "var(--color-cream)",
+                color: "var(--color-navy)",
                 fontFamily: "var(--font-sans)",
                 fontSize: "0.85rem",
                 outline: "none",
@@ -131,9 +131,9 @@ export function NewsletterSignup({ config }: { config: NewsletterConfig }) {
               disabled={status === "loading"}
               style={{
                 padding: "1rem 1.75rem",
-                backgroundColor: "#172545",
-                color: "#F5F1E8",
-                border: "2px solid #172545",
+                backgroundColor: "var(--color-navy)",
+                color: "var(--color-cream)",
+                border: "2px solid var(--color-navy)",
                 fontFamily: "var(--font-sans)",
                 fontWeight: 800,
                 fontSize: "0.72rem",
@@ -143,8 +143,8 @@ export function NewsletterSignup({ config }: { config: NewsletterConfig }) {
                 whiteSpace: "nowrap",
                 transition: "background-color 0.2s ease",
               }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#C94227"; (e.currentTarget as HTMLButtonElement).style.borderColor = "#C94227"; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#172545"; (e.currentTarget as HTMLButtonElement).style.borderColor = "#172545"; }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--color-crimson)"; (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--color-crimson)"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--color-navy)"; (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--color-navy)"; }}
             >
               {status === "loading" ? "..." : config.ctaLabel}
             </button>
@@ -152,7 +152,7 @@ export function NewsletterSignup({ config }: { config: NewsletterConfig }) {
         )}
 
         {status === "error" && (
-          <p style={{ marginTop: "0.75rem", fontFamily: "Inter,sans-serif", fontSize: "0.75rem", fontWeight: 700, color: "#C94227" }}>
+          <p style={{ marginTop: "0.75rem", fontFamily: "Inter,sans-serif", fontSize: "0.75rem", fontWeight: 700, color: "var(--color-crimson)" }}>
             {errorMsg}
           </p>
         )}

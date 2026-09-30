@@ -14,7 +14,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     <div
       style={{
         display: "flex",
-        minHeight: "100vh",
+        minHeight: "100dvh",
         backgroundColor: "#0F1419",
         fontFamily: "var(--font-sans)",
       }}

@@ -155,7 +155,7 @@ export default function AdminCmsHeroPage() {
     borderRadius: "4px",
     fontFamily: "var(--font-sans)",
     fontSize: "0.82rem",
-    color: "#F5F1E8",
+    color: "var(--color-cream)",
     outline: "none",
   };
 
@@ -175,10 +175,10 @@ export default function AdminCmsHeroPage() {
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "2rem" }}>
         <div>
-          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#C94227", marginBottom: "0.4rem" }}>
+          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-crimson)", marginBottom: "0.4rem" }}>
             CMS
           </p>
-          <h1 style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "1.75rem", color: "#F5F1E8", letterSpacing: "-0.02em" }}>
+          <h1 style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "1.75rem", color: "var(--color-cream)", letterSpacing: "-0.02em" }}>
             Hero Banners
           </h1>
         </div>
@@ -193,7 +193,7 @@ export default function AdminCmsHeroPage() {
             id="admin-save-hero-btn"
             onClick={saveAll}
             disabled={saving}
-            style={{ padding: "0.75rem 1.5rem", backgroundColor: saved ? "#10B981" : "#C94227", color: "#F5F1E8", fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.78rem", letterSpacing: "0.08em", textTransform: "uppercase", border: "none", borderRadius: "4px", cursor: saving ? "not-allowed" : "pointer", transition: "background-color 0.2s ease" }}
+            style={{ padding: "0.75rem 1.5rem", backgroundColor: saved ? "#10B981" : "var(--color-crimson)", color: "var(--color-cream)", fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.78rem", letterSpacing: "0.08em", textTransform: "uppercase", border: "none", borderRadius: "4px", cursor: saving ? "not-allowed" : "pointer", transition: "background-color 0.2s ease" }}
           >
             {saving ? "Saving..." : saved ? "✓ Saved" : "Save Changes"}
           </button>
@@ -228,7 +228,7 @@ export default function AdminCmsHeroPage() {
 
               {/* Info */}
               <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.88rem", color: "#F5F1E8", marginBottom: "3px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                <p style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.88rem", color: "var(--color-cream)", marginBottom: "3px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   {banner.headline || "(No headline)"}
                 </p>
                 <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "rgba(245,241,232,0.4)", marginBottom: "3px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
@@ -263,7 +263,7 @@ export default function AdminCmsHeroPage() {
                       width: "16px",
                       height: "16px",
                       borderRadius: "50%",
-                      backgroundColor: "#F5F1E8",
+                      backgroundColor: "var(--color-cream)",
                       transition: "left 0.2s ease",
                     }}
                   />
@@ -283,7 +283,7 @@ export default function AdminCmsHeroPage() {
                 </button>
                 <button
                   onClick={() => deleteBanner(banner.id)}
-                  style={{ padding: "6px 14px", backgroundColor: "rgba(201,66,39,0.1)", color: "#C94227", fontFamily: "var(--font-sans)", fontWeight: 600, fontSize: "0.72rem", border: "none", borderRadius: "3px", cursor: "pointer" }}
+                  style={{ padding: "6px 14px", backgroundColor: "rgba(201,66,39,0.1)", color: "var(--color-crimson)", fontFamily: "var(--font-sans)", fontWeight: 600, fontSize: "0.72rem", border: "none", borderRadius: "3px", cursor: "pointer" }}
                 >
                   Delete
                 </button>
@@ -303,7 +303,7 @@ export default function AdminCmsHeroPage() {
             padding: "2rem",
           }}
         >
-          <h2 style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "1rem", color: "#F5F1E8", marginBottom: "1.75rem" }}>
+          <h2 style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "1rem", color: "var(--color-cream)", marginBottom: "1.75rem" }}>
             {editingId === "new" ? "New Banner" : "Edit Banner"}
           </h2>
 
@@ -328,7 +328,7 @@ export default function AdminCmsHeroPage() {
                   type="checkbox"
                   checked={form.active}
                   onChange={(e) => setForm((p) => ({ ...p, active: e.target.checked }))}
-                  style={{ accentColor: "#C94227", width: "18px", height: "18px" }}
+                  style={{ accentColor: "var(--color-crimson)", width: "18px", height: "18px" }}
                 />
                 <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", fontWeight: 600, color: "rgba(245,241,232,0.75)" }}>
                   Active (show on homepage)
@@ -377,7 +377,7 @@ export default function AdminCmsHeroPage() {
                 step="0.05"
                 value={form.overlayOpacity}
                 onChange={(e) => setForm((p) => ({ ...p, overlayOpacity: parseFloat(e.target.value) }))}
-                style={{ width: "100%", accentColor: "#C94227" }}
+                style={{ width: "100%", accentColor: "var(--color-crimson)" }}
               />
             </div>
           </div>
@@ -386,7 +386,7 @@ export default function AdminCmsHeroPage() {
           <div style={{ display: "flex", gap: "1rem", marginTop: "1.75rem" }}>
             <button
               onClick={saveEdit}
-              style={{ padding: "0.75rem 1.75rem", backgroundColor: "#C94227", color: "#F5F1E8", fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.78rem", letterSpacing: "0.08em", textTransform: "uppercase", border: "none", borderRadius: "4px", cursor: "pointer" }}
+              style={{ padding: "0.75rem 1.75rem", backgroundColor: "var(--color-crimson)", color: "var(--color-cream)", fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.78rem", letterSpacing: "0.08em", textTransform: "uppercase", border: "none", borderRadius: "4px", cursor: "pointer" }}
             >
               {editingId === "new" ? "Add Banner" : "Save Changes"}
             </button>

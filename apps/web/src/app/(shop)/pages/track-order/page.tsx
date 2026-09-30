@@ -24,7 +24,7 @@ function mockTrack(orderId: string): TrackResult | null {
   return {
     orderId: orderId.toUpperCase(),
     status: "Out for Delivery",
-    statusColor: "#C94227",
+    statusColor: "var(--color-crimson)",
     product: "RAVEN OVERSIZED TEE — ACID BLACK (Size L)",
     placedOn: "27 Sep 2026",
     estimatedDelivery: "30 Sep 2026",
@@ -68,11 +68,11 @@ export default function TrackOrderPage() {
   };
 
   return (
-    <div style={{ backgroundColor: "#F5F1E8", minHeight: "100vh" }}>
+    <div style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh" }}>
       {/* Hero */}
       <div
         style={{
-          backgroundColor: "#172545",
+          backgroundColor: "var(--color-navy)",
           padding: "clamp(3rem,6vw,6rem) clamp(1.25rem,4vw,5rem)",
         }}
       >
@@ -83,7 +83,7 @@ export default function TrackOrderPage() {
             fontWeight: 800,
             letterSpacing: "0.22em",
             textTransform: "uppercase",
-            color: "#C94227",
+            color: "var(--color-crimson)",
             marginBottom: "0.75rem",
           }}
         >
@@ -95,7 +95,7 @@ export default function TrackOrderPage() {
             
             fontSize: "clamp(2.5rem,6vw,5rem)",
             fontWeight: 600,
-            color: "#F5F1E8",
+            color: "var(--color-cream)",
             lineHeight: 1,
           }}
         >
@@ -122,7 +122,7 @@ export default function TrackOrderPage() {
                   fontSize: "0.68rem",
                   letterSpacing: "0.14em",
                   textTransform: "uppercase",
-                  color: "#172545",
+                  color: "var(--color-navy)",
                   marginBottom: "0.5rem",
                 }}
               >
@@ -142,16 +142,16 @@ export default function TrackOrderPage() {
                 style={{
                   width: "100%",
                   padding: "0.875rem 1rem",
-                  border: `1.5px solid ${errors.orderId ? "#C94227" : "#D9D3C4"}`,
-                  backgroundColor: "#F5F1E8",
+                  border: `1.5px solid ${errors.orderId ? "var(--color-crimson)" : "var(--color-border)"}`,
+                  backgroundColor: "var(--color-cream)",
                   fontFamily: "var(--font-sans)",
                   fontSize: "0.9rem",
-                  color: "#172545",
+                  color: "var(--color-navy)",
                   outline: "none",
                 }}
               />
               {errors.orderId && (
-                <p id="track-order-id-error" role="alert" style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "#C94227", marginTop: "0.35rem" }}>
+                <p id="track-order-id-error" role="alert" style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "var(--color-crimson)", marginTop: "0.35rem" }}>
                   {errors.orderId}
                 </p>
               )}
@@ -167,7 +167,7 @@ export default function TrackOrderPage() {
                   fontSize: "0.68rem",
                   letterSpacing: "0.14em",
                   textTransform: "uppercase",
-                  color: "#172545",
+                  color: "var(--color-navy)",
                   marginBottom: "0.5rem",
                 }}
               >
@@ -187,16 +187,16 @@ export default function TrackOrderPage() {
                 style={{
                   width: "100%",
                   padding: "0.875rem 1rem",
-                  border: `1.5px solid ${errors.phone ? "#C94227" : "#D9D3C4"}`,
-                  backgroundColor: "#F5F1E8",
+                  border: `1.5px solid ${errors.phone ? "var(--color-crimson)" : "var(--color-border)"}`,
+                  backgroundColor: "var(--color-cream)",
                   fontFamily: "var(--font-sans)",
                   fontSize: "0.9rem",
-                  color: "#172545",
+                  color: "var(--color-navy)",
                   outline: "none",
                 }}
               />
               {errors.phone && (
-                <p id="track-phone-error" role="alert" style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "#C94227", marginTop: "0.35rem" }}>
+                <p id="track-phone-error" role="alert" style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "var(--color-crimson)", marginTop: "0.35rem" }}>
                   {errors.phone}
                 </p>
               )}
@@ -209,8 +209,8 @@ export default function TrackOrderPage() {
             style={{
               width: "100%",
               padding: "1.1rem",
-              backgroundColor: "#172545",
-              color: "#F5F1E8",
+              backgroundColor: "var(--color-navy)",
+              color: "var(--color-cream)",
               fontFamily: "var(--font-sans)",
               fontWeight: 800,
               fontSize: "0.82rem",
@@ -230,13 +230,13 @@ export default function TrackOrderPage() {
           style={{
             fontFamily: "var(--font-sans)",
             fontSize: "0.75rem",
-            color: "#6B7280",
+            color: "var(--color-gray)",
             marginTop: "1rem",
             lineHeight: 1.6,
           }}
         >
           Your Order ID can be found in your confirmation email or under{" "}
-          <Link href="/account/orders" style={{ color: "#172545", fontWeight: 700, textDecoration: "underline" }}>
+          <Link href="/account/orders" style={{ color: "var(--color-navy)", fontWeight: 700, textDecoration: "underline" }}>
             My Orders
           </Link>{" "}
           in your account.
@@ -248,9 +248,9 @@ export default function TrackOrderPage() {
             role="alert"
             style={{
               marginTop: "2rem",
-              backgroundColor: "#EAE6DB",
+              backgroundColor: "var(--color-mist)",
               padding: "1.5rem",
-              borderLeft: "3px solid #C94227",
+              borderLeft: "3px solid var(--color-crimson)",
             }}
           >
             <p
@@ -258,7 +258,7 @@ export default function TrackOrderPage() {
                 fontFamily: "var(--font-sans)",
                 fontWeight: 700,
                 fontSize: "0.85rem",
-                color: "#172545",
+                color: "var(--color-navy)",
                 marginBottom: "0.5rem",
               }}
             >
@@ -273,7 +273,7 @@ export default function TrackOrderPage() {
               }}
             >
               We couldn&apos;t find an order with these details. Please double-check your Order ID and phone number. Need help?{" "}
-              <a href="/pages/contact" style={{ color: "#C94227", fontWeight: 700, textDecoration: "underline" }}>
+              <a href="/pages/contact" style={{ color: "var(--color-crimson)", fontWeight: 700, textDecoration: "underline" }}>
                 Contact us
               </a>
               .
@@ -287,7 +287,7 @@ export default function TrackOrderPage() {
             {/* Status card */}
             <div
               style={{
-                backgroundColor: "#172545",
+                backgroundColor: "var(--color-navy)",
                 padding: "1.75rem",
                 marginBottom: "1.5rem",
               }}
@@ -321,7 +321,7 @@ export default function TrackOrderPage() {
                       fontFamily: "var(--font-sans)",
                       fontWeight: 800,
                       fontSize: "1rem",
-                      color: "#F5F1E8",
+                      color: "var(--color-cream)",
                     }}
                   >
                     {result.orderId}
@@ -387,7 +387,7 @@ export default function TrackOrderPage() {
                 fontSize: "0.72rem",
                 letterSpacing: "0.16em",
                 textTransform: "uppercase",
-                color: "#172545",
+                color: "var(--color-navy)",
                 marginBottom: "1.25rem",
               }}
             >
@@ -417,8 +417,8 @@ export default function TrackOrderPage() {
                         width: "14px",
                         height: "14px",
                         borderRadius: "50%",
-                        backgroundColor: step.done ? "#172545" : "#D9D3C4",
-                        border: step.done ? "2px solid #172545" : "2px solid #D9D3C4",
+                        backgroundColor: step.done ? "var(--color-navy)" : "var(--color-border)",
+                        border: step.done ? "2px solid var(--color-navy)" : "2px solid var(--color-border)",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -427,7 +427,7 @@ export default function TrackOrderPage() {
                       }}
                     >
                       {step.done && (
-                        <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#F5F1E8" strokeWidth="3">
+                        <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="var(--color-cream)" strokeWidth="3">
                           <polyline points="20 6 9 17 4 12" />
                         </svg>
                       )}
@@ -438,7 +438,7 @@ export default function TrackOrderPage() {
                           width: "2px",
                           flex: 1,
                           minHeight: "28px",
-                          backgroundColor: step.done ? "#172545" : "#D9D3C4",
+                          backgroundColor: step.done ? "var(--color-navy)" : "var(--color-border)",
                           marginBlock: "4px",
                         }}
                       />
@@ -452,7 +452,7 @@ export default function TrackOrderPage() {
                         fontFamily: "var(--font-sans)",
                         fontWeight: step.done ? 700 : 500,
                         fontSize: "0.85rem",
-                        color: step.done ? "#172545" : "#9CA3AF",
+                        color: step.done ? "var(--color-navy)" : "#9CA3AF",
                       }}
                     >
                       {step.label}

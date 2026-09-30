@@ -218,8 +218,8 @@ export const HOMEPAGE_CMS_FIXTURE: HomepageCms = {
       },
     ],
     intervalMs: 4000,
-    bgColor: "#172545",
-    textColor: "#F5F1E8",
+    bgColor: "var(--color-navy)",
+    textColor: "var(--color-cream)",
   },
 
   navMenu: {

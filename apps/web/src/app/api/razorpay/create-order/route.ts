@@ -18,14 +18,19 @@ import { z } from "zod";
 import Razorpay from "razorpay";
 import { connectToDatabase } from "@/lib/db";
 import { Order } from "@/lib/models/Order";
+import { Product } from "@/lib/models/Product";
+import { validateCoupon } from "@/lib/promotion-service";
+import { FREE_SHIPPING_THRESHOLD, SHIPPING_FEE, COD_FEE, COD_MAX_LIMIT } from "@/lib/constants";
 
 // ── Zod schema ────────────────────────────────────────────────────────────────
 const BodySchema = z.object({
   userId: z.string().optional().default("guest"),
-  items: z.array(z.any()), // Assuming cart items match OrderItem shape for now
-  subtotalPaise: z.number().int().min(0),
-  shippingPaise: z.number().int().min(0),
-  amountPaise: z.number().int().min(100, "Minimum order amount is ₹1"),
+  items: z.array(z.object({
+    slug: z.string(),
+    quantity: z.number().int().min(1),
+    size: z.string().optional(),
+    color: z.string().optional(),
+  })).min(1, "Cart is empty"),
   currency: z.string().default("INR"),
   receipt: z.string().trim().max(40).optional(),
   name: z.string().trim().max(100),
@@ -38,6 +43,8 @@ const BodySchema = z.object({
     state: z.string(),
     pincode: z.string(),
   }),
+  paymentMethod: z.enum(["razorpay", "cod"]).default("razorpay"),
+  couponCode: z.string().optional(),
 });
 
 // ── Rate limiting (production: use Upstash Redis) ─────────────────────────────
@@ -94,29 +101,76 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { amountPaise, currency, receipt, name, email, phone, items, subtotalPaise, shippingPaise, address, userId } = result.data;
+  const { currency, receipt, name, email, phone, items, address, userId, paymentMethod, couponCode } = result.data;
 
   try {
     await connectToDatabase();
-    const razorpay = getRazorpayClient();
 
-    const order = await razorpay.orders.create({
-      amount: amountPaise,
-      currency,
-      receipt: receipt ?? `rcpt_${Date.now()}`,
-      notes: {
-        customer_name: name,
-        customer_email: email,
-        customer_phone: phone,
-      },
+    // 1. Load prices from catalogue
+    const slugs = items.map((i) => i.slug);
+    const dbProducts = await Product.find({ slug: { $in: slugs } });
+    if (dbProducts.length !== items.length) {
+      // Could be some products were deleted or inactive, simplify for now
+      return NextResponse.json({ error: "Some items in your cart are invalid or out of stock" }, { status: 400 });
+    }
+
+    const productMap = new Map(dbProducts.map((p) => [p.slug, p.pricePaise]));
+
+    // 2. Compute subtotal
+    let subtotalPaise = 0;
+    const finalItems = items.map((item) => {
+      const price = productMap.get(item.slug) || 0;
+      subtotalPaise += price * item.quantity;
+      return { ...item, pricePaise: price };
     });
 
-    // Create DB order linked to Razorpay order ID
-    await Order.create({
+    // 3. Validate coupon and apply discount
+    const promo = validateCoupon(couponCode, subtotalPaise);
+    if (couponCode && !promo.isValid) {
+      return NextResponse.json({ error: promo.error || "Invalid coupon" }, { status: 400 });
+    }
+
+    // 4. Compute shipping and COD fees
+    const shippingPaise = subtotalPaise >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
+    const codFeePaise = paymentMethod === "cod" ? COD_FEE : 0;
+
+    const amountPaise = subtotalPaise - promo.discountPaise + shippingPaise + codFeePaise;
+
+    if (amountPaise < 100) {
+      return NextResponse.json({ error: "Minimum order amount is ₹1" }, { status: 400 });
+    }
+
+    // Maximum ₹5,000 for COD
+    if (paymentMethod === "cod" && amountPaise > COD_MAX_LIMIT) {
+      return NextResponse.json({ error: "COD is not available for orders above ₹5,000" }, { status: 400 });
+    }
+
+    let razorpayOrderId = null;
+
+    if (paymentMethod === "razorpay") {
+      const razorpay = getRazorpayClient();
+      const order = await razorpay.orders.create({
+        amount: amountPaise,
+        currency,
+        receipt: receipt ?? `rcpt_${Date.now()}`,
+        notes: {
+          customer_name: name,
+          customer_email: email,
+          customer_phone: phone,
+        },
+      });
+      razorpayOrderId = order.id;
+    }
+
+    // Create DB order
+    const newOrder = await Order.create({
       userId,
-      items,
+      items: finalItems,
       subtotalPaise,
       shippingPaise,
+      discountPaise: promo.discountPaise,
+      couponCode: promo.isValid ? promo.code : null,
+      codFeePaise,
       totalPaise: amountPaise,
       deliveryAddress: {
         name,
@@ -128,27 +182,32 @@ export async function POST(req: NextRequest) {
         state: address.state,
         pincode: address.pincode,
       },
-      razorpayOrderId: order.id,
-      paymentStatus: "pending",
+      paymentMethod,
+      razorpayOrderId,
+      paymentStatus: paymentMethod === "cod" ? "pending" : "pending",
       fulfillmentStatus: "processing",
     });
 
+    if (paymentMethod === "cod") {
+      return NextResponse.json({ orderId: newOrder._id }, { status: 200 });
+    }
+
     // Return ONLY safe data to client
-    // Never send key_secret to the frontend
     return NextResponse.json(
       {
-        orderId: order.id,
-        amount: order.amount,
-        currency: order.currency,
+        orderId: razorpayOrderId,
+        dbOrderId: newOrder._id,
+        amount: amountPaise,
+        currency,
         keyId: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ?? "",
       },
       { status: 200 }
     );
   } catch (err) {
     // Don't leak internal error details
-    console.error("[Razorpay] create-order error:", err);
+    console.error("[Razorpay/Order] create-order error:", err);
     return NextResponse.json(
-      { error: "Failed to create payment order. Please try again." },
+      { error: "Failed to create order. Please try again." },
       { status: 500 }
     );
   }

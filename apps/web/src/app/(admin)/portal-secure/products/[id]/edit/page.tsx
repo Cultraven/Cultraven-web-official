@@ -27,7 +27,7 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
         <Link href="/portal-secure/products" style={{ color: "rgba(245,241,232,0.5)", textDecoration: "none", fontSize: "0.875rem", fontFamily: "var(--font-sans)", display: "inline-block", marginBottom: "1rem" }}>
           ← Back to Products
         </Link>
-        <h1 style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "1.75rem", color: "#F5F1E8", letterSpacing: "-0.02em" }}>
+        <h1 style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "1.75rem", color: "var(--color-cream)", letterSpacing: "-0.02em" }}>
           Edit Product: {serializedProduct.title}
         </h1>
       </div>

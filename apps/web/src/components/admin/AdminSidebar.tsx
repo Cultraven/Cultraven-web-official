@@ -146,7 +146,7 @@ export function AdminSidebar() {
         borderRight: "1px solid rgba(255,255,255,0.06)",
         display: "flex",
         flexDirection: "column",
-        minHeight: "100vh",
+        minHeight: "100dvh",
         position: "sticky",
         top: 0,
       }}
@@ -171,14 +171,14 @@ export function AdminSidebar() {
             style={{
               width: "28px",
               height: "28px",
-              border: "2px solid #C94227",
+              border: "2px solid var(--color-crimson)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               flexShrink: 0,
             }}
           >
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#C94227" strokeWidth="2.5">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--color-crimson)" strokeWidth="2.5">
               <path d="M12 21V12M12 12L4 4M12 12L20 4" />
             </svg>
           </div>
@@ -190,7 +190,7 @@ export function AdminSidebar() {
                 fontSize: "0.85rem",
                 letterSpacing: "0.18em",
                 textTransform: "uppercase",
-                color: "#F5F1E8",
+                color: "var(--color-cream)",
               }}
             >
               CULTRAVEN
@@ -232,7 +232,7 @@ export function AdminSidebar() {
                     background: "none",
                     border: "none",
                     cursor: "pointer",
-                    color: active ? "#F5F1E8" : "rgba(245,241,232,0.55)",
+                    color: active ? "var(--color-cream)" : "rgba(245,241,232,0.55)",
                     transition: "color 0.15s ease",
                   }}
                 >
@@ -273,9 +273,9 @@ export function AdminSidebar() {
                     gap: "0.75rem",
                     padding: "0.625rem 1.5rem",
                     textDecoration: "none",
-                    color: active ? "#F5F1E8" : "rgba(245,241,232,0.55)",
+                    color: active ? "var(--color-cream)" : "rgba(245,241,232,0.55)",
                     backgroundColor: active ? "rgba(201,66,39,0.12)" : "transparent",
-                    borderLeft: active ? "2px solid #C94227" : "2px solid transparent",
+                    borderLeft: active ? "2px solid var(--color-crimson)" : "2px solid transparent",
                     transition: "all 0.15s ease",
                   }}
                 >
@@ -309,8 +309,8 @@ export function AdminSidebar() {
                           fontFamily: "var(--font-sans)",
                           fontSize: "0.78rem",
                           fontWeight: childActive ? 700 : 500,
-                          color: childActive ? "#F5F1E8" : "rgba(245,241,232,0.45)",
-                          borderLeft: childActive ? "2px solid #C94227" : "2px solid transparent",
+                          color: childActive ? "var(--color-cream)" : "rgba(245,241,232,0.45)",
+                          borderLeft: childActive ? "2px solid var(--color-crimson)" : "2px solid transparent",
                           transition: "all 0.15s ease",
                         }}
                         onMouseEnter={(e) =>
@@ -318,7 +318,7 @@ export function AdminSidebar() {
                         }
                         onMouseLeave={(e) =>
                           ((e.currentTarget as HTMLAnchorElement).style.color =
-                            childActive ? "#F5F1E8" : "rgba(245,241,232,0.45)")
+                            childActive ? "var(--color-cream)" : "rgba(245,241,232,0.45)")
                         }
                       >
                         {child.label}
@@ -409,7 +409,7 @@ function AdminLogout() {
         transition: "color 0.15s ease",
       }}
       onMouseEnter={(e) =>
-        ((e.currentTarget as HTMLButtonElement).style.color = "#C94227")
+        ((e.currentTarget as HTMLButtonElement).style.color = "var(--color-crimson)")
       }
       onMouseLeave={(e) =>
         ((e.currentTarget as HTMLButtonElement).style.color = "rgba(201,66,39,0.7)")

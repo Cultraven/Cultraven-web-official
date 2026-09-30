@@ -48,8 +48,8 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   _addToast = addToast;
 
   const bgColor = (type: ToastType) => {
-    if (type === "success") return "#172545";
-    if (type === "error") return "#C94227";
+    if (type === "success") return "var(--color-navy)";
+    if (type === "error") return "var(--color-crimson)";
     return "#4B5563";
   };
 
@@ -83,7 +83,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
             key={t.id}
             style={{
               backgroundColor: bgColor(t.type),
-              color: "#F5F1E8",
+              color: "var(--color-cream)",
               fontFamily: "var(--font-sans)",
               fontWeight: 700,
               fontSize: "0.82rem",

@@ -21,7 +21,7 @@ export function BrandStorySection() {
         display: "flex",
         alignItems: "center",
         overflow: "hidden",
-        backgroundColor: "#172545",
+        backgroundColor: "var(--color-navy)",
       }}
     >
       {/* Background video */}
@@ -71,7 +71,7 @@ export function BrandStorySection() {
             fontWeight: 800,
             letterSpacing: "0.22em",
             textTransform: "uppercase",
-            color: "#C94227",
+            color: "var(--color-crimson)",
             marginBottom: "1.5rem",
           }}
         >
@@ -85,7 +85,7 @@ export function BrandStorySection() {
             
             fontSize: "clamp(2.5rem,6vw,5.5rem)",
             fontWeight: 600,
-            color: "#F5F1E8",
+            color: "var(--color-cream)",
             lineHeight: 1.0,
             letterSpacing: "-0.01em",
             marginBottom: "2rem",
@@ -119,19 +119,19 @@ export function BrandStorySection() {
             fontSize: "0.75rem",
             letterSpacing: "0.14em",
             textTransform: "uppercase",
-            color: "#F5F1E8",
+            color: "var(--color-cream)",
             borderBottom: "2px solid rgba(245,241,232,0.5)",
             paddingBottom: "4px",
             transition: "border-color 0.2s ease",
           }}
           onMouseEnter={(e) => {
-            (e.currentTarget as HTMLAnchorElement).style.borderColor = "#C94227";
-            (e.currentTarget as HTMLAnchorElement).style.color = "#C94227";
+            (e.currentTarget as HTMLAnchorElement).style.borderColor = "var(--color-crimson)";
+            (e.currentTarget as HTMLAnchorElement).style.color = "var(--color-crimson)";
           }}
           onMouseLeave={(e) => {
             (e.currentTarget as HTMLAnchorElement).style.borderColor =
               "rgba(245,241,232,0.5)";
-            (e.currentTarget as HTMLAnchorElement).style.color = "#F5F1E8";
+            (e.currentTarget as HTMLAnchorElement).style.color = "var(--color-cream)";
           }}
         >
           EXPLORE THE STORY

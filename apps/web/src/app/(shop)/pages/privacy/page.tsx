@@ -76,11 +76,11 @@ Order data is retained for 8 years for tax compliance. Account data is deleted w
 
 export default function PrivacyPage() {
   return (
-    <div style={{ backgroundColor: "#F5F1E8", minHeight: "100vh" }}>
+    <div style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh" }}>
       {/* Hero */}
       <div
         style={{
-          backgroundColor: "#172545",
+          backgroundColor: "var(--color-navy)",
           padding: "clamp(3rem,6vw,6rem) clamp(1.25rem,4vw,5rem)",
         }}
       >
@@ -91,7 +91,7 @@ export default function PrivacyPage() {
             fontWeight: 800,
             letterSpacing: "0.22em",
             textTransform: "uppercase",
-            color: "#C94227",
+            color: "var(--color-crimson)",
             marginBottom: "0.75rem",
           }}
         >
@@ -103,7 +103,7 @@ export default function PrivacyPage() {
             
             fontSize: "clamp(2.5rem,6vw,5rem)",
             fontWeight: 600,
-            color: "#F5F1E8",
+            color: "var(--color-cream)",
             lineHeight: 1,
           }}
         >
@@ -126,8 +126,8 @@ export default function PrivacyPage() {
             color: "#4B5563",
             marginBottom: "3rem",
             padding: "1.25rem 1.5rem",
-            backgroundColor: "#EAE6DB",
-            borderLeft: "3px solid #C94227",
+            backgroundColor: "var(--color-mist)",
+            borderLeft: "3px solid var(--color-crimson)",
           }}
         >
           At CULTRAVEN, your privacy matters as much as the quality of our clothes. This policy explains how we handle your personal information when you shop with us or interact with our services.
@@ -139,7 +139,7 @@ export default function PrivacyPage() {
             style={{
               paddingBottom: "2.5rem",
               marginBottom: "2.5rem",
-              borderBottom: i < SECTIONS.length - 1 ? "1px solid #D9D3C4" : "none",
+              borderBottom: i < SECTIONS.length - 1 ? "1px solid var(--color-border)" : "none",
             }}
           >
             <h2
@@ -149,7 +149,7 @@ export default function PrivacyPage() {
                 fontSize: "0.82rem",
                 letterSpacing: "0.16em",
                 textTransform: "uppercase",
-                color: "#172545",
+                color: "var(--color-navy)",
                 marginBottom: "0.875rem",
               }}
             >
@@ -169,13 +169,13 @@ export default function PrivacyPage() {
           </div>
         ))}
 
-        <div style={{ backgroundColor: "#172545", padding: "2rem" }}>
+        <div style={{ backgroundColor: "var(--color-navy)", padding: "2rem" }}>
           <p
             style={{
               fontFamily: "var(--font-sans)",
               fontWeight: 700,
               fontSize: "0.78rem",
-              color: "#F5F1E8",
+              color: "var(--color-cream)",
               marginBottom: "0.5rem",
             }}
           >
@@ -192,7 +192,7 @@ export default function PrivacyPage() {
             Email us at{" "}
             <a
               href="mailto:privacy@cultraven.com"
-              style={{ color: "#C94227", textDecoration: "underline" }}
+              style={{ color: "var(--color-crimson)", textDecoration: "underline" }}
             >
               privacy@cultraven.com
             </a>

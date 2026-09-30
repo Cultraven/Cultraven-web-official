@@ -38,7 +38,7 @@ const fallbackProducts = [
     colors: [
       { hex: "#0A0A0A", label: "Acid Black" },
       { hex: "#2C2C2C", label: "Charcoal" },
-      { hex: "#C94227", label: "Flame" },
+      { hex: "var(--color-crimson)", label: "Flame" },
     ],
     isNew: true,
   },
@@ -53,9 +53,9 @@ const fallbackProducts = [
     pricePaise: 299900,
     mrpPaise: 399900,
     colors: [
-      { hex: "#EAE6DB", label: "Stone" },
-      { hex: "#172545", label: "Navy" },
-      { hex: "#6B7280", label: "Ash" },
+      { hex: "var(--color-mist)", label: "Stone" },
+      { hex: "var(--color-navy)", label: "Navy" },
+      { hex: "var(--color-gray)", label: "Ash" },
     ],
     isNew: true,
   },
@@ -71,7 +71,7 @@ const fallbackProducts = [
     mrpPaise: 499900,
     colors: [
       { hex: "#556B2F", label: "Olive" },
-      { hex: "#172545", label: "Navy" },
+      { hex: "var(--color-navy)", label: "Navy" },
       { hex: "#0A0A0A", label: "Black" },
     ],
     isNew: true,
@@ -90,7 +90,7 @@ const fallbackProducts = [
     colors: [
       { hex: "#9CA3AF", label: "Washed Grey" },
       { hex: "#0A0A0A", label: "Black" },
-      { hex: "#EAE6DB", label: "Cream" },
+      { hex: "var(--color-mist)", label: "Cream" },
     ],
     isNew: true,
   },
@@ -108,14 +108,17 @@ export function NewDropSection() {
       .then(res => res.json())
       .then(data => {
         if (data.products && data.products.length > 0) {
-          const mapped = data.products.slice(0, 4).map((p: any) => ({
+          const mapped = data.products
+            .filter((p: any) => p.pricePaise != null)
+            .slice(0, 4)
+            .map((p: any) => ({
             id: p.id || p._id,
             title: p.title,
             href: `/products/${p.slug || p.id}`,
             image: p.image || fallbackProducts[0].image,
             hoverImage: p.hoverImage || p.image || fallbackProducts[0].hoverImage,
-            pricePaise: p.pricePaise || 199900,
-            mrpPaise: p.mrpPaise || 249900,
+            pricePaise: p.pricePaise,
+            mrpPaise: p.mrpPaise || p.pricePaise,
             colors: Array.isArray(p.colors)
               ? p.colors
                   .filter((c: any) => c && typeof c.hex === "string" && typeof c.label === "string")
@@ -131,7 +134,7 @@ export function NewDropSection() {
   return (
     <section
       aria-labelledby="new-drop-heading"
-      style={{ backgroundColor: "#F5F1E8", padding: "clamp(4rem,8vw,8rem) 0" }}
+      style={{ backgroundColor: "var(--color-cream)", padding: "clamp(4rem,8vw,8rem) 0" }}
     >
       <div style={{ paddingInline: "clamp(1.25rem,4vw,5rem)" }}>
         {/* Header */}
@@ -144,7 +147,7 @@ export function NewDropSection() {
               fontWeight: 800,
               letterSpacing: "0.22em",
               textTransform: "uppercase",
-              color: "#C94227",
+              color: "var(--color-crimson)",
               marginBottom: "0.75rem",
             }}
           >
@@ -167,7 +170,7 @@ export function NewDropSection() {
                 
                 fontSize: "clamp(2.5rem,5.5vw,4.5rem)",
                 fontWeight: 600,
-                color: "#172545",
+                color: "var(--color-navy)",
                 lineHeight: 0.95,
                 letterSpacing: "-0.01em",
               }}
@@ -183,8 +186,8 @@ export function NewDropSection() {
                 fontWeight: 800,
                 letterSpacing: "0.18em",
                 textTransform: "uppercase",
-                color: "#172545",
-                borderBottom: "2px solid #172545",
+                color: "var(--color-navy)",
+                borderBottom: "2px solid var(--color-navy)",
                 paddingBottom: "2px",
                 whiteSpace: "nowrap",
               }}
@@ -198,7 +201,7 @@ export function NewDropSection() {
               fontFamily: "var(--font-sans)",
               fontSize: "0.8rem",
               fontWeight: 600,
-              color: "#6B7280",
+              color: "var(--color-gray)",
               marginTop: "0.75rem",
               letterSpacing: "0.1em",
               textTransform: "uppercase",
@@ -255,7 +258,7 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
           display: "block",
           aspectRatio: "3/4",
           overflow: "hidden",
-          backgroundColor: "#EAE6DB",
+          backgroundColor: "var(--color-mist)",
           marginBottom: "0.85rem",
         }}
       >
@@ -274,8 +277,8 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
           {p.isNew && (
             <span
               style={{
-                backgroundColor: "#172545",
-                color: "#F5F1E8",
+                backgroundColor: "var(--color-navy)",
+                color: "var(--color-cream)",
                 fontFamily: "var(--font-sans)",
                 fontSize: "9px",
                 fontWeight: 900,
@@ -291,8 +294,8 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
           {p.badge && (
             <span
               style={{
-                backgroundColor: "#C94227",
-                color: "#F5F1E8",
+                backgroundColor: "var(--color-crimson)",
+                color: "var(--color-cream)",
                 fontFamily: "var(--font-sans)",
                 fontSize: "9px",
                 fontWeight: 900,
@@ -308,8 +311,8 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
           {disc > 0 && !p.badge && (
             <span
               style={{
-                backgroundColor: "#C94227",
-                color: "#F5F1E8",
+                backgroundColor: "var(--color-crimson)",
+                color: "var(--color-cream)",
                 fontFamily: "var(--font-sans)",
                 fontSize: "9px",
                 fontWeight: 900,
@@ -354,8 +357,8 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
             width="15"
             height="15"
             viewBox="0 0 24 24"
-            fill={wishlisted ? "#C94227" : "none"}
-            stroke={wishlisted ? "#C94227" : "#172545"}
+            fill={wishlisted ? "var(--color-crimson)" : "none"}
+            stroke={wishlisted ? "var(--color-crimson)" : "var(--color-navy)"}
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -399,8 +402,8 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
             style={{
               width: "100%",
               padding: "0.75rem",
-              backgroundColor: added ? "#C94227" : "#172545",
-              color: "#F5F1E8",
+              backgroundColor: added ? "var(--color-crimson)" : "var(--color-navy)",
+              color: "var(--color-cream)",
               fontFamily: "var(--font-sans)",
               fontWeight: 800,
               fontSize: "0.68rem",
@@ -448,7 +451,7 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
             fontSize: "0.72rem",
             letterSpacing: "0.06em",
             textTransform: "uppercase",
-            color: "#172545",
+            color: "var(--color-navy)",
             marginBottom: "6px",
             lineHeight: 1.35,
           }}
@@ -462,7 +465,7 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
               fontFamily: "var(--font-sans)",
               fontWeight: 700,
               fontSize: "0.85rem",
-              color: "#172545",
+              color: "var(--color-navy)",
             }}
           >
             {fmt(p.pricePaise)}
@@ -474,7 +477,7 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
                   fontFamily: "var(--font-sans)",
                   fontWeight: 500,
                   fontSize: "0.75rem",
-                  color: "#6B7280",
+                  color: "var(--color-gray)",
                   textDecoration: "line-through",
                 }}
               >
@@ -485,7 +488,7 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
                   fontFamily: "var(--font-sans)",
                   fontWeight: 700,
                   fontSize: "0.68rem",
-                  color: "#C94227",
+                  color: "var(--color-crimson)",
                   letterSpacing: "0.04em",
                 }}
               >

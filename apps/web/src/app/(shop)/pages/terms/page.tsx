@@ -72,10 +72,10 @@ const SECTIONS = [
 
 export default function TermsPage() {
   return (
-    <div style={{ backgroundColor: "#F5F1E8", minHeight: "100vh" }}>
+    <div style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh" }}>
       <div
         style={{
-          backgroundColor: "#172545",
+          backgroundColor: "var(--color-navy)",
           padding: "clamp(3rem,6vw,6rem) clamp(1.25rem,4vw,5rem)",
         }}
       >
@@ -86,7 +86,7 @@ export default function TermsPage() {
             fontWeight: 800,
             letterSpacing: "0.22em",
             textTransform: "uppercase",
-            color: "#C94227",
+            color: "var(--color-crimson)",
             marginBottom: "0.75rem",
           }}
         >
@@ -98,7 +98,7 @@ export default function TermsPage() {
             
             fontSize: "clamp(2.5rem,6vw,5rem)",
             fontWeight: 600,
-            color: "#F5F1E8",
+            color: "var(--color-cream)",
             lineHeight: 1,
           }}
         >
@@ -120,8 +120,8 @@ export default function TermsPage() {
             color: "#4B5563",
             marginBottom: "3rem",
             padding: "1.25rem 1.5rem",
-            backgroundColor: "#EAE6DB",
-            borderLeft: "3px solid #C94227",
+            backgroundColor: "var(--color-mist)",
+            borderLeft: "3px solid var(--color-crimson)",
           }}
         >
           Please read these Terms and Conditions carefully before using the CULTRAVEN website or making a purchase. These terms constitute a binding legal agreement between you and CULTRAVEN.
@@ -133,7 +133,7 @@ export default function TermsPage() {
             style={{
               paddingBottom: "2.5rem",
               marginBottom: "2.5rem",
-              borderBottom: i < SECTIONS.length - 1 ? "1px solid #D9D3C4" : "none",
+              borderBottom: i < SECTIONS.length - 1 ? "1px solid var(--color-border)" : "none",
             }}
           >
             <h2
@@ -143,7 +143,7 @@ export default function TermsPage() {
                 fontSize: "0.82rem",
                 letterSpacing: "0.16em",
                 textTransform: "uppercase",
-                color: "#172545",
+                color: "var(--color-navy)",
                 marginBottom: "0.875rem",
               }}
             >
@@ -163,13 +163,13 @@ export default function TermsPage() {
           </div>
         ))}
 
-        <div style={{ backgroundColor: "#172545", padding: "2rem" }}>
+        <div style={{ backgroundColor: "var(--color-navy)", padding: "2rem" }}>
           <p
             style={{
               fontFamily: "var(--font-sans)",
               fontWeight: 700,
               fontSize: "0.78rem",
-              color: "#F5F1E8",
+              color: "var(--color-cream)",
               marginBottom: "0.5rem",
             }}
           >
@@ -185,7 +185,7 @@ export default function TermsPage() {
             Contact us at{" "}
             <a
               href="mailto:legal@cultraven.com"
-              style={{ color: "#C94227", textDecoration: "underline" }}
+              style={{ color: "var(--color-crimson)", textDecoration: "underline" }}
             >
               legal@cultraven.com
             </a>

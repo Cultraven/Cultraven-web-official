@@ -28,9 +28,9 @@ class PLPErrorBoundary extends Component<
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{ backgroundColor: "#F5F1E8", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "1.5rem" }}>
-          <p style={{ fontFamily: "var(--font-heading)", fontSize: "2rem", color: "#172545", textAlign: "center", padding: "0 2rem" }}>Something went wrong loading this collection.</p>
-          <Link href="/" style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.72rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#F5F1E8", backgroundColor: "#172545", padding: "0.875rem 2rem", textDecoration: "none" }}>BACK TO HOME</Link>
+        <div style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "1.5rem" }}>
+          <p style={{ fontFamily: "var(--font-heading)", fontSize: "2rem", color: "var(--color-navy)", textAlign: "center", padding: "0 2rem" }}>Something went wrong loading this collection.</p>
+          <Link href="/" style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.72rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-cream)", backgroundColor: "var(--color-navy)", padding: "0.875rem 2rem", textDecoration: "none" }}>BACK TO HOME</Link>
         </div>
       );
     }
@@ -71,7 +71,7 @@ const ALL_PRODUCTS: Product[] = [
     image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&auto=format&fit=crop&q=80",
     hoverImage: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&auto=format&fit=crop&q=80",
     pricePaise: 199900, mrpPaise: 249900, rating: 5, reviewCount: 124,
-    colors: [{ hex: "#0A0A0A", label: "Black" }, { hex: "#C94227", label: "Flame" }],
+    colors: [{ hex: "#0A0A0A", label: "Black" }, { hex: "var(--color-crimson)", label: "Flame" }],
     sizes: ["S", "M", "L", "XL", "XXL"], category: "T-Shirts", fit: "Oversized", badge: "NEW", inStock: true,
   },
   {
@@ -80,7 +80,7 @@ const ALL_PRODUCTS: Product[] = [
     image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&auto=format&fit=crop&q=80",
     hoverImage: "https://images.unsplash.com/photo-1578768079052-aa76e52ff62e?w=600&auto=format&fit=crop&q=80",
     pricePaise: 299900, mrpPaise: 399900, rating: 4, reviewCount: 88,
-    colors: [{ hex: "#EAE6DB", label: "Stone" }, { hex: "#172545", label: "Navy" }],
+    colors: [{ hex: "var(--color-mist)", label: "Stone" }, { hex: "var(--color-navy)", label: "Navy" }],
     sizes: ["S", "M", "L", "XL"], category: "Hoodies", fit: "Oversized", badge: "BESTSELLER", inStock: true,
   },
   {
@@ -98,7 +98,7 @@ const ALL_PRODUCTS: Product[] = [
     image: "https://images.unsplash.com/photo-1529391409740-59f2cea08bc6?w=600&auto=format&fit=crop&q=80",
     hoverImage: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=80",
     pricePaise: 249900, mrpPaise: 299900, rating: 4, reviewCount: 52,
-    colors: [{ hex: "#9CA3AF", label: "Grey" }, { hex: "#EAE6DB", label: "Cream" }],
+    colors: [{ hex: "#9CA3AF", label: "Grey" }, { hex: "var(--color-mist)", label: "Cream" }],
     sizes: ["XS", "S", "M", "L", "XL"], category: "Sweatshirts", fit: "Relaxed", inStock: true,
   },
   {
@@ -107,7 +107,7 @@ const ALL_PRODUCTS: Product[] = [
     image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&auto=format&fit=crop&q=80",
     hoverImage: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&auto=format&fit=crop&q=80",
     pricePaise: 189900, mrpPaise: 189900, rating: 5, reviewCount: 203,
-    colors: [{ hex: "#FFFFFF", label: "White" }, { hex: "#0A0A0A", label: "Black" }, { hex: "#172545", label: "Navy" }],
+    colors: [{ hex: "#FFFFFF", label: "White" }, { hex: "#0A0A0A", label: "Black" }, { hex: "var(--color-navy)", label: "Navy" }],
     sizes: ["XS", "S", "M", "L", "XL", "XXL"], category: "T-Shirts", fit: "Oversized", badge: "BESTSELLER", inStock: true,
   },
   {
@@ -116,7 +116,7 @@ const ALL_PRODUCTS: Product[] = [
     image: "https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?w=600&auto=format&fit=crop&q=80",
     hoverImage: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=80",
     pricePaise: 299900, mrpPaise: 299900, rating: 5, reviewCount: 41,
-    colors: [{ hex: "#EAE6DB", label: "Cream" }, { hex: "#FFFFFF", label: "White" }],
+    colors: [{ hex: "var(--color-mist)", label: "Cream" }, { hex: "#FFFFFF", label: "White" }],
     sizes: ["S", "M", "L", "XL"], category: "Shirts", fit: "Relaxed", badge: "NEW", inStock: true,
   },
   {
@@ -134,7 +134,7 @@ const ALL_PRODUCTS: Product[] = [
     image: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&auto=format&fit=crop&q=80",
     hoverImage: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&auto=format&fit=crop&q=80",
     pricePaise: 379900, mrpPaise: 499900, rating: 5, reviewCount: 33,
-    colors: [{ hex: "#172545", label: "Washed Navy" }, { hex: "#556B2F", label: "Olive" }],
+    colors: [{ hex: "var(--color-navy)", label: "Washed Navy" }, { hex: "#556B2F", label: "Olive" }],
     sizes: ["S", "M", "L", "XL"], category: "Cargos", fit: "Baggy", badge: "NEW", inStock: false,
   },
   {
@@ -143,7 +143,7 @@ const ALL_PRODUCTS: Product[] = [
     image: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=600&auto=format&fit=crop&q=80",
     hoverImage: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=80",
     pricePaise: 229900, mrpPaise: 279900, rating: 5, reviewCount: 118,
-    colors: [{ hex: "#2C2C2C", label: "Charcoal" }, { hex: "#172545", label: "Navy" }],
+    colors: [{ hex: "#2C2C2C", label: "Charcoal" }, { hex: "var(--color-navy)", label: "Navy" }],
     sizes: ["S", "M", "L", "XL", "XXL"], category: "T-Shirts", fit: "Oversized", badge: "BESTSELLER", inStock: true,
   },
   {
@@ -161,7 +161,7 @@ const ALL_PRODUCTS: Product[] = [
     image: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&auto=format&fit=crop&q=80",
     hoverImage: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&auto=format&fit=crop&q=80",
     pricePaise: 329900, mrpPaise: 429900, rating: 4, reviewCount: 29,
-    colors: [{ hex: "#C4A882", label: "Sand" }, { hex: "#EAE6DB", label: "Cream" }],
+    colors: [{ hex: "#C4A882", label: "Sand" }, { hex: "var(--color-mist)", label: "Cream" }],
     sizes: ["S", "M", "L", "XL"], category: "Trousers", fit: "Relaxed", badge: "NEW", inStock: true,
   },
   {
@@ -209,16 +209,18 @@ function CollectionPageClientInner({
       .then((res) => res.json())
       .then((data) => {
         if (data.products) {
-          const mapped = data.products.map((p: any) => ({
+          const mapped = data.products
+            .filter((p: any) => p.pricePaise != null)
+            .map((p: any) => ({
             id: p.id,
             title: p.title,
             href: `/products/${p.slug}`,
             image: p.image || "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&auto=format&fit=crop&q=80",
             hoverImage: p.hoverImage || p.image || "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&auto=format&fit=crop&q=80",
-            pricePaise: p.pricePaise || 199900,
-            mrpPaise: p.mrpPaise || 249900,
-            rating: Number(p.rating) || 5,
-            reviewCount: Number(p.reviewCount) || 42,
+            pricePaise: p.pricePaise,
+            mrpPaise: p.mrpPaise || p.pricePaise,
+            rating: Number(p.rating) || 0,
+            reviewCount: Number(p.reviewCount) || 0,
             colors: safeColors(p),
             sizes: safeSizes(p),
             category: p.category || "T-Shirts",
@@ -275,9 +277,9 @@ function CollectionPageClientInner({
   };
 
   return (
-    <div style={{ backgroundColor: "#F5F1E8", minHeight: "100vh" }}>
+    <div style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh" }}>
       {/* ── Collection Hero ── */}
-      <div style={{ position: "relative", height: "400px", overflow: "hidden", backgroundColor: "#EAE6DB" }}>
+      <div style={{ position: "relative", height: "400px", overflow: "hidden", backgroundColor: "var(--color-mist)" }}>
         <Image src={heroImage} alt={collectionName} fill style={{ objectFit: "cover" }} priority />
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(23,37,69,0.75) 0%, rgba(23,37,69,0.35) 60%, transparent 100%)" }} />
         <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "center", padding: "clamp(2rem,4vw,4rem)", paddingTop: "80px" }}>
@@ -285,12 +287,12 @@ function CollectionPageClientInner({
           <nav aria-label="Breadcrumb" style={{ marginBottom: "1rem", display: "flex", gap: "0.5rem", alignItems: "center" }}>
             {[{ label: "Home", href: "/" }, { label: "Collections", href: "/collections" }, { label: collectionName, href: "#" }].map((crumb, i, arr) => (
               <React.Fragment key={crumb.href}>
-                <Link href={crumb.href} style={{ fontFamily: "var(--font-sans)", fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: i === arr.length - 1 ? "#F5F1E8" : "rgba(245,241,232,0.55)", textDecoration: "none" }}>{crumb.label}</Link>
+                <Link href={crumb.href} style={{ fontFamily: "var(--font-sans)", fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: i === arr.length - 1 ? "var(--color-cream)" : "rgba(245,241,232,0.55)", textDecoration: "none" }}>{crumb.label}</Link>
                 {i < arr.length - 1 && <span style={{ color: "rgba(245,241,232,0.4)", fontSize: "10px" }}>/</span>}
               </React.Fragment>
             ))}
           </nav>
-          <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(3rem,8vw,6.5rem)", fontWeight: 400, color: "#F5F1E8", lineHeight: 0.9, letterSpacing: "0.02em", marginBottom: "0.75rem", textTransform: "uppercase" }}>{collectionName}</h1>
+          <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(3rem,8vw,6.5rem)", fontWeight: 400, color: "var(--color-cream)", lineHeight: 0.9, letterSpacing: "0.02em", marginBottom: "0.75rem", textTransform: "uppercase" }}>{collectionName}</h1>
           <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.9rem", color: "rgba(245,241,232,0.75)", maxWidth: "460px", lineHeight: 1.6 }}>{description}</p>
           <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", fontWeight: 700, color: "rgba(245,241,232,0.55)", letterSpacing: "0.1em", textTransform: "uppercase", marginTop: "1rem" }}>{filtered.length} Products</p>
         </div>
@@ -298,28 +300,28 @@ function CollectionPageClientInner({
 
       <div style={{ paddingInline: "clamp(1.25rem,4vw,5rem)", paddingBottom: "6rem" }}>
         {/* ── Controls bar ── */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.5rem", borderBottom: "var(--border-thick)", borderTop: "var(--border-thick)", flexWrap: "wrap", gap: "1rem", position: "sticky", top: "72px", backgroundColor: "#F5F1E8", zIndex: 40, marginTop: "2rem", boxShadow: "0 4px 0px rgba(23,37,69,1)" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.5rem", borderBottom: "var(--border-thick)", borderTop: "var(--border-thick)", flexWrap: "wrap", gap: "1rem", position: "sticky", top: "72px", backgroundColor: "var(--color-cream)", zIndex: 40, marginTop: "2rem", boxShadow: "0 4px 0px rgba(23,37,69,1)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
             {/* Filter toggle */}
-            <button onClick={() => setFilterOpen(!filterOpen)} style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.6rem 1.25rem", border: "2px solid #172545", backgroundColor: filterOpen ? "#172545" : "#F5F1E8", color: filterOpen ? "#F5F1E8" : "#172545", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", boxShadow: "2px 2px 0px 0px #172545" }}>
+            <button onClick={() => setFilterOpen(!filterOpen)} style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.6rem 1.25rem", border: "2px solid var(--color-navy)", backgroundColor: filterOpen ? "var(--color-navy)" : "var(--color-cream)", color: filterOpen ? "var(--color-cream)" : "var(--color-navy)", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", boxShadow: "2px 2px 0px 0px var(--color-navy)" }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square" strokeLinejoin="miter"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
               FILTER {activeCount > 0 && `(${activeCount})`}
             </button>
             {/* Active filter chips */}
             {activeCount > 0 && (
-              <button onClick={clearAll} style={{ fontFamily: "var(--font-sans)", fontSize: "11px", fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", color: "#C94227", background: "none", border: "none", cursor: "pointer", paddingBottom: "1px", textDecoration: "underline" }}>SAB HATAAO</button>
+              <button onClick={clearAll} style={{ fontFamily: "var(--font-sans)", fontSize: "11px", fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-crimson)", background: "none", border: "none", cursor: "pointer", paddingBottom: "1px", textDecoration: "underline" }}>SAB HATAAO</button>
             )}
           </div>
           {/* Sort */}
           <div style={{ position: "relative" }}>
-            <button onClick={() => setSortOpen(!sortOpen)} style={{ display: "flex", alignItems: "center", gap: "0.75rem", padding: "0.6rem 1.25rem", border: "2px solid #172545", backgroundColor: "#F5F1E8", color: "#172545", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", minWidth: "180px", justifyContent: "space-between", boxShadow: "2px 2px 0px 0px #172545" }}>
+            <button onClick={() => setSortOpen(!sortOpen)} style={{ display: "flex", alignItems: "center", gap: "0.75rem", padding: "0.6rem 1.25rem", border: "2px solid var(--color-navy)", backgroundColor: "var(--color-cream)", color: "var(--color-navy)", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", minWidth: "180px", justifyContent: "space-between", boxShadow: "2px 2px 0px 0px var(--color-navy)" }}>
               {SORT_OPTIONS.find((s) => s.value === sort)?.label ?? "Sort"}
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             {sortOpen && (
-              <div style={{ position: "absolute", top: "110%", right: 0, backgroundColor: "#F5F1E8", border: "2px solid #172545", zIndex: 50, minWidth: "200px", boxShadow: "4px 4px 0px #172545" }}>
+              <div style={{ position: "absolute", top: "110%", right: 0, backgroundColor: "var(--color-cream)", border: "2px solid var(--color-navy)", zIndex: 50, minWidth: "200px", boxShadow: "4px 4px 0px var(--color-navy)" }}>
                 {SORT_OPTIONS.map((opt) => (
-                  <button key={opt.value} onClick={() => { setSort(opt.value); setSortOpen(false); }} style={{ display: "block", width: "100%", textAlign: "left", padding: "0.875rem 1.25rem", fontFamily: "var(--font-sans)", fontWeight: sort === opt.value ? 900 : 700, fontSize: "11px", letterSpacing: "0.08em", textTransform: "uppercase", color: sort === opt.value ? "#F5F1E8" : "#172545", backgroundColor: sort === opt.value ? "#172545" : "transparent", border: "none", borderBottom: "2px solid #172545", cursor: "pointer" }}>{opt.label}</button>
+                  <button key={opt.value} onClick={() => { setSort(opt.value); setSortOpen(false); }} style={{ display: "block", width: "100%", textAlign: "left", padding: "0.875rem 1.25rem", fontFamily: "var(--font-sans)", fontWeight: sort === opt.value ? 900 : 700, fontSize: "11px", letterSpacing: "0.08em", textTransform: "uppercase", color: sort === opt.value ? "var(--color-cream)" : "var(--color-navy)", backgroundColor: sort === opt.value ? "var(--color-navy)" : "transparent", border: "none", borderBottom: "2px solid var(--color-navy)", cursor: "pointer" }}>{opt.label}</button>
                 ))}
               </div>
             )}
@@ -333,9 +335,9 @@ function CollectionPageClientInner({
               <FilterBlock title="Category" options={CATEGORIES} selected={filterCategory} onToggle={(v) => toggleFilter(filterCategory, v, setFilterCategory)} />
               <FilterBlock title="Size" options={SIZES} selected={filterSize} onToggle={(v) => toggleFilter(filterSize, v, setFilterSize)} pills />
               <FilterBlock title="Fit" options={FITS} selected={filterFit} onToggle={(v) => toggleFilter(filterFit, v, setFilterFit)} />
-              <div style={{ paddingTop: "1rem", borderTop: "1px solid #D9D3C4", marginTop: "0.5rem" }}>
-                <label style={{ display: "flex", alignItems: "center", gap: "0.75rem", cursor: "pointer", fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.72rem", letterSpacing: "0.08em", textTransform: "uppercase", color: "#172545" }}>
-                  <input type="checkbox" checked={filterInStock} onChange={(e) => setFilterInStock(e.target.checked)} style={{ width: "16px", height: "16px", accentColor: "#172545" }} />
+              <div style={{ paddingTop: "1rem", borderTop: "1px solid var(--color-border)", marginTop: "0.5rem" }}>
+                <label style={{ display: "flex", alignItems: "center", gap: "0.75rem", cursor: "pointer", fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.72rem", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--color-navy)" }}>
+                  <input type="checkbox" checked={filterInStock} onChange={(e) => setFilterInStock(e.target.checked)} style={{ width: "16px", height: "16px", accentColor: "var(--color-navy)" }} />
                   In Stock Only
                 </label>
               </div>
@@ -346,8 +348,8 @@ function CollectionPageClientInner({
           <div>
             {filtered.length === 0 ? (
               <div style={{ textAlign: "center", padding: "6rem 2rem" }}>
-                <p style={{ fontFamily: "var(--font-heading)", fontSize: "2rem", fontWeight: 400, color: "#172545", marginBottom: "1rem" }}>KUCH NAHI MILA BRO.</p>
-                <button onClick={clearAll} style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#F5F1E8", backgroundColor: "#172545", border: "2px solid #172545", padding: "1rem 2rem", cursor: "pointer", boxShadow: "4px 4px 0px #172545" }}>SAB HATAAO</button>
+                <p style={{ fontFamily: "var(--font-heading)", fontSize: "2rem", fontWeight: 400, color: "var(--color-navy)", marginBottom: "1rem" }}>KUCH NAHI MILA BRO.</p>
+                <button onClick={clearAll} style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-cream)", backgroundColor: "var(--color-navy)", border: "2px solid var(--color-navy)", padding: "1rem 2rem", cursor: "pointer", boxShadow: "4px 4px 0px var(--color-navy)" }}>SAB HATAAO</button>
               </div>
             ) : (
               <>
@@ -389,18 +391,18 @@ function FilterBlock({ title, options, selected, onToggle, pills = false }: {
 }) {
   const [open, setOpen] = useState(true);
   return (
-    <div style={{ borderTop: "1px solid #D9D3C4", paddingBlock: "1rem" }}>
-      <button onClick={() => setOpen(!open)} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", background: "none", border: "none", cursor: "pointer", padding: 0, fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#172545" }}>
+    <div style={{ borderTop: "1px solid var(--color-border)", paddingBlock: "1rem" }}>
+      <button onClick={() => setOpen(!open)} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", background: "none", border: "none", cursor: "pointer", padding: 0, fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-navy)" }}>
         {title}
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#172545" strokeWidth="2.5" style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}><polyline points="6 9 12 15 18 9"/></svg>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--color-navy)" strokeWidth="2.5" style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}><polyline points="6 9 12 15 18 9"/></svg>
       </button>
       {open && (
         <div style={{ marginTop: "0.875rem", display: pills ? "flex" : "block", flexWrap: "wrap", gap: pills ? "0.5rem" : undefined }}>
           {options.map((opt) => pills ? (
-            <button key={opt} onClick={() => onToggle(opt)} style={{ padding: "0.35rem 0.75rem", border: "1.5px solid", borderColor: selected.includes(opt) ? "#172545" : "#D9D3C4", backgroundColor: selected.includes(opt) ? "#172545" : "transparent", color: selected.includes(opt) ? "#F5F1E8" : "#172545", fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.65rem", letterSpacing: "0.08em", cursor: "pointer" }}>{opt}</button>
+            <button key={opt} onClick={() => onToggle(opt)} style={{ padding: "0.35rem 0.75rem", border: "1.5px solid", borderColor: selected.includes(opt) ? "var(--color-navy)" : "var(--color-border)", backgroundColor: selected.includes(opt) ? "var(--color-navy)" : "transparent", color: selected.includes(opt) ? "var(--color-cream)" : "var(--color-navy)", fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.65rem", letterSpacing: "0.08em", cursor: "pointer" }}>{opt}</button>
           ) : (
-            <label key={opt} style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.5rem", cursor: "pointer", fontFamily: "var(--font-sans)", fontWeight: 600, fontSize: "0.75rem", color: "#172545" }}>
-              <input type="checkbox" checked={selected.includes(opt)} onChange={() => onToggle(opt)} style={{ width: "14px", height: "14px", accentColor: "#172545" }} />
+            <label key={opt} style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.5rem", cursor: "pointer", fontFamily: "var(--font-sans)", fontWeight: 600, fontSize: "0.75rem", color: "var(--color-navy)" }}>
+              <input type="checkbox" checked={selected.includes(opt)} onChange={() => onToggle(opt)} style={{ width: "14px", height: "14px", accentColor: "var(--color-navy)" }} />
               {opt}
             </label>
           ))}
@@ -425,7 +427,7 @@ function PLPCard({ product: p }: { product: Product }) {
       style={{
         display: "flex",
         flexDirection: "column",
-        backgroundColor: "#F5F1E8",
+        backgroundColor: "var(--color-cream)",
         border: "var(--border-thick)",
         boxShadow: "var(--shadow-sm)",
         transition: "box-shadow 0.2s ease, transform 0.2s ease",
@@ -445,8 +447,8 @@ function PLPCard({ product: p }: { product: Product }) {
           top: "12px",
           right: "12px",
           zIndex: 20,
-          background: wishlisted ? "#C94227" : "#F5F1E8",
-          border: "2px solid #172545",
+          background: wishlisted ? "var(--color-crimson)" : "var(--color-cream)",
+          border: "2px solid var(--color-navy)",
           borderRadius: "50%",
           width: "32px",
           height: "32px",
@@ -454,12 +456,12 @@ function PLPCard({ product: p }: { product: Product }) {
           alignItems: "center",
           justifyContent: "center",
           cursor: "pointer",
-          boxShadow: "2px 2px 0px 0px #172545",
+          boxShadow: "2px 2px 0px 0px var(--color-navy)",
           transition: "transform 0.1s ease",
         }}
         className="wishlist-btn"
       >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill={wishlisted ? "#C94227" : "none"} stroke={wishlisted ? "#F5F1E8" : "#172545"} strokeWidth="2.5" strokeLinecap="square" strokeLinejoin="miter">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill={wishlisted ? "var(--color-crimson)" : "none"} stroke={wishlisted ? "var(--color-cream)" : "var(--color-navy)"} strokeWidth="2.5" strokeLinecap="square" strokeLinejoin="miter">
           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
         </svg>
       </button>
@@ -472,7 +474,7 @@ function PLPCard({ product: p }: { product: Product }) {
           display: "block",
           aspectRatio: "3/4",
           overflow: "hidden",
-          backgroundColor: "#EAE6DB",
+          backgroundColor: "var(--color-mist)",
           borderBottom: "var(--border-thick)",
         }}
         tabIndex={-1}
@@ -499,16 +501,16 @@ function PLPCard({ product: p }: { product: Product }) {
         <div style={{ position: "absolute", top: "12px", left: "12px", zIndex: 10 }}>
           {p.badge && p.inStock && (
             <span style={{ 
-              backgroundColor: p.badge === "LIMITED" || p.badge === "SALE" ? "#C94227" : "#172545", 
-              color: "#F5F1E8", 
+              backgroundColor: p.badge === "LIMITED" || p.badge === "SALE" ? "var(--color-crimson)" : "var(--color-navy)", 
+              color: "var(--color-cream)", 
               fontFamily: "var(--font-mono)", 
               fontWeight: 700, 
               fontSize: "10px", 
               letterSpacing: "0.1em", 
               textTransform: "uppercase", 
               padding: "4px 8px",
-              border: "2px solid #172545",
-              boxShadow: "2px 2px 0px 0px #172545",
+              border: "2px solid var(--color-navy)",
+              boxShadow: "2px 2px 0px 0px var(--color-navy)",
               display: "inline-block",
               transform: "rotate(-3deg)",
               marginBottom: "4px"
@@ -518,16 +520,16 @@ function PLPCard({ product: p }: { product: Product }) {
           )}
           {!p.inStock && (
              <span style={{ 
-              backgroundColor: "#6B7280", 
-              color: "#F5F1E8", 
+              backgroundColor: "var(--color-gray)", 
+              color: "var(--color-cream)", 
               fontFamily: "var(--font-mono)", 
               fontWeight: 700, 
               fontSize: "10px", 
               letterSpacing: "0.1em", 
               textTransform: "uppercase", 
               padding: "4px 8px",
-              border: "2px solid #172545",
-              boxShadow: "2px 2px 0px 0px #172545",
+              border: "2px solid var(--color-navy)",
+              boxShadow: "2px 2px 0px 0px var(--color-navy)",
               display: "inline-block",
               transform: "rotate(-3deg)"
             }}>
@@ -557,10 +559,10 @@ function PLPCard({ product: p }: { product: Product }) {
               onClick={(e) => { e.preventDefault(); setAdded(true); setTimeout(() => setAdded(false), 1800); }}
               style={{
                 width: "100%",
-                backgroundColor: added ? "#C94227" : "#F5F1E8",
-                color: added ? "#F5F1E8" : "#172545",
-                border: "2px solid #172545",
-                boxShadow: "2px 2px 0px 0px #172545",
+                backgroundColor: added ? "var(--color-crimson)" : "var(--color-cream)",
+                color: added ? "var(--color-cream)" : "var(--color-navy)",
+                border: "2px solid var(--color-navy)",
+                boxShadow: "2px 2px 0px 0px var(--color-navy)",
                 padding: "8px",
                 fontFamily: "var(--font-sans)",
                 fontWeight: 900,
@@ -589,7 +591,7 @@ function PLPCard({ product: p }: { product: Product }) {
                 lineHeight: "1",
                 letterSpacing: "0.02em",
                 textTransform: "uppercase",
-                color: "#172545",
+                color: "var(--color-navy)",
                 display: "-webkit-box",
                 WebkitLineClamp: 2,
                 WebkitBoxOrient: "vertical",
@@ -606,10 +608,10 @@ function PLPCard({ product: p }: { product: Product }) {
             display: "flex", 
             alignItems: "center", 
             gap: "2px", 
-            backgroundColor: "#172545", 
-            color: "#F5F1E8", 
+            backgroundColor: "var(--color-navy)", 
+            color: "var(--color-cream)", 
             padding: "2px 6px", 
-            border: "1.5px solid #172545",
+            border: "1.5px solid var(--color-navy)",
             fontFamily: "var(--font-mono)",
             fontSize: "10px",
             fontWeight: 700,
@@ -621,15 +623,15 @@ function PLPCard({ product: p }: { product: Product }) {
         </div>
 
         <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-          <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "14px", color: "#172545" }}>
+          <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "14px", color: "var(--color-navy)" }}>
             {fmt(p.pricePaise)}
           </span>
           {disc > 0 && (
             <>
-              <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "11px", color: "#6B7280", textDecoration: "line-through" }}>
+              <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "11px", color: "var(--color-gray)", textDecoration: "line-through" }}>
                 {fmt(p.mrpPaise)}
               </span>
-              <span style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "10px", color: "#C94227" }}>
+              <span style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "10px", color: "var(--color-crimson)" }}>
                 {disc}% off
               </span>
             </>
@@ -640,7 +642,7 @@ function PLPCard({ product: p }: { product: Product }) {
           {/* Color Swatches */}
           <div style={{ display: "flex", gap: "4px" }}>
             {safeColors(p).map((c) => (
-              <div key={c.hex} title={c.label} style={{ width: "12px", height: "12px", borderRadius: "50%", backgroundColor: c.hex, border: "1px solid #172545" }} />
+              <div key={c.hex} title={c.label} style={{ width: "12px", height: "12px", borderRadius: "50%", backgroundColor: c.hex, border: "1px solid var(--color-navy)" }} />
             ))}
           </div>
 
@@ -650,7 +652,7 @@ function PLPCard({ product: p }: { product: Product }) {
               <span key={sz} style={{
                 fontSize: "9px",
                 fontWeight: 700,
-                color: "#172545",
+                color: "var(--color-navy)",
                 fontFamily: "var(--font-mono)",
               }}>
                 {sz}

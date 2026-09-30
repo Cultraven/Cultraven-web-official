@@ -40,27 +40,27 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div style={{ backgroundColor: "#F5F1E8", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem" }}>
-      <div style={{ maxWidth: "440px", width: "100%", backgroundColor: "#F5F1E8", padding: "clamp(2.5rem,5vw,4rem)", border: "var(--border-thick)", boxShadow: "var(--shadow-md)" }}>
+    <div style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem" }}>
+      <div style={{ maxWidth: "440px", width: "100%", backgroundColor: "var(--color-cream)", padding: "clamp(2.5rem,5vw,4rem)", border: "var(--border-thick)", boxShadow: "var(--shadow-md)" }}>
 
         <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
           <Link href="/" style={{ textDecoration: "none" }}>
-            <h1 style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "1.2rem", letterSpacing: "0.2em", color: "#172545", textTransform: "uppercase", marginBottom: "1rem" }}>CULTRAVEN</h1>
+            <h1 style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "1.2rem", letterSpacing: "0.2em", color: "var(--color-navy)", textTransform: "uppercase", marginBottom: "1rem" }}>CULTRAVEN</h1>
           </Link>
-          <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "2rem", color: "#172545" }}>Reset Password</h2>
-          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.85rem", color: "#6B7280", marginTop: "0.5rem" }}>Enter your email and we&apos;ll send a reset link.</p>
+          <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "2rem", color: "var(--color-navy)" }}>Reset Password</h2>
+          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.85rem", color: "var(--color-gray)", marginTop: "0.5rem" }}>Enter your email and we&apos;ll send a reset link.</p>
         </div>
 
         {submitted ? (
           <div style={{ textAlign: "center", padding: "1.5rem", backgroundColor: "rgba(23,37,69,0.05)", border: "1px solid rgba(23,37,69,0.15)" }}>
             <div style={{ fontSize: "2rem", marginBottom: "1rem" }}>✉️</div>
-            <h3 style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.9rem", color: "#172545", marginBottom: "0.75rem", letterSpacing: "0.05em" }}>CHECK YOUR INBOX</h3>
-            <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "#6B7280", lineHeight: 1.6 }}>
-              If an account with <strong style={{ color: "#172545" }}>{email}</strong> exists, you&apos;ll receive a password reset link within a few minutes. Check your spam folder if you don&apos;t see it.
+            <h3 style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.9rem", color: "var(--color-navy)", marginBottom: "0.75rem", letterSpacing: "0.05em" }}>CHECK YOUR INBOX</h3>
+            <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "var(--color-gray)", lineHeight: 1.6 }}>
+              If an account with <strong style={{ color: "var(--color-navy)" }}>{email}</strong> exists, you&apos;ll receive a password reset link within a few minutes. Check your spam folder if you don&apos;t see it.
             </p>
             <Link
               href="/login"
-              style={{ display: "inline-block", marginTop: "1.5rem", fontFamily: "var(--font-sans)", fontSize: "0.78rem", fontWeight: 700, color: "#172545", textDecoration: "underline" }}
+              style={{ display: "inline-block", marginTop: "1.5rem", fontFamily: "var(--font-sans)", fontSize: "0.78rem", fontWeight: 700, color: "var(--color-navy)", textDecoration: "underline" }}
             >
               ← Back to Login
             </Link>
@@ -68,7 +68,7 @@ export default function ForgotPasswordPage() {
         ) : (
           <form onSubmit={handleSubmit} noValidate style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
             <div>
-              <label htmlFor="forgot-email" style={{ display: "block", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.68rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#172545", marginBottom: "0.5rem" }}>
+              <label htmlFor="forgot-email" style={{ display: "block", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.68rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-navy)", marginBottom: "0.5rem" }}>
                 Email Address
               </label>
               <input
@@ -79,21 +79,21 @@ export default function ForgotPasswordPage() {
                 value={email}
                 onChange={(e) => { setEmail(e.target.value); setError(""); }}
                 disabled={loading}
-                style={{ width: "100%", padding: "0.875rem 1rem", border: `1.5px solid ${error ? "#C94227" : "#D9D3C4"}`, backgroundColor: "#F5F1E8", fontFamily: "var(--font-sans)", fontSize: "0.9rem", color: "#172545", outline: "none", boxSizing: "border-box" }}
+                style={{ width: "100%", padding: "0.875rem 1rem", border: `1.5px solid ${error ? "var(--color-crimson)" : "var(--color-border)"}`, backgroundColor: "var(--color-cream)", fontFamily: "var(--font-sans)", fontSize: "0.9rem", color: "var(--color-navy)", outline: "none", boxSizing: "border-box" }}
               />
-              {error && <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "#C94227", marginTop: "0.3rem" }}>{error}</p>}
+              {error && <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "var(--color-crimson)", marginTop: "0.3rem" }}>{error}</p>}
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              style={{ width: "100%", padding: "1rem", backgroundColor: loading ? "#9fa8c0" : "#172545", color: "#F5F1E8", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.78rem", letterSpacing: "0.14em", textTransform: "uppercase", border: "none", cursor: loading ? "not-allowed" : "pointer", transition: "background-color 0.2s" }}
+              style={{ width: "100%", padding: "1rem", backgroundColor: loading ? "#9fa8c0" : "var(--color-navy)", color: "var(--color-cream)", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.78rem", letterSpacing: "0.14em", textTransform: "uppercase", border: "none", cursor: loading ? "not-allowed" : "pointer", transition: "background-color 0.2s" }}
             >
               {loading ? "SENDING..." : "SEND RESET LINK"}
             </button>
 
-            <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "#6B7280", textAlign: "center" }}>
-              <Link href="/login" style={{ color: "#172545", fontWeight: 700, textDecoration: "underline" }}>← Back to Login</Link>
+            <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "var(--color-gray)", textAlign: "center" }}>
+              <Link href="/login" style={{ color: "var(--color-navy)", fontWeight: 700, textDecoration: "underline" }}>← Back to Login</Link>
             </p>
           </form>
         )}

@@ -131,11 +131,11 @@ export default function FAQPage() {
   const toggle = (id: string) => setOpenId((prev) => (prev === id ? null : id));
 
   return (
-    <div style={{ backgroundColor: "#F5F1E8", minHeight: "100vh" }}>
+    <div style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh" }}>
       {/* Hero */}
       <div
         style={{
-          backgroundColor: "#172545",
+          backgroundColor: "var(--color-navy)",
           padding: "clamp(3rem,6vw,6rem) clamp(1.25rem,4vw,5rem)",
         }}
       >
@@ -146,7 +146,7 @@ export default function FAQPage() {
             fontWeight: 800,
             letterSpacing: "0.22em",
             textTransform: "uppercase",
-            color: "#C94227",
+            color: "var(--color-crimson)",
             marginBottom: "0.75rem",
           }}
         >
@@ -158,7 +158,7 @@ export default function FAQPage() {
             
             fontSize: "clamp(2.5rem,6vw,5rem)",
             fontWeight: 600,
-            color: "#F5F1E8",
+            color: "var(--color-cream)",
             lineHeight: 1,
             marginBottom: "1rem",
           }}
@@ -188,18 +188,18 @@ export default function FAQPage() {
                 fontSize: "0.68rem",
                 letterSpacing: "0.22em",
                 textTransform: "uppercase",
-                color: "#C94227",
+                color: "var(--color-crimson)",
                 marginBottom: "1.25rem",
               }}
             >
               {group.category}
             </h2>
-            <div style={{ borderTop: "1px solid #D9D3C4" }}>
+            <div style={{ borderTop: "1px solid var(--color-border)" }}>
               {group.items.map((item, i) => {
                 const id = `${group.category}-${i}`;
                 const isOpen = openId === id;
                 return (
-                  <div key={i} style={{ borderBottom: "1px solid #D9D3C4" }}>
+                  <div key={i} style={{ borderBottom: "1px solid var(--color-border)" }}>
                     <button
                       id={`faq-btn-${id}`}
                       aria-expanded={isOpen}
@@ -223,7 +223,7 @@ export default function FAQPage() {
                           fontFamily: "var(--font-sans)",
                           fontWeight: 700,
                           fontSize: "0.92rem",
-                          color: "#172545",
+                          color: "var(--color-navy)",
                           lineHeight: 1.4,
                         }}
                       >
@@ -234,7 +234,7 @@ export default function FAQPage() {
                         height="16"
                         viewBox="0 0 24 24"
                         fill="none"
-                        stroke="#172545"
+                        stroke="var(--color-navy)"
                         strokeWidth="2.5"
                         strokeLinecap="round"
                         style={{
@@ -278,7 +278,7 @@ export default function FAQPage() {
         {/* CTA */}
         <div
           style={{
-            backgroundColor: "#172545",
+            backgroundColor: "var(--color-navy)",
             padding: "2.5rem",
             textAlign: "center",
             marginTop: "2rem",
@@ -290,7 +290,7 @@ export default function FAQPage() {
               
               fontSize: "1.5rem",
               fontWeight: 600,
-              color: "#F5F1E8",
+              color: "var(--color-cream)",
               marginBottom: "0.75rem",
             }}
           >
@@ -331,8 +331,8 @@ export default function FAQPage() {
               style={{
                 display: "inline-block",
                 padding: "0.875rem 1.75rem",
-                border: "2px solid #F5F1E8",
-                color: "#F5F1E8",
+                border: "2px solid var(--color-cream)",
+                color: "var(--color-cream)",
                 fontFamily: "var(--font-sans)",
                 fontWeight: 800,
                 fontSize: "0.72rem",

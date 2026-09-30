@@ -1,7 +1,7 @@
 /**
  * FeaturedCollectionSection — editorial split layout.
  *
- * Navy (#172545) background for strong contrast.
+ * Navy (var(--color-navy)) background for strong contrast.
  * Large image left (60%) + collection info right (40%).
  * Used as section 6 in homepage: "Featured Collection".
  */
@@ -15,7 +15,7 @@ export function FeaturedCollectionSection() {
   return (
     <section
       aria-labelledby="featured-col-heading"
-      style={{ backgroundColor: "#172545" }}
+      style={{ backgroundColor: "var(--color-navy)" }}
     >
       <div
         style={{
@@ -41,7 +41,7 @@ export function FeaturedCollectionSection() {
               position: "absolute",
               inset: 0,
               background:
-                "linear-gradient(to right, transparent 60%, #172545 100%)",
+                "linear-gradient(to right, transparent 60%, var(--color-navy) 100%)",
             }}
           />
         </div>
@@ -63,7 +63,7 @@ export function FeaturedCollectionSection() {
               fontWeight: 800,
               letterSpacing: "0.22em",
               textTransform: "uppercase",
-              color: "#C94227",
+              color: "var(--color-crimson)",
               marginBottom: "1.5rem",
             }}
           >
@@ -77,7 +77,7 @@ export function FeaturedCollectionSection() {
               
               fontSize: "clamp(2.5rem,5vw,5rem)",
               fontWeight: 600,
-              color: "#F5F1E8",
+              color: "var(--color-cream)",
               lineHeight: 1.0,
               letterSpacing: "-0.01em",
               marginBottom: "1.5rem",
@@ -108,27 +108,27 @@ export function FeaturedCollectionSection() {
                 alignItems: "center",
                 justifyContent: "center",
                 padding: "1rem 2.25rem",
-                backgroundColor: "#F5F1E8",
-                color: "#172545",
+                backgroundColor: "var(--color-cream)",
+                color: "var(--color-navy)",
                 fontFamily: "var(--font-sans)",
                 fontWeight: 800,
                 fontSize: "0.72rem",
                 letterSpacing: "0.12em",
                 textTransform: "uppercase",
-                border: "2px solid #F5F1E8",
+                border: "2px solid var(--color-cream)",
                 transition: "all 0.2s ease",
               }}
               onMouseEnter={(e) => {
                 const el = e.currentTarget as HTMLAnchorElement;
-                el.style.backgroundColor = "#C94227";
-                el.style.borderColor = "#C94227";
-                el.style.color = "#F5F1E8";
+                el.style.backgroundColor = "var(--color-crimson)";
+                el.style.borderColor = "var(--color-crimson)";
+                el.style.color = "var(--color-cream)";
               }}
               onMouseLeave={(e) => {
                 const el = e.currentTarget as HTMLAnchorElement;
-                el.style.backgroundColor = "#F5F1E8";
-                el.style.borderColor = "#F5F1E8";
-                el.style.color = "#172545";
+                el.style.backgroundColor = "var(--color-cream)";
+                el.style.borderColor = "var(--color-cream)";
+                el.style.color = "var(--color-navy)";
               }}
             >
               SHOP STREET
@@ -141,7 +141,7 @@ export function FeaturedCollectionSection() {
                 justifyContent: "center",
                 padding: "1rem 2.25rem",
                 backgroundColor: "transparent",
-                color: "#F5F1E8",
+                color: "var(--color-cream)",
                 fontFamily: "var(--font-sans)",
                 fontWeight: 800,
                 fontSize: "0.72rem",
@@ -152,7 +152,7 @@ export function FeaturedCollectionSection() {
               }}
               onMouseEnter={(e) => {
                 const el = e.currentTarget as HTMLAnchorElement;
-                el.style.borderColor = "#F5F1E8";
+                el.style.borderColor = "var(--color-cream)";
                 el.style.backgroundColor = "rgba(245,241,232,0.08)";
               }}
               onMouseLeave={(e) => {
@@ -186,7 +186,7 @@ export function FeaturedCollectionSection() {
                     fontFamily: "var(--font-heading)",
                     fontSize: "1.6rem",
                     fontWeight: 600,
-                    color: "#F5F1E8",
+                    color: "var(--color-cream)",
                     lineHeight: 1,
                     marginBottom: "4px",
                   }}

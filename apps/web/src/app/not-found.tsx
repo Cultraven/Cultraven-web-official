@@ -5,8 +5,8 @@ export default function NotFound() {
   return (
     <div
       style={{
-        minHeight: "100vh",
-        backgroundColor: "#172545",
+        minHeight: "100dvh",
+        backgroundColor: "var(--color-navy)",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -25,14 +25,14 @@ export default function NotFound() {
           gap: "0.75rem",
           marginBottom: "4rem",
           textDecoration: "none",
-          color: "#F5F1E8",
+          color: "var(--color-cream)",
         }}
       >
         <div
           style={{
             width: "36px",
             height: "36px",
-            border: "2px solid #F5F1E8",
+            border: "2px solid var(--color-cream)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -62,7 +62,7 @@ export default function NotFound() {
           fontSize: "0.75rem",
           letterSpacing: "0.25em",
           textTransform: "uppercase",
-          color: "#C94227",
+          color: "var(--color-crimson)",
           marginBottom: "1rem",
         }}
       >
@@ -76,13 +76,13 @@ export default function NotFound() {
           fontWeight: 400,
           fontSize: "clamp(3.5rem, 10vw, 7rem)",
           lineHeight: 0.95,
-          color: "#F5F1E8",
+          color: "var(--color-cream)",
           marginBottom: "2rem",
         }}
       >
         Lost in the
         <br />
-        <em style={{ color: "#C94227" }}>Shadows.</em>
+        <em style={{ color: "var(--color-crimson)" }}>Shadows.</em>
       </h1>
 
       <p
@@ -103,8 +103,8 @@ export default function NotFound() {
         style={{
           display: "inline-block",
           padding: "1rem 2.5rem",
-          backgroundColor: "#C94227",
-          color: "#F5F1E8",
+          backgroundColor: "var(--color-crimson)",
+          color: "var(--color-cream)",
           fontFamily: "var(--font-sans)",
           fontWeight: 800,
           fontSize: "0.75rem",

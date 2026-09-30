@@ -11,7 +11,7 @@ interface EditorialBannerProps {
 
 export function EditorialBanner({ banner }: EditorialBannerProps) {
   return (
-    <section style={{ backgroundColor: "#172545" }}>
+    <section style={{ backgroundColor: "var(--color-navy)" }}>
       <div
         style={{
           display: "grid",
@@ -47,7 +47,7 @@ export function EditorialBanner({ banner }: EditorialBannerProps) {
               fontSize: "0.7rem",
               letterSpacing: "0.2em",
               textTransform: "uppercase",
-              color: "#C94227",
+              color: "var(--color-crimson)",
               marginBottom: "1.25rem",
               display: "block",
             }}
@@ -62,7 +62,7 @@ export function EditorialBanner({ banner }: EditorialBannerProps) {
               fontWeight: 400,
               fontSize: "clamp(2.5rem,5vw,5rem)",
               lineHeight: 1.05,
-              color: "#F5F1E8",
+              color: "var(--color-cream)",
               marginBottom: "1.5rem",
             }}
           >
@@ -89,9 +89,9 @@ export function EditorialBanner({ banner }: EditorialBannerProps) {
               alignItems: "center",
               justifyContent: "center",
               padding: "1rem 2.25rem",
-              border: "2px solid #F5F1E8",
+              border: "2px solid var(--color-cream)",
               backgroundColor: "transparent",
-              color: "#F5F1E8",
+              color: "var(--color-cream)",
               fontFamily: "var(--font-sans)",
               fontWeight: 800,
               fontSize: "0.75rem",
@@ -102,13 +102,13 @@ export function EditorialBanner({ banner }: EditorialBannerProps) {
             }}
             onMouseEnter={(e) => {
               const el = e.currentTarget as HTMLAnchorElement;
-              el.style.backgroundColor = "#F5F1E8";
-              el.style.color = "#172545";
+              el.style.backgroundColor = "var(--color-cream)";
+              el.style.color = "var(--color-navy)";
             }}
             onMouseLeave={(e) => {
               const el = e.currentTarget as HTMLAnchorElement;
               el.style.backgroundColor = "transparent";
-              el.style.color = "#F5F1E8";
+              el.style.color = "var(--color-cream)";
             }}
           >
             {banner.ctaLabel}

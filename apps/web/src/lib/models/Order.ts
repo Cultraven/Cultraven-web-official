@@ -42,11 +42,13 @@ export interface IOrder extends Document {
   subtotalPaise: number;
   discountPaise: number;
   shippingPaise: number;
+  codFeePaise: number;
   totalPaise: number;
   couponCode?: string;
   deliveryAddress: DeliveryAddress;
-  razorpayOrderId: string;
+  razorpayOrderId?: string;
   razorpayPaymentId?: string;
+  paymentMethod: "razorpay" | "cod";
   paymentStatus: "pending" | "paid" | "failed" | "refunded";
   fulfillmentStatus: "processing" | "confirmed" | "shipped" | "delivered" | "cancelled" | "returned";
   trackingNumber?: string;
@@ -92,11 +94,13 @@ const OrderSchema = new Schema<IOrder>(
     subtotalPaise: { type: Number, required: true, min: 0 },
     discountPaise: { type: Number, default: 0, min: 0 },
     shippingPaise: { type: Number, default: 0, min: 0 },
+    codFeePaise: { type: Number, default: 0, min: 0 },
     totalPaise: { type: Number, required: true, min: 0 },
     couponCode: { type: String },
     deliveryAddress: { type: AddressSchema, required: true },
-    razorpayOrderId: { type: String, required: true, unique: true },
+    razorpayOrderId: { type: String, unique: true, sparse: true },
     razorpayPaymentId: { type: String },
+    paymentMethod: { type: String, enum: ["razorpay", "cod"], default: "razorpay" },
     paymentStatus: {
       type: String,
       enum: ["pending", "paid", "failed", "refunded"],

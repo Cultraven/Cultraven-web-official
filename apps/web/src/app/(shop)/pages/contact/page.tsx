@@ -77,11 +77,11 @@ export default function ContactPage() {
   const FIELD_STYLE = (hasError?: string): React.CSSProperties => ({
     width: "100%",
     padding: "0.875rem 1rem",
-    border: `1.5px solid ${hasError ? "#C94227" : "#D9D3C4"}`,
-    backgroundColor: "#F5F1E8",
+    border: `1.5px solid ${hasError ? "var(--color-crimson)" : "var(--color-border)"}`,
+    backgroundColor: "var(--color-cream)",
     fontFamily: "var(--font-sans)",
     fontSize: "0.9rem",
-    color: "#172545",
+    color: "var(--color-navy)",
     outline: "none",
   });
 
@@ -92,23 +92,23 @@ export default function ContactPage() {
     fontSize: "0.68rem",
     letterSpacing: "0.14em",
     textTransform: "uppercase",
-    color: "#172545",
+    color: "var(--color-navy)",
     marginBottom: "0.5rem",
   };
 
   const ERR_STYLE: React.CSSProperties = {
     fontFamily: "var(--font-sans)",
     fontSize: "0.72rem",
-    color: "#C94227",
+    color: "var(--color-crimson)",
     marginTop: "0.35rem",
   };
 
   return (
-    <div style={{ backgroundColor: "#F5F1E8", minHeight: "100vh" }}>
+    <div style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh" }}>
       {/* Hero */}
       <div
         style={{
-          backgroundColor: "#172545",
+          backgroundColor: "var(--color-navy)",
           padding: "clamp(3rem,6vw,6rem) clamp(1.25rem,4vw,5rem)",
         }}
       >
@@ -119,7 +119,7 @@ export default function ContactPage() {
             fontWeight: 800,
             letterSpacing: "0.22em",
             textTransform: "uppercase",
-            color: "#C94227",
+            color: "var(--color-crimson)",
             marginBottom: "0.75rem",
           }}
         >
@@ -131,7 +131,7 @@ export default function ContactPage() {
             
             fontSize: "clamp(2.5rem,6vw,5rem)",
             fontWeight: 600,
-            color: "#F5F1E8",
+            color: "var(--color-cream)",
             lineHeight: 1,
           }}
         >
@@ -155,7 +155,7 @@ export default function ContactPage() {
             <div
               style={{
                 padding: "3rem",
-                backgroundColor: "#172545",
+                backgroundColor: "var(--color-navy)",
                 textAlign: "center",
               }}
             >
@@ -164,14 +164,14 @@ export default function ContactPage() {
                   width: "56px",
                   height: "56px",
                   borderRadius: "50%",
-                  backgroundColor: "#C94227",
+                  backgroundColor: "var(--color-crimson)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   margin: "0 auto 1.5rem",
                 }}
               >
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#F5F1E8" strokeWidth="3">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-cream)" strokeWidth="3">
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               </div>
@@ -181,7 +181,7 @@ export default function ContactPage() {
                   
                   fontSize: "1.75rem",
                   fontWeight: 600,
-                  color: "#F5F1E8",
+                  color: "var(--color-cream)",
                   marginBottom: "0.75rem",
                 }}
               >
@@ -206,7 +206,7 @@ export default function ContactPage() {
                   
                   fontSize: "2rem",
                   fontWeight: 600,
-                  color: "#172545",
+                  color: "var(--color-navy)",
                   marginBottom: "2rem",
                 }}
               >
@@ -305,7 +305,7 @@ export default function ContactPage() {
                     {errors.message
                       ? <p id="contact-message-error" role="alert" style={ERR_STYLE}>{errors.message}</p>
                       : <span />}
-                    <p style={{ ...ERR_STYLE, color: form.message.length >= 20 ? "#6B7280" : "#9CA3AF" }}>
+                    <p style={{ ...ERR_STYLE, color: form.message.length >= 20 ? "var(--color-gray)" : "#9CA3AF" }}>
                       {form.message.length}/500
                     </p>
                   </div>
@@ -322,8 +322,8 @@ export default function ContactPage() {
                   disabled={status === "loading"}
                   style={{
                     padding: "1.1rem",
-                    backgroundColor: "#172545",
-                    color: "#F5F1E8",
+                    backgroundColor: "var(--color-navy)",
+                    color: "var(--color-cream)",
                     fontFamily: "var(--font-sans)",
                     fontWeight: 800,
                     fontSize: "0.82rem",
@@ -349,7 +349,7 @@ export default function ContactPage() {
               
               fontSize: "2rem",
               fontWeight: 600,
-              color: "#172545",
+              color: "var(--color-navy)",
               marginBottom: "2rem",
             }}
           >
@@ -368,12 +368,12 @@ export default function ContactPage() {
                 alignItems: "center",
                 gap: "1.25rem",
                 padding: "1.25rem",
-                backgroundColor: "#EAE6DB",
+                backgroundColor: "var(--color-mist)",
                 textDecoration: "none",
                 transition: "background-color 0.2s ease",
               }}
-              onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = "#D9D3C4")}
-              onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = "#EAE6DB")}
+              onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = "var(--color-border)")}
+              onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = "var(--color-mist)")}
             >
               <div
                 style={{
@@ -392,10 +392,10 @@ export default function ContactPage() {
                 </svg>
               </div>
               <div>
-                <p style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.85rem", color: "#172545", marginBottom: "3px" }}>
+                <p style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.85rem", color: "var(--color-navy)", marginBottom: "3px" }}>
                   WhatsApp
                 </p>
-                <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", color: "#6B7280" }}>
+                <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", color: "var(--color-gray)" }}>
                   Fastest response — typically within 1 hour
                 </p>
               </div>
@@ -412,12 +412,12 @@ export default function ContactPage() {
                 alignItems: "center",
                 gap: "1.25rem",
                 padding: "1.25rem",
-                backgroundColor: "#EAE6DB",
+                backgroundColor: "var(--color-mist)",
                 textDecoration: "none",
                 transition: "background-color 0.2s ease",
               }}
-              onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = "#D9D3C4")}
-              onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = "#EAE6DB")}
+              onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = "var(--color-border)")}
+              onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = "var(--color-mist)")}
             >
               <div
                 style={{
@@ -438,10 +438,10 @@ export default function ContactPage() {
                 </svg>
               </div>
               <div>
-                <p style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.85rem", color: "#172545", marginBottom: "3px" }}>
+                <p style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.85rem", color: "var(--color-navy)", marginBottom: "3px" }}>
                   Instagram DM
                 </p>
-                <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", color: "#6B7280" }}>
+                <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", color: "var(--color-gray)" }}>
                   @cultraven — usually replies within a few hours
                 </p>
               </div>
@@ -455,35 +455,35 @@ export default function ContactPage() {
                 alignItems: "center",
                 gap: "1.25rem",
                 padding: "1.25rem",
-                backgroundColor: "#EAE6DB",
+                backgroundColor: "var(--color-mist)",
                 textDecoration: "none",
                 transition: "background-color 0.2s ease",
               }}
-              onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = "#D9D3C4")}
-              onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = "#EAE6DB")}
+              onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = "var(--color-border)")}
+              onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = "var(--color-mist)")}
             >
               <div
                 style={{
                   width: "48px",
                   height: "48px",
                   borderRadius: "50%",
-                  backgroundColor: "#172545",
+                  backgroundColor: "var(--color-navy)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   flexShrink: 0,
                 }}
               >
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F5F1E8" strokeWidth="2">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-cream)" strokeWidth="2">
                   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                   <polyline points="22,6 12,13 2,6" />
                 </svg>
               </div>
               <div>
-                <p style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.85rem", color: "#172545", marginBottom: "3px" }}>
+                <p style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.85rem", color: "var(--color-navy)", marginBottom: "3px" }}>
                   Email
                 </p>
-                <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", color: "#6B7280" }}>
+                <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", color: "var(--color-gray)" }}>
                   support@cultraven.com — reply within 24 hours
                 </p>
               </div>
@@ -492,9 +492,9 @@ export default function ContactPage() {
 
           <div
             style={{
-              backgroundColor: "#EAE6DB",
+              backgroundColor: "var(--color-mist)",
               padding: "1.25rem",
-              borderLeft: "3px solid #172545",
+              borderLeft: "3px solid var(--color-navy)",
             }}
           >
             <p
@@ -504,7 +504,7 @@ export default function ContactPage() {
                 fontSize: "0.68rem",
                 letterSpacing: "0.12em",
                 textTransform: "uppercase",
-                color: "#172545",
+                color: "var(--color-navy)",
                 marginBottom: "0.5rem",
               }}
             >

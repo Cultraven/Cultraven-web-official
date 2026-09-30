@@ -60,7 +60,7 @@ export function ShopTheLookSection() {
   return (
     <section
       aria-labelledby="stl-heading"
-      style={{ backgroundColor: "#F5F1E8", padding: "clamp(4rem,8vw,8rem) 0" }}
+      style={{ backgroundColor: "var(--color-cream)", padding: "clamp(4rem,8vw,8rem) 0" }}
     >
       <div style={{ paddingInline: "clamp(1.25rem,4vw,5rem)" }}>
         {/* Heading */}
@@ -73,7 +73,7 @@ export function ShopTheLookSection() {
               fontWeight: 800,
               letterSpacing: "0.22em",
               textTransform: "uppercase",
-              color: "#C94227",
+              color: "var(--color-crimson)",
               marginBottom: "0.6rem",
             }}
           >
@@ -86,7 +86,7 @@ export function ShopTheLookSection() {
               
               fontSize: "clamp(2rem,4.5vw,3.75rem)",
               fontWeight: 600,
-              color: "#172545",
+              color: "var(--color-navy)",
               lineHeight: 1,
             }}
           >
@@ -105,7 +105,7 @@ export function ShopTheLookSection() {
               position: "relative",
               aspectRatio: "3/4",
               overflow: "hidden",
-              backgroundColor: "#EAE6DB",
+              backgroundColor: "var(--color-mist)",
             }}
           >
             <Image
@@ -117,11 +117,11 @@ export function ShopTheLookSection() {
             />
 
             {/* Hotspots */}
-            <Link href="/products/raven-oversized-tee-acid-black" style={{ position: "absolute", top: "40%", left: "55%", width: "24px", height: "24px", backgroundColor: "#C94227", borderRadius: "50%", border: "2px solid #F5F1E8", display: "flex", alignItems: "center", justifyContent: "center", transform: "translate(-50%, -50%)", cursor: "pointer", zIndex: 10, animation: "pulse 2s infinite" }}>
-              <span style={{ color: "#F5F1E8", fontWeight: 900, fontSize: "16px", lineHeight: 1 }}>+</span>
+            <Link href="/products/raven-oversized-tee-acid-black" style={{ position: "absolute", top: "40%", left: "55%", width: "24px", height: "24px", backgroundColor: "var(--color-crimson)", borderRadius: "50%", border: "2px solid var(--color-cream)", display: "flex", alignItems: "center", justifyContent: "center", transform: "translate(-50%, -50%)", cursor: "pointer", zIndex: 10, animation: "pulse 2s infinite" }}>
+              <span style={{ color: "var(--color-cream)", fontWeight: 900, fontSize: "16px", lineHeight: 1 }}>+</span>
             </Link>
-            <Link href="/products/cargo-wide-leg-military-olive" style={{ position: "absolute", top: "75%", left: "45%", width: "24px", height: "24px", backgroundColor: "#C94227", borderRadius: "50%", border: "2px solid #F5F1E8", display: "flex", alignItems: "center", justifyContent: "center", transform: "translate(-50%, -50%)", cursor: "pointer", zIndex: 10, animation: "pulse 2s infinite" }}>
-              <span style={{ color: "#F5F1E8", fontWeight: 900, fontSize: "16px", lineHeight: 1 }}>+</span>
+            <Link href="/products/cargo-wide-leg-military-olive" style={{ position: "absolute", top: "75%", left: "45%", width: "24px", height: "24px", backgroundColor: "var(--color-crimson)", borderRadius: "50%", border: "2px solid var(--color-cream)", display: "flex", alignItems: "center", justifyContent: "center", transform: "translate(-50%, -50%)", cursor: "pointer", zIndex: 10, animation: "pulse 2s infinite" }}>
+              <span style={{ color: "var(--color-cream)", fontWeight: 900, fontSize: "16px", lineHeight: 1 }}>+</span>
             </Link>
 
             {/* "LOOK 01" label */}
@@ -130,8 +130,8 @@ export function ShopTheLookSection() {
                 position: "absolute",
                 bottom: "1.5rem",
                 left: "1.5rem",
-                backgroundColor: "#172545",
-                color: "#F5F1E8",
+                backgroundColor: "var(--color-navy)",
+                color: "var(--color-cream)",
                 fontFamily: "var(--font-sans)",
                 fontSize: "10px",
                 fontWeight: 900,
@@ -151,7 +151,7 @@ export function ShopTheLookSection() {
                 fontFamily: "var(--font-sans)",
                 fontSize: "0.8rem",
                 fontWeight: 600,
-                color: "#6B7280",
+                color: "var(--color-gray)",
                 letterSpacing: "0.1em",
                 textTransform: "uppercase",
                 marginBottom: "1.5rem",
@@ -169,8 +169,8 @@ export function ShopTheLookSection() {
                 style={{
                   width: "100%",
                   padding: "1.1rem",
-                  backgroundColor: "#172545",
-                  color: "#F5F1E8",
+                  backgroundColor: "var(--color-navy)",
+                  color: "var(--color-cream)",
                   fontFamily: "var(--font-sans)",
                   fontWeight: 800,
                   fontSize: "0.78rem",
@@ -181,10 +181,10 @@ export function ShopTheLookSection() {
                   transition: "background-color 0.2s ease",
                 }}
                 onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#C94227";
+                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--color-crimson)";
                 }}
                 onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#172545";
+                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--color-navy)";
                 }}
               >
                 SHOP COMPLETE LOOK
@@ -223,7 +223,7 @@ function LookProductRow({
         gap: "1rem",
         alignItems: "center",
         padding: "1.25rem 0",
-        borderBottom: isLast ? "none" : "1px solid #D9D3C4",
+        borderBottom: isLast ? "none" : "1px solid var(--color-border)",
       }}
     >
       {/* Thumbnail */}
@@ -235,7 +235,7 @@ function LookProductRow({
           width: "80px",
           height: "100px",
           overflow: "hidden",
-          backgroundColor: "#EAE6DB",
+          backgroundColor: "var(--color-mist)",
           flexShrink: 0,
         }}
       >
@@ -258,7 +258,7 @@ function LookProductRow({
             fontWeight: 800,
             letterSpacing: "0.16em",
             textTransform: "uppercase",
-            color: "#C94227",
+            color: "var(--color-crimson)",
             marginBottom: "4px",
           }}
         >
@@ -272,7 +272,7 @@ function LookProductRow({
             fontSize: "0.72rem",
             letterSpacing: "0.04em",
             textTransform: "uppercase",
-            color: "#172545",
+            color: "var(--color-navy)",
             display: "block",
             marginBottom: "4px",
             lineHeight: 1.3,
@@ -285,7 +285,7 @@ function LookProductRow({
             fontFamily: "var(--font-sans)",
             fontSize: "0.7rem",
             fontWeight: 500,
-            color: "#6B7280",
+            color: "var(--color-gray)",
           }}
         >
           {p.color} · {fmt(p.pricePaise)}
@@ -301,10 +301,10 @@ function LookProductRow({
         aria-label={`Add ${p.title} to bag`}
         style={{
           padding: "0.65rem 1rem",
-          backgroundColor: added ? "#C94227" : "transparent",
-          color: added ? "#F5F1E8" : "#172545",
+          backgroundColor: added ? "var(--color-crimson)" : "transparent",
+          color: added ? "var(--color-cream)" : "var(--color-navy)",
           border: "2px solid",
-          borderColor: added ? "#C94227" : "#172545",
+          borderColor: added ? "var(--color-crimson)" : "var(--color-navy)",
           fontFamily: "var(--font-sans)",
           fontWeight: 800,
           fontSize: "0.62rem",

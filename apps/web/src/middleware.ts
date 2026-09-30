@@ -23,6 +23,13 @@ function isMatch(pathname: string, patterns: string[]): boolean {
 }
 
 export async function middleware(req: NextRequest) {
+  if (!process.env.SESSION_SECRET || !process.env.ADMIN_SECRET_TOKEN) {
+    return new NextResponse(
+      JSON.stringify({ error: "Server misconfigured: Missing secrets" }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
+  }
+
   const { pathname } = req.nextUrl;
 
   // ── Helper to verify HMAC-SHA256 token ────────────────────────────────────
@@ -31,7 +38,8 @@ export async function middleware(req: NextRequest) {
     const [encodedPayload, signature] = token.split(".");
     
     try {
-      const secret = process.env.SESSION_SECRET || "cultraven-dev-secret-change-in-prod";
+      const secret = process.env.SESSION_SECRET;
+      if (!secret) return null;
       const encoder = new TextEncoder();
       
       // We can't use node:crypto in Edge, so we use Web Crypto API

@@ -9,7 +9,7 @@ export function TrendingNow({ items = TRENDING_NOW_ITEMS }: { items?: TrendingIt
   return (
     <section
       style={{
-        backgroundColor: "#F5F1E8",
+        backgroundColor: "var(--color-cream)",
         padding: "clamp(4rem,8vw,8rem) 0",
       }}
     >
@@ -21,7 +21,7 @@ export function TrendingNow({ items = TRENDING_NOW_ITEMS }: { items?: TrendingIt
             
             fontSize: "clamp(2rem,4.5vw,3.75rem)",
             fontWeight: 600,
-            color: "#172545",
+            color: "var(--color-navy)",
             marginBottom: "2.5rem",
             lineHeight: 1,
           }}
@@ -55,7 +55,7 @@ export function TrendingNow({ items = TRENDING_NOW_ITEMS }: { items?: TrendingIt
 function TrendCard({ item }: { item: TrendingItem }) {
   return (
     <div
-      style={{ position: "relative", backgroundColor: "#EAE6DB" }}
+      style={{ position: "relative", backgroundColor: "var(--color-mist)" }}
       className="trend-card"
     >
       <Link
@@ -84,8 +84,8 @@ function TrendCard({ item }: { item: TrendingItem }) {
             left: "1.25rem",
             right: "1.25rem",
             padding: "0.85rem 1rem",
-            backgroundColor: "#F5F1E8",
-            border: "2px solid #172545",
+            backgroundColor: "var(--color-cream)",
+            border: "2px solid var(--color-navy)",
             textAlign: "center",
             transition: "background-color 0.2s ease",
           }}
@@ -98,7 +98,7 @@ function TrendCard({ item }: { item: TrendingItem }) {
               fontSize: "0.7rem",
               letterSpacing: "0.14em",
               textTransform: "uppercase",
-              color: "#172545",
+              color: "var(--color-navy)",
             }}
           >
             {item.title}
@@ -108,8 +108,8 @@ function TrendCard({ item }: { item: TrendingItem }) {
 
       <style>{`
         .trend-card:hover .trend-img { transform: scale(1.06); }
-        .trend-card:hover .trend-bar { background-color: #172545; }
-        .trend-card:hover .trend-bar span { color: #F5F1E8; }
+        .trend-card:hover .trend-bar { background-color: var(--color-navy); }
+        .trend-card:hover .trend-bar span { color: var(--color-cream); }
       `}</style>
     </div>
   );

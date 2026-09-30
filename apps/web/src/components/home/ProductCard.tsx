@@ -33,7 +33,7 @@ export function ProductCard({ product, cardWidth = "100%" }: ProductCardProps) {
         flexShrink: 0,
         display: "flex",
         flexDirection: "column",
-        backgroundColor: "#F5F1E8",
+        backgroundColor: "var(--color-cream)",
         border: "var(--border-thick)",
         boxShadow: "var(--shadow-sm)",
         transition: "box-shadow 0.2s ease, transform 0.2s ease",
@@ -49,8 +49,8 @@ export function ProductCard({ product, cardWidth = "100%" }: ProductCardProps) {
           top: "12px",
           right: "12px",
           zIndex: 20,
-          background: "#F5F1E8",
-          border: "2px solid #172545",
+          background: "var(--color-cream)",
+          border: "2px solid var(--color-navy)",
           borderRadius: "50%",
           width: "32px",
           height: "32px",
@@ -58,12 +58,12 @@ export function ProductCard({ product, cardWidth = "100%" }: ProductCardProps) {
           alignItems: "center",
           justifyContent: "center",
           cursor: "pointer",
-          boxShadow: "2px 2px 0px 0px #172545",
+          boxShadow: "2px 2px 0px 0px var(--color-navy)",
           transition: "transform 0.1s ease",
         }}
         className="wishlist-btn"
       >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#172545" strokeWidth="2.5" strokeLinecap="square" strokeLinejoin="miter">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-navy)" strokeWidth="2.5" strokeLinecap="square" strokeLinejoin="miter">
           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
         </svg>
       </button>
@@ -76,7 +76,7 @@ export function ProductCard({ product, cardWidth = "100%" }: ProductCardProps) {
           display: "block",
           aspectRatio: "3/4",
           overflow: "hidden",
-          backgroundColor: "#EAE6DB",
+          backgroundColor: "var(--color-mist)",
           borderBottom: "var(--border-thick)",
         }}
         tabIndex={-1}
@@ -105,16 +105,16 @@ export function ProductCard({ product, cardWidth = "100%" }: ProductCardProps) {
         {badgeText && (
           <div style={{ position: "absolute", top: "12px", left: "12px", zIndex: 10 }}>
             <span style={{ 
-              backgroundColor: "#C94227", 
-              color: "#F5F1E8", 
+              backgroundColor: "var(--color-crimson)", 
+              color: "var(--color-cream)", 
               fontFamily: "var(--font-mono)", 
               fontWeight: 700, 
               fontSize: "10px", 
               letterSpacing: "0.1em", 
               textTransform: "uppercase", 
               padding: "4px 8px",
-              border: "2px solid #172545",
-              boxShadow: "2px 2px 0px 0px #172545",
+              border: "2px solid var(--color-navy)",
+              boxShadow: "2px 2px 0px 0px var(--color-navy)",
               display: "inline-block",
               transform: "rotate(-3deg)"
             }}>
@@ -141,10 +141,10 @@ export function ProductCard({ product, cardWidth = "100%" }: ProductCardProps) {
         >
           <button style={{
             width: "100%",
-            backgroundColor: "#F5F1E8",
-            color: "#172545",
-            border: "2px solid #172545",
-            boxShadow: "2px 2px 0px 0px #172545",
+            backgroundColor: "var(--color-cream)",
+            color: "var(--color-navy)",
+            border: "2px solid var(--color-navy)",
+            boxShadow: "2px 2px 0px 0px var(--color-navy)",
             padding: "8px",
             fontFamily: "var(--font-sans)",
             fontWeight: 900,
@@ -171,7 +171,7 @@ export function ProductCard({ product, cardWidth = "100%" }: ProductCardProps) {
                 lineHeight: "1",
                 letterSpacing: "0.02em",
                 textTransform: "uppercase",
-                color: "#172545",
+                color: "var(--color-navy)",
                 display: "-webkit-box",
                 WebkitLineClamp: 2,
                 WebkitBoxOrient: "vertical",
@@ -188,10 +188,10 @@ export function ProductCard({ product, cardWidth = "100%" }: ProductCardProps) {
             display: "flex", 
             alignItems: "center", 
             gap: "4px", 
-            backgroundColor: "#172545", 
-            color: "#F5F1E8", 
+            backgroundColor: "var(--color-navy)", 
+            color: "var(--color-cream)", 
             padding: "2px 6px", 
-            border: "1.5px solid #172545",
+            border: "1.5px solid var(--color-navy)",
             fontFamily: "var(--font-mono)",
             fontSize: "10px",
             fontWeight: 700,
@@ -203,11 +203,11 @@ export function ProductCard({ product, cardWidth = "100%" }: ProductCardProps) {
         </div>
 
         <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-          <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "14px", color: "#172545" }}>
+          <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "14px", color: "var(--color-navy)" }}>
             {formatPriceINR(price)}
           </span>
           {isOnSale && mrp && (
-            <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "11px", color: "#6B7280", textDecoration: "line-through" }}>
+            <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "11px", color: "var(--color-gray)", textDecoration: "line-through" }}>
               {formatPriceINR(mrp)}
             </span>
           )}
@@ -216,8 +216,8 @@ export function ProductCard({ product, cardWidth = "100%" }: ProductCardProps) {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "auto", paddingTop: "4px" }}>
           {/* Color Swatches */}
           <div style={{ display: "flex", gap: "4px" }}>
-            <div style={{ width: "12px", height: "12px", borderRadius: "50%", backgroundColor: "#1C1C1C", border: "1px solid #172545" }} />
-            <div style={{ width: "12px", height: "12px", borderRadius: "50%", backgroundColor: "#F5F1E8", border: "1px solid #172545" }} />
+            <div style={{ width: "12px", height: "12px", borderRadius: "50%", backgroundColor: "#1C1C1C", border: "1px solid var(--color-navy)" }} />
+            <div style={{ width: "12px", height: "12px", borderRadius: "50%", backgroundColor: "var(--color-cream)", border: "1px solid var(--color-navy)" }} />
           </div>
 
           {/* Size Chips */}
@@ -226,7 +226,7 @@ export function ProductCard({ product, cardWidth = "100%" }: ProductCardProps) {
               <span key={sz} style={{
                 fontSize: "9px",
                 fontWeight: 700,
-                color: "#172545",
+                color: "var(--color-navy)",
                 fontFamily: "var(--font-mono)",
               }}>
                 {sz}
@@ -238,8 +238,8 @@ export function ProductCard({ product, cardWidth = "100%" }: ProductCardProps) {
       
       <style>{`
         .product-card:hover { transform: translate(-2px, -2px); box-shadow: var(--shadow-md) !important; }
-        .wishlist-btn:hover { transform: scale(1.1); background-color: #172545 !important; }
-        .wishlist-btn:hover svg { stroke: #F5F1E8 !important; }
+        .wishlist-btn:hover { transform: scale(1.1); background-color: var(--color-navy) !important; }
+        .wishlist-btn:hover svg { stroke: var(--color-cream) !important; }
         @media (max-width: 1024px) {
           .quick-add-overlay { display: none !important; }
         }
@@ -250,11 +250,11 @@ export function ProductCard({ product, cardWidth = "100%" }: ProductCardProps) {
 
 export function ProductCardSkeleton({ cardWidth = "100%" }: { cardWidth?: number | string }) {
   return (
-    <div style={{ width: typeof cardWidth === "number" ? `${cardWidth}px` : cardWidth, flexShrink: 0, border: "var(--border-thick)", backgroundColor: "#F5F1E8" }}>
-      <div style={{ aspectRatio: "3/4", backgroundColor: "#EAE6DB", borderBottom: "var(--border-thick)", animation: "pulse 1.5s infinite" }} />
+    <div style={{ width: typeof cardWidth === "number" ? `${cardWidth}px` : cardWidth, flexShrink: 0, border: "var(--border-thick)", backgroundColor: "var(--color-cream)" }}>
+      <div style={{ aspectRatio: "3/4", backgroundColor: "var(--color-mist)", borderBottom: "var(--border-thick)", animation: "pulse 1.5s infinite" }} />
       <div style={{ padding: "12px" }}>
-        <div style={{ height: "14px", backgroundColor: "#EAE6DB", width: "75%", marginBottom: "8px" }} />
-        <div style={{ height: "12px", backgroundColor: "#EAE6DB", width: "35%" }} />
+        <div style={{ height: "14px", backgroundColor: "var(--color-mist)", width: "75%", marginBottom: "8px" }} />
+        <div style={{ height: "12px", backgroundColor: "var(--color-mist)", width: "35%" }} />
       </div>
     </div>
   );

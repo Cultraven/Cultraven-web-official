@@ -17,6 +17,7 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { connectToDatabase } from "@/lib/db";
 import { Order } from "@/lib/models/Order";
+import { Product } from "@/lib/models/Product";
 
 // ── Webhook event shape (minimal — extend as needed) ──────────────────────────
 interface RazorpayWebhookPayload {
@@ -47,21 +48,26 @@ interface RazorpayWebhookPayload {
 
 // ── Signature verification ────────────────────────────────────────────────────
 function verifySignature(rawBody: string, signature: string): boolean {
-  const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
-  if (!secret) {
-    console.error("[webhook] RAZORPAY_WEBHOOK_SECRET not set");
+  try {
+    const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
+    if (!secret) {
+      console.error("[webhook] RAZORPAY_WEBHOOK_SECRET not set");
+      return false;
+    }
+
+    const expected = crypto
+      .createHmac("sha256", secret)
+      .update(rawBody)
+      .digest("hex");
+
+    return crypto.timingSafeEqual(
+      Buffer.from(expected, "hex"),
+      Buffer.from(signature, "hex")
+    );
+  } catch (err) {
+    console.error("[webhook] Signature verification failed:", err);
     return false;
   }
-
-  const expected = crypto
-    .createHmac("sha256", secret)
-    .update(rawBody)
-    .digest("hex");
-
-  return crypto.timingSafeEqual(
-    Buffer.from(expected, "hex"),
-    Buffer.from(signature, "hex")
-  );
 }
 
 // ── Event handlers ────────────────────────────────────────────────────────────
@@ -69,19 +75,42 @@ async function handlePaymentCaptured(payload: RazorpayWebhookPayload) {
   const payment = payload.payload?.payment?.entity;
   if (!payment) return;
 
-  console.log("[webhook] payment.captured", {
-    paymentId: payment.id,
-    orderId: payment.order_id,
-    amount: payment.amount,
-    currency: payment.currency,
-    email: payment.email,
-  });
-
-  // 1. Mark order as PAID in database
   try {
     await connectToDatabase();
-    await Order.findOneAndUpdate(
-      { razorpayOrderId: payment.order_id },
+    
+    // Fetch order first to check status and amount
+    const order = await Order.findOne({ razorpayOrderId: payment.order_id });
+    if (!order) {
+      console.warn(`[webhook] Order not found for razorpayOrderId: ${payment.order_id}`);
+      return;
+    }
+
+    // Never overwrite "paid"
+    if (order.paymentStatus === "paid") {
+      console.log(`[webhook] Order ${payment.order_id} is already paid. Ignoring.`);
+      return;
+    }
+
+    // Compare amount
+    if (order.totalPaise !== payment.amount) {
+      console.error(`[webhook] Amount mismatch for order ${payment.order_id}. Expected: ${order.totalPaise}, Got: ${payment.amount}`);
+      // Mark as failed or flag it, but don't mark as paid
+      order.notes = (order.notes || "") + `\nAmount mismatch: expected ${order.totalPaise}, paid ${payment.amount}`;
+      await order.save();
+      return;
+    }
+
+    // Deduct inventory
+    for (const item of order.items) {
+      await Product.findOneAndUpdate(
+        { slug: item.slug },
+        { $inc: { stockCount: -item.quantity } }
+      );
+    }
+
+    // Mark order as PAID
+    await Order.findByIdAndUpdate(
+      order._id,
       {
         $set: {
           paymentStatus: "paid",
@@ -96,27 +125,23 @@ async function handlePaymentCaptured(payload: RazorpayWebhookPayload) {
         },
       }
     );
-    console.log(`[webhook] Order ${payment.order_id} marked as paid`);
+    console.log(`[webhook] Order ${payment.order_id} marked as paid and inventory deducted`);
   } catch (err) {
-    console.error("[webhook] Failed to update order status:", err);
+    console.error("[webhook] Failed to handle payment captured:", err);
   }
-
-  // TODO: Send order confirmation email to customer
-  // TODO: Trigger inventory deduction via inventory-service
 }
 
 async function handlePaymentFailed(payload: RazorpayWebhookPayload) {
   const payment = payload.payload?.payment?.entity;
-  console.log("[webhook] payment.failed", {
-    paymentId: payment?.id,
-    orderId: payment?.order_id,
-  });
 
   // Mark order as failed in database
   try {
     await connectToDatabase();
-    await Order.findOneAndUpdate(
-      { razorpayOrderId: payment?.order_id },
+    const order = await Order.findOne({ razorpayOrderId: payment?.order_id });
+    if (!order || order.paymentStatus === "paid") return; // never overwrite paid
+
+    await Order.findByIdAndUpdate(
+      order._id,
       {
         $set: { paymentStatus: "failed" },
         $push: {
@@ -131,24 +156,11 @@ async function handlePaymentFailed(payload: RazorpayWebhookPayload) {
   } catch (err) {
     console.error("[webhook] Failed to update failed order:", err);
   }
-
-  // TODO: Send payment failure notification to customer
-}
-
-async function handleOrderPaid(payload: RazorpayWebhookPayload) {
-  const order = payload.payload?.order?.entity;
-  console.log("[webhook] order.paid", {
-    orderId: order?.id,
-    receipt: order?.receipt,
-    amount: order?.amount,
-  });
-
-  // TODO: Fulfill the order — trigger packing/shipping workflow
 }
 
 // ── Main handler ──────────────────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
-  // 1. Read raw body as text (needed for HMAC verification)
+  // 1. Read raw body as text
   const rawBody = await req.text();
   const signature = req.headers.get("x-razorpay-signature") ?? "";
 
@@ -170,27 +182,23 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
   }
 
-  // 4. Return 200 immediately (Razorpay expects fast response to avoid retries)
-  // Process event asynchronously
-  (async () => {
-    try {
-      switch (event.event) {
-        case "payment.captured":
-          await handlePaymentCaptured(event);
-          break;
-        case "payment.failed":
-          await handlePaymentFailed(event);
-          break;
-        case "order.paid":
-          await handleOrderPaid(event);
-          break;
-        default:
-          console.log(`[webhook] Unhandled event: ${event.event}`);
-      }
-    } catch (err) {
-      console.error("[webhook] Event handler error:", err);
+  // 4. Await DB work before returning to avoid Serverless timeout
+  try {
+    switch (event.event) {
+      case "payment.captured":
+        await handlePaymentCaptured(event);
+        break;
+      case "payment.failed":
+        await handlePaymentFailed(event);
+        break;
+      default:
+        console.log(`[webhook] Unhandled event: ${event.event}`);
     }
-  })();
+  } catch (err) {
+    console.error("[webhook] Event handler error:", err);
+    // If we fail processing, we can return 500 so Razorpay retries
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
 
   return NextResponse.json({ received: true }, { status: 200 });
 }

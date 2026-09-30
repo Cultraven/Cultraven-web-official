@@ -2,7 +2,7 @@
  * BestsellersSection — "THE ONES EVERYONE WANTS."
  *
  * Horizontal snap-scroll carousel of 6 bestselling products.
- * Mist (#EAE6DB) background for section alternation.
+ * Mist (var(--color-mist)) background for section alternation.
  * Cards include rating stars, hover swap, wishlist, quick-add.
  */
 "use client";
@@ -40,8 +40,8 @@ const BESTSELLERS: BestProduct[] = [
     reviewCount: 248,
     colors: [
       { hex: "#0A0A0A", label: "Black" },
-      { hex: "#F5F1E8", label: "White" },
-      { hex: "#172545", label: "Navy" },
+      { hex: "var(--color-cream)", label: "White" },
+      { hex: "var(--color-navy)", label: "Navy" },
     ],
     badge: "BESTSELLER",
   },
@@ -59,7 +59,7 @@ const BESTSELLERS: BestProduct[] = [
     reviewCount: 184,
     colors: [
       { hex: "#2C2C2C", label: "Charcoal" },
-      { hex: "#172545", label: "Navy" },
+      { hex: "var(--color-navy)", label: "Navy" },
     ],
     badge: "BESTSELLER",
   },
@@ -76,9 +76,9 @@ const BESTSELLERS: BestProduct[] = [
     rating: 4,
     reviewCount: 132,
     colors: [
-      { hex: "#172545", label: "Washed Navy" },
+      { hex: "var(--color-navy)", label: "Washed Navy" },
       { hex: "#0A0A0A", label: "Jet Black" },
-      { hex: "#6B7280", label: "Ash" },
+      { hex: "var(--color-gray)", label: "Ash" },
     ],
   },
   {
@@ -113,7 +113,7 @@ const BESTSELLERS: BestProduct[] = [
     rating: 4,
     reviewCount: 76,
     colors: [
-      { hex: "#EAE6DB", label: "Stone" },
+      { hex: "var(--color-mist)", label: "Stone" },
       { hex: "#9CA3AF", label: "Washed Grey" },
     ],
   },
@@ -131,8 +131,8 @@ const BESTSELLERS: BestProduct[] = [
     reviewCount: 61,
     colors: [
       { hex: "#FFFFFF", label: "White" },
-      { hex: "#EAE6DB", label: "Cream" },
-      { hex: "#172545", label: "Navy" },
+      { hex: "var(--color-mist)", label: "Cream" },
+      { hex: "var(--color-navy)", label: "Navy" },
     ],
     badge: "BESTSELLER",
   },
@@ -153,16 +153,19 @@ export function BestsellersSection() {
       .then(res => res.json())
       .then(data => {
         if (data.products && data.products.length > 0) {
-          const mapped = data.products.slice(0, 6).map((p: any) => ({
+          const mapped = data.products
+            .filter((p: any) => p.pricePaise != null)
+            .slice(0, 6)
+            .map((p: any) => ({
             id: p.id || p._id,
             title: p.title,
             href: `/products/${p.slug || p.id}`,
             image: p.image || fallbackProducts[0].image,
             hoverImage: p.hoverImage || p.image || fallbackProducts[0].hoverImage,
-            pricePaise: p.pricePaise || 199900,
-            mrpPaise: p.mrpPaise || 249900,
-            rating: 5,
-            reviewCount: Math.floor(Math.random() * 200) + 10,
+            pricePaise: p.pricePaise,
+            mrpPaise: p.mrpPaise || p.pricePaise,
+            rating: p.rating || 0,
+            reviewCount: p.reviewCount || 0,
             colors: Array.isArray(p.colors)
               ? p.colors
                   .filter((c: any) => c && typeof c.hex === "string" && typeof c.label === "string")
@@ -185,7 +188,7 @@ export function BestsellersSection() {
   return (
     <section
       aria-labelledby="bs-heading"
-      style={{ backgroundColor: "#EAE6DB", padding: "clamp(4rem,8vw,8rem) 0" }}
+      style={{ backgroundColor: "var(--color-mist)", padding: "clamp(4rem,8vw,8rem) 0" }}
     >
       <div style={{ paddingInline: "clamp(1.25rem,4vw,5rem)" }}>
         {/* Header */}
@@ -208,7 +211,7 @@ export function BestsellersSection() {
                 fontWeight: 800,
                 letterSpacing: "0.22em",
                 textTransform: "uppercase",
-                color: "#C94227",
+                color: "var(--color-crimson)",
                 marginBottom: "0.6rem",
               }}
             >
@@ -221,7 +224,7 @@ export function BestsellersSection() {
                 
                 fontSize: "clamp(2rem,4.5vw,3.75rem)",
                 fontWeight: 600,
-                color: "#172545",
+                color: "var(--color-navy)",
                 lineHeight: 1,
                 letterSpacing: "-0.01em",
               }}
@@ -239,8 +242,8 @@ export function BestsellersSection() {
                 fontWeight: 800,
                 letterSpacing: "0.18em",
                 textTransform: "uppercase",
-                color: "#172545",
-                borderBottom: "2px solid #172545",
+                color: "var(--color-navy)",
+                borderBottom: "2px solid var(--color-navy)",
                 paddingBottom: "2px",
                 marginRight: "1rem",
               }}
@@ -257,9 +260,9 @@ export function BestsellersSection() {
                   width: "40px",
                   height: "40px",
                   borderRadius: "50%",
-                  border: "2px solid #172545",
+                  border: "2px solid var(--color-navy)",
                   background: "transparent",
-                  color: "#172545",
+                  color: "var(--color-navy)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -269,13 +272,13 @@ export function BestsellersSection() {
                 }}
                 onMouseEnter={(e) => {
                   (e.currentTarget as HTMLButtonElement).style.backgroundColor =
-                    "#172545";
-                  (e.currentTarget as HTMLButtonElement).style.color = "#F5F1E8";
+                    "var(--color-navy)";
+                  (e.currentTarget as HTMLButtonElement).style.color = "var(--color-cream)";
                 }}
                 onMouseLeave={(e) => {
                   (e.currentTarget as HTMLButtonElement).style.backgroundColor =
                     "transparent";
-                  (e.currentTarget as HTMLButtonElement).style.color = "#172545";
+                  (e.currentTarget as HTMLButtonElement).style.color = "var(--color-navy)";
                 }}
               >
                 <svg
@@ -354,7 +357,7 @@ function BestsellerCard({ product: p }: { product: BestProduct }) {
           display: "block",
           aspectRatio: "3/4",
           overflow: "hidden",
-          backgroundColor: "#F5F1E8",
+          backgroundColor: "var(--color-cream)",
           marginBottom: "0.85rem",
         }}
       >
@@ -367,8 +370,8 @@ function BestsellerCard({ product: p }: { product: BestProduct }) {
               left: "12px",
               zIndex: 10,
               backgroundColor:
-                p.badge === "LOW STOCK" ? "#C94227" : "#172545",
-              color: "#F5F1E8",
+                p.badge === "LOW STOCK" ? "var(--color-crimson)" : "var(--color-navy)",
+              color: "var(--color-cream)",
               fontFamily: "var(--font-sans)",
               fontSize: "9px",
               fontWeight: 900,
@@ -410,8 +413,8 @@ function BestsellerCard({ product: p }: { product: BestProduct }) {
             width="14"
             height="14"
             viewBox="0 0 24 24"
-            fill={wishlisted ? "#C94227" : "none"}
-            stroke={wishlisted ? "#C94227" : "#172545"}
+            fill={wishlisted ? "var(--color-crimson)" : "none"}
+            stroke={wishlisted ? "var(--color-crimson)" : "var(--color-navy)"}
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -454,8 +457,8 @@ function BestsellerCard({ product: p }: { product: BestProduct }) {
             style={{
               width: "100%",
               padding: "0.75rem",
-              backgroundColor: added ? "#C94227" : "#172545",
-              color: "#F5F1E8",
+              backgroundColor: added ? "var(--color-crimson)" : "var(--color-navy)",
+              color: "var(--color-cream)",
               fontFamily: "var(--font-sans)",
               fontWeight: 800,
               fontSize: "0.65rem",
@@ -484,8 +487,8 @@ function BestsellerCard({ product: p }: { product: BestProduct }) {
                 width="11"
                 height="11"
                 viewBox="0 0 24 24"
-                fill={i < p.rating ? "#C94227" : "none"}
-                stroke={i < p.rating ? "#C94227" : "#D9D3C4"}
+                fill={i < p.rating ? "var(--color-crimson)" : "none"}
+                stroke={i < p.rating ? "var(--color-crimson)" : "var(--color-border)"}
                 strokeWidth="2"
               >
                 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
@@ -497,7 +500,7 @@ function BestsellerCard({ product: p }: { product: BestProduct }) {
               fontFamily: "var(--font-sans)",
               fontSize: "0.68rem",
               fontWeight: 600,
-              color: "#6B7280",
+              color: "var(--color-gray)",
             }}
           >
             ({p.reviewCount})
@@ -530,7 +533,7 @@ function BestsellerCard({ product: p }: { product: BestProduct }) {
             fontSize: "0.7rem",
             letterSpacing: "0.06em",
             textTransform: "uppercase",
-            color: "#172545",
+            color: "var(--color-navy)",
             marginBottom: "5px",
             lineHeight: 1.35,
           }}
@@ -544,7 +547,7 @@ function BestsellerCard({ product: p }: { product: BestProduct }) {
               fontFamily: "var(--font-sans)",
               fontWeight: 700,
               fontSize: "0.85rem",
-              color: "#172545",
+              color: "var(--color-navy)",
             }}
           >
             {fmt(p.pricePaise)}
@@ -556,7 +559,7 @@ function BestsellerCard({ product: p }: { product: BestProduct }) {
                   fontFamily: "var(--font-sans)",
                   fontWeight: 500,
                   fontSize: "0.72rem",
-                  color: "#6B7280",
+                  color: "var(--color-gray)",
                   textDecoration: "line-through",
                 }}
               >
@@ -567,7 +570,7 @@ function BestsellerCard({ product: p }: { product: BestProduct }) {
                   fontFamily: "var(--font-sans)",
                   fontWeight: 700,
                   fontSize: "0.65rem",
-                  color: "#C94227",
+                  color: "var(--color-crimson)",
                 }}
               >
                 {disc}% off

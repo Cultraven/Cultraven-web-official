@@ -3,7 +3,7 @@
  *
  * 6-image editorial grid of lifestyle photography.
  * Instagram handle CTA at the top right.
- * Clean mist (#EAE6DB) background, no heavy UI chrome.
+ * Clean mist (var(--color-mist)) background, no heavy UI chrome.
  */
 "use client";
 
@@ -57,7 +57,7 @@ export function CommunitySection() {
   return (
     <section
       aria-labelledby="community-heading"
-      style={{ backgroundColor: "#EAE6DB", padding: "clamp(4rem,8vw,8rem) 0" }}
+      style={{ backgroundColor: "var(--color-mist)", padding: "clamp(4rem,8vw,8rem) 0" }}
     >
       <div style={{ paddingInline: "clamp(1.25rem,4vw,5rem)" }}>
         {/* Header */}
@@ -80,7 +80,7 @@ export function CommunitySection() {
                 fontWeight: 800,
                 letterSpacing: "0.22em",
                 textTransform: "uppercase",
-                color: "#C94227",
+                color: "var(--color-crimson)",
                 marginBottom: "0.6rem",
               }}
             >
@@ -93,7 +93,7 @@ export function CommunitySection() {
                 
                 fontSize: "clamp(2rem,4.5vw,3.75rem)",
                 fontWeight: 600,
-                color: "#172545",
+                color: "var(--color-navy)",
                 lineHeight: 1,
               }}
             >
@@ -114,8 +114,8 @@ export function CommunitySection() {
               fontWeight: 800,
               letterSpacing: "0.18em",
               textTransform: "uppercase",
-              color: "#172545",
-              borderBottom: "2px solid #172545",
+              color: "var(--color-navy)",
+              borderBottom: "2px solid var(--color-navy)",
               paddingBottom: "2px",
               whiteSpace: "nowrap",
             }}
@@ -158,13 +158,13 @@ export function CommunitySection() {
               fontFamily: "var(--font-sans)",
               fontSize: "0.8rem",
               fontWeight: 600,
-              color: "#6B7280",
+              color: "var(--color-gray)",
               letterSpacing: "0.06em",
               marginBottom: "1.25rem",
             }}
           >
             Tag{" "}
-            <strong style={{ color: "#172545" }}>@cultraven</strong> to be featured
+            <strong style={{ color: "var(--color-navy)" }}>@cultraven</strong> to be featured
           </p>
           <Link
             href="https://www.instagram.com/cultraven"
@@ -175,9 +175,9 @@ export function CommunitySection() {
               alignItems: "center",
               justifyContent: "center",
               padding: "0.875rem 2.25rem",
-              border: "2px solid #172545",
+              border: "2px solid var(--color-navy)",
               backgroundColor: "transparent",
-              color: "#172545",
+              color: "var(--color-navy)",
               fontFamily: "var(--font-sans)",
               fontWeight: 800,
               fontSize: "0.72rem",
@@ -187,13 +187,13 @@ export function CommunitySection() {
             }}
             onMouseEnter={(e) => {
               const el = e.currentTarget as HTMLAnchorElement;
-              el.style.backgroundColor = "#172545";
-              el.style.color = "#F5F1E8";
+              el.style.backgroundColor = "var(--color-navy)";
+              el.style.color = "var(--color-cream)";
             }}
             onMouseLeave={(e) => {
               const el = e.currentTarget as HTMLAnchorElement;
               el.style.backgroundColor = "transparent";
-              el.style.color = "#172545";
+              el.style.color = "var(--color-navy)";
             }}
           >
             FOLLOW US ON INSTAGRAM
@@ -223,7 +223,7 @@ function UGCTile({ image }: { image: UGCImage }) {
       style={{
         position: "relative",
         overflow: "hidden",
-        backgroundColor: "#D9D3C4",
+        backgroundColor: "var(--color-border)",
         cursor: "pointer",
       }}
       onMouseEnter={() => setHovered(true)}
@@ -260,13 +260,13 @@ function UGCTile({ image }: { image: UGCImage }) {
             height="28"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#F5F1E8"
+            stroke="var(--color-cream)"
             strokeWidth="1.5"
             style={{ marginBottom: "8px", margin: "0 auto 8px" }}
           >
             <rect x="2" y="2" width="20" height="20" rx="5" />
             <circle cx="12" cy="12" r="4" />
-            <circle cx="17.5" cy="6.5" r="1.2" fill="#F5F1E8" stroke="none" />
+            <circle cx="17.5" cy="6.5" r="1.2" fill="var(--color-cream)" stroke="none" />
           </svg>
           <p
             style={{
@@ -275,7 +275,7 @@ function UGCTile({ image }: { image: UGCImage }) {
               fontWeight: 800,
               letterSpacing: "0.16em",
               textTransform: "uppercase",
-              color: "#F5F1E8",
+              color: "var(--color-cream)",
             }}
           >
             @CULTRAVEN

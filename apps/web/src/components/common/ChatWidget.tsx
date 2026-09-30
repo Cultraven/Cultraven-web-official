@@ -143,8 +143,8 @@ export function ChatWidget() {
           width: "56px",
           height: "56px",
           borderRadius: "50%",
-          backgroundColor: "#172545",
-          color: "#F5F1E8",
+          backgroundColor: "var(--color-navy)",
+          color: "var(--color-cream)",
           border: "none",
           cursor: "pointer",
           display: "flex",
@@ -154,11 +154,11 @@ export function ChatWidget() {
           transition: "transform 0.2s ease, background-color 0.2s ease",
         }}
         onMouseEnter={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#C94227";
+          (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--color-crimson)";
           (e.currentTarget as HTMLButtonElement).style.transform = "scale(1.08)";
         }}
         onMouseLeave={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#172545";
+          (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--color-navy)";
           (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)";
         }}
       >
@@ -187,7 +187,7 @@ export function ChatWidget() {
             zIndex: 9998,
             width: "360px",
             maxWidth: "calc(100vw - 2rem)",
-            backgroundColor: "#F5F1E8",
+            backgroundColor: "var(--color-cream)",
             boxShadow: "0 8px 40px rgba(23,37,69,0.22)",
             borderRadius: "4px",
             overflow: "hidden",
@@ -197,7 +197,7 @@ export function ChatWidget() {
           {/* Header */}
           <div
             style={{
-              backgroundColor: "#172545",
+              backgroundColor: "var(--color-navy)",
               padding: "1.25rem 1.5rem",
               display: "flex",
               alignItems: "center",
@@ -212,7 +212,7 @@ export function ChatWidget() {
                   fontSize: "0.88rem",
                   letterSpacing: "0.08em",
                   textTransform: "uppercase",
-                  color: "#F5F1E8",
+                  color: "var(--color-cream)",
                   marginBottom: "2px",
                 }}
               >
@@ -245,8 +245,8 @@ export function ChatWidget() {
                     fontWeight: 800,
                     letterSpacing: "0.1em",
                     textTransform: "uppercase",
-                    backgroundColor: tab === t ? "#C94227" : "rgba(245,241,232,0.15)",
-                    color: "#F5F1E8",
+                    backgroundColor: tab === t ? "var(--color-crimson)" : "rgba(245,241,232,0.15)",
+                    color: "var(--color-cream)",
                     transition: "background-color 0.15s ease",
                   }}
                 >
@@ -263,7 +263,7 @@ export function ChatWidget() {
                 style={{
                   fontFamily: "var(--font-sans)",
                   fontSize: "0.75rem",
-                  color: "#6B7280",
+                  color: "var(--color-gray)",
                   marginBottom: "1rem",
                   lineHeight: 1.5,
                 }}
@@ -326,7 +326,7 @@ export function ChatWidget() {
                         fontFamily: "var(--font-sans)",
                         fontWeight: 700,
                         fontSize: "0.85rem",
-                        color: "#172545",
+                        color: "var(--color-navy)",
                         marginBottom: "2px",
                       }}
                     >
@@ -336,7 +336,7 @@ export function ChatWidget() {
                       style={{
                         fontFamily: "var(--font-sans)",
                         fontSize: "0.7rem",
-                        color: "#6B7280",
+                        color: "var(--color-gray)",
                       }}
                     >
                       @{INSTAGRAM_HANDLE}
@@ -399,7 +399,7 @@ export function ChatWidget() {
                         fontFamily: "var(--font-sans)",
                         fontWeight: 700,
                         fontSize: "0.85rem",
-                        color: "#172545",
+                        color: "var(--color-navy)",
                         marginBottom: "2px",
                       }}
                     >
@@ -409,7 +409,7 @@ export function ChatWidget() {
                       style={{
                         fontFamily: "var(--font-sans)",
                         fontSize: "0.7rem",
-                        color: "#6B7280",
+                        color: "var(--color-gray)",
                       }}
                     >
                       Typically replies within 1 hour
@@ -436,7 +436,7 @@ export function ChatWidget() {
                   style={{
                     background: "none",
                     border: "none",
-                    color: "#172545",
+                    color: "var(--color-navy)",
                     fontWeight: 700,
                     cursor: "pointer",
                     fontSize: "0.68rem",
@@ -481,7 +481,7 @@ export function ChatWidget() {
                           width: "28px",
                           height: "28px",
                           borderRadius: "50%",
-                          backgroundColor: "#172545",
+                          backgroundColor: "var(--color-navy)",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
@@ -498,8 +498,8 @@ export function ChatWidget() {
                         maxWidth: "78%",
                         padding: "0.625rem 0.875rem",
                         borderRadius: msg.from === "user" ? "12px 12px 3px 12px" : "12px 12px 12px 3px",
-                        backgroundColor: msg.from === "user" ? "#172545" : "#F5F1E8",
-                        color: msg.from === "user" ? "#F5F1E8" : "#172545",
+                        backgroundColor: msg.from === "user" ? "var(--color-navy)" : "var(--color-cream)",
+                        color: msg.from === "user" ? "var(--color-cream)" : "var(--color-navy)",
                         fontFamily: "var(--font-sans)",
                         fontSize: "0.82rem",
                         lineHeight: 1.55,
@@ -550,7 +550,7 @@ export function ChatWidget() {
                     border: "1.5px solid #E5E7EB",
                     fontFamily: "var(--font-sans)",
                     fontSize: "0.82rem",
-                    color: "#172545",
+                    color: "var(--color-navy)",
                     outline: "none",
                     borderRadius: "3px",
                   }}
@@ -563,7 +563,7 @@ export function ChatWidget() {
                     width: "40px",
                     height: "40px",
                     borderRadius: "3px",
-                    backgroundColor: input.trim() && !typing ? "#172545" : "#E5E7EB",
+                    backgroundColor: input.trim() && !typing ? "var(--color-navy)" : "#E5E7EB",
                     border: "none",
                     cursor: input.trim() && !typing ? "pointer" : "not-allowed",
                     display: "flex",
@@ -578,7 +578,7 @@ export function ChatWidget() {
                     height="16"
                     viewBox="0 0 24 24"
                     fill="none"
-                    stroke={input.trim() && !typing ? "#F5F1E8" : "#9CA3AF"}
+                    stroke={input.trim() && !typing ? "var(--color-cream)" : "#9CA3AF"}
                     strokeWidth="2.5"
                     strokeLinecap="round"
                   >
@@ -605,13 +605,13 @@ export function ChatWidget() {
                     }}
                     style={{
                       padding: "3px 10px",
-                      backgroundColor: "#EAE6DB",
+                      backgroundColor: "var(--color-mist)",
                       border: "var(--border-thick)", boxShadow: "var(--shadow-md)",
                       borderRadius: "20px",
                       fontFamily: "var(--font-sans)",
                       fontSize: "0.65rem",
                       fontWeight: 600,
-                      color: "#172545",
+                      color: "var(--color-navy)",
                       cursor: "pointer",
                       whiteSpace: "nowrap",
                     }}

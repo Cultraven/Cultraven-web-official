@@ -101,7 +101,7 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
                   onFocus={() => handleMouseEnter(item.id)}
                   onClick={() => toggle(item.id)}
                   onKeyDown={(e) => handleTriggerKey(e, item.id)}
-                  style={{ display: "flex", alignItems: "center", gap: "0.25rem", fontFamily: "'Inter', sans-serif", fontSize: "13px", fontWeight: 900, letterSpacing: "0.05em", textTransform: "uppercase", background: "none", border: "none", cursor: "pointer", color: "#F5F1E8", transition: "opacity 0.2s" }}
+                  style={{ display: "flex", alignItems: "center", gap: "0.25rem", fontFamily: "'Inter', sans-serif", fontSize: "13px", fontWeight: 900, letterSpacing: "0.05em", textTransform: "uppercase", background: "none", border: "none", cursor: "pointer", color: "var(--color-cream)", transition: "opacity 0.2s" }}
                   onMouseOver={(e) => (e.currentTarget.style.opacity = "0.6")}
                   onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
                 >
@@ -117,7 +117,7 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
                 <Link
                   href={item.href ?? "#"}
                   role="menuitem"
-                  style={{ display: "block", fontFamily: "'Inter', sans-serif", fontSize: "13px", fontWeight: 900, letterSpacing: "0.05em", textTransform: "uppercase", color: "#F5F1E8", textDecoration: "none", transition: "opacity 0.2s" }}
+                  style={{ display: "block", fontFamily: "'Inter', sans-serif", fontSize: "13px", fontWeight: 900, letterSpacing: "0.05em", textTransform: "uppercase", color: "var(--color-cream)", textDecoration: "none", transition: "opacity 0.2s" }}
                   onMouseOver={(e) => (e.currentTarget.style.opacity = "0.6")}
                   onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
                 >
@@ -140,11 +140,11 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
                     top: "100%",
                     left: 0,
                     width: "100%",
-                    backgroundColor: "#F5F1E8",
-                    color: "#172545",
+                    backgroundColor: "var(--color-cream)",
+                    color: "var(--color-navy)",
                     zIndex: 100,
                     boxShadow: "0 8px 24px rgba(23,37,69,0.12)",
-                    borderTop: "1px solid #D9D3C4"
+                    borderTop: "1px solid var(--color-border)"
                   }}
                 >
                   <div style={{ maxWidth: "1152px", margin: "0 auto", padding: "3rem" }}>
@@ -234,7 +234,7 @@ function MegaPanel({
       {/* Category columns */}
       {item.columns?.map((col) => (
         <div key={col.heading} style={{ minWidth: "150px" }}>
-          <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: "11px", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.1em", color: "#6B7280", margin: "0 0 1.5rem 0" }}>
+          <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: "11px", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--color-gray)", margin: "0 0 1.5rem 0" }}>
             {col.heading}
           </h3>
           <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -243,9 +243,9 @@ function MegaPanel({
                 <Link
                   href={sub.href}
                   onClick={onClose}
-                  style={{ fontFamily: "'Inter', sans-serif", fontSize: "14px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: "#172545", textDecoration: "none", display: "flex", alignItems: "center", transition: "color 0.2s" }}
-                  onMouseOver={(e) => (e.currentTarget.style.color = "#6B7280")}
-                  onMouseOut={(e) => (e.currentTarget.style.color = "#172545")}
+                  style={{ fontFamily: "'Inter', sans-serif", fontSize: "14px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--color-navy)", textDecoration: "none", display: "flex", alignItems: "center", transition: "color 0.2s" }}
+                  onMouseOver={(e) => (e.currentTarget.style.color = "var(--color-gray)")}
+                  onMouseOut={(e) => (e.currentTarget.style.color = "var(--color-navy)")}
                 >
                   {sub.label}
                   {sub.isNew && (
@@ -266,7 +266,7 @@ function MegaPanel({
           <Link
             href={featuredHref}
             onClick={onClose}
-            style={{ display: "block", position: "relative", aspectRatio: "3/4", overflow: "hidden", backgroundColor: "#EAE6DB" }}
+            style={{ display: "block", position: "relative", aspectRatio: "3/4", overflow: "hidden", backgroundColor: "var(--color-mist)" }}
             onMouseOver={(e) => {
               const img = e.currentTarget.querySelector('img');
               if(img) img.style.transform = "scale(1.05)";
@@ -316,7 +316,7 @@ function MegaPanel({
                   fontWeight: 900,
                   letterSpacing: "0.1em",
                   textTransform: "uppercase",
-                  color: "#F5F1E8",
+                  color: "var(--color-cream)",
                 }}
               >
                 {featuredLabel}

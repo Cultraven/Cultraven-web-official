@@ -67,7 +67,7 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
     padding: "0.875rem",
     backgroundColor: "#0F1419",
     border: "1px solid rgba(245,241,232,0.1)",
-    color: "#F5F1E8",
+    color: "var(--color-cream)",
     fontFamily: "var(--font-sans)",
     fontSize: "0.875rem",
     borderRadius: "4px",
@@ -143,12 +143,12 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
         </div>
 
         <label style={{ display: "flex", alignItems: "center", gap: "0.75rem", cursor: "pointer" }}>
-          <input type="checkbox" name="inStock" checked={formData.inStock} onChange={handleChange} style={{ width: "20px", height: "20px", accentColor: "#C94227" }} />
+          <input type="checkbox" name="inStock" checked={formData.inStock} onChange={handleChange} style={{ width: "20px", height: "20px", accentColor: "var(--color-crimson)" }} />
           <span style={LABEL_STYLE}>In Stock</span>
         </label>
 
         <div style={{ marginTop: "1rem" }}>
-          <button type="submit" disabled={loading} style={{ padding: "1rem 2rem", backgroundColor: "#C94227", color: "#F5F1E8", border: "none", borderRadius: "4px", fontWeight: 700, fontSize: "0.875rem", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer" }}>
+          <button type="submit" disabled={loading} style={{ padding: "1rem 2rem", backgroundColor: "var(--color-crimson)", color: "var(--color-cream)", border: "none", borderRadius: "4px", fontWeight: 700, fontSize: "0.875rem", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer" }}>
             {loading ? "Saving..." : "Save Product"}
           </button>
         </div>

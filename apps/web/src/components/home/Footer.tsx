@@ -126,7 +126,7 @@ export function Footer({ config }: FooterProps) {
       {/* ── Main footer body ─────────────────────────────────────────────── */}
       <div
         style={{
-          backgroundColor: "#F5F1E8",
+          backgroundColor: "var(--color-cream)",
           padding: "clamp(4rem,8vw,6rem) clamp(1.25rem,4vw,5rem) 0",
         }}
       >
@@ -157,15 +157,15 @@ export function Footer({ config }: FooterProps) {
                   width: "40px",
                   height: "40px",
                   border: "var(--border-thick)",
-                  backgroundColor: "#172545",
+                  backgroundColor: "var(--color-navy)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   flexShrink: 0,
-                  boxShadow: "2px 2px 0px 0px #172545"
+                  boxShadow: "2px 2px 0px 0px var(--color-navy)"
                 }}
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F5F1E8" strokeWidth="2.5" strokeLinecap="square">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-cream)" strokeWidth="2.5" strokeLinecap="square">
                   <path d="M12 21V12M12 12L4 4M12 12L20 4" />
                 </svg>
               </div>
@@ -176,7 +176,7 @@ export function Footer({ config }: FooterProps) {
                   fontSize: "32px",
                   letterSpacing: "0.05em",
                   textTransform: "uppercase",
-                  color: "#172545",
+                  color: "var(--color-navy)",
                 }}
               >
                 CULTRAVEN
@@ -189,7 +189,7 @@ export function Footer({ config }: FooterProps) {
                 fontSize: "12px",
                 fontWeight: 800,
                 lineHeight: 1.5,
-                color: "#172545",
+                color: "var(--color-navy)",
                 maxWidth: "240px",
                 marginBottom: "2rem",
                 textTransform: "uppercase"
@@ -209,15 +209,15 @@ export function Footer({ config }: FooterProps) {
                   aria-label={`CULTRAVEN on ${s.platform}`}
                   className="social-btn"
                   style={{
-                    color: "#F5F1E8",
-                    backgroundColor: "#172545",
-                    border: "2px solid #172545",
+                    color: "var(--color-cream)",
+                    backgroundColor: "var(--color-navy)",
+                    border: "2px solid var(--color-navy)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     width: "44px",
                     height: "44px",
-                    boxShadow: "2px 2px 0px 0px #172545",
+                    boxShadow: "2px 2px 0px 0px var(--color-navy)",
                     transition: "transform 0.1s ease"
                   }}
                 >
@@ -236,7 +236,7 @@ export function Footer({ config }: FooterProps) {
                 fontSize: "14px",
                 letterSpacing: "0.1em",
                 textTransform: "uppercase",
-                color: "#172545",
+                color: "var(--color-navy)",
                 marginBottom: "1.5rem",
               }}
             >
@@ -254,13 +254,13 @@ export function Footer({ config }: FooterProps) {
                       fontWeight: 800,
                       fontSize: "12px",
                       textTransform: "uppercase",
-                      color: "#172545",
+                      color: "var(--color-navy)",
                       textDecoration: "none",
                       borderBottom: "2px solid transparent",
                       transition: "border-color 0.2s ease"
                     }}
                     onMouseEnter={(e) =>
-                      ((e.currentTarget as HTMLAnchorElement).style.borderBottomColor = "#172545")
+                      ((e.currentTarget as HTMLAnchorElement).style.borderBottomColor = "var(--color-navy)")
                     }
                     onMouseLeave={(e) =>
                       ((e.currentTarget as HTMLAnchorElement).style.borderBottomColor = "transparent")
@@ -282,7 +282,7 @@ export function Footer({ config }: FooterProps) {
                 fontSize: "14px",
                 letterSpacing: "0.1em",
                 textTransform: "uppercase",
-                color: "#172545",
+                color: "var(--color-navy)",
                 marginBottom: "1.5rem",
               }}
             >
@@ -298,13 +298,13 @@ export function Footer({ config }: FooterProps) {
                       fontWeight: 800,
                       fontSize: "12px",
                       textTransform: "uppercase",
-                      color: "#172545",
+                      color: "var(--color-navy)",
                       textDecoration: "none",
                       borderBottom: "2px solid transparent",
                       transition: "border-color 0.2s ease"
                     }}
                     onMouseEnter={(e) =>
-                      ((e.currentTarget as HTMLAnchorElement).style.borderBottomColor = "#172545")
+                      ((e.currentTarget as HTMLAnchorElement).style.borderBottomColor = "var(--color-navy)")
                     }
                     onMouseLeave={(e) =>
                       ((e.currentTarget as HTMLAnchorElement).style.borderBottomColor = "transparent")
@@ -326,7 +326,7 @@ export function Footer({ config }: FooterProps) {
                 fontSize: "14px",
                 letterSpacing: "0.1em",
                 textTransform: "uppercase",
-                color: "#172545",
+                color: "var(--color-navy)",
                 marginBottom: "1.5rem",
               }}
             >
@@ -338,7 +338,7 @@ export function Footer({ config }: FooterProps) {
                 fontSize: "12px",
                 fontWeight: 800,
                 lineHeight: 1.5,
-                color: "#172545",
+                color: "var(--color-navy)",
                 marginBottom: "1.25rem",
                 textTransform: "uppercase"
               }}
@@ -352,11 +352,11 @@ export function Footer({ config }: FooterProps) {
                   fontFamily: "var(--font-sans)",
                   fontWeight: 900,
                   fontSize: "12px",
-                  color: "#F5F1E8",
-                  backgroundColor: "#172545",
+                  color: "var(--color-cream)",
+                  backgroundColor: "var(--color-navy)",
                   padding: "1rem",
-                  border: "2px solid #172545",
-                  boxShadow: "4px 4px 0px 0px #172545",
+                  border: "2px solid var(--color-navy)",
+                  boxShadow: "4px 4px 0px 0px var(--color-navy)",
                   textTransform: "uppercase"
                 }}
               >
@@ -379,9 +379,9 @@ export function Footer({ config }: FooterProps) {
                     style={{
                       width: "100%",
                       padding: "12px",
-                      backgroundColor: "#F5F1E8",
-                      border: "2px solid #172545",
-                      color: "#172545",
+                      backgroundColor: "var(--color-cream)",
+                      border: "2px solid var(--color-navy)",
+                      color: "var(--color-navy)",
                       fontFamily: "var(--font-sans)",
                       fontSize: "12px",
                       fontWeight: 800,
@@ -395,15 +395,15 @@ export function Footer({ config }: FooterProps) {
                     style={{
                       width: "100%",
                       padding: "12px",
-                      backgroundColor: "#C94227",
-                      color: "#F5F1E8",
+                      backgroundColor: "var(--color-crimson)",
+                      color: "var(--color-cream)",
                       fontFamily: "var(--font-sans)",
                       fontWeight: 900,
                       fontSize: "12px",
                       letterSpacing: "0.1em",
                       textTransform: "uppercase",
-                      border: "2px solid #172545",
-                      boxShadow: "4px 4px 0px 0px #172545",
+                      border: "2px solid var(--color-navy)",
+                      boxShadow: "4px 4px 0px 0px var(--color-navy)",
                       cursor: status === "loading" ? "not-allowed" : "pointer",
                       transition: "transform 0.1s ease",
                     }}
@@ -418,7 +418,7 @@ export function Footer({ config }: FooterProps) {
                       fontFamily: "var(--font-sans)",
                       fontSize: "10px",
                       fontWeight: 900,
-                      color: "#C94227",
+                      color: "var(--color-crimson)",
                       marginTop: "0.5rem",
                       textTransform: "uppercase"
                     }}
@@ -438,7 +438,7 @@ export function Footer({ config }: FooterProps) {
                   fontSize: "10px",
                   letterSpacing: "0.1em",
                   textTransform: "uppercase",
-                  color: "#172545",
+                  color: "var(--color-navy)",
                   marginBottom: "0.75rem",
                 }}
               >
@@ -450,13 +450,13 @@ export function Footer({ config }: FooterProps) {
                     key={badge}
                     style={{
                       padding: "6px 10px",
-                      border: "2px solid #172545",
+                      border: "2px solid var(--color-navy)",
                       fontFamily: "var(--font-mono)",
                       fontWeight: 700,
                       fontSize: "10px",
-                      color: "#172545",
-                      backgroundColor: "#F5F1E8",
-                      boxShadow: "2px 2px 0px 0px #172545"
+                      color: "var(--color-navy)",
+                      backgroundColor: "var(--color-cream)",
+                      boxShadow: "2px 2px 0px 0px var(--color-navy)"
                     }}
                   >
                     {badge}
@@ -486,7 +486,7 @@ export function Footer({ config }: FooterProps) {
               fontWeight: 700,
               fontSize: "12px",
               textTransform: "uppercase",
-              color: "#172545",
+              color: "var(--color-navy)",
             }}
           >
             {config.copyrightText}
@@ -497,7 +497,7 @@ export function Footer({ config }: FooterProps) {
               fontWeight: 700,
               fontSize: "12px",
               textTransform: "uppercase",
-              color: "#172545",
+              color: "var(--color-navy)",
             }}
           >
             MADE IN INDIA
@@ -508,7 +508,7 @@ export function Footer({ config }: FooterProps) {
               fontWeight: 700,
               fontSize: "12px",
               textTransform: "uppercase",
-              color: "#172545",
+              color: "var(--color-navy)",
             }}
           >
             PREMIUM STREETWEAR
@@ -517,8 +517,8 @@ export function Footer({ config }: FooterProps) {
       </div>
 
       <style>{`
-        .social-btn:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0px 0px #172545 !important; }
-        .newsletter-btn:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px 0px #172545 !important; }
+        .social-btn:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0px 0px var(--color-navy) !important; }
+        .newsletter-btn:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px 0px var(--color-navy) !important; }
         
         .marquee-content {
           animation: marquee 20s linear infinite;

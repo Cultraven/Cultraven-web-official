@@ -17,7 +17,7 @@ export function ProductCarousel({ config, products, loading = false }: ProductCa
   const skeletonCount = config.limit ?? 4;
 
   return (
-    <section style={{ backgroundColor: "#F5F1E8", padding: "clamp(4rem,8vw,8rem) 0" }}>
+    <section style={{ backgroundColor: "var(--color-cream)", padding: "clamp(4rem,8vw,8rem) 0" }}>
       <div style={{ paddingInline: "clamp(1.25rem,4vw,5rem)" }}>
         {/* Header */}
         <div
@@ -28,7 +28,7 @@ export function ProductCarousel({ config, products, loading = false }: ProductCa
             flexWrap: "wrap",
             gap: "1rem",
             marginBottom: "2.5rem",
-            borderBottom: "2px solid #172545",
+            borderBottom: "2px solid var(--color-navy)",
             paddingBottom: "1rem",
           }}
         >
@@ -39,7 +39,7 @@ export function ProductCarousel({ config, products, loading = false }: ProductCa
                 
                 fontSize: "clamp(2rem,4.5vw,3.75rem)",
                 fontWeight: 600,
-                color: "#172545",
+                color: "var(--color-navy)",
                 lineHeight: 1,
               }}
             >
@@ -50,7 +50,7 @@ export function ProductCarousel({ config, products, loading = false }: ProductCa
                 style={{
                   fontFamily: "var(--font-sans)",
                   fontSize: "0.85rem",
-                  color: "#6B7280",
+                  color: "var(--color-gray)",
                   marginTop: "0.4rem",
                 }}
               >
@@ -67,8 +67,8 @@ export function ProductCarousel({ config, products, loading = false }: ProductCa
               fontWeight: 800,
               letterSpacing: "0.18em",
               textTransform: "uppercase",
-              color: "#172545",
-              borderBottom: "2px solid #172545",
+              color: "var(--color-navy)",
+              borderBottom: "2px solid var(--color-navy)",
               paddingBottom: "2px",
               whiteSpace: "nowrap",
             }}

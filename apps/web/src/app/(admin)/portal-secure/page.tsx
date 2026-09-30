@@ -21,8 +21,8 @@ const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
   Processing: { bg: "rgba(245,158,11,0.15)", text: "#D97706" },
   Shipped: { bg: "rgba(59,130,246,0.15)", text: "#2563EB" },
   Delivered: { bg: "rgba(16,185,129,0.15)", text: "#059669" },
-  Pending: { bg: "rgba(156,163,175,0.15)", text: "#6B7280" },
-  Cancelled: { bg: "rgba(201,66,39,0.15)", text: "#C94227" },
+  Pending: { bg: "rgba(156,163,175,0.15)", text: "var(--color-gray)" },
+  Cancelled: { bg: "rgba(201,66,39,0.15)", text: "var(--color-crimson)" },
 };
 
 const QUICK_ACTIONS = [
@@ -80,7 +80,7 @@ export default function AdminDashboardPage() {
             fontWeight: 700,
             letterSpacing: "0.14em",
             textTransform: "uppercase",
-            color: "#C94227",
+            color: "var(--color-crimson)",
             marginBottom: "0.5rem",
           }}
         >
@@ -91,7 +91,7 @@ export default function AdminDashboardPage() {
             fontFamily: "var(--font-sans)",
             fontWeight: 800,
             fontSize: "1.75rem",
-            color: "#F5F1E8",
+            color: "var(--color-cream)",
             letterSpacing: "-0.02em",
           }}
         >
@@ -137,7 +137,7 @@ export default function AdminDashboardPage() {
                 fontFamily: "var(--font-sans)",
                 fontWeight: 800,
                 fontSize: "2rem",
-                color: "#F5F1E8",
+                color: "var(--color-cream)",
                 letterSpacing: "-0.02em",
                 marginBottom: "0.5rem",
               }}
@@ -150,7 +150,7 @@ export default function AdminDashboardPage() {
                   fontFamily: "var(--font-sans)",
                   fontSize: "0.72rem",
                   fontWeight: 700,
-                  color: kpi.up ? "#10B981" : "#C94227",
+                  color: kpi.up ? "#10B981" : "var(--color-crimson)",
                 }}
               >
                 {kpi.delta}
@@ -201,7 +201,7 @@ export default function AdminDashboardPage() {
                 fontFamily: "var(--font-sans)",
                 fontWeight: 700,
                 fontSize: "0.88rem",
-                color: "#F5F1E8",
+                color: "var(--color-cream)",
               }}
             >
               Recent Orders
@@ -212,7 +212,7 @@ export default function AdminDashboardPage() {
                 fontFamily: "var(--font-sans)",
                 fontSize: "0.72rem",
                 fontWeight: 600,
-                color: "#C94227",
+                color: "var(--color-crimson)",
                 textDecoration: "none",
               }}
             >
@@ -259,8 +259,8 @@ export default function AdminDashboardPage() {
                         borderTop: "1px solid rgba(255,255,255,0.04)",
                       }}
                     >
-                      <td style={{ padding: "1rem", fontFamily: "var(--font-sans)", fontSize: "0.78rem", fontWeight: 700, color: "#F5F1E8" }}>
-                        <Link href={`/admin/orders/${order.id}`} style={{ textDecoration: "none", color: "#C94227" }}>
+                      <td style={{ padding: "1rem", fontFamily: "var(--font-sans)", fontSize: "0.78rem", fontWeight: 700, color: "var(--color-cream)" }}>
+                        <Link href={`/admin/orders/${order.id}`} style={{ textDecoration: "none", color: "var(--color-crimson)" }}>
                           {order.id}
                         </Link>
                       </td>
@@ -270,7 +270,7 @@ export default function AdminDashboardPage() {
                       <td style={{ padding: "1rem", fontFamily: "var(--font-sans)", fontSize: "0.78rem", color: "rgba(245,241,232,0.75)", textAlign: "center" }}>
                         {order.items}
                       </td>
-                      <td style={{ padding: "1rem", fontFamily: "var(--font-sans)", fontSize: "0.82rem", fontWeight: 700, color: "#F5F1E8" }}>
+                      <td style={{ padding: "1rem", fontFamily: "var(--font-sans)", fontSize: "0.82rem", fontWeight: 700, color: "var(--color-cream)" }}>
                         {order.total}
                       </td>
                       <td style={{ padding: "1rem" }}>
@@ -318,7 +318,7 @@ export default function AdminDashboardPage() {
                 fontFamily: "var(--font-sans)",
                 fontWeight: 700,
                 fontSize: "0.88rem",
-                color: "#F5F1E8",
+                color: "var(--color-cream)",
                 marginBottom: "1.25rem",
               }}
             >
@@ -348,7 +348,7 @@ export default function AdminDashboardPage() {
                     const el = e.currentTarget as HTMLAnchorElement;
                     el.style.backgroundColor = "rgba(201,66,39,0.1)";
                     el.style.borderColor = "rgba(201,66,39,0.3)";
-                    el.style.color = "#F5F1E8";
+                    el.style.color = "var(--color-cream)";
                   }}
                   onMouseLeave={(e) => {
                     const el = e.currentTarget as HTMLAnchorElement;
@@ -378,7 +378,7 @@ export default function AdminDashboardPage() {
                 fontFamily: "var(--font-sans)",
                 fontWeight: 700,
                 fontSize: "0.88rem",
-                color: "#F5F1E8",
+                color: "var(--color-cream)",
                 marginBottom: "1.25rem",
               }}
             >
@@ -408,7 +408,7 @@ export default function AdminDashboardPage() {
                     fontFamily: "var(--font-sans)",
                     fontSize: "0.75rem",
                     fontWeight: 700,
-                    color: item.good ? "#10B981" : "#C94227",
+                    color: item.good ? "#10B981" : "var(--color-crimson)",
                   }}
                 >
                   {item.value}

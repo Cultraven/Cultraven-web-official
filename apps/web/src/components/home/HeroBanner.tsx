@@ -35,10 +35,10 @@ export function HeroBanner({ slide: _slide, siteUrl: _siteUrl }: HeroBannerProps
       style={{
         position: "relative",
         width: "100%",
-        height: "100vh",
-        minHeight: "100vh",
+        height: "100dvh",
+        minHeight: "100dvh",
         overflow: "hidden",
-        backgroundColor: "#172545",
+        backgroundColor: "var(--color-navy)",
       }}
     >
       {/* ── Background looping videos (Horizontal scroll track) ── */}
@@ -59,7 +59,7 @@ export function HeroBanner({ slide: _slide, siteUrl: _siteUrl }: HeroBannerProps
           "https://assets.mixkit.co/videos/preview/mixkit-shoes-of-a-skateboarder-doing-tricks-41689-large.mp4",
           "https://assets.mixkit.co/videos/preview/mixkit-urban-style-girl-with-sunglasses-42296-large.mp4"
         ].map((src, i) => (
-          <div key={i} style={{ flex: "0 0 100vw", height: "100vh", scrollSnapAlign: "start", position: "relative" }}>
+          <div key={i} style={{ flex: "0 0 100vw", height: "100dvh", scrollSnapAlign: "start", position: "relative" }}>
             <video
               autoPlay
               muted
@@ -109,17 +109,17 @@ export function HeroBanner({ slide: _slide, siteUrl: _siteUrl }: HeroBannerProps
           style={{
             display: "inline-flex",
             gap: "8px",
-            backgroundColor: "#F5F1E8",
+            backgroundColor: "var(--color-cream)",
             border: "var(--border-thick)",
-            boxShadow: "4px 4px 0px 0px #172545",
+            boxShadow: "4px 4px 0px 0px var(--color-navy)",
             padding: "8px 16px",
             marginBottom: "24px",
             transform: "rotate(-2deg)",
             pointerEvents: "auto",
           }}
         >
-          <span style={{ fontSize: "12px", fontWeight: 900, color: "#172545", textTransform: "uppercase" }}>NEXT DROP IN:</span>
-          <div style={{ display: "flex", gap: "4px", fontSize: "12px", fontWeight: 900, color: "#C94227" }}>
+          <span style={{ fontSize: "12px", fontWeight: 900, color: "var(--color-navy)", textTransform: "uppercase" }}>NEXT DROP IN:</span>
+          <div style={{ display: "flex", gap: "4px", fontSize: "12px", fontWeight: 900, color: "var(--color-crimson)" }}>
             <span>{timeLeft.days}D</span>:
             <span>{String(timeLeft.hours).padStart(2, "0")}H</span>:
             <span>{String(timeLeft.minutes).padStart(2, "0")}M</span>:
@@ -136,9 +136,9 @@ export function HeroBanner({ slide: _slide, siteUrl: _siteUrl }: HeroBannerProps
             lineHeight: 0.85,
             letterSpacing: "0.02em",
             textTransform: "uppercase",
-            color: "#F5F1E8",
+            color: "var(--color-cream)",
             marginBottom: "32px",
-            textShadow: "4px 4px 0px #172545, 8px 8px 0px rgba(23,37,69,0.5)",
+            textShadow: "4px 4px 0px var(--color-navy), 8px 8px 0px rgba(23,37,69,0.5)",
           }}
         >
           ACID STATE
@@ -167,11 +167,11 @@ export function HeroBanner({ slide: _slide, siteUrl: _siteUrl }: HeroBannerProps
           pointerEvents: "none",
         }}
       >
-        <span style={{ fontFamily: "var(--font-sans)", fontSize: "10px", fontWeight: 900, letterSpacing: "0.2em", color: "#F5F1E8", textTransform: "uppercase" }}>
+        <span style={{ fontFamily: "var(--font-sans)", fontSize: "10px", fontWeight: 900, letterSpacing: "0.2em", color: "var(--color-cream)", textTransform: "uppercase" }}>
           SCROLL TO EXPLORE
         </span>
         <div style={{ width: "2px", height: "40px", backgroundColor: "rgba(245,241,232,0.3)", position: "relative", overflow: "hidden" }}>
-          <div style={{ width: "100%", height: "50%", backgroundColor: "#F5F1E8", animation: "scrollDown 1.5s infinite" }} />
+          <div style={{ width: "100%", height: "50%", backgroundColor: "var(--color-cream)", animation: "scrollDown 1.5s infinite" }} />
         </div>
       </div>
 

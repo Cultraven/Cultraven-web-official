@@ -85,7 +85,7 @@ export function CategoryTiles() {
   return (
     <section
       aria-labelledby="cat-heading"
-      style={{ backgroundColor: "#F5F1E8", padding: "clamp(3rem,6vw,6rem) 0", borderBottom: "var(--border-thick)" }}
+      style={{ backgroundColor: "var(--color-cream)", padding: "clamp(3rem,6vw,6rem) 0", borderBottom: "var(--border-thick)" }}
     >
       <div style={{ paddingInline: "clamp(1rem,4vw,5rem)" }}>
         {/* Header */}
@@ -107,7 +107,7 @@ export function CategoryTiles() {
               fontWeight: 400,
               textTransform: "uppercase",
               letterSpacing: "-0.03em",
-              color: "#172545",
+              color: "var(--color-navy)",
               lineHeight: 0.9,
               textShadow: "3px 3px 0px rgba(23,37,69,0.2)",
             }}
@@ -168,7 +168,7 @@ function CategoryCard({ cat }: { cat: Category }) {
         position: "relative",
         display: "block",
         overflow: "hidden",
-        backgroundColor: "#172545",
+        backgroundColor: "var(--color-navy)",
         border: "var(--border-thick)",
         boxShadow: "var(--shadow-md)",
         gridColumn: isColSpan2 ? "span 2" : "span 1",
@@ -200,14 +200,14 @@ function CategoryCard({ cat }: { cat: Category }) {
           position: "absolute",
           top: "16px",
           right: "16px",
-          backgroundColor: "#C94227",
-          color: "#F5F1E8",
+          backgroundColor: "var(--color-crimson)",
+          color: "var(--color-cream)",
           fontFamily: "var(--font-mono)",
           fontWeight: 700,
           fontSize: "12px",
           padding: "6px 12px",
-          border: "2px solid #172545",
-          boxShadow: "2px 2px 0px 0px #172545",
+          border: "2px solid var(--color-navy)",
+          boxShadow: "2px 2px 0px 0px var(--color-navy)",
           transform: "rotate(3deg)",
           zIndex: 10,
         }}
@@ -232,9 +232,9 @@ function CategoryCard({ cat }: { cat: Category }) {
             fontSize: isRowSpan2 || isColSpan2 ? "clamp(1.5rem, 3vw, 2.5rem)" : "1.25rem",
             textTransform: "uppercase",
             letterSpacing: "-0.02em",
-            color: "#F5F1E8",
+            color: "var(--color-cream)",
             lineHeight: 1.1,
-            textShadow: "2px 2px 0px #172545",
+            textShadow: "2px 2px 0px var(--color-navy)",
           }}
         >
           {cat.title}
@@ -244,7 +244,7 @@ function CategoryCard({ cat }: { cat: Category }) {
       <style>{`
         .cat-card:hover .cat-img { transform: scale(1.05); }
         .cat-card:hover { transform: translate(-2px, -2px); box-shadow: var(--shadow-lg) !important; }
-        .cat-card:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px 0px #172545 !important; }
+        .cat-card:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px 0px var(--color-navy) !important; }
       `}</style>
     </Link>
   );

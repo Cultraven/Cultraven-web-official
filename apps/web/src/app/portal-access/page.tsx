@@ -44,7 +44,7 @@ function AdminLoginForm() {
   return (
     <div
       style={{
-        minHeight: "100vh",
+        minHeight: "100dvh",
         backgroundColor: "#0F1419",
         display: "flex",
         alignItems: "center",
@@ -64,7 +64,7 @@ function AdminLoginForm() {
       >
         {/* Logo */}
         <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
-          <p style={{ fontWeight: 900, fontSize: "1.1rem", letterSpacing: "0.25em", color: "#F5F1E8", textTransform: "uppercase", marginBottom: "0.5rem" }}>
+          <p style={{ fontWeight: 900, fontSize: "1.1rem", letterSpacing: "0.25em", color: "var(--color-cream)", textTransform: "uppercase", marginBottom: "0.5rem" }}>
             CULTRAVEN
           </p>
           <p style={{ fontSize: "0.72rem", letterSpacing: "0.15em", color: "rgba(245,241,232,0.45)", textTransform: "uppercase" }}>
@@ -88,7 +88,7 @@ function AdminLoginForm() {
               onChange={(e) => setEmail(e.target.value)}
               disabled={loading}
               placeholder="Enter admin email"
-              style={{ width: "100%", padding: "0.875rem 1rem", backgroundColor: "#0F1419", border: "1.5px solid rgba(245,241,232,0.15)", color: "#F5F1E8", fontFamily: "var(--font-sans)", fontSize: "0.9rem", outline: "none", boxSizing: "border-box" }}
+              style={{ width: "100%", padding: "0.875rem 1rem", backgroundColor: "#0F1419", border: "1.5px solid rgba(245,241,232,0.15)", color: "var(--color-cream)", fontFamily: "var(--font-sans)", fontSize: "0.9rem", outline: "none", boxSizing: "border-box" }}
             />
           </div>
           <div>
@@ -106,12 +106,12 @@ function AdminLoginForm() {
               onChange={(e) => setPassword(e.target.value)}
               disabled={loading}
               placeholder="Enter admin password"
-              style={{ width: "100%", padding: "0.875rem 1rem", backgroundColor: "#0F1419", border: "1.5px solid rgba(245,241,232,0.15)", color: "#F5F1E8", fontFamily: "var(--font-sans)", fontSize: "0.9rem", outline: "none", boxSizing: "border-box" }}
+              style={{ width: "100%", padding: "0.875rem 1rem", backgroundColor: "#0F1419", border: "1.5px solid rgba(245,241,232,0.15)", color: "var(--color-cream)", fontFamily: "var(--font-sans)", fontSize: "0.9rem", outline: "none", boxSizing: "border-box" }}
             />
           </div>
 
           {error && (
-            <p style={{ fontSize: "0.78rem", color: "#C94227", fontWeight: 600, padding: "0.75rem 1rem", backgroundColor: "rgba(201,66,39,0.1)", border: "1px solid rgba(201,66,39,0.3)" }}>
+            <p style={{ fontSize: "0.78rem", color: "var(--color-crimson)", fontWeight: 600, padding: "0.75rem 1rem", backgroundColor: "rgba(201,66,39,0.1)", border: "1px solid rgba(201,66,39,0.3)" }}>
               {error}
             </p>
           )}
@@ -119,7 +119,7 @@ function AdminLoginForm() {
           <button
             type="submit"
             disabled={loading}
-            style={{ width: "100%", padding: "1rem", backgroundColor: loading ? "#3a4a6b" : "#172545", color: "#F5F1E8", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.78rem", letterSpacing: "0.14em", textTransform: "uppercase", border: "none", cursor: loading ? "not-allowed" : "pointer" }}
+            style={{ width: "100%", padding: "1rem", backgroundColor: loading ? "#3a4a6b" : "var(--color-navy)", color: "var(--color-cream)", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.78rem", letterSpacing: "0.14em", textTransform: "uppercase", border: "none", cursor: loading ? "not-allowed" : "pointer" }}
           >
             {loading ? "AUTHENTICATING..." : "ACCESS ADMIN"}
           </button>
@@ -132,7 +132,7 @@ function AdminLoginForm() {
 export default function AdminLoginPage() {
   return (
     <Suspense fallback={
-      <div style={{ minHeight: "100vh", backgroundColor: "#0F1419", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ minHeight: "100dvh", backgroundColor: "#0F1419", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div style={{ color: "rgba(245,241,232,0.4)", fontFamily: "var(--font-sans)", fontSize: "0.8rem", letterSpacing: "0.1em" }}>LOADING…</div>
       </div>
     }>

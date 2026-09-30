@@ -1,6 +1,6 @@
 /**
  * AnnouncementBar — ticker strip that rotates 1-line offers.
- * Navy background (#172545) with cream text (#F5F1E8).
+ * Navy background (var(--color-navy)) with cream text (var(--color-cream)).
  * Auto-scrolling marquee, pauses on hover.
  */
 "use client";
@@ -36,7 +36,7 @@ export function AnnouncementBar({ data }: AnnouncementBarProps) {
       aria-label="Announcements"
       className="relative w-full overflow-hidden"
       style={{
-        backgroundColor: "#172545",
+        backgroundColor: "var(--color-navy)",
         height: "44px",
         display: "flex",
         alignItems: "center",
@@ -54,7 +54,7 @@ export function AnnouncementBar({ data }: AnnouncementBarProps) {
             key={i}
             className="inline-flex items-center"
             style={{
-              color: "#F5F1E8",
+              color: "var(--color-cream)",
               fontSize: "12px",
               fontWeight: 800,
               letterSpacing: "0.1em",
@@ -70,7 +70,7 @@ export function AnnouncementBar({ data }: AnnouncementBarProps) {
                 display: "inline-block",
                 width: "8px",
                 height: "8px",
-                background: "#C94227",
+                background: "var(--color-crimson)",
                 margin: "0 2rem",
                 flexShrink: 0,
                 transform: "rotate(45deg)",
@@ -85,7 +85,7 @@ export function AnnouncementBar({ data }: AnnouncementBarProps) {
         onClick={() => setDismissed(true)}
         aria-label="Dismiss announcement"
         className="absolute right-3 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center w-6 h-6 rounded-none transition-transform"
-        style={{ color: "#172545", backgroundColor: "#F5F1E8", border: "2px solid #172545" }}
+        style={{ color: "var(--color-navy)", backgroundColor: "var(--color-cream)", border: "2px solid var(--color-navy)" }}
       >
         <svg width="12" height="12" viewBox="0 0 10 10" fill="none">
           <line x1="1" y1="1" x2="9" y2="9" stroke="currentColor" strokeWidth="2" strokeLinecap="square" />

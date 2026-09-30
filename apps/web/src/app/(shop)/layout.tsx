@@ -93,8 +93,8 @@ export default async function ShopLayout({ children }: ShopLayoutProps) {
       { id: "a3", text: "CASH ON DELIVERY AVAILABLE" },
       { id: "a4", text: "EASY 7-DAY RETURNS" },
     ],
-    bgColor: "#172545",
-    textColor: "#F5F1E8",
+    bgColor: "var(--color-navy)",
+    textColor: "var(--color-cream)",
     intervalMs: 4000,
   };
 

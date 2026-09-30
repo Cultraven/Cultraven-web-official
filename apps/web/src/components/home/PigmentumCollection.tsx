@@ -33,7 +33,7 @@ export function PigmentumCollection({
   };
 
   return (
-    <section style={{ backgroundColor: "#EAE6DB", padding: "clamp(4rem,8vw,8rem) 0" }}>
+    <section style={{ backgroundColor: "var(--color-mist)", padding: "clamp(4rem,8vw,8rem) 0" }}>
       <div style={{ paddingInline: "clamp(1.25rem,4vw,5rem)" }}>
         {/* Header */}
         <div
@@ -44,7 +44,7 @@ export function PigmentumCollection({
             flexWrap: "wrap",
             gap: "1rem",
             marginBottom: "2.5rem",
-            borderBottom: "2px solid #172545",
+            borderBottom: "2px solid var(--color-navy)",
             paddingBottom: "1rem",
           }}
         >
@@ -54,7 +54,7 @@ export function PigmentumCollection({
               
               fontSize: "clamp(2rem,4.5vw,3.75rem)",
               fontWeight: 600,
-              color: "#172545",
+              color: "var(--color-navy)",
               lineHeight: 1,
             }}
           >
@@ -68,8 +68,8 @@ export function PigmentumCollection({
               fontWeight: 800,
               letterSpacing: "0.18em",
               textTransform: "uppercase",
-              color: "#172545",
-              borderBottom: "2px solid #172545",
+              color: "var(--color-navy)",
+              borderBottom: "2px solid var(--color-navy)",
               paddingBottom: "2px",
             }}
           >
@@ -98,7 +98,7 @@ export function PigmentumCollection({
                     display: "block",
                     aspectRatio: "3/4",
                     overflow: "hidden",
-                    backgroundColor: "#F5F1E8",
+                    backgroundColor: "var(--color-cream)",
                     marginBottom: "0.85rem",
                   }}
                   className="pig-card"
@@ -117,8 +117,8 @@ export function PigmentumCollection({
                         position: "absolute",
                         top: "12px",
                         left: "12px",
-                        backgroundColor: "#C94227",
-                        color: "#F5F1E8",
+                        backgroundColor: "var(--color-crimson)",
+                        color: "var(--color-cream)",
                         fontFamily: "var(--font-sans)",
                         fontWeight: 900,
                         fontSize: "9px",
@@ -142,7 +142,7 @@ export function PigmentumCollection({
                     fontSize: "0.78rem",
                     letterSpacing: "0.06em",
                     textTransform: "uppercase",
-                    color: "#172545",
+                    color: "var(--color-navy)",
                     marginBottom: "6px",
                     lineHeight: 1.3,
                   }}
@@ -151,10 +151,10 @@ export function PigmentumCollection({
                 </Link>
 
                 <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
-                  <span style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.85rem", color: "#172545" }}>
+                  <span style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.85rem", color: "var(--color-navy)" }}>
                     {fmt(p.pricePaise)}
                   </span>
-                  <span style={{ fontFamily: "var(--font-sans)", fontWeight: 500, fontSize: "0.78rem", color: "#6B7280", textDecoration: "line-through" }}>
+                  <span style={{ fontFamily: "var(--font-sans)", fontWeight: 500, fontSize: "0.78rem", color: "var(--color-gray)", textDecoration: "line-through" }}>
                     {fmt(p.mrpPaise)}
                   </span>
                 </div>
@@ -163,9 +163,9 @@ export function PigmentumCollection({
                   onClick={() => handleQuickAdd(p)}
                   style={{
                     padding: "0.75rem 1rem",
-                    border: "2px solid #172545",
-                    backgroundColor: addedId === p.id ? "#172545" : "transparent",
-                    color: addedId === p.id ? "#F5F1E8" : "#172545",
+                    border: "2px solid var(--color-navy)",
+                    backgroundColor: addedId === p.id ? "var(--color-navy)" : "transparent",
+                    color: addedId === p.id ? "var(--color-cream)" : "var(--color-navy)",
                     fontFamily: "var(--font-sans)",
                     fontWeight: 800,
                     fontSize: "0.7rem",
@@ -177,14 +177,14 @@ export function PigmentumCollection({
                   }}
                   onMouseEnter={(e) => {
                     if (addedId !== p.id) {
-                      (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#172545";
-                      (e.currentTarget as HTMLButtonElement).style.color = "#F5F1E8";
+                      (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--color-navy)";
+                      (e.currentTarget as HTMLButtonElement).style.color = "var(--color-cream)";
                     }
                   }}
                   onMouseLeave={(e) => {
                     if (addedId !== p.id) {
                       (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
-                      (e.currentTarget as HTMLButtonElement).style.color = "#172545";
+                      (e.currentTarget as HTMLButtonElement).style.color = "var(--color-navy)";
                     }
                   }}
                 >

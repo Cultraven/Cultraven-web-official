@@ -34,11 +34,11 @@ const NOT_ELIGIBLE = [
 
 export default function ReturnsPage() {
   return (
-    <div style={{ backgroundColor: "#F5F1E8", minHeight: "100vh" }}>
+    <div style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh" }}>
       {/* Hero */}
       <div
         style={{
-          backgroundColor: "#172545",
+          backgroundColor: "var(--color-navy)",
           padding: "clamp(3rem,6vw,6rem) clamp(1.25rem,4vw,5rem)",
         }}
       >
@@ -49,7 +49,7 @@ export default function ReturnsPage() {
             fontWeight: 800,
             letterSpacing: "0.22em",
             textTransform: "uppercase",
-            color: "#C94227",
+            color: "var(--color-crimson)",
             marginBottom: "0.75rem",
           }}
         >
@@ -61,7 +61,7 @@ export default function ReturnsPage() {
             
             fontSize: "clamp(2.5rem,6vw,5rem)",
             fontWeight: 600,
-            color: "#F5F1E8",
+            color: "var(--color-cream)",
             lineHeight: 1,
             marginBottom: "1rem",
           }}
@@ -82,7 +82,7 @@ export default function ReturnsPage() {
       {/* Stats strip */}
       <div
         style={{
-          backgroundColor: "#EAE6DB",
+          backgroundColor: "var(--color-mist)",
           padding: "2rem clamp(1.25rem,4vw,5rem)",
           display: "grid",
           gridTemplateColumns: "repeat(3, 1fr)",
@@ -101,7 +101,7 @@ export default function ReturnsPage() {
                 fontFamily: "var(--font-heading)",
                 fontWeight: 600,
                 fontSize: "clamp(1.75rem,3vw,2.5rem)",
-                color: "#172545",
+                color: "var(--color-navy)",
                 marginBottom: "0.25rem",
               }}
             >
@@ -114,7 +114,7 @@ export default function ReturnsPage() {
                 fontSize: "0.68rem",
                 letterSpacing: "0.14em",
                 textTransform: "uppercase",
-                color: "#6B7280",
+                color: "var(--color-gray)",
               }}
             >
               {s.label}
@@ -136,7 +136,7 @@ export default function ReturnsPage() {
             fontSize: "0.68rem",
             letterSpacing: "0.22em",
             textTransform: "uppercase",
-            color: "#C94227",
+            color: "var(--color-crimson)",
             marginBottom: "2rem",
           }}
         >
@@ -152,13 +152,13 @@ export default function ReturnsPage() {
           className="returns-steps"
         >
           {HOW_IT_WORKS.map((step) => (
-            <div key={step.step} style={{ paddingTop: "1.5rem", borderTop: "2px solid #172545" }}>
+            <div key={step.step} style={{ paddingTop: "1.5rem", borderTop: "2px solid var(--color-navy)" }}>
               <p
                 style={{
                   fontFamily: "var(--font-heading)",
                   fontWeight: 600,
                   fontSize: "2rem",
-                  color: "#C94227",
+                  color: "var(--color-crimson)",
                   marginBottom: "1rem",
                   lineHeight: 1,
                 }}
@@ -172,7 +172,7 @@ export default function ReturnsPage() {
                   fontSize: "0.82rem",
                   letterSpacing: "0.1em",
                   textTransform: "uppercase",
-                  color: "#172545",
+                  color: "var(--color-navy)",
                   marginBottom: "0.75rem",
                 }}
               >
@@ -196,7 +196,7 @@ export default function ReturnsPage() {
       {/* Eligible / Not eligible */}
       <div
         style={{
-          backgroundColor: "#EAE6DB",
+          backgroundColor: "var(--color-mist)",
           padding: "clamp(3rem,6vw,5rem) clamp(1.25rem,4vw,5rem)",
         }}
       >
@@ -213,7 +213,7 @@ export default function ReturnsPage() {
                 fontSize: "0.68rem",
                 letterSpacing: "0.22em",
                 textTransform: "uppercase",
-                color: "#172545",
+                color: "var(--color-navy)",
                 marginBottom: "1.5rem",
               }}
             >
@@ -227,7 +227,7 @@ export default function ReturnsPage() {
                       width: "18px",
                       height: "18px",
                       borderRadius: "50%",
-                      backgroundColor: "#172545",
+                      backgroundColor: "var(--color-navy)",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -235,7 +235,7 @@ export default function ReturnsPage() {
                       marginTop: "2px",
                     }}
                   >
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#F5F1E8" strokeWidth="3">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--color-cream)" strokeWidth="3">
                       <polyline points="20 6 9 17 4 12" />
                     </svg>
                   </span>
@@ -243,7 +243,7 @@ export default function ReturnsPage() {
                     style={{
                       fontFamily: "var(--font-sans)",
                       fontSize: "0.82rem",
-                      color: "#172545",
+                      color: "var(--color-navy)",
                       lineHeight: 1.5,
                     }}
                   >
@@ -263,7 +263,7 @@ export default function ReturnsPage() {
                 fontSize: "0.68rem",
                 letterSpacing: "0.22em",
                 textTransform: "uppercase",
-                color: "#C94227",
+                color: "var(--color-crimson)",
                 marginBottom: "1.5rem",
               }}
             >
@@ -277,7 +277,7 @@ export default function ReturnsPage() {
                       width: "18px",
                       height: "18px",
                       borderRadius: "50%",
-                      backgroundColor: "#C94227",
+                      backgroundColor: "var(--color-crimson)",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -324,7 +324,7 @@ export default function ReturnsPage() {
             
             fontSize: "clamp(1.75rem,3.5vw,2.75rem)",
             fontWeight: 600,
-            color: "#172545",
+            color: "var(--color-navy)",
           }}
         >
           Need to return something?
@@ -345,8 +345,8 @@ export default function ReturnsPage() {
             style={{
               display: "inline-block",
               padding: "0.875rem 2rem",
-              backgroundColor: "#172545",
-              color: "#F5F1E8",
+              backgroundColor: "var(--color-navy)",
+              color: "var(--color-cream)",
               fontFamily: "var(--font-sans)",
               fontWeight: 800,
               fontSize: "0.72rem",
@@ -362,8 +362,8 @@ export default function ReturnsPage() {
             style={{
               display: "inline-block",
               padding: "0.875rem 2rem",
-              border: "2px solid #172545",
-              color: "#172545",
+              border: "2px solid var(--color-navy)",
+              color: "var(--color-navy)",
               fontFamily: "var(--font-sans)",
               fontWeight: 800,
               fontSize: "0.72rem",

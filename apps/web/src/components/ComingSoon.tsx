@@ -32,8 +32,8 @@ export function ComingSoon({
   return (
     <div
       style={{
-        minHeight: "100vh",
-        backgroundColor: "#172545",
+        minHeight: "100dvh",
+        backgroundColor: "var(--color-navy)",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -60,7 +60,7 @@ export function ComingSoon({
       >
         <path
           d="M200 50 C120 80 60 140 80 200 C100 260 60 280 40 360 C100 320 140 340 160 300 C170 320 160 350 180 370 C190 350 185 330 200 310 C215 330 210 350 220 370 C240 350 230 320 240 300 C260 340 300 320 360 360 C340 280 300 260 320 200 C340 140 280 80 200 50Z"
-          fill="#F5F1E8"
+          fill="var(--color-cream)"
         />
       </svg>
 
@@ -73,7 +73,7 @@ export function ComingSoon({
           gap: "0.75rem",
           marginBottom: "4rem",
           textDecoration: "none",
-          color: "#F5F1E8",
+          color: "var(--color-cream)",
           zIndex: 1,
         }}
       >
@@ -81,7 +81,7 @@ export function ComingSoon({
           style={{
             width: "36px",
             height: "36px",
-            border: "2px solid #F5F1E8",
+            border: "2px solid var(--color-cream)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -114,7 +114,7 @@ export function ComingSoon({
             fontSize: "0.7rem",
             letterSpacing: "0.25em",
             textTransform: "uppercase",
-            color: "#C94227",
+            color: "var(--color-crimson)",
             marginBottom: "1.5rem",
           }}
         >
@@ -130,13 +130,13 @@ export function ComingSoon({
             fontSize: "clamp(3rem, 9vw, 6rem)",
             lineHeight: 0.95,
             letterSpacing: "-0.02em",
-            color: "#F5F1E8",
+            color: "var(--color-cream)",
             marginBottom: "2rem",
           }}
         >
           Dropping
           <br />
-          <em style={{ color: "#C94227" }}>Soon.</em>
+          <em style={{ color: "var(--color-crimson)" }}>Soon.</em>
         </h1>
 
         {/* Description */}
@@ -163,8 +163,8 @@ export function ComingSoon({
                 alignItems: "center",
                 gap: "0.75rem",
                 padding: "1rem 2rem",
-                border: "2px solid #C94227",
-                color: "#C94227",
+                border: "2px solid var(--color-crimson)",
+                color: "var(--color-crimson)",
                 fontFamily: "var(--font-sans)",
                 fontWeight: 800,
                 fontSize: "0.75rem",
@@ -194,7 +194,7 @@ export function ComingSoon({
                   backgroundColor: "rgba(245,241,232,0.08)",
                   border: "2px solid rgba(245,241,232,0.25)",
                   borderRight: "none",
-                  color: "#F5F1E8",
+                  color: "var(--color-cream)",
                   fontFamily: "var(--font-sans)",
                   fontSize: "0.85rem",
                   outline: "none",
@@ -204,9 +204,9 @@ export function ComingSoon({
                 type="submit"
                 style={{
                   padding: "1rem 1.5rem",
-                  backgroundColor: "#C94227",
-                  color: "#F5F1E8",
-                  border: "2px solid #C94227",
+                  backgroundColor: "var(--color-crimson)",
+                  color: "var(--color-cream)",
+                  border: "2px solid var(--color-crimson)",
                   fontFamily: "var(--font-sans)",
                   fontWeight: 800,
                   fontSize: "0.7rem",

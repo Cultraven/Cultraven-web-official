@@ -91,6 +91,7 @@
     background-color: var(--color-cream) !important;
     color: var(--color-navy) !important;
     font-family: var(--font-sans) !important;
+    font-size: 16px !important; /* Prevent iOS zoom */
     font-weight: 800 !important;
     outline: none !important;
     box-shadow: inset 2px 2px 0px 0px rgba(23,37,69,0.1) !important;

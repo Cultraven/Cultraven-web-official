@@ -52,15 +52,15 @@ export function CookieConsentBanner() {
         left: 0,
         right: 0,
         zIndex: 99999,
-        backgroundColor: "#172545",
-        color: "#F5F1E8",
+        backgroundColor: "var(--color-navy)",
+        color: "var(--color-cream)",
         padding: "1.25rem clamp(1.25rem,4vw,5rem)",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
         gap: "1.5rem",
         flexWrap: "wrap",
-        borderTop: "2px solid #C94227",
+        borderTop: "2px solid var(--color-crimson)",
         animation: "slideUpConsent 0.3s ease",
       }}
     >
@@ -74,10 +74,10 @@ export function CookieConsentBanner() {
         }}
       >
         We use cookies to enhance your shopping experience, analyze site traffic, and serve personalized content. By clicking{" "}
-        <strong style={{ color: "#F5F1E8" }}>&ldquo;Accept All&rdquo;</strong>, you agree to our{" "}
+        <strong style={{ color: "var(--color-cream)" }}>&ldquo;Accept All&rdquo;</strong>, you agree to our{" "}
         <Link
           href="/pages/privacy"
-          style={{ color: "#C94227", textDecoration: "underline", fontWeight: 600 }}
+          style={{ color: "var(--color-crimson)", textDecoration: "underline", fontWeight: 600 }}
         >
           Privacy Policy
         </Link>
@@ -103,7 +103,7 @@ export function CookieConsentBanner() {
           }}
           onMouseEnter={(e) => {
             (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(245,241,232,0.7)";
-            (e.currentTarget as HTMLButtonElement).style.color = "#F5F1E8";
+            (e.currentTarget as HTMLButtonElement).style.color = "var(--color-cream)";
           }}
           onMouseLeave={(e) => {
             (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(245,241,232,0.3)";
@@ -117,14 +117,14 @@ export function CookieConsentBanner() {
           onClick={accept}
           style={{
             padding: "0.625rem 1.75rem",
-            backgroundColor: "#C94227",
-            color: "#F5F1E8",
+            backgroundColor: "var(--color-crimson)",
+            color: "var(--color-cream)",
             fontFamily: "var(--font-sans)",
             fontWeight: 800,
             fontSize: "0.72rem",
             letterSpacing: "0.1em",
             textTransform: "uppercase",
-            border: "1.5px solid #C94227",
+            border: "1.5px solid var(--color-crimson)",
             cursor: "pointer",
             transition: "background-color 0.2s ease",
           }}
@@ -132,7 +132,7 @@ export function CookieConsentBanner() {
             (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#a8361f";
           }}
           onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#C94227";
+            (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--color-crimson)";
           }}
         >
           Accept All

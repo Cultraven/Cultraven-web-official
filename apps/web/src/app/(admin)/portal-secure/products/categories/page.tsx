@@ -32,17 +32,17 @@ export default function AdminCategoriesPage() {
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "2.5rem" }}>
         <div>
-          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#C94227", marginBottom: "0.5rem" }}>
+          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-crimson)", marginBottom: "0.5rem" }}>
             Catalog
           </p>
-          <h1 style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "1.75rem", color: "#F5F1E8", letterSpacing: "-0.02em" }}>
+          <h1 style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "1.75rem", color: "var(--color-cream)", letterSpacing: "-0.02em" }}>
             Categories
           </h1>
         </div>
         <button
           style={{
-            backgroundColor: "#C94227",
-            color: "#F5F1E8",
+            backgroundColor: "var(--color-crimson)",
+            color: "var(--color-cream)",
             border: "none",
             padding: "0.75rem 1.5rem",
             borderRadius: "4px",
@@ -87,7 +87,7 @@ export default function AdminCategoriesPage() {
           <tbody>
             {categories.map((cat) => (
               <tr key={cat.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
-                <td style={{ padding: "1.25rem 1.5rem", fontFamily: "var(--font-sans)", fontSize: "0.82rem", fontWeight: 700, color: "#F5F1E8" }}>
+                <td style={{ padding: "1.25rem 1.5rem", fontFamily: "var(--font-sans)", fontSize: "0.82rem", fontWeight: 700, color: "var(--color-cream)" }}>
                   {cat.name}
                 </td>
                 <td style={{ padding: "1.25rem 1.5rem", fontFamily: "var(--font-sans)", fontSize: "0.78rem", color: "rgba(245,241,232,0.6)" }}>
