@@ -26,7 +26,7 @@ export default async function OrderSuccessPage({ searchParams }: Props) {
          query = { _id: orderId };
       }
 
-      const order = await Order.findOne(query).lean();
+      const order = await Order.findOne(query).lean() as any;
       
       if (order) {
         orderData = {
