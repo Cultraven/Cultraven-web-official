@@ -38,12 +38,24 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
+    // 10 MB limit
+    if (file.size > 10 * 1024 * 1024) {
+      return NextResponse.json({ error: "File too large (max 10MB)" }, { status: 413 });
+    }
+
+    // Allowlist of safe image extensions
+    const ALLOWED_EXTS = new Set(["jpg", "jpeg", "png", "webp", "avif", "gif"]);
+    const rawExt = (file.name.split(".").pop() ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
+    const ext = ALLOWED_EXTS.has(rawExt) ? rawExt : null;
+    if (!ext) {
+      return NextResponse.json({ error: "File type not allowed" }, { status: 415 });
+    }
+
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Create unique filename
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const ext = file.name.split('.').pop() || 'png';
+    // Secure random filename — no user input in the path
+    const uniqueSuffix = crypto.randomBytes(16).toString("hex");
     const filename = `${uniqueSuffix}.${ext}`;
     
     // Ensure upload directory exists
