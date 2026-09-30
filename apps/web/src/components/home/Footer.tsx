@@ -389,7 +389,7 @@ export function Footer({ config }: FooterProps) {
           style={{
             marginTop: "4rem",
             borderTop: "2px solid var(--color-raven)",
-            padding: "1.75rem 0",
+            padding: "1.75rem 9.5rem 1.75rem 0", // right gap keeps the last item clear of the floating chat button
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",

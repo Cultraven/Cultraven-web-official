@@ -38,6 +38,20 @@ export function CookieConsentBanner() {
     setVisible(false);
   };
 
+  // While the banner is showing, reserve its height at the bottom of the page so it never
+  // covers the footer's last line / copyright bar.
+  useEffect(() => {
+    if (!visible) return;
+    const el = document.querySelector<HTMLElement>('[aria-label="Cookie consent"]');
+    const apply = () => { document.body.style.paddingBottom = (el?.offsetHeight ?? 0) + "px"; };
+    apply();
+    window.addEventListener("resize", apply);
+    return () => {
+      window.removeEventListener("resize", apply);
+      document.body.style.paddingBottom = "";
+    };
+  }, [visible]);
+
   if (!visible) return null;
 
   return (
