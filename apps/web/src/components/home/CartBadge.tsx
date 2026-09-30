@@ -23,14 +23,17 @@ export function CartBadge({ isScrolled = false }: { isScrolled?: boolean }) {
           display: "inline-flex",
           alignItems: "center",
           justifyContent: "center",
-          padding: "8px",
-          color: "var(--color-navy)",
-          background: "var(--color-cream)",
-          border: "2px solid var(--color-navy)",
-          boxShadow: "2px 2px 0px 0px var(--color-navy)",
+          width: "38px",
+          height: "38px",
+          padding: 0,
+          color: isScrolled ? "var(--color-navy)" : "#FFFFFF",
+          background: "transparent",
+          border: "none",
+          boxShadow: "none",
           borderRadius: "0px",
           cursor: "pointer",
-          transition: "transform 0.1s ease, box-shadow 0.1s ease",
+          transition: "opacity 0.2s ease",
+          flexShrink: 0,
         }}
       >
         <svg

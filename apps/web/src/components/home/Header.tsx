@@ -26,8 +26,8 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
       setIsScrolled(true);
       return;
     }
-    setIsScrolled(window.scrollY > 80);
-    const onScroll = () => setIsScrolled(window.scrollY > 80);
+    setIsScrolled(window.scrollY > 88);
+    const onScroll = () => setIsScrolled(window.scrollY > 88);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, [isHomepage]);
@@ -44,17 +44,18 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
-    background:   transparent ? "rgba(255,255,255,0.12)" : "transparent",
-    border:       transparent ? "1.5px solid rgba(255,255,255,0.55)" : "none",
-    color:        fg,
+    background: "transparent",
+    border: "none",
+    color: fg,
     cursor: "pointer",
-    width: "36px",
-    height: "36px",
+    width: "38px",
+    height: "38px",
     textDecoration: "none",
     boxShadow: "none",
     borderRadius: "0px",
-    transition: "all 0.2s ease",
+    transition: "color 0.2s ease, opacity 0.2s ease",
     flexShrink: 0,
+    padding: 0,
   };
 
   return (
@@ -64,13 +65,11 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
           position: "sticky",
           top: 0,
           zIndex: 70,
-          height: "80px",
-          overflow: "visible",
           backgroundColor: bg,
           color: fg,
           borderBottom: border,
           boxShadow: shadow,
-          padding: "0",
+          padding: "0.6rem 0",
           transition: "background-color 0.4s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease",
         }}
       >
@@ -105,7 +104,7 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
               height={66}
               style={{
                 objectFit: "contain",
-                height: "120px",
+                height: "68px",
                 width: "auto",
                 filter: transparent ? "brightness(0) invert(1)" : "none",
                 transition: "filter 0.4s ease",
@@ -144,7 +143,7 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
               </svg>
             </Link>
 
-            <div style={{ transform: "translateY(-2px)" }} className="hide-mobile">
+            <div className="hide-mobile">
               <CartBadge isScrolled={!transparent} />
             </div>
           </div>
@@ -229,8 +228,7 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
           .bottom-nav-item svg { width: 20px; height: 20px; }
         }
         .action-icon:hover {
-          color: var(--color-lava) !important;
-          opacity: 0.8;
+          opacity: 0.6;
         }
         .action-icon:active {
           opacity: 1;
