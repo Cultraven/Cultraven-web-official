@@ -136,7 +136,7 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
                   <div key={i} className="adm-row">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img className="adm-thumb" src={url} alt="" style={{ width: 40, height: 50 }} />
-                    <input className="adm-input" value={url} onChange={(e) => setGallery((g) => g.map((x, k) => (k === i ? e.target.value : x)))} />
+                    <input className="adm-input adm-row-main" value={url} onChange={(e) => setGallery((g) => g.map((x, k) => (k === i ? e.target.value : x)))} />
                     <div className="adm-reorder">
                       <Button size="sm" variant="ghost" onClick={() => moveGallery(i, -1)} disabled={i === 0} aria-label="Move up"><Icon name="up" size={14} /></Button>
                       <Button size="sm" variant="ghost" onClick={() => moveGallery(i, 1)} disabled={i === gallery.length - 1} aria-label="Move down"><Icon name="down" size={14} /></Button>

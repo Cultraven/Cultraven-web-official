@@ -51,7 +51,7 @@
 .adm-shell { display: grid; grid-template-columns: 264px minmax(0, 1fr); min-height: 100dvh; }
 .adm-side {
   background: var(--a-side); color: var(--a-side-text);
-  position: sticky; top: 0; height: 100dvh; display: flex; flex-direction: column;
+  position: sticky; top: 0; z-index: 40; height: 100dvh; display: flex; flex-direction: column;
   border-right: 1px solid rgba(255, 255, 255, 0.05);
 }
 .adm-brand { display: flex; align-items: center; gap: 10px; padding: 18px 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.07); }
@@ -150,8 +150,8 @@
 .adm-search { position: relative; }
 .adm-search svg { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--a-faint); pointer-events: none; }
 .adm-search .adm-input { padding-left: 34px; }
-.adm-switch { position: relative; display: inline-block; vertical-align: middle; width: 38px; height: 22px; flex-shrink: 0; }
-.adm-switch input { position: absolute; inset: 0; opacity: 0; cursor: pointer; margin: 0; z-index: 1; }
+.adm-switch { position: relative; isolation: isolate; display: inline-block; vertical-align: middle; width: 38px; height: 22px; flex-shrink: 0; }
+.adm-switch input { position: absolute; inset: 0; opacity: 0; cursor: pointer; margin: 0; }
 .adm-switch span { position: absolute; inset: 0; background: var(--a-border-strong); border-radius: 999px; transition: background 0.15s; }
 .adm-switch span::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform 0.15s; box-shadow: 0 1px 2px rgba(0,0,0,0.25); }
 .adm-switch input:checked + span { background: var(--a-success); }
@@ -262,4 +262,17 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .adm *, .adm *::before, .adm *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* ── Rows & lists on small screens: wrap controls instead of overflowing ── */
+.adm-row { flex-wrap: wrap; }
+.adm-row-main { flex: 1 1 160px; min-width: 0; }
+.adm-page, .adm-card { min-width: 0; }
+@media (max-width: 900px) {
+  .adm-row { gap: 8px 10px; }
+  .adm-media { width: 72px; height: 48px; }
+  .adm-ph .adm-actions { width: 100%; }
+  .adm-savebar { flex-wrap: wrap; }
+  .adm-toolbar .adm-search { width: 100%; }
+  .adm-card-h { flex-wrap: wrap; }
 }

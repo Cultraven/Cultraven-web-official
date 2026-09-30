@@ -171,7 +171,7 @@ export default function AdminCmsHeroPage() {
                 <Button size="sm" variant="ghost" disabled={i === slides.length - 1} onClick={() => move(i, 1)} aria-label="Move down"><Icon name="down" size={14} /></Button>
               </div>
               <Media src={s.srcDesktop} kind={s.type} poster={s.posterSrc} big />
-              <div style={{ flex: 1, minWidth: 0 }}>
+              <div className="adm-row-main">
                 <div className="adm-cell-title" style={{ maxWidth: "100%" }}>{i + 1}. {s.headline || "(No headline)"}</div>
                 <div className="adm-cell-sub">{s.type === "video" ? "Video" : "Image"} · {s.srcMobile ? "desktop + mobile" : "desktop only"} · {Math.round(s.durationMs / 1000)}s · {s.ctaLabel} → {s.ctaHref}{s.startsAt || s.endsAt ? " · scheduled" : ""}</div>
               </div>

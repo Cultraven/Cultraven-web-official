@@ -103,7 +103,7 @@ export default function AdminShopTheLookPage() {
                     </div>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img className="adm-thumb" src={p.image} alt="" loading="lazy" />
-                    <div style={{ flex: 1, minWidth: 0 }}>
+                    <div className="adm-row-main">
                       <div className="adm-cell-title" style={{ maxWidth: "100%" }}>{p.title || "(No title)"}</div>
                       <div className="adm-cell-sub">{p.category} · {p.color} · {p.pricePaise ? inr(p.pricePaise) : "—"} · {p.href}</div>
                     </div>

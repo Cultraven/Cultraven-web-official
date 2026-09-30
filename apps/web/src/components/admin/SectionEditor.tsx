@@ -145,7 +145,7 @@ function ListEditor({ f, value, onChange, onError }: { f: Extract<Field, { kind:
                   <Button size="sm" variant="ghost" onClick={() => move(i, 1)} disabled={i === value.length - 1} aria-label="Move down"><Icon name="down" size={14} /></Button>
                 </div>
                 {imgField ? <MediaPreview src={item[imgField.key] ?? ""} /> : null}
-                <button type="button" onClick={() => setOpen(isOpen ? null : id)} style={{ flex: 1, textAlign: "left", background: "none", border: 0, cursor: "pointer", fontWeight: 600, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "inherit" }}>
+                <button type="button" onClick={() => setOpen(isOpen ? null : id)} className="adm-row-main" style={{ textAlign: "left", background: "none", border: 0, cursor: "pointer", fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "inherit" }}>
                   {i + 1}. {title}
                 </button>
                 {hasActive ? (
