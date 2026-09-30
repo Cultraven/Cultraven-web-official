@@ -20,6 +20,7 @@ import React, { useState } from "react";
 import Image from "@/components/common/CmsImage";
 import Link from "next/link";
 import { useCartStore } from "@/store/cart";
+import { useWishlisted } from "@/store/wishlist";
 import { toast } from "@/components/common/Toast";
 
 const fmt = (p: number) => `₹${(p / 100).toLocaleString("en-IN")}`;
@@ -64,7 +65,8 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
   const [selectedColor, setSelectedColor] = useState(0);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [qty, setQty] = useState(1);
-  const [wishlisted, setWishlisted] = useState(false);
+  const [wishlisted, toggleWishlist] = useWishlisted({ id: product.id, title: product.title, href: `/products/${product.slug}`, image: product.image, pricePaise: product.pricePaise, mrpPaise: product.mrpPaise });
+  const setWishlisted = (_next?: (w: boolean) => boolean) => toggleWishlist();
   const [added, setAdded] = useState(false);
   const [pincode, setPincode] = useState("");
   const [deliveryMsg, setDeliveryMsg] = useState<string | null>(null);

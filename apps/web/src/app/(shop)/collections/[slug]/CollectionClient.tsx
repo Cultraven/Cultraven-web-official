@@ -11,6 +11,7 @@
  */
 "use client";
 
+import { useWishlisted } from "@/store/wishlist";
 import React, { useState, useMemo, Component } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -305,7 +306,8 @@ function FilterBlock({ title, options, selected, onToggle, pills = false }: {
 
 function PLPCard({ product: p }: { product: Product }) {
   const [hovered, setHovered] = useState(false);
-  const [wishlisted, setWishlisted] = useState(false);
+  const [wishlisted, toggleWishlist] = useWishlisted({ id: p.id, title: p.title, href: p.href, image: p.image, pricePaise: p.pricePaise, mrpPaise: p.mrpPaise });
+  const setWishlisted = (_next?: (w: boolean) => boolean) => toggleWishlist();
   const [added, setAdded] = useState(false);
   const disc = Math.round(((p.mrpPaise - p.pricePaise) / p.mrpPaise) * 100);
   

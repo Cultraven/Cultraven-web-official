@@ -10,6 +10,7 @@ import React, { useState } from "react";
 import Image from "@/components/common/CmsImage";
 import Link from "next/link";
 import { useCartStore } from "@/store/cart";
+import { useWishlisted } from "@/store/wishlist";
 
 export interface DropProduct {
   id: string;
@@ -130,7 +131,8 @@ export function NewDropSection({ content, products }: { content: NewDropContent;
 
 function NewDropCard({ product: p }: { product: DropProduct }) {
   const [hovered, setHovered] = useState(false);
-  const [wishlisted, setWishlisted] = useState(false);
+  const [wishlisted, toggleWishlist] = useWishlisted({ id: p.id, title: p.title, href: p.href, image: p.image, pricePaise: p.pricePaise, mrpPaise: p.mrpPaise });
+  const setWishlisted = (_next?: (w: boolean) => boolean) => toggleWishlist();
   const [added, setAdded] = useState(false);
   const addItem = useCartStore((s) => s.addItem);
   const slug = p.href.replace(/^\/products\//, "");

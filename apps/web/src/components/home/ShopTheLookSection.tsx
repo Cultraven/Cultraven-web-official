@@ -249,50 +249,19 @@ export function ShopTheLookSection({ look }: { look: ShopLookData | null }) {
 
               {/* One-click Buy Look button */}
               <button
+                type="button"
                 onClick={handleBuyLook}
-                style={{
-                  display: "block",
-                  width: "100%",
-                  padding: "1.1rem",
-                  backgroundColor: allAdded ? "var(--color-lava)" : "var(--color-navy)",
-                  color: allAdded ? "var(--color-navy)" : "var(--color-cream)",
-                  fontFamily: "var(--font-sans)",
-                  fontWeight: 900,
-                  fontSize: "0.78rem",
-                  letterSpacing: "0.14em",
-                  textTransform: "uppercase",
-                  border: "2px solid var(--color-navy)",
-                  boxShadow: allAdded ? "4px 4px 0px 0px var(--color-navy)" : "none",
-                  cursor: "pointer",
-                  textAlign: "center",
-                  transition: "background-color 0.2s ease, color 0.2s ease",
-                }}
+                className={`cv-btn cv-btn-block ${allAdded ? "cv-btn-lava" : "cv-btn-navy"}`}
+                style={{ padding: "1.15rem 1.5rem" }}
               >
                 {allAdded ? `✓ ${look.products.length} ITEMS ADDED TO BAG` : `BUY COMPLETE LOOK — ${fmt(totalLookPrice)}`}
               </button>
 
               {/* Checkout link shown after adding */}
               {allAdded && (
-                <Link
-                  href="/checkout"
-                  style={{
-                    display: "block",
-                    width: "100%",
-                    padding: "0.8rem",
-                    backgroundColor: "var(--color-cream)",
-                    color: "var(--color-navy)",
-                    fontFamily: "var(--font-sans)",
-                    fontWeight: 800,
-                    fontSize: "0.75rem",
-                    letterSpacing: "0.1em",
-                    textTransform: "uppercase",
-                    border: "2px solid var(--color-navy)",
-                    textAlign: "center",
-                    textDecoration: "none",
-                    marginTop: "0.5rem",
-                  }}
-                >
-                  PROCEED TO CHECKOUT →
+                <Link href="/checkout" className="cv-btn cv-btn-outline cv-btn-block" style={{ marginTop: "0.9rem" }}>
+                  PROCEED TO CHECKOUT
+                  <svg className="cv-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="square" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                 </Link>
               )}
             </div>

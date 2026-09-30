@@ -1,6 +1,7 @@
 /* ── Google Fonts (Loaded via next/font in layout.tsx) ─────────────── */
 @import "tailwindcss";
 @import "./components.css";
+@import "./theme-ui.css";
 @source "../../../../packages/ui/src";
 
 @theme {

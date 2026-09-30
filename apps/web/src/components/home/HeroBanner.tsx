@@ -272,40 +272,15 @@ function SlideLayer({ slide: s, index, visible, isPrev }: { slide: HeroSlide; in
           </p>
         )}
 
-        {/* CTAs */}
-        <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-          <Link
-            href={s.ctaHref || "/collections/new-in"}
-            style={{
-              fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "0.78rem",
-              letterSpacing: "0.14em", textTransform: "uppercase",
-              backgroundColor: "var(--color-lava)", color: "var(--color-navy)",
-              padding: "14px 32px", border: "none", textDecoration: "none",
-              display: "inline-flex", alignItems: "center", gap: "8px",
-              transition: "background-color 0.2s, transform 0.15s",
-            }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.backgroundColor = "#F0C310"; (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)"; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.backgroundColor = "var(--color-lava)"; (e.currentTarget as HTMLElement).style.transform = "translateY(0)"; }}
-          >
+        {/* CTAs — shared theme buttons (see styles/theme-ui.css) */}
+        <div style={{ display: "flex", gap: "1.25rem", flexWrap: "wrap" }}>
+          <Link href={s.ctaHref || "/collections/new-in"} className="cv-btn cv-btn-lava">
             {s.ctaLabel || "Shop Now"}
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <svg className="cv-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="square" aria-hidden="true">
               <path d="M5 12h14M12 5l7 7-7 7" />
             </svg>
           </Link>
-
-          <Link
-            href="/collections/all"
-            style={{
-              fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.78rem",
-              letterSpacing: "0.14em", textTransform: "uppercase",
-              backgroundColor: "transparent", color: "#FFFFFF",
-              padding: "14px 28px", border: "1.5px solid rgba(255,255,255,0.55)",
-              textDecoration: "none", display: "inline-flex", alignItems: "center",
-              transition: "border-color 0.2s",
-            }}
-            onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.9)"}
-            onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.55)"}
-          >
+          <Link href="/collections/all" className="cv-btn cv-btn-ghost-light">
             View All
           </Link>
         </div>

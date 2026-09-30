@@ -1,248 +1,145 @@
 "use client";
 /**
- * Addresses Page — /account/addresses
- * Manage delivery addresses for 1-click checkout.
+ * /account/addresses — the signed-in customer's saved delivery addresses, stored in MongoDB
+ * (GET/POST /api/account/addresses, PUT/DELETE /api/account/addresses/<id>).
  */
-import React, { useState } from "react";
-import type { Metadata } from "next";
+import React, { useCallback, useEffect, useState } from "react";
 
-interface Address {
-  id: string;
-  label: string;
-  name: string;
-  line1: string;
-  line2?: string;
-  city: string;
-  state: string;
-  pincode: string;
-  phone: string;
-  isDefault: boolean;
-}
+interface Addr { id: string; label: string; name: string; line1: string; line2: string; city: string; state: string; pincode: string; phone: string; isDefault: boolean }
 
-const MOCK_ADDRESSES: Address[] = [
-  {
-    id: "addr-1",
-    label: "Home",
-    name: "Rohan Sharma",
-    line1: "A-14, Hauz Khas Enclave",
-    city: "New Delhi",
-    state: "Delhi",
-    pincode: "110016",
-    phone: "9876543210",
-    isDefault: true,
-  },
-];
-
-const INDIAN_STATES = [
-  "Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh",
-  "Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka",
-  "Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram",
-  "Nagaland","Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana",
-  "Tripura","Uttar Pradesh","Uttarakhand","West Bengal",
-  "Andaman & Nicobar","Chandigarh","Dadra & Nagar Haveli","Daman & Diu",
-  "Delhi","Jammu & Kashmir","Ladakh","Lakshadweep","Puducherry",
-];
-
-const emptyForm = { label: "Home", name: "", line1: "", line2: "", city: "", state: "", pincode: "", phone: "" };
+const STATES = ["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal","Andaman & Nicobar","Chandigarh","Dadra & Nagar Haveli","Daman & Diu","Delhi","Jammu & Kashmir","Ladakh","Lakshadweep","Puducherry"];
+const EMPTY = { label: "Home", name: "", line1: "", line2: "", city: "", state: "", pincode: "", phone: "", isDefault: false };
 
 export default function AddressesPage() {
-  const [addresses, setAddresses] = useState<Address[]>(MOCK_ADDRESSES);
-  const [showForm, setShowForm] = useState(false);
+  const [list, setList] = useState<Addr[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [form, setForm] = useState<typeof EMPTY | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState(emptyForm);
+  const [errs, setErrs] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [confirmId, setConfirmId] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
-  const update = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setForm((prev) => ({ ...prev, [field]: e.target.value }));
-    setErrors((prev) => ({ ...prev, [field]: "" }));
+  const load = useCallback(() => {
+    fetch("/api/account/addresses", { cache: "no-store" })
+      .then(async (r) => { const d = await r.json().catch(() => ({})); if (!r.ok) throw new Error(d.error || `HTTP ${r.status}`); setList(d.addresses); setError(null); })
+      .catch((e) => setError(e.message));
+  }, []);
+  useEffect(load, [load]);
+
+  const flash = (m: string) => { setNotice(m); setTimeout(() => setNotice(null), 2800); };
+  const set = (k: keyof typeof EMPTY) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => { setForm((f) => f && { ...f, [k]: e.target.value }); setErrs((x) => ({ ...x, [k]: "" })); };
+
+  const validate = (f: typeof EMPTY) => {
+    const e: Record<string, string> = {};
+    if (!f.name.trim()) e.name = "Full name is required";
+    if (!f.line1.trim()) e.line1 = "Address is required";
+    if (!f.city.trim()) e.city = "City is required";
+    if (!f.state) e.state = "Choose a state";
+    if (!/^\d{6}$/.test(f.pincode)) e.pincode = "Enter a 6-digit pincode";
+    if (!/^\d{10}$/.test(f.phone.replace(/\s/g, ""))) e.phone = "Enter a 10-digit phone number";
+    return e;
   };
 
-  const validate = () => {
-    const errs: Record<string, string> = {};
-    if (!form.name.trim()) errs.name = "Full name required";
-    if (!form.line1.trim()) errs.line1 = "Address required";
-    if (!form.city.trim()) errs.city = "City required";
-    if (!form.state) errs.state = "State required";
-    if (!/^\d{6}$/.test(form.pincode)) errs.pincode = "Valid 6-digit pincode required";
-    if (!/^\d{10}$/.test(form.phone.replace(/\s/g, ""))) errs.phone = "Valid 10-digit phone required";
-    setErrors(errs);
-    return Object.keys(errs).length === 0;
-  };
-
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validate()) return;
+  const save = async (ev: React.FormEvent) => {
+    ev.preventDefault();
+    if (!form) return;
+    const e = validate(form);
+    setErrs(e);
+    if (Object.keys(e).length) return;
     setSaving(true);
-    await new Promise((r) => setTimeout(r, 600)); // API call placeholder
-    if (editingId) {
-      setAddresses((prev) => prev.map((a) => a.id === editingId ? { ...a, ...form } : a));
-    } else {
-      const newAddr: Address = { ...form, id: `addr-${Date.now()}`, isDefault: addresses.length === 0 };
-      setAddresses((prev) => [...prev, newAddr]);
-    }
+    try {
+      const res = await fetch(editingId ? `/api/account/addresses/${editingId}` : "/api/account/addresses", { method: editingId ? "PUT" : "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
+      const d = await res.json().catch(() => ({}));
+      if (!res.ok) { setErrs(d.issues ? Object.fromEntries(Object.entries(d.issues).map(([k, v]) => [k, (v as string[])[0]])) : { _: d.error || "Could not save" }); }
+      else { setForm(null); setEditingId(null); flash(editingId ? "Address updated" : "Address saved"); load(); }
+    } catch { setErrs({ _: "Network error — nothing was saved." }); }
     setSaving(false);
-    setShowForm(false);
-    setEditingId(null);
-    setForm(emptyForm);
   };
 
-  const handleEdit = (addr: Address) => {
-    setEditingId(addr.id);
-    setForm({ label: addr.label, name: addr.name, line1: addr.line1, line2: addr.line2 || "", city: addr.city, state: addr.state, pincode: addr.pincode, phone: addr.phone });
-    setShowForm(true);
-    setErrors({});
-  };
+  const makeDefault = async (id: string) => { await fetch(`/api/account/addresses/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ setDefault: true }) }); flash("Default address updated"); load(); };
+  const remove = async (id: string) => { const r = await fetch(`/api/account/addresses/${id}`, { method: "DELETE" }); setConfirmId(null); if (r.ok) { flash("Address deleted"); load(); } else setError("Could not delete the address"); };
+  const edit = (a: Addr) => { setEditingId(a.id); setForm({ label: a.label, name: a.name, line1: a.line1, line2: a.line2, city: a.city, state: a.state, pincode: a.pincode, phone: a.phone, isDefault: a.isDefault }); setErrs({}); };
 
-  const handleDelete = (id: string) => {
-    setAddresses((prev) => prev.filter((a) => a.id !== id));
-  };
-
-  const setDefault = (id: string) => {
-    setAddresses((prev) => prev.map((a) => ({ ...a, isDefault: a.id === id })));
-  };
-
-  const inputStyle = (field: string): React.CSSProperties => ({
-    width: "100%", padding: "0.75rem 1rem",
-    border: `1.5px solid ${errors[field] ? "var(--color-crimson)" : "var(--color-border)"}`,
-    backgroundColor: "var(--color-cream)", fontFamily: "var(--font-sans)", fontSize: "0.85rem",
-    color: "var(--color-navy)", outline: "none", boxSizing: "border-box",
-  });
-
-  const labelStyle: React.CSSProperties = {
-    display: "block", fontFamily: "var(--font-sans)", fontWeight: 700,
-    fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase",
-    color: "var(--color-navy)", marginBottom: "0.4rem",
-  };
+  const Field = ({ k, label, full, children }: { k: keyof typeof EMPTY; label: string; full?: boolean; children: React.ReactNode }) => (
+    <div className={`acct-field ${full ? "full" : ""}`}><label>{label}</label>{children}{errs[k] ? <em>{errs[k]}</em> : null}</div>
+  );
 
   return (
-    <div style={{ padding: "clamp(2rem,5vw,4rem)", maxWidth: "760px" }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "2rem", flexWrap: "wrap", gap: "1rem" }}>
-        <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(1.75rem,4vw,2.5rem)", color: "var(--color-navy)", margin: 0 }}>
-          Delivery Addresses
-        </h1>
-        {!showForm && (
-          <button
-            onClick={() => { setShowForm(true); setEditingId(null); setForm(emptyForm); setErrors({}); }}
-            style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.72rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-cream)", backgroundColor: "var(--color-navy)", border: "none", padding: "0.75rem 1.5rem", cursor: "pointer" }}
-          >
-            + ADD NEW ADDRESS
-          </button>
-        )}
-      </div>
-
-      {/* ── Add / Edit Form ── */}
-      {showForm && (
-        <div style={{ backgroundColor: "var(--color-cream)", border: "var(--border-thick)", boxShadow: "var(--shadow-md)", padding: "2rem", marginBottom: "2rem" }}>
-          <h2 style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.82rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-navy)", marginBottom: "1.5rem" }}>
-            {editingId ? "EDIT ADDRESS" : "NEW ADDRESS"}
-          </h2>
-          <form onSubmit={handleSave} noValidate style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-            {/* Label */}
-            <div>
-              <label style={labelStyle}>Label</label>
-              <div style={{ display: "flex", gap: "0.5rem" }}>
-                {["Home", "Work", "Other"].map((l) => (
-                  <button key={l} type="button" onClick={() => setForm((p) => ({ ...p, label: l }))}
-                    style={{ padding: "0.4rem 1rem", fontFamily: "var(--font-sans)", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", border: "1.5px solid var(--color-navy)", cursor: "pointer", backgroundColor: form.label === l ? "var(--color-navy)" : "transparent", color: form.label === l ? "var(--color-cream)" : "var(--color-navy)" }}>
-                    {l}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-              <div>
-                <label style={labelStyle}>Full Name</label>
-                <input type="text" autoComplete="name" value={form.name} onChange={update("name")} style={inputStyle("name")} />
-                {errors.name && <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.65rem", color: "var(--color-crimson)", marginTop: "0.25rem" }}>{errors.name}</p>}
-              </div>
-              <div>
-                <label style={labelStyle}>Phone</label>
-                <input type="tel" autoComplete="tel" value={form.phone} onChange={update("phone")} style={inputStyle("phone")} placeholder="10-digit number" />
-                {errors.phone && <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.65rem", color: "var(--color-crimson)", marginTop: "0.25rem" }}>{errors.phone}</p>}
-              </div>
-            </div>
-
-            <div>
-              <label style={labelStyle}>Address Line 1</label>
-              <input type="text" autoComplete="address-line1" value={form.line1} onChange={update("line1")} style={inputStyle("line1")} placeholder="House/flat no., street, area" />
-              {errors.line1 && <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.65rem", color: "var(--color-crimson)", marginTop: "0.25rem" }}>{errors.line1}</p>}
-            </div>
-
-            <div>
-              <label style={labelStyle}>Address Line 2 (Optional)</label>
-              <input type="text" autoComplete="address-line2" value={form.line2} onChange={update("line2")} style={inputStyle("line2")} placeholder="Landmark, building name" />
-            </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem" }}>
-              <div>
-                <label style={labelStyle}>City</label>
-                <input type="text" autoComplete="address-level2" value={form.city} onChange={update("city")} style={inputStyle("city")} />
-                {errors.city && <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.65rem", color: "var(--color-crimson)", marginTop: "0.25rem" }}>{errors.city}</p>}
-              </div>
-              <div>
-                <label style={labelStyle}>State</label>
-                <select value={form.state} onChange={update("state")} style={{ ...inputStyle("state"), appearance: "none" as const }}>
-                  <option value="">Select state</option>
-                  {INDIAN_STATES.map((s) => <option key={s} value={s}>{s}</option>)}
-                </select>
-                {errors.state && <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.65rem", color: "var(--color-crimson)", marginTop: "0.25rem" }}>{errors.state}</p>}
-              </div>
-              <div>
-                <label style={labelStyle}>Pincode</label>
-                <input type="text" inputMode="numeric" maxLength={6} value={form.pincode} onChange={update("pincode")} style={inputStyle("pincode")} placeholder="6-digit" />
-                {errors.pincode && <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.65rem", color: "var(--color-crimson)", marginTop: "0.25rem" }}>{errors.pincode}</p>}
-              </div>
-            </div>
-
-            <div style={{ display: "flex", gap: "0.75rem", marginTop: "0.5rem", flexWrap: "wrap" }}>
-              <button type="submit" disabled={saving} style={{ padding: "0.875rem 2rem", backgroundColor: "var(--color-navy)", color: "var(--color-cream)", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.72rem", letterSpacing: "0.14em", textTransform: "uppercase", border: "none", cursor: saving ? "not-allowed" : "pointer" }}>
-                {saving ? "SAVING..." : editingId ? "UPDATE ADDRESS" : "SAVE ADDRESS"}
-              </button>
-              <button type="button" onClick={() => { setShowForm(false); setEditingId(null); setForm(emptyForm); }} style={{ padding: "0.875rem 1.5rem", backgroundColor: "transparent", color: "var(--color-navy)", fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", border: "2px solid var(--color-navy)", boxShadow: "inset 2px 2px 0px 0px rgba(23,37,69,0.1)", cursor: "pointer" }}>
-                CANCEL
-              </button>
-            </div>
-          </form>
+    <>
+      <header className="acct-head" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: "1rem", flexWrap: "wrap" }}>
+        <div>
+          <span className="acct-eyebrow">My account</span>
+          <h1 className="acct-title">Addresses</h1>
+          <p className="acct-sub">Save where to deliver — checkout gets faster.</p>
         </div>
-      )}
+        {!form ? <button type="button" className="cv-btn cv-btn-lava cv-btn-sm" onClick={() => { setForm({ ...EMPTY }); setEditingId(null); setErrs({}); }}>+ Add address</button> : null}
+      </header>
 
-      {/* ── Address Cards ── */}
-      {addresses.length === 0 ? (
-        <div style={{ textAlign: "center", padding: "4rem 2rem", backgroundColor: "var(--color-cream)", border: "1px dashed var(--color-border)" }}>
-          <p style={{ fontFamily: "var(--font-heading)", fontSize: "1.4rem", color: "var(--color-navy)", marginBottom: "0.5rem" }}>No addresses saved yet.</p>
-          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "var(--color-gray)" }}>Add an address for faster checkout.</p>
+      {notice ? <p role="status" style={{ background: "#e6f6ec", color: "#15803d", border: "2px solid #15803d", padding: "0.7rem 1rem", fontWeight: 800, marginBottom: "1rem" }}>{notice}</p> : null}
+      {error ? <p role="alert" style={{ color: "#b42318", fontWeight: 700, marginBottom: "1rem" }}>{error}</p> : null}
+
+      {form ? (
+        <form onSubmit={save} className="acct-card" style={{ marginBottom: "2rem" }} noValidate>
+          <div className="acct-card-h"><h3>{editingId ? "Edit address" : "New address"}</h3></div>
+          <div className="acct-card-b">
+            {errs._ ? <p role="alert" style={{ color: "#b42318", fontWeight: 700, marginBottom: "1rem" }}>{errs._}</p> : null}
+            <div className="acct-form">
+              <Field k="label" label="Label"><select value={form.label} onChange={set("label")}><option>Home</option><option>Work</option><option>Other</option></select></Field>
+              <Field k="name" label="Full name"><input value={form.name} onChange={set("name")} autoComplete="name" /></Field>
+              <Field k="line1" label="Address line 1" full><input value={form.line1} onChange={set("line1")} autoComplete="address-line1" /></Field>
+              <Field k="line2" label="Address line 2 (optional)" full><input value={form.line2} onChange={set("line2")} autoComplete="address-line2" /></Field>
+              <Field k="city" label="City"><input value={form.city} onChange={set("city")} autoComplete="address-level2" /></Field>
+              <Field k="state" label="State"><select value={form.state} onChange={set("state")}><option value="">Select state</option>{STATES.map((s) => <option key={s}>{s}</option>)}</select></Field>
+              <Field k="pincode" label="Pincode"><input inputMode="numeric" maxLength={6} value={form.pincode} onChange={set("pincode")} autoComplete="postal-code" /></Field>
+              <Field k="phone" label="Phone"><input inputMode="tel" maxLength={10} value={form.phone} onChange={set("phone")} autoComplete="tel-national" /></Field>
+              <label className="full" style={{ display: "flex", gap: 10, alignItems: "center", fontWeight: 800, fontSize: "0.8rem", color: "var(--color-navy)", cursor: "pointer" }}>
+                <input type="checkbox" checked={form.isDefault} onChange={(e) => setForm((f) => f && { ...f, isDefault: e.target.checked })} /> Make this my default address
+              </label>
+            </div>
+            <div style={{ display: "flex", gap: "1rem", marginTop: "1.5rem", flexWrap: "wrap" }}>
+              <button type="submit" className="cv-btn cv-btn-navy cv-btn-sm" disabled={saving}>{saving ? "Saving…" : editingId ? "Save changes" : "Save address"}</button>
+              <button type="button" className="cv-btn cv-btn-outline cv-btn-sm" onClick={() => { setForm(null); setEditingId(null); }}>Cancel</button>
+            </div>
+          </div>
+        </form>
+      ) : null}
+
+      {list === null && !error ? (
+        <div className="acct-addr-grid">{[0, 1].map((i) => <div key={i} className="skel" style={{ height: 190 }} />)}</div>
+      ) : list && list.length === 0 && !form ? (
+        <div className="acct-card">
+          <div className="acct-empty">
+            <div className="acct-empty-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z" /><circle cx="12" cy="10" r="3" /></svg></div>
+            <h3>No saved addresses</h3>
+            <p>Add your delivery address once and skip the typing at checkout.</p>
+            <button type="button" className="cv-btn cv-btn-navy" onClick={() => { setForm({ ...EMPTY }); setErrs({}); }}>Add your first address</button>
+          </div>
         </div>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          {addresses.map((addr) => (
-            <div key={addr.id} style={{ backgroundColor: "var(--color-cream)", border: addr.isDefault ? "2px solid var(--color-navy)" : "1px solid var(--color-border)", padding: "1.5rem", position: "relative" }}>
-              {addr.isDefault && (
-                <span style={{ position: "absolute", top: "1rem", right: "1rem", fontFamily: "var(--font-sans)", fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-cream)", backgroundColor: "var(--color-navy)", padding: "0.2rem 0.6rem" }}>
-                  DEFAULT
-                </span>
-              )}
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
-                <span style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.65rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-crimson)" }}>{addr.label}</span>
-              </div>
-              <p style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.9rem", color: "var(--color-navy)", marginBottom: "0.25rem" }}>{addr.name}</p>
-              <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "#4B5563", lineHeight: 1.6 }}>
-                {addr.line1}{addr.line2 && `, ${addr.line2}`}<br />
-                {addr.city}, {addr.state} — {addr.pincode}<br />
-                📱 {addr.phone}
-              </p>
-              <div style={{ display: "flex", gap: "1rem", marginTop: "1rem", flexWrap: "wrap" }}>
-                <button onClick={() => handleEdit(addr)} style={{ fontFamily: "var(--font-sans)", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-navy)", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}>EDIT</button>
-                <button onClick={() => handleDelete(addr.id)} style={{ fontFamily: "var(--font-sans)", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-crimson)", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}>DELETE</button>
-                {!addr.isDefault && (
-                  <button onClick={() => setDefault(addr.id)} style={{ fontFamily: "var(--font-sans)", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-gray)", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}>SET DEFAULT</button>
+        <div className="acct-addr-grid">
+          {list?.map((a) => (
+            <article key={a.id} className={`acct-addr ${a.isDefault ? "is-default" : ""}`}>
+              <h4>{a.label}{a.isDefault ? <span className="acct-chip is-ok">Default</span> : null}</h4>
+              <p><b>{a.name}</b><br />{a.line1}{a.line2 ? `, ${a.line2}` : ""}<br />{a.city}, {a.state} {a.pincode}<br /><span style={{ color: "var(--color-smoke)" }}>{a.phone}</span></p>
+              <div className="acct-addr-actions">
+                {confirmId === a.id ? (
+                  <>
+                    <button type="button" className="cv-btn cv-btn-danger cv-btn-sm" onClick={() => remove(a.id)}>Yes, delete</button>
+                    <button type="button" className="cv-btn cv-btn-outline cv-btn-sm" onClick={() => setConfirmId(null)}>Keep</button>
+                  </>
+                ) : (
+                  <>
+                    <button type="button" className="cv-btn cv-btn-outline cv-btn-sm" onClick={() => edit(a)}>Edit</button>
+                    {!a.isDefault ? <button type="button" className="cv-btn cv-btn-outline cv-btn-sm" onClick={() => makeDefault(a.id)}>Set default</button> : null}
+                    <button type="button" className="cv-btn cv-btn-danger cv-btn-sm" onClick={() => setConfirmId(a.id)}>Delete</button>
+                  </>
                 )}
               </div>
-            </div>
+            </article>
           ))}
         </div>
       )}
-    </div>
+    </>
   );
 }

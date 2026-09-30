@@ -1,65 +1,60 @@
 "use client";
-import React, { useState } from "react";
-import Image from "next/image";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "@/components/common/CmsImage";
+import { useWishlistStore } from "@/store/wishlist";
 
-const fmt = (p: number) => `₹${(p / 100).toLocaleString("en-IN")}`;
-
-const INITIAL_WISHLIST = [
-  { id: "w1", title: "RAVEN OVERSIZED TEE — ACID BLACK", pricePaise: 199900, mrpPaise: 249900, image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&auto=format&fit=crop&q=80", href: "/products/raven-oversized-tee-acid-black", inStock: true },
-  { id: "w2", title: "CARGO WIDE LEG — MILITARY OLIVE", pricePaise: 349900, mrpPaise: 499900, image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=400&auto=format&fit=crop&q=80", href: "/products/cargo-wide-leg-military-olive", inStock: true },
-  { id: "w3", title: "BOMBER JACKET — OLIVE BLACK", pricePaise: 599900, mrpPaise: 799900, image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&auto=format&fit=crop&q=80", href: "/products/bomber-jacket-olive-black", inStock: false },
-  { id: "w4", title: "DRAGON BLOOD GRAPHIC TEE — CHARCOAL", pricePaise: 229900, mrpPaise: 279900, image: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=400&auto=format&fit=crop&q=80", href: "/products/dragon-blood-graphic-tee-charcoal", inStock: true },
-];
+const inr = (p: number) => `₹${(p / 100).toLocaleString("en-IN")}`;
 
 export default function WishlistPage() {
-  const [items, setItems] = useState(INITIAL_WISHLIST);
-  const remove = (id: string) => setItems((prev) => prev.filter((i) => i.id !== id));
+  // persisted in the browser — render after mount so server and client HTML match
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const items = useWishlistStore((s) => s.items);
+  const remove = useWishlistStore((s) => s.remove);
+  const list = mounted ? items : [];
 
   return (
-    <div style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh", padding: "clamp(2rem,5vw,5rem) clamp(1.25rem,4vw,5rem)" }}>
-      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: "2.5rem", flexWrap: "wrap", gap: "1rem" }}>
-        <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(2rem,4vw,3.5rem)", fontWeight: 600, color: "var(--color-navy)" }}>Wishlist</h1>
-        <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.78rem", color: "var(--color-gray)" }}>{items.length} item{items.length !== 1 ? "s" : ""}</p>
-      </div>
+    <>
+      <header className="acct-head">
+        <span className="acct-eyebrow">My account</span>
+        <h1 className="acct-title">Wishlist</h1>
+        <p className="acct-sub">{mounted ? `${list.length} saved piece${list.length === 1 ? "" : "s"}` : "Your saved pieces"}. Tap the heart on any product to add it here.</p>
+      </header>
 
-      {items.length === 0 ? (
-        <div style={{ textAlign: "center", padding: "5rem 2rem" }}>
-          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="var(--color-border)" strokeWidth="1.5" style={{ margin: "0 auto 1.5rem" }}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-          <p style={{ fontFamily: "var(--font-heading)", fontSize: "1.75rem", color: "var(--color-navy)", marginBottom: "0.75rem" }}>Your wishlist is empty.</p>
-          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.85rem", color: "var(--color-gray)", marginBottom: "2rem" }}>Save your favourite pieces by clicking the heart icon on any product.</p>
-          <Link href="/collections/all" style={{ display: "inline-flex", padding: "1rem 2.5rem", backgroundColor: "var(--color-navy)", color: "var(--color-cream)", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.72rem", letterSpacing: "0.14em", textTransform: "uppercase", textDecoration: "none" }}>SHOP ALL</Link>
+      {mounted && list.length === 0 ? (
+        <div className="acct-card">
+          <div className="acct-empty">
+            <div className="acct-empty-ic">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="square" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" /></svg>
+            </div>
+            <h3>Your wishlist is empty</h3>
+            <p>Save the pieces you love and come back when you&apos;re ready.</p>
+            <Link href="/collections/all" className="cv-btn cv-btn-navy">
+              Explore the drop
+              <svg className="cv-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="square" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+            </Link>
+          </div>
         </div>
       ) : (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "1.5rem" }} className="wishlist-grid">
-          {items.map((item) => (
-            <div key={item.id} style={{ position: "relative" }}>
-              <Link href={item.href} style={{ display: "block", position: "relative", aspectRatio: "3/4", overflow: "hidden", backgroundColor: "var(--color-mist)", marginBottom: "0.875rem" }}>
-                <Image src={item.image} alt={item.title} fill sizes="25vw" style={{ objectFit: "cover", opacity: item.inStock ? 1 : 0.5 }} />
-                {!item.inStock && (
-                  <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", backgroundColor: "rgba(245,241,232,0.4)" }}>
-                    <span style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "0.72rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-navy)", backgroundColor: "var(--color-cream)", padding: "5px 10px" }}>SOLD OUT</span>
-                  </div>
-                )}
-                <button onClick={(e) => { e.preventDefault(); remove(item.id); }} style={{ position: "absolute", top: "10px", right: "10px", backgroundColor: "rgba(245,241,232,0.9)", border: "none", width: "32px", height: "32px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }} aria-label="Remove from wishlist">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--color-crimson)" stroke="var(--color-crimson)" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <div className="acct-wish-grid">
+          {list.map((p) => (
+            <article key={p.id} className="acct-wish">
+              <div className="acct-wish-img">
+                <button type="button" className="acct-wish-x" onClick={() => remove(p.id)} aria-label={`Remove ${p.title} from wishlist`}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="square" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12" /></svg>
                 </button>
-              </Link>
-              <Link href={item.href} style={{ display: "block", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.72rem", letterSpacing: "0.05em", textTransform: "uppercase", color: "var(--color-navy)", marginBottom: "6px", lineHeight: 1.4 }}>{item.title}</Link>
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.75rem" }}>
-                <span style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.9rem", color: "var(--color-navy)" }}>{fmt(item.pricePaise)}</span>
-                {item.mrpPaise > item.pricePaise && <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", color: "var(--color-gray)", textDecoration: "line-through" }}>{fmt(item.mrpPaise)}</span>}
+                <Link href={p.href}><Image src={p.image} alt={p.title} fill sizes="(max-width: 600px) 50vw, 240px" style={{ objectFit: "cover" }} /></Link>
               </div>
-              {item.inStock ? (
-                <Link href={item.href} style={{ display: "block", width: "100%", padding: "0.7rem", backgroundColor: "var(--color-navy)", color: "var(--color-cream)", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.68rem", letterSpacing: "0.14em", textTransform: "uppercase", textAlign: "center", textDecoration: "none" }}>ADD TO BAG</Link>
-              ) : (
-                <button disabled style={{ width: "100%", padding: "0.7rem", backgroundColor: "var(--color-border)", color: "var(--color-gray)", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.68rem", letterSpacing: "0.14em", textTransform: "uppercase", border: "none", cursor: "not-allowed" }}>SOLD OUT</button>
-              )}
-            </div>
+              <div className="acct-wish-b">
+                <b>{p.title}</b>
+                <span style={{ color: "var(--color-navy)", fontWeight: 800 }}>{inr(p.pricePaise)}{p.mrpPaise && p.mrpPaise > p.pricePaise ? <s style={{ color: "var(--color-smoke)", fontWeight: 600, marginLeft: 8, fontSize: "0.8rem" }}>{inr(p.mrpPaise)}</s> : null}</span>
+                <Link href={p.href} className="cv-btn cv-btn-navy cv-btn-sm cv-btn-block" style={{ marginTop: 6 }}>View product</Link>
+              </div>
+            </article>
           ))}
         </div>
       )}
-
-    </div>
+    </>
   );
 }
