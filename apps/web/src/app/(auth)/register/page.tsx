@@ -84,9 +84,15 @@ export default function RegisterPage() {
       <div style={{ backgroundColor: "var(--color-navy)", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "3rem", position: "relative", overflow: "hidden" }} className="auth-brand-panel">
         <div style={{ position: "absolute", inset: 0, backgroundImage: "repeating-linear-gradient(45deg, transparent, transparent 60px, rgba(218,178,5,0.04) 60px, rgba(218,178,5,0.04) 61px)", pointerEvents: "none" }} />
 
-        <Link href="/" style={{ display: "inline-block", textDecoration: "none", position: "relative", zIndex: 1 }}>
-          <Image src="/logo.png" alt="CULTRAVEN" width={180} height={60} style={{ objectFit: "contain", filter: "brightness(0) invert(1)", height: "60px", width: "auto" }} />
-        </Link>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", zIndex: 1 }}>
+          <Link href="/" style={{ display: "inline-block", textDecoration: "none" }}>
+            <Image src="/logo.png" alt="CULTRAVEN" width={240} height={80} style={{ objectFit: "contain", filter: "brightness(0) invert(1)", height: "80px", width: "auto" }} />
+          </Link>
+          <Link href="/" style={{ fontFamily: "var(--font-sans)", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(245,241,232,0.55)", textDecoration: "none", display: "flex", alignItems: "center", gap: "0.35rem", border: "1px solid rgba(245,241,232,0.2)", padding: "6px 12px" }}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square"><polyline points="15 18 9 12 15 6"/></svg>
+            Home
+          </Link>
+        </div>
 
         <div style={{ position: "relative", zIndex: 1 }}>
           <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-lava)", marginBottom: "1.25rem" }}>JOIN THE CULT</p>
