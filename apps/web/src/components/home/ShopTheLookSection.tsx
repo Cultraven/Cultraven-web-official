@@ -38,7 +38,7 @@ const LOOK_PRODUCTS: LookProduct[] = [
     category: "CARGO",
     href: "/products/cargo-wide-leg-military-olive",
     image:
-      "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=200&auto=format&fit=crop&q=80",
     pricePaise: 349900,
     color: "Military Olive",
   },
@@ -48,7 +48,7 @@ const LOOK_PRODUCTS: LookProduct[] = [
     category: "HOODIE",
     href: "/products/essentials-hoodie-washed-navy",
     image:
-      "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=200&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=200&auto=format&fit=crop&q=80",
     pricePaise: 319900,
     color: "Washed Navy",
   },
@@ -115,6 +115,14 @@ export function ShopTheLookSection() {
               sizes="(max-width: 768px) 100vw, 55vw"
               style={{ objectFit: "cover" }}
             />
+
+            {/* Hotspots */}
+            <Link href="/products/raven-oversized-tee-acid-black" style={{ position: "absolute", top: "40%", left: "55%", width: "24px", height: "24px", backgroundColor: "#C94227", borderRadius: "50%", border: "2px solid #F5F1E8", display: "flex", alignItems: "center", justifyContent: "center", transform: "translate(-50%, -50%)", cursor: "pointer", zIndex: 10, animation: "pulse 2s infinite" }}>
+              <span style={{ color: "#F5F1E8", fontWeight: 900, fontSize: "16px", lineHeight: 1 }}>+</span>
+            </Link>
+            <Link href="/products/cargo-wide-leg-military-olive" style={{ position: "absolute", top: "75%", left: "45%", width: "24px", height: "24px", backgroundColor: "#C94227", borderRadius: "50%", border: "2px solid #F5F1E8", display: "flex", alignItems: "center", justifyContent: "center", transform: "translate(-50%, -50%)", cursor: "pointer", zIndex: 10, animation: "pulse 2s infinite" }}>
+              <span style={{ color: "#F5F1E8", fontWeight: 900, fontSize: "16px", lineHeight: 1 }}>+</span>
+            </Link>
 
             {/* "LOOK 01" label */}
             <div

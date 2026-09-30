@@ -243,6 +243,16 @@ function CollectionPageClientInner({
   // Apply filters
   const filtered = useMemo(() => {
     let list = [...products];
+    
+    // Filter by collection slug
+    if (collectionSlug === "new-in") {
+      list = list.filter(p => p.badge === "NEW" || p.badge === "LIMITED");
+    } else if (collectionSlug === "sale") {
+      list = list.filter(p => p.mrpPaise > p.pricePaise);
+    } else if (collectionSlug && collectionSlug !== "all") {
+      list = list.filter(p => p.category.toLowerCase() === collectionSlug.toLowerCase());
+    }
+
     if (filterCategory.length) list = list.filter((p) => filterCategory.includes(p.category));
     if (filterSize.length) list = list.filter((p) => p.sizes.some((s) => filterSize.includes(s)));
     if (filterFit.length) list = list.filter((p) => filterFit.includes(p.fit));

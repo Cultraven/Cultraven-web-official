@@ -25,11 +25,11 @@ import { toast } from "@/components/common/Toast";
 const fmt = (p: number) => `₹${(p / 100).toLocaleString("en-IN")}`;
 
 const GALLERY_IMAGES = [
-  "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=900&auto=format&fit=crop&q=85",
-  "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=900&auto=format&fit=crop&q=85",
-  "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=900&auto=format&fit=crop&q=85",
-  "https://images.unsplash.com/photo-1529391409740-59f2cea08bc6?w=900&auto=format&fit=crop&q=85",
-  "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=900&auto=format&fit=crop&q=85",
+  { type: "image", src: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=900&auto=format&fit=crop&q=85" },
+  { type: "video", src: "https://assets.mixkit.co/videos/preview/mixkit-young-man-in-streetwear-standing-outdoors-42289-large.mp4" },
+  { type: "image", src: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=900&auto=format&fit=crop&q=85" },
+  { type: "image", src: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=900&auto=format&fit=crop&q=85" },
+  { type: "image", src: "https://images.unsplash.com/photo-1529391409740-59f2cea08bc6?w=900&auto=format&fit=crop&q=85" },
 ];
 
 const COLORS = [
@@ -141,18 +141,26 @@ export default function ProductDetailClient({ slug, productName }: { slug: strin
         <div className="gallery-container">
           {/* Thumbnails (Desktop) */}
           <div className="gallery-thumbs">
-            {[product?.image || GALLERY_IMAGES[0], product?.hoverImage || GALLERY_IMAGES[1]].filter(Boolean).map((src, i) => (
+            {GALLERY_IMAGES.map((media, i) => (
               <button key={i} onClick={() => setActiveImage(i)} style={{ position: "relative", width: "80px", height: "100px", overflow: "hidden", backgroundColor: "#EAE6DB", border: `2px solid ${activeImage === i ? "#172545" : "transparent"}`, cursor: "pointer", padding: 0 }}>
-                <Image src={src} alt={`View ${i + 1}`} fill sizes="80px" style={{ objectFit: "cover" }} />
+                {media.type === "image" ? (
+                  <Image src={media.src} alt={`View ${i + 1}`} fill sizes="80px" style={{ objectFit: "cover" }} />
+                ) : (
+                  <video src={media.src} muted playsInline style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                )}
               </button>
             ))}
           </div>
           {/* Main image (Swipeable on mobile) */}
           <div className="gallery-main" style={{ flex: 1, minWidth: 0, width: "100%", backgroundColor: "#EAE6DB", position: "relative", border: "var(--border-thick)", boxShadow: "var(--shadow-md)" }}>
             <div className="swipe-wrapper">
-              {[product?.image || GALLERY_IMAGES[0], product?.hoverImage || GALLERY_IMAGES[1]].filter(Boolean).map((src, i) => (
-                <div key={i} className="swipe-item" style={{ display: i === activeImage ? "block" : "none" }}>
-                  <Image src={src} alt={finalName} width={900} height={1200} sizes="(max-width: 768px) 100vw, 50vw" style={{ width: "100%", height: "auto", display: "block", objectFit: "cover", transition: "opacity 0.3s ease" }} priority />
+              {GALLERY_IMAGES.map((media, i) => (
+                <div key={i} className="swipe-item" style={{ display: i === activeImage ? "block" : "none", height: "100%" }}>
+                  {media.type === "image" ? (
+                    <Image src={media.src} alt={finalName} width={900} height={1200} sizes="(max-width: 768px) 100vw, 50vw" style={{ width: "100%", height: "auto", display: "block", objectFit: "cover", transition: "opacity 0.3s ease" }} priority={i === 0} />
+                  ) : (
+                    <video src={media.src} autoPlay={i === activeImage} loop muted playsInline style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                  )}
                 </div>
               ))}
             </div>
@@ -180,9 +188,17 @@ export default function ProductDetailClient({ slug, productName }: { slug: strin
           </div>
 
           {/* Price */}
-          <div style={{ display: "flex", alignItems: "baseline", gap: "0.75rem", marginBottom: "1.5rem", paddingBottom: "1.5rem", borderBottom: "var(--border-thick)" }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: "0.75rem", marginBottom: "0.5rem", paddingBottom: "0.5rem" }}>
             <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "2rem", color: "#172545" }}>{fmt(pricePaise)}</span>
             <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "1.2rem", color: "#6B7280", textDecoration: "line-through" }}>{fmt(mrpPaise)}</span>
+          </div>
+          <div style={{ marginBottom: "1.5rem", paddingBottom: "1.5rem", borderBottom: "var(--border-thick)", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            {disc > 0 && (
+              <span style={{ backgroundColor: "#172545", color: "#F5F1E8", padding: "4px 8px", fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase" }}>
+                FINAL SALE - NO RETURNS
+              </span>
+            )}
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", color: "#6B7280" }}>Inclusive of all taxes</span>
           </div>
 
           {/* Color */}
@@ -201,7 +217,10 @@ export default function ProductDetailClient({ slug, productName }: { slug: strin
           <div style={{ marginBottom: "1.5rem" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>
               <p style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", letterSpacing: "0.12em", textTransform: "uppercase", color: sizeError ? "#C94227" : "#172545" }}>{sizeError ? "SIZE KAHAN HAI BRO?" : "SIZE"}</p>
-              <Link href="/size-guide" style={{ fontFamily: "var(--font-sans)", fontSize: "10px", fontWeight: 800, color: "#172545", textDecoration: "underline" }}>SIZE GUIDE</Link>
+              <div style={{ textAlign: "right" }}>
+                <Link href="/size-guide" style={{ fontFamily: "var(--font-sans)", fontSize: "10px", fontWeight: 800, color: "#172545", textDecoration: "underline", display: "block", marginBottom: "2px" }}>SIZE GUIDE</Link>
+                <span style={{ fontFamily: "var(--font-sans)", fontSize: "9px", fontWeight: 800, color: "#6B7280", textTransform: "uppercase", letterSpacing: "0.05em" }}>FIT NOTE: SIZE DOWN FOR REGULAR</span>
+              </div>
             </div>
             <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
               {SIZES.map((sz) => {
@@ -247,7 +266,7 @@ export default function ProductDetailClient({ slug, productName }: { slug: strin
               <input value={pincode} onChange={(e) => { setPincode(e.target.value.replace(/\D/g, "").slice(0, 6)); setDeliveryMsg(null); }} placeholder="Enter Pincode" style={{ flex: 1, padding: "0.65rem 0.875rem", border: "2px solid #172545", backgroundColor: "#F5F1E8", fontFamily: "var(--font-sans)", fontSize: "14px", fontWeight: 800, color: "#172545", outline: "none" }} />
               <button className="btn-primary" onClick={checkDelivery} style={{ padding: "0.65rem 1.25rem", fontSize: "12px" }}>CHECK</button>
             </div>
-            {deliveryMsg && <p style={{ fontFamily: "var(--font-sans)", fontSize: "12px", fontWeight: 800, color: pincode.length === 6 ? "#172545" : "#C94227", marginTop: "0.625rem", textTransform: "uppercase" }}>{deliveryMsg}</p>}
+            {deliveryMsg && <p style={{ fontFamily: "var(--font-sans)", fontSize: "12px", fontWeight: 800, color: pincode.length === 6 ? "#172545" : "#C94227", marginTop: "0.625rem", textTransform: "uppercase" }}>{deliveryMsg} (COD AVAILABLE)</p>}
           </div>
 
           {/* Trust strip */}
@@ -311,12 +330,19 @@ export default function ProductDetailClient({ slug, productName }: { slug: strin
           </div>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "1.5rem" }} className="review-grid">
-          {[{ author: "Aditya S.", text: "Absolutely fire. The 260 GSM weight feels incredible and the acid black colour is perfect. Sizing is true to the oversized description.", rating: 5, verified: true },
-            { author: "Priya M.", text: "Finally a brand that gets the oversized tee right. The drop shoulder and the fabric feel premium. Would buy again.", rating: 5, verified: true },
-            { author: "Rohan K.", text: "Great quality but runs a bit small for an oversized fit. Ordered L instead of M, fits perfectly now. Otherwise love it.", rating: 4, verified: true }].map((r, i) => (
+          {[{ author: "Aditya S.", text: "Absolutely fire. The 260 GSM weight feels incredible and the acid black colour is perfect. Sizing is true to the oversized description.", rating: 5, verified: true, photo: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=200&auto=format&fit=crop&q=80" },
+            { author: "Priya M.", text: "Finally a brand that gets the oversized tee right. The drop shoulder and the fabric feel premium. Would buy again.", rating: 5, verified: true, photo: "https://images.unsplash.com/photo-1529391409740-59f2cea08bc6?w=200&auto=format&fit=crop&q=80" },
+            { author: "Rohan K.", text: "Great quality but runs a bit small for an oversized fit. Ordered L instead of M, fits perfectly now. Otherwise love it.", rating: 4, verified: true, photo: null }].map((r, i) => (
             <div key={i} style={{ backgroundColor: "#F5F1E8", padding: "1.5rem", border: "2px solid #172545", boxShadow: "4px 4px 0px 0px #172545" }}>
               <div style={{ display: "flex", gap: "3px", marginBottom: "0.75rem" }}>{Array.from({ length: 5 }).map((_, j) => <svg key={j} width="16" height="16" viewBox="0 0 24 24" fill={j < r.rating ? "#C94227" : "none"} stroke="#C94227" strokeWidth="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>)}</div>
               <p style={{ fontFamily: "var(--font-sans)", fontSize: "14px", lineHeight: 1.5, color: "#172545", marginBottom: "1rem", fontWeight: 700 }}>"{r.text}"</p>
+              
+              {r.photo && (
+                <div style={{ width: "80px", height: "80px", marginBottom: "1rem", border: "2px solid #172545", overflow: "hidden" }}>
+                  <img src={r.photo} alt="Customer photo" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                </div>
+              )}
+
               <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
                 <span style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", color: "#172545", textTransform: "uppercase" }}>{r.author}</span>
                 {r.verified && <span style={{ fontFamily: "var(--font-sans)", fontSize: "10px", fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", color: "#C94227" }}>✓ VERIFIED</span>}

@@ -40,11 +40,14 @@ export default async function ShopLayout({ children }: ShopLayoutProps) {
           {
             heading: "Categories",
             items: [
-              { label: "Oversized Tees", href: "/category/oversized-tees" },
-              { label: "Acid Wash", href: "/category/acid-wash" },
-              { label: "Heavyweight Hoodies", href: "/category/hoodies" },
-              { label: "Baggy Jeans", href: "/category/jeans" },
-              { label: "Street Accessories", href: "/category/accessories" },
+              { label: "T-Shirts", href: "/collections/t-shirts" },
+              { label: "Shirts", href: "/collections/shirts" },
+              { label: "Hoodies", href: "/collections/hoodies" },
+              { label: "Sweatshirts", href: "/collections/sweatshirts" },
+              { label: "Cargos", href: "/collections/cargos" },
+              { label: "Jeans", href: "/collections/jeans" },
+              { label: "Trousers", href: "/collections/trousers" },
+              { label: "Outerwear", href: "/collections/outerwear" },
             ],
           },
           {
@@ -72,7 +75,7 @@ export default async function ShopLayout({ children }: ShopLayoutProps) {
           },
         ],
       },
-      { id: "about", label: "ABOUT", href: "/pages/about" },
+      { id: "about", label: "ABOUT", href: "/pages/our-heritage" },
     ],
   };
 
@@ -85,10 +88,10 @@ export default async function ShopLayout({ children }: ShopLayoutProps) {
 
   const defaultAnnouncement = {
     items: [
-      { id: "a1", text: "Free Shipping on orders above ₹999" },
-      { id: "a2", text: "Express delivery in 2–4 business days" },
-      { id: "a3", text: "Easy 15-day hassle-free returns" },
-      { id: "a4", text: "Exclusive member offers — Join the Cultraven Circle" },
+      { id: "a1", text: "ACID STATE DROP OUT NOW" },
+      { id: "a2", text: "FREE SHIPPING ON ORDERS ABOVE ₹1,999" },
+      { id: "a3", text: "CASH ON DELIVERY AVAILABLE" },
+      { id: "a4", text: "EASY 7-DAY RETURNS" },
     ],
     bgColor: "#172545",
     textColor: "#F5F1E8",

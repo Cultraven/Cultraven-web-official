@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import type { NavMenu } from "@shop/types";
 import { MegaMenu } from "./MegaMenu";
 import { CartBadge } from "./CartBadge";
@@ -15,6 +16,7 @@ interface HeaderProps {
 export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai", hasHero = false }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(!hasHero);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     if (!hasHero) {
@@ -172,14 +174,14 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai", hasHer
       {/* Mobile Bottom Nav */}
       <nav className="mobile-bottom-nav">
         <div className="bottom-nav-grid">
-          <Link href="/" className="bottom-nav-item">
+          <Link href="/" className="bottom-nav-item" style={{ color: pathname === "/" ? "#C94227" : "#172545" }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
               <polyline points="9 22 9 12 15 12 15 22"/>
             </svg>
             <span>Home</span>
           </Link>
-          <Link href="/collections/all" className="bottom-nav-item">
+          <Link href="/collections/all" className="bottom-nav-item" style={{ color: pathname?.startsWith("/collections") || pathname?.startsWith("/products") ? "#C94227" : "#172545" }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <rect x="3" y="3" width="7" height="7"/>
               <rect x="14" y="3" width="7" height="7"/>
@@ -188,7 +190,7 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai", hasHer
             </svg>
             <span>Shop</span>
           </Link>
-          <Link href="/account/wishlist" className="bottom-nav-item">
+          <Link href="/account/wishlist" className="bottom-nav-item" style={{ color: pathname === "/account/wishlist" ? "#C94227" : "#172545" }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
             </svg>
@@ -198,7 +200,7 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai", hasHer
             <CartBadge isScrolled={false} />
             <span>Bag</span>
           </div>
-          <Link href="/account" className="bottom-nav-item">
+          <Link href="/account" className="bottom-nav-item" style={{ color: pathname === "/account" ? "#C94227" : "#172545" }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
             </svg>

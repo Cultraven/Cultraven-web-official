@@ -187,7 +187,7 @@ export function ProductCard({ product, cardWidth = "100%" }: ProductCardProps) {
           <div style={{ 
             display: "flex", 
             alignItems: "center", 
-            gap: "2px", 
+            gap: "4px", 
             backgroundColor: "#172545", 
             color: "#F5F1E8", 
             padding: "2px 6px", 
@@ -198,7 +198,7 @@ export function ProductCard({ product, cardWidth = "100%" }: ProductCardProps) {
             flexShrink: 0
           }}>
             <span style={{ color: "var(--color-yellow)", fontSize: "10px" }}>★</span>
-            <span>{mockRating}</span>
+            <span>{mockRating} <span style={{ color: "rgba(245,241,232,0.7)" }}>({mockReviews})</span></span>
           </div>
         </div>
 

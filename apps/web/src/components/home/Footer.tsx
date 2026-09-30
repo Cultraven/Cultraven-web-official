@@ -50,6 +50,11 @@ const SOCIAL_ICONS: Record<string, React.ReactElement> = {
       <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z" />
     </svg>
   ),
+  whatsapp: (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square" aria-hidden="true">
+      <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" />
+    </svg>
+  ),
 };
 
 // ── Default fallback data when CMS is unavailable ─────────────────────────────
@@ -72,14 +77,6 @@ const DEFAULT_SUPPORT_LINKS = [
   { label: "FAQ", href: "/pages/faq" },
 ];
 
-const TRUST_STRIP = [
-  "PREMIUM HEAVYWEIGHT COTTON",
-  "SECURE PAYMENTS",
-  "FAST SHIPPING",
-  "MADE FOR EVERYDAY WEAR",
-];
-
-// ── Payment badge SVG/text labels ─────────────────────────────────────────────
 const PAYMENT_BADGES = ["RAZORPAY", "VISA", "MASTERCARD", "UPI", "RUPAY"];
 
 export function Footer({ config }: FooterProps) {
@@ -117,50 +114,14 @@ export function Footer({ config }: FooterProps) {
     ? config.socialLinks
     : [
         { platform: "instagram" as const, href: "https://www.instagram.com/cultraven" },
+        { platform: "whatsapp" as const, href: "https://wa.me/919999999999" },
         { platform: "youtube" as const, href: "https://www.youtube.com/cultraven" },
         { platform: "pinterest" as const, href: "https://www.pinterest.com/cultraven" },
       ];
 
   return (
     <footer aria-label="Site footer">
-      {/* ── Trust strip ─────────────────────────────────────────────────── */}
-      <div
-        style={{
-          backgroundColor: "#C94227",
-          borderTop: "var(--border-thick)",
-          borderBottom: "var(--border-thick)",
-          overflowX: "hidden",
-          whiteSpace: "nowrap",
-        }}
-      >
-        <div
-          className="marquee-content"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            padding: "1rem 0",
-          }}
-        >
-          {Array(4).fill(TRUST_STRIP).flat().map((item, i) => (
-            <span key={i} style={{ display: "flex", alignItems: "center" }}>
-              <span
-                style={{
-                  fontFamily: "var(--font-heading)",
-                  fontWeight: 400,
-                  fontSize: "18px",
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
-                  color: "#F5F1E8",
-                  padding: "0 2rem",
-                }}
-              >
-                {item}
-              </span>
-              <span style={{ color: "#172545", fontSize: "16px", fontWeight: 900 }}>*</span>
-            </span>
-          ))}
-        </div>
-      </div>
+
 
       {/* ── Main footer body ─────────────────────────────────────────────── */}
       <div
@@ -382,7 +343,7 @@ export function Footer({ config }: FooterProps) {
                 textTransform: "uppercase"
               }}
             >
-              BE FIRST TO KNOW ABOUT DROPS, RESTOCKS AND LIMITED RELEASES.
+              JOIN THE CULT. GET ₹500 OFF YOUR FIRST ORDER AND BE FIRST TO KNOW ABOUT DROPS.
             </p>
 
             {status === "success" ? (

@@ -57,7 +57,7 @@ export const metadata = {
     template: "%s | CULTRAVEN",
   },
   description:
-    "CULTRAVEN is India's boldest Gen-Z streetwear brand. Shop oversized essentials, acid-wash heavyweights, mythic graphic tees, and limited-edition drops. Free delivery above ₹999.",
+    "CULTRAVEN is India's boldest Gen-Z streetwear brand. Shop oversized essentials, acid-wash heavyweights, mythic graphic tees, and limited-edition drops. Free delivery above ₹1,999.",
   keywords: [
     "gen z streetwear india",
     "oversized t-shirts india",

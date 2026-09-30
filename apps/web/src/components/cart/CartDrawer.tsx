@@ -179,8 +179,12 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
         {/* Cart Items */}
         <div style={{ flex: 1, overflowY: "auto" }}>
           {items.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "3rem 1rem" }}>
-              <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🛍️</div>
+            <div style={{ textAlign: "center", padding: "3rem 1rem", flex: 1 }}>
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#172545" strokeWidth="2" strokeLinecap="square" style={{ margin: "0 auto 1rem" }}>
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <path d="M16 10a4 4 0 0 1-8 0" />
+              </svg>
               <p style={{ fontFamily: "var(--font-heading)", fontSize: "28px", fontWeight: 400, color: "#172545", marginBottom: "1.5rem", textTransform: "uppercase" }}>
                 BAG KHALI HAI BRO.
               </p>
@@ -224,32 +228,32 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
                   </div>
                 ))}
               </div>
-              
-              {/* Upsell Section */}
-              <div style={{ padding: "1.5rem", backgroundColor: "#EAE6DB" }}>
-                <p style={{ fontFamily: "var(--font-heading)", fontWeight: 400, fontSize: "18px", letterSpacing: "0.02em", color: "#172545", marginBottom: "1rem", textTransform: "uppercase" }}>YOU MIGHT ALSO LIKE</p>
-                <div style={{ display: "flex", gap: "1rem", overflowX: "auto", paddingBottom: "1rem" }} className="hide-scrollbar">
-                  {[
-                    { id: "al1", title: "DHARMA GRAPHIC HOODIE", price: 299900, image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=400&auto=format&fit=crop&q=80", href: "/products/dharma-graphic-hoodie-stone" },
-                    { id: "al2", title: "CARGO WIDE LEG", price: 349900, image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=400&auto=format&fit=crop&q=80", href: "/products/cargo-wide-leg-military-olive" }
-                  ].map((p) => (
-                    <div key={p.id} style={{ minWidth: "140px", backgroundColor: "#F5F1E8", border: "2px solid #172545", boxShadow: "2px 2px 0px 0px #172545", padding: "8px" }}>
-                      <Link href={p.href} onClick={onClose} style={{ display: "block" }}>
-                        <div style={{ position: "relative", aspectRatio: "3/4", border: "2px solid #172545", marginBottom: "8px" }}>
-                          <Image src={p.image} alt={p.title} fill sizes="140px" style={{ objectFit: "cover" }} />
-                        </div>
-                        <p style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "10px", color: "#172545", textTransform: "uppercase", marginBottom: "4px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.title}</p>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                          <p style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "12px", color: "#172545" }}>{fmt(p.price)}</p>
-                          <span style={{ backgroundColor: "#172545", color: "#F5F1E8", width: "24px", height: "24px", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900 }}>+</span>
-                        </div>
-                      </Link>
-                    </div>
-                  ))}
-                </div>
-              </div>
             </>
           )}
+          
+          {/* Upsell Section (Always visible) */}
+          <div style={{ padding: "1.5rem", backgroundColor: "#EAE6DB", marginTop: "auto" }}>
+            <p style={{ fontFamily: "var(--font-heading)", fontWeight: 400, fontSize: "18px", letterSpacing: "0.02em", color: "#172545", marginBottom: "1rem", textTransform: "uppercase" }}>YOU MIGHT ALSO LIKE</p>
+            <div style={{ display: "flex", gap: "1rem", overflowX: "auto", paddingBottom: "1rem" }} className="hide-scrollbar">
+              {[
+                { id: "al1", title: "DHARMA GRAPHIC HOODIE", price: 299900, image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=400&auto=format&fit=crop&q=80", href: "/products/dharma-graphic-hoodie-stone" },
+                { id: "al2", title: "CARGO WIDE LEG", price: 349900, image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=400&auto=format&fit=crop&q=80", href: "/products/cargo-wide-leg-military-olive" }
+              ].map((p) => (
+                <div key={p.id} style={{ minWidth: "140px", backgroundColor: "#F5F1E8", border: "2px solid #172545", boxShadow: "2px 2px 0px 0px #172545", padding: "8px" }}>
+                  <Link href={p.href} onClick={onClose} style={{ display: "block" }}>
+                    <div style={{ position: "relative", aspectRatio: "3/4", border: "2px solid #172545", marginBottom: "8px" }}>
+                      <Image src={p.image} alt={p.title} fill sizes="140px" style={{ objectFit: "cover" }} />
+                    </div>
+                    <p style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "10px", color: "#172545", textTransform: "uppercase", marginBottom: "4px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.title}</p>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <p style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "12px", color: "#172545" }}>{fmt(p.price)}</p>
+                      <span style={{ backgroundColor: "#172545", color: "#F5F1E8", width: "24px", height: "24px", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900 }}>+</span>
+                    </div>
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Footer */}

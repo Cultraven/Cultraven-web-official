@@ -94,7 +94,7 @@ export const TRENDING_NOW_ITEMS: TrendingItem[] = [
     title: "24-Hour Knit Shirt",
     category: "Shirts",
     imageSrc: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=800&auto=format&fit=crop&q=80",
-    href: "/product/24-hour-knit-shirt",
+    href: "/products/24-hour-knit-shirt",
     features: [
       { icon: "nylon", label: "NYLON BLEND" },
       { icon: "non-iron", label: "NON-IRON" },
@@ -118,7 +118,7 @@ export const TRENDING_NOW_ITEMS: TrendingItem[] = [
     title: "Coloured Denim",
     category: "Bottoms",
     imageSrc: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=800&auto=format&fit=crop&q=80",
-    href: "/category/slim-jeans",
+    href: "/collections/jeans",
     features: [
       { icon: "selvedge", label: "SELVEDGE" },
       { icon: "comfort", label: "COMFORT FLEX" },

@@ -24,18 +24,23 @@ export function BrandStorySection() {
         backgroundColor: "#172545",
       }}
     >
-      {/* Background image */}
-      <div
-        aria-hidden="true"
+      {/* Background video */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
         style={{
           position: "absolute",
           inset: 0,
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&auto=format&fit=crop&q=85')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          zIndex: 0,
         }}
-      />
+      >
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-young-man-in-streetwear-standing-outdoors-42289-large.mp4" type="video/mp4" />
+      </video>
 
       {/* Overlay — left-heavy for text legibility */}
       <div
@@ -104,7 +109,7 @@ export function BrandStorySection() {
         </p>
 
         <Link
-          href="/about"
+          href="/pages/our-heritage"
           style={{
             display: "inline-flex",
             alignItems: "center",

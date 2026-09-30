@@ -90,10 +90,6 @@ export default async function HomePage() {
         <TrustBadges badges={cmsData.trustBadges} />
       )}
 
-      {/* 12 — Newsletter: "JOIN THE CULTURE." */}
-      {cmsData?.newsletter && (
-        <NewsletterSignup config={cmsData.newsletter} />
-      )}
     </div>
   );
 }
