@@ -4,15 +4,15 @@
 
 @theme {
   /* ── CULTRAVEN Brand Palette ──────────────────────────────────────────── */
-  --color-cream:   #F5F1E8; /* 60% — primary bg */
+  --color-cream:   #FAF9F6; /* 60% — primary bg (off-white) */
   --color-navy:    #172545; /* 30% — headings, buttons, footer */
   --color-crimson: #C94227; /* 10% — accents, CTAs, badges */
   --color-yellow:  #DAB205; /* PDF brand yellow — star ratings, gold accents */
   --color-gold:    #DAB205; /* alias */
-  --color-mist:    #EAE6DB; /* off-cream for alternating sections */
+  --color-mist:    #F0F0F0; /* slight gray for alternating sections */
   --color-white:   #FFFFFF;
   --color-gray:    #6B7280;
-  --color-border:  #D9D3C4;
+  --color-border:  #E5E5E5;
 
   /* Convenience aliases that components use */
   --color-black: var(--color-navy);
