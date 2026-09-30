@@ -11,6 +11,7 @@
  *             (products are never overwritten)
  *   --dry-run print what would be written, touch nothing
  */
+import dns from "node:dns";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -292,7 +293,16 @@ async function main() {
     return;
   }
   if (!process.env.MONGODB_URI) throw new Error("MONGODB_URI is not set (apps/web/.env)");
-  await mongoose.connect(process.env.MONGODB_URI, { serverSelectionTimeoutMS: 15000 });
+  try {
+    await mongoose.connect(process.env.MONGODB_URI, { serverSelectionTimeoutMS: 15000 });
+  } catch (e) {
+    // Some local resolvers / VPNs refuse the SRV lookup mongodb+srv:// needs — retry with public DNS.
+    if (!/querySrv/.test(String(e.message))) throw e;
+    const servers = (process.env.MONGODB_DNS_SERVERS || "8.8.8.8,1.1.1.1").split(",").map((s) => s.trim());
+    console.warn(`SRV lookup failed with system DNS (${dns.getServers().join(", ")}); retrying with ${servers.join(", ")}`);
+    dns.setServers(servers);
+    await mongoose.connect(process.env.MONGODB_URI, { serverSelectionTimeoutMS: 15000 });
+  }
   const db = mongoose.connection.db;
   const now = new Date();
 

@@ -1,3 +1,4 @@
+import dns from "dns";
 import mongoose from "mongoose";
 
 const MONGODB_URI = process.env.MONGODB_URI;
@@ -7,6 +8,28 @@ let cached = (global as any).mongoose;
 
 if (!cached) {
   cached = (global as any).mongoose = { conn: null, promise: null };
+}
+
+/** `mongodb+srv://` needs SRV DNS lookups. Some local resolvers / VPNs refuse them (ECONNREFUSED on querySrv). */
+function isSrvDnsFailure(e: any): boolean {
+  return (
+    e?.syscall === "querySrv" ||
+    /querySrv (ECONNREFUSED|ENOTFOUND|ETIMEOUT|ESERVFAIL)/.test(String(e?.message ?? ""))
+  );
+}
+
+async function connectWithDnsFallback(uri: string) {
+  const opts = { bufferCommands: false };
+  try {
+    return await mongoose.connect(uri, opts);
+  } catch (e) {
+    if (!uri.startsWith("mongodb+srv://") || !isSrvDnsFailure(e)) throw e;
+    // Retry once using public resolvers (override with MONGODB_DNS_SERVERS="ip,ip").
+    const servers = (process.env.MONGODB_DNS_SERVERS || "8.8.8.8,1.1.1.1").split(",").map((s) => s.trim()).filter(Boolean);
+    console.warn(`[db] SRV lookup failed with system DNS (${dns.getServers().join(", ")}). Retrying with ${servers.join(", ")}.`);
+    dns.setServers(servers);
+    return await mongoose.connect(uri, opts);
+  }
 }
 
 export async function connectToDatabase() {
@@ -21,11 +44,7 @@ export async function connectToDatabase() {
   }
 
   if (!cached.promise) {
-    const opts = {
-      bufferCommands: false,
-    };
-
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
+    cached.promise = connectWithDnsFallback(MONGODB_URI).then((mongoose) => {
       console.log("MongoDB connected successfully");
       return mongoose;
     });
