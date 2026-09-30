@@ -26,8 +26,8 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
       setIsScrolled(true);
       return;
     }
-    setIsScrolled(window.scrollY > 83);
-    const onScroll = () => setIsScrolled(window.scrollY > 83);
+    setIsScrolled(window.scrollY > 100);
+    const onScroll = () => setIsScrolled(window.scrollY > 100);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, [isHomepage]);
@@ -102,9 +102,9 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
               alt="CULTRAVEN"
               width={200}
               height={66}
+              className="site-logo"
               style={{
                 objectFit: "contain",
-                height: "80px",
                 width: "auto",
                 filter: transparent ? "brightness(0) invert(1)" : "none",
                 transition: "filter 0.4s ease",
@@ -189,6 +189,11 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
       </nav>
 
       <style>{`
+        /* Logo: 64px on mobile, 100px on desktop (25% up from prior 80px) */
+        .site-logo { height: 64px; }
+        @media (min-width: 1024px) {
+          .site-logo { height: 100px; }
+        }
         @media (min-width: 1024px) {
           .show-mobile { display: none !important; }
           .mobile-bottom-nav { display: none !important; }
