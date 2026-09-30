@@ -47,8 +47,8 @@ export default async function HomePage() {
     <div className="w-full">
       {/* 1 — Full-screen campaign hero
             Negative margin pulls it behind the transparent sticky header.
-            Header height ≈ 88px (68px logo + 2×0.6rem padding). */}
-      <div style={{ marginTop: "-88px" }}>
+            Header height ≈ 83px (80px logo + 2×0.15rem padding). */}
+      <div style={{ marginTop: "-83px" }}>
         {(cmsData as any)?.heroSlides?.length > 0 ? (
           <HeroBanner slides={(cmsData as any).heroSlides} siteUrl={siteUrl} />
         ) : cmsData?.heroSlide ? (

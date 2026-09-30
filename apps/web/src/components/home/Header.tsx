@@ -26,8 +26,8 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
       setIsScrolled(true);
       return;
     }
-    setIsScrolled(window.scrollY > 88);
-    const onScroll = () => setIsScrolled(window.scrollY > 88);
+    setIsScrolled(window.scrollY > 83);
+    const onScroll = () => setIsScrolled(window.scrollY > 83);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, [isHomepage]);
@@ -69,7 +69,7 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
           color: fg,
           borderBottom: border,
           boxShadow: shadow,
-          padding: "0.6rem 0",
+          padding: "0.15rem 0",
           transition: "background-color 0.4s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease",
         }}
       >
@@ -104,7 +104,7 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
               height={66}
               style={{
                 objectFit: "contain",
-                height: "68px",
+                height: "80px",
                 width: "auto",
                 filter: transparent ? "brightness(0) invert(1)" : "none",
                 transition: "filter 0.4s ease",
