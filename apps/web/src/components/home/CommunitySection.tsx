@@ -141,7 +141,7 @@ export function CommunitySection() {
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(3, 1fr)",
-            gridAutoRows: "260px",
+            gridAutoRows: "clamp(140px, 18vw, 260px)",
             gap: "0.75rem",
           }}
           className="ugc-grid"
@@ -203,10 +203,10 @@ export function CommunitySection() {
 
       <style>{`
         @media (max-width: 768px) {
-          .ugc-grid { grid-template-columns: repeat(2, 1fr) !important; grid-auto-rows: 200px !important; }
+          .ugc-grid { grid-template-columns: repeat(2, 1fr) !important; grid-auto-rows: clamp(120px, 28vw, 200px) !important; }
         }
         @media (max-width: 480px) {
-          .ugc-grid { grid-template-columns: repeat(2, 1fr) !important; grid-auto-rows: 160px !important; }
+          .ugc-grid { grid-template-columns: repeat(2, 1fr) !important; grid-auto-rows: clamp(100px, 30vw, 160px) !important; }
         }
       `}</style>
     </section>

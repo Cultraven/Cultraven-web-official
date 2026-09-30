@@ -78,7 +78,7 @@ export function ProductCard({ product, cardWidth = "100%" }: ProductCardProps) {
           position: "relative",
           display: "block",
           aspectRatio: "4/5",
-          maxHeight: "360px",
+          maxHeight: "clamp(200px, 26vw, 360px)",
           overflow: "hidden",
           backgroundColor: "var(--color-mist)",
           borderBottom: "var(--border-thick)",

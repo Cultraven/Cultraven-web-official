@@ -231,7 +231,7 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
           position: "relative",
           display: "block",
           aspectRatio: "4/5",
-          maxHeight: "360px",
+          maxHeight: "clamp(200px, 26vw, 360px)",
           overflow: "hidden",
           backgroundColor: "var(--color-bone)",
           marginBottom: "0.9rem",
