@@ -79,20 +79,27 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  // ── Admin routes: require ADMIN_TOKEN cookie ──────────────────────────────
+  // ── Admin routes: require a signed admin-session cookie (separate from the customer session) ──
   if (isMatch(pathname, ADMIN_PATHS)) {
-    const session = req.cookies.get("cultraven_session")?.value;
+    const session = req.cookies.get("cultraven_admin_session")?.value;
     const payload = session ? await verifyToken(session) : null;
-    
-    // In dev, we might allow fallback to ADMIN_SECRET_TOKEN for backward compatibility
-    const fallbackAdminToken = req.cookies.get("cultraven_admin")?.value;
-    const isFallbackAdmin = fallbackAdminToken === process.env.ADMIN_SECRET_TOKEN;
 
-    if (!(payload && payload.role === "admin") && !isFallbackAdmin) {
+    if (!(payload && payload.role === "admin")) {
       const loginUrl = req.nextUrl.clone();
       loginUrl.pathname = "/portal-access";
       loginUrl.searchParams.set("redirect", pathname);
       return NextResponse.redirect(loginUrl);
+    }
+  }
+
+  // ── Admin login page: already signed in → go straight to the panel ──
+  if (pathname === "/portal-access") {
+    const session = req.cookies.get("cultraven_admin_session")?.value;
+    const payload = session ? await verifyToken(session) : null;
+    if (payload && payload.role === "admin") {
+      const dest = req.nextUrl.searchParams.get("redirect");
+      const target = dest && dest.startsWith("/portal-secure") ? dest : "/portal-secure";
+      return NextResponse.redirect(new URL(target, req.url));
     }
   }
 

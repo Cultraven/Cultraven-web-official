@@ -1,13 +1,13 @@
 /**
  * POST /api/auth/admin-logout
- * Ends the admin session: clears BOTH the signed session cookie (what the API
- * actually trusts) and the legacy admin cookie.
+ * Ends the admin session: clears the signed admin cookie (what the API trusts) and the
+ * legacy admin cookie. The customer storefront session is a separate cookie and is untouched.
  */
 import { NextResponse } from "next/server";
 
 export async function POST() {
   const response = NextResponse.json({ ok: true }, { status: 200 });
-  for (const name of ["cultraven_session", "cultraven_admin"]) {
+  for (const name of ["cultraven_admin_session", "cultraven_admin"]) {
     response.cookies.set(name, "", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",

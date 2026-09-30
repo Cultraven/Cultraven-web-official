@@ -1,5 +1,8 @@
 import crypto from "crypto";
 
+/** Admin sessions live in their own cookie so a customer login/logout on the storefront can never replace or clear them. */
+export const ADMIN_COOKIE = "cultraven_admin_session";
+
 function readCookie(req: Request, name: string): string | null {
   const header = req.headers.get("cookie") || "";
   for (const part of header.split(";")) {
@@ -15,7 +18,7 @@ export function isAdminRequest(req: Request): boolean {
   const secret = process.env.SESSION_SECRET;
   if (!secret) return false;
 
-  const token = readCookie(req, "cultraven_session");
+  const token = readCookie(req, ADMIN_COOKIE);
   if (!token || !token.includes(".")) return false;
 
   const [encodedPayload, signature] = token.split(".");

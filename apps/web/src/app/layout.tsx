@@ -118,6 +118,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html
       lang="en"
       className={`${archivo.variable} ${hanken.variable} ${notoDeva.variable}`}
+      suppressHydrationWarning
     >
       <head>
         {/* JSON-LD — Organization */}
@@ -150,7 +151,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           }}
         />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <ToastProvider>
           {children}
           <ChatWidgetGate />

@@ -73,8 +73,7 @@ export async function POST(req: NextRequest) {
   try { token = createAdminToken(email); } catch { return NextResponse.json({ error: "Admin not configured." }, { status: 500 }); }
   const res = NextResponse.json({ ok: true }, { status: 200 });
   const cookieOpts = { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax" as const, maxAge: 60 * 60 * 8, path: "/" };
-  res.cookies.set("cultraven_session", token, cookieOpts);
-  if (process.env.ADMIN_SECRET_TOKEN) res.cookies.set("cultraven_admin", process.env.ADMIN_SECRET_TOKEN, cookieOpts);
+  res.cookies.set("cultraven_admin_session", token, cookieOpts);
   return res;
 }
 
