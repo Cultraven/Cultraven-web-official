@@ -11,14 +11,9 @@ export function AnnouncementBar({ data }: AnnouncementBarProps) {
   const [dismissed, setDismissed] = useState(false);
   if (dismissed) return null;
 
-  const items = data?.items?.length
-    ? data.items
-    : [
-        { id: "a1", text: "ACID STATE DROP IS LIVE" },
-        { id: "a2", text: "FREE SHIPPING ABOVE ₹1,999" },
-        { id: "a3", text: "CASH ON DELIVERY AVAILABLE" },
-        { id: "a4", text: "EASY 7-DAY RETURNS" },
-      ];
+  // Messages come from the database (site.announcement). None configured → no bar.
+  const items = data?.items ?? [];
+  if (items.length === 0) return null;
 
   // Repeat items to make a seamless marquee
   const marqueeItems = [...items, ...items, ...items];

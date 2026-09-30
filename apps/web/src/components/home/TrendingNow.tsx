@@ -1,11 +1,13 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
+import Image from "@/components/common/CmsImage";
 import Link from "next/link";
-import { TRENDING_NOW_ITEMS, type TrendingItem } from "@/lib/fixtures";
+export interface TrendItem { id: string; title: string; href: string; image: string; alt?: string }
 
-export function TrendingNow({ items = TRENDING_NOW_ITEMS }: { items?: TrendingItem[] }) {
+/** Heading + cards come from the database (home.trending). */
+export function TrendingNow({ heading, items }: { heading?: string; items: TrendItem[] }) {
+  if (items.length === 0) return null;
   return (
     <section
       style={{
@@ -26,7 +28,7 @@ export function TrendingNow({ items = TRENDING_NOW_ITEMS }: { items?: TrendingIt
             lineHeight: 1,
           }}
         >
-          Trending Now
+          {heading}
         </h2>
 
         {/* 3-column grid */}
@@ -52,7 +54,7 @@ export function TrendingNow({ items = TRENDING_NOW_ITEMS }: { items?: TrendingIt
   );
 }
 
-function TrendCard({ item }: { item: TrendingItem }) {
+function TrendCard({ item }: { item: TrendItem }) {
   return (
     <div
       style={{ position: "relative", backgroundColor: "var(--color-mist)" }}
@@ -70,8 +72,8 @@ function TrendCard({ item }: { item: TrendingItem }) {
         }}
       >
         <Image
-          src={item.imageSrc}
-          alt={item.title}
+          src={item.image}
+          alt={item.alt || item.title}
           fill
           sizes="(max-width: 768px) 100vw, 33vw"
           style={{ objectFit: "cover", transition: "transform 0.65s ease" }}

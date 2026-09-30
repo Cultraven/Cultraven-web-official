@@ -17,59 +17,48 @@
 "use client";
 
 import React, { useState } from "react";
-import Image from "next/image";
+import Image from "@/components/common/CmsImage";
 import Link from "next/link";
 import { useCartStore } from "@/store/cart";
 import { toast } from "@/components/common/Toast";
 
 const fmt = (p: number) => `₹${(p / 100).toLocaleString("en-IN")}`;
 
-const GALLERY_IMAGES = [
-  { type: "image", src: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=900&auto=format&fit=crop&q=85" },
-  { type: "video", src: "https://assets.mixkit.co/videos/preview/mixkit-young-man-in-streetwear-standing-outdoors-42289-large.mp4" },
-  { type: "image", src: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=900&auto=format&fit=crop&q=85" },
-  { type: "image", src: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=900&auto=format&fit=crop&q=85" },
-  { type: "image", src: "https://images.unsplash.com/photo-1529391409740-59f2cea08bc6?w=900&auto=format&fit=crop&q=85" },
-];
+export interface PdpProduct {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  image: string;
+  images: string[];
+  pricePaise: number;
+  mrpPaise: number;
+  rating: number;
+  reviewCount: number;
+  colors: { hex: string; label: string }[];
+  sizes: string[];
+  fit?: string;
+}
+export interface RelatedProduct { id: string; title: string; price: number; image: string; href: string }
 
-const COLORS = [
-  { hex: "#0A0A0A", label: "Acid Black" },
-  { hex: "#2C2C2C", label: "Charcoal" },
-  { hex: "var(--color-crimson)", label: "Flame" },
-];
-const SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
-const SOLD_OUT_SIZES = ["XS"];
-
-const ALSO_LIKE = [
-  { id: "al1", title: "DHARMA GRAPHIC HOODIE", price: 299900, image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=400&auto=format&fit=crop&q=80", href: "/products/dharma-graphic-hoodie-stone" },
-  { id: "al2", title: "CARGO WIDE LEG", price: 349900, image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=400&auto=format&fit=crop&q=80", href: "/products/cargo-wide-leg-military-olive" },
-  { id: "al3", title: "CLASSIC TEE WHITE", price: 189900, image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&auto=format&fit=crop&q=80", href: "/products/classic-oversized-tee-white" },
-  { id: "al4", title: "ESSENTIALS HOODIE", price: 319900, image: "https://images.unsplash.com/photo-1578768079052-aa76e52ff62e?w=400&auto=format&fit=crop&q=80", href: "/products/essentials-hoodie-jet-black" },
-];
-
-const ACCORDIONS = [
-  { id: "description", title: "Description", body: "The RAVEN OVERSIZED TEE is built from 260 GSM pre-shrunk heavyweight cotton — a drop-shoulder silhouette designed to make the oversized feel intentional. Washed to a rich acid black finish, screen-printed with the signature CULTRAVEN mark." },
-  { id: "fabric", title: "Fabric & Care", body: "100% Combed Ring-Spun Cotton, 260 GSM. Acid-wash finish. Cold machine wash (max 30°C), inside out. Do not tumble dry. Do not bleach. Iron on low heat, inside out." },
-  { id: "fit", title: "Fit & Sizing", body: "OVERSIZED FIT — Drops 2–3 sizes below your regular size. If you usually wear M, size down to S for a regular oversized, or stay at M for an extreme drop-shoulder silhouette. Chest: 46\" (M). Length: 29\" (M). Shoulder: 22\" (M)." },
+// Site-wide policy copy (not product data).
+const POLICY_ACCORDIONS = [
   { id: "shipping", title: "Shipping", body: "Free shipping on orders above ₹1,999. Standard: 4–6 business days. Express: 2–3 business days. COD available on select pincodes. We ship across India." },
   { id: "returns", title: "Returns & Exchanges", body: "Easy 7-day returns. Items must be unworn, unwashed with original tags. Initiate a return from your account dashboard. Exchange for a different size available within 15 days." },
 ];
 
-export default function ProductDetailClient({ slug, productName }: { slug: string; productName: string }) {
-  const [product, setProduct] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-
-  React.useEffect(() => {
-    fetch("/api/products")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.products) {
-          const found = data.products.find((p: any) => p.slug === slug);
-          if (found) setProduct(found);
-        }
-      })
-      .finally(() => setLoading(false));
-  }, [slug]);
+/** Product + related items are loaded from the database on the server (see page.tsx). */
+export default function ProductDetailClient({ product, related }: { product: PdpProduct; related: RelatedProduct[] }) {
+  const slug = product.slug;
+  const GALLERY_IMAGES = product.images.map((src) => ({ type: "image" as const, src }));
+  const COLORS = product.colors;
+  const SIZES = product.sizes;
+  const SOLD_OUT_SIZES: string[] = [];
+  const ALSO_LIKE = related;
+  const ACCORDIONS = [
+    ...(product.description ? [{ id: "description", title: "Description", body: product.description }] : []),
+    ...POLICY_ACCORDIONS,
+  ];
 
   const [activeImage, setActiveImage] = useState(0);
   const [selectedColor, setSelectedColor] = useState(0);
@@ -82,22 +71,12 @@ export default function ProductDetailClient({ slug, productName }: { slug: strin
   const [openAccordion, setOpenAccordion] = useState<string | null>("description");
   const [sizeError, setSizeError] = useState(false);
 
-  const finalName = product?.title || productName;
-  const pricePaise = product?.pricePaise;
-  const mrpPaise = product?.mrpPaise;
+  const finalName = product.title;
+  const pricePaise = product.pricePaise;
+  const mrpPaise = product.mrpPaise;
   const disc = mrpPaise && pricePaise ? Math.round(((mrpPaise - pricePaise) / mrpPaise) * 100) : 0;
-  const rating = product?.rating || 0;
-  const reviewCount = product?.reviewCount || 0;
-
-  if (!loading && (!product || !pricePaise)) {
-    return (
-      <div style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <p style={{ fontFamily: "var(--font-sans)", fontSize: "1.2rem", fontWeight: 700, color: "var(--color-navy)" }}>
-          Product unavailable or pricing error.
-        </p>
-      </div>
-    );
-  }
+  const rating = product.rating || 0;
+  const reviewCount = product.reviewCount || 0;
 
   const handleAddToBag = () => {
     if (!selectedSize) { 
@@ -108,13 +87,13 @@ export default function ProductDetailClient({ slug, productName }: { slug: strin
     
     // Add to cart store
     useCartStore.getState().addItem({
-      productId: product?.id || "fallback-id",
+      productId: product.id,
       slug: slug,
       title: finalName,
-      image: product?.image || GALLERY_IMAGES[0],
-      sku: `${slug}-${selectedSize}-${COLORS[selectedColor].label.toUpperCase().replace(/\s+/g, '-')}`,
+      image: product.image,
+      sku: `${slug}-${selectedSize}-${(COLORS[selectedColor]?.label ?? 'default').toUpperCase().replace(/\s+/g, '-')}`,
       size: selectedSize,
-      color: COLORS[selectedColor].label,
+      color: COLORS[selectedColor]?.label ?? "Default",
       pricePaise: pricePaise,
       mrpPaise: mrpPaise,
     }, qty);
@@ -217,9 +196,10 @@ export default function ProductDetailClient({ slug, productName }: { slug: strin
           </div>
 
           {/* Color */}
+          {COLORS.length > 0 && (
           <div style={{ marginBottom: "1.5rem" }}>
             <p style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-navy)", marginBottom: "0.75rem" }}>
-              COLOR: <span style={{ color: "var(--color-crimson)" }}>{COLORS[selectedColor].label}</span>
+              COLOR: <span style={{ color: "var(--color-crimson)" }}>{COLORS[selectedColor]?.label}</span>
             </p>
             <div style={{ display: "flex", gap: "0.5rem" }}>
               {COLORS.map((c, i) => (
@@ -227,6 +207,7 @@ export default function ProductDetailClient({ slug, productName }: { slug: strin
               ))}
             </div>
           </div>
+          )}
 
           {/* Size selector */}
           <div style={{ marginBottom: "1.5rem" }}>
@@ -234,7 +215,7 @@ export default function ProductDetailClient({ slug, productName }: { slug: strin
               <p style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", letterSpacing: "0.12em", textTransform: "uppercase", color: sizeError ? "var(--color-crimson)" : "var(--color-navy)" }}>{sizeError ? "PLEASE SELECT A SIZE" : "SIZE"}</p>
               <div style={{ textAlign: "right" }}>
                 <Link href="/size-guide" style={{ fontFamily: "var(--font-sans)", fontSize: "10px", fontWeight: 800, color: "var(--color-navy)", textDecoration: "underline", display: "block", marginBottom: "2px" }}>SIZE GUIDE</Link>
-                <span style={{ fontFamily: "var(--font-sans)", fontSize: "9px", fontWeight: 800, color: "var(--color-gray)", textTransform: "uppercase", letterSpacing: "0.05em" }}>FIT NOTE: SIZE DOWN FOR REGULAR</span>
+                <span style={{ fontFamily: "var(--font-sans)", fontSize: "9px", fontWeight: 800, color: "var(--color-gray)", textTransform: "uppercase", letterSpacing: "0.05em" }}>{product.fit ? `FIT: ${product.fit}` : ""}</span>
               </div>
             </div>
             <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
@@ -317,7 +298,7 @@ export default function ProductDetailClient({ slug, productName }: { slug: strin
         
         <div style={{ position: "relative", width: "100%", maxWidth: "600px", margin: "0 auto" }}>
           <div style={{ position: "relative", aspectRatio: "3/4", border: "var(--border-thick)", boxShadow: "8px 8px 0px 0px #000" }}>
-            <Image src={product?.image || GALLERY_IMAGES[0].src} alt="Shop the look" fill sizes="100vw" style={{ objectFit: "cover" }} />
+            <Image src={product.image} alt="Shop the look" fill sizes="100vw" style={{ objectFit: "cover" }} />
             
             {/* Hotspot 1 */}
             <Link href="/products/raven-oversized-tee-acid-black" style={{ position: "absolute", top: "35%", left: "45%", width: "24px", height: "24px", backgroundColor: "var(--color-crimson)", borderRadius: "50%", border: "2px solid var(--color-cream)", display: "flex", alignItems: "center", justifyContent: "center", transform: "translate(-50%, -50%)", cursor: "pointer", zIndex: 10, animation: "pulse 2s infinite" }}>
@@ -345,25 +326,9 @@ export default function ProductDetailClient({ slug, productName }: { slug: strin
           </div>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "1.5rem" }} className="review-grid">
-          {[{ author: "Aditya S.", text: "Absolutely fire. The 260 GSM weight feels incredible and the acid black colour is perfect. Sizing is true to the oversized description.", rating: 5, verified: true, photo: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=200&auto=format&fit=crop&q=80" },
-            { author: "Priya M.", text: "Finally a brand that gets the oversized tee right. The drop shoulder and the fabric feel premium. Would buy again.", rating: 5, verified: true, photo: "https://images.unsplash.com/photo-1529391409740-59f2cea08bc6?w=200&auto=format&fit=crop&q=80" },
-            { author: "Rohan K.", text: "Great quality but runs a bit small for an oversized fit. Ordered L instead of M, fits perfectly now. Otherwise love it.", rating: 4, verified: true, photo: null }].map((r, i) => (
-            <div key={i} style={{ backgroundColor: "var(--color-cream)", padding: "1.5rem", border: "2px solid var(--color-navy)", boxShadow: "4px 4px 0px 0px var(--color-navy)" }}>
-              <div style={{ display: "flex", gap: "3px", marginBottom: "0.75rem" }}>{Array.from({ length: 5 }).map((_, j) => <svg key={j} width="16" height="16" viewBox="0 0 24 24" fill={j < r.rating ? "var(--color-crimson)" : "none"} stroke="var(--color-crimson)" strokeWidth="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>)}</div>
-              <p style={{ fontFamily: "var(--font-sans)", fontSize: "14px", lineHeight: 1.5, color: "var(--color-navy)", marginBottom: "1rem", fontWeight: 700 }}>"{r.text}"</p>
-              
-              {r.photo && (
-                <div style={{ width: "80px", height: "80px", marginBottom: "1rem", border: "2px solid var(--color-navy)", overflow: "hidden" }}>
-                  <img src={r.photo} alt="Customer photo" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                </div>
-              )}
-
-              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                <span style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", color: "var(--color-navy)", textTransform: "uppercase" }}>{r.author}</span>
-                {r.verified && <span style={{ fontFamily: "var(--font-sans)", fontSize: "10px", fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-crimson)" }}>✓ VERIFIED</span>}
-              </div>
-            </div>
-          ))}
+          {reviewCount === 0 ? (
+            <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.9rem", color: "var(--color-gray)" }}>No reviews yet.</p>
+          ) : null}
         </div>
       </div>
 

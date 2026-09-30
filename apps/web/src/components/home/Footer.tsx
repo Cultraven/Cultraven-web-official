@@ -66,26 +66,6 @@ const SOCIAL_BRAND_BG: Record<string, string> = {
   whatsapp: "#25D366",
 };
 
-// ── Default fallback data when CMS is unavailable ─────────────────────────────
-const DEFAULT_SHOP_LINKS = [
-  { label: "New Arrivals", href: "/collections/new-in" },
-  { label: "Oversized Tees", href: "/collections/tees" },
-  { label: "Hoodies", href: "/collections/hoodies" },
-  { label: "Cargo & Bottoms", href: "/collections/bottoms" },
-  { label: "Accessories", href: "/collections/accessories" },
-  { label: "Sale", href: "/collections/sale" },
-];
-
-const DEFAULT_SUPPORT_LINKS = [
-  { label: "Contact Us", href: "/pages/contact" },
-  { label: "Track Order", href: "/pages/track-order" },
-  { label: "Shipping Policy", href: "/pages/shipping" },
-  { label: "Return Policy", href: "/pages/returns" },
-  { label: "Terms & Conditions", href: "/pages/terms" },
-  { label: "Privacy Policy", href: "/pages/privacy" },
-  { label: "FAQ", href: "/pages/faq" },
-];
-
 const PAYMENT_BADGES = ["RAZORPAY", "VISA", "MASTERCARD", "UPI", "RUPAY"];
 
 export function Footer({ config }: FooterProps) {
@@ -108,25 +88,12 @@ export function Footer({ config }: FooterProps) {
     }
   };
 
-  // Resolve columns — prefer CMS, fallback to hardcoded
-  const shopColumn = config.columns.find((c) =>
-    c.heading.toLowerCase().includes("shop")
-  );
-  const supportColumn = config.columns.find((c) =>
-    c.heading.toLowerCase().includes("support")
-  );
-
-  const shopLinks = shopColumn?.links ?? DEFAULT_SHOP_LINKS.map((l) => ({ ...l, openInNew: false }));
-  const supportLinks = supportColumn?.links ?? DEFAULT_SUPPORT_LINKS.map((l) => ({ ...l, openInNew: false }));
-
-  const socials = config.socialLinks.length > 0
-    ? config.socialLinks
-    : [
-        { platform: "instagram" as const, href: "https://www.instagram.com/cultraven" },
-        { platform: "whatsapp" as const, href: "https://wa.me/919999999999" },
-        { platform: "youtube" as const, href: "https://www.youtube.com/cultraven" },
-        { platform: "pinterest" as const, href: "https://www.pinterest.com/cultraven" },
-      ];
+  // Columns, headings and links come straight from the database (site.footer).
+  const [shopColumn, supportColumn, brandColumn] = config.columns;
+  const shopLinks = shopColumn?.links ?? [];
+  const supportLinks = supportColumn?.links ?? [];
+  const brandLinks = brandColumn?.links ?? [];
+  const socials = (config.socialLinks ?? []) as { platform: string; href: string }[];
 
   return (
     <footer aria-label="Site footer">
@@ -255,7 +222,7 @@ export function Footer({ config }: FooterProps) {
                 marginBottom: "1.5rem",
               }}
             >
-              SHOP
+              {shopColumn?.heading ?? ""}
             </h3>
             <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "1rem" }}>
               {shopLinks.map((link) => (
@@ -291,7 +258,7 @@ export function Footer({ config }: FooterProps) {
                 marginBottom: "1.5rem",
               }}
             >
-              SUPPORT
+              {supportColumn?.heading ?? ""}
             </h3>
             <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "1rem" }}>
               {supportLinks.map((link) => (
@@ -327,15 +294,10 @@ export function Footer({ config }: FooterProps) {
                 marginBottom: "1.5rem",
               }}
             >
-              THE CULT
+              {brandColumn?.heading ?? ""}
             </h3>
             <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "1rem", marginBottom: "2rem" }}>
-              {(config.columns.find(c => c.id === "brand")?.links ?? [
-                { href: "/pages/our-heritage", label: "Our Heritage", openInNew: false },
-                { href: "/pages/journal", label: "Journal", openInNew: false },
-                { href: "/pages/size-guide", label: "Size Guide", openInNew: false },
-                { href: "/pages/contact", label: "Contact", openInNew: false },
-              ]).map((link) => (
+              {brandLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}

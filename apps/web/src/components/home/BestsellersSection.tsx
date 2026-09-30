@@ -8,11 +8,11 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import Image from "next/image";
+import Image from "@/components/common/CmsImage";
 import Link from "next/link";
 import { useCartStore } from "@/store/cart";
 
-interface BestProduct {
+export interface BestProduct {
   id: string;
   title: string;
   href: string;
@@ -26,159 +26,16 @@ interface BestProduct {
   badge?: "BESTSELLER" | "LOW STOCK";
 }
 
-const BESTSELLERS: BestProduct[] = [
-  {
-    id: "bs-1",
-    title: "CLASSIC OVERSIZED TEE — BLACK",
-    href: "/products/classic-oversized-tee-black",
-    image:
-      "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=600&auto=format&fit=crop&q=80",
-    hoverImage:
-      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&auto=format&fit=crop&q=80",
-    pricePaise: 189900,
-    mrpPaise: 189900,
-    rating: 5,
-    reviewCount: 248,
-    colors: [
-      { hex: "#0A0A0A", label: "Black" },
-      { hex: "var(--color-cream)", label: "White" },
-      { hex: "var(--color-navy)", label: "Navy" },
-    ],
-    badge: "BESTSELLER",
-  },
-  {
-    id: "bs-2",
-    title: "DRAGON BLOOD GRAPHIC — CHARCOAL",
-    href: "/products/dragon-blood-graphic-charcoal",
-    image:
-      "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=80",
-    hoverImage:
-      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600&auto=format&fit=crop&q=80",
-    pricePaise: 249900,
-    mrpPaise: 299900,
-    rating: 5,
-    reviewCount: 184,
-    colors: [
-      { hex: "#2C2C2C", label: "Charcoal" },
-      { hex: "var(--color-navy)", label: "Navy" },
-    ],
-    badge: "BESTSELLER",
-  },
-  {
-    id: "bs-3",
-    title: "ESSENTIALS HOODIE — WASHED NAVY",
-    href: "/products/essentials-hoodie-washed-navy",
-    image:
-      "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&auto=format&fit=crop&q=80",
-    hoverImage:
-      "https://images.unsplash.com/photo-1578768079052-aa76e52ff62e?w=600&auto=format&fit=crop&q=80",
-    pricePaise: 319900,
-    mrpPaise: 399900,
-    rating: 4,
-    reviewCount: 132,
-    colors: [
-      { hex: "var(--color-navy)", label: "Washed Navy" },
-      { hex: "#0A0A0A", label: "Jet Black" },
-      { hex: "var(--color-gray)", label: "Ash" },
-    ],
-  },
-  {
-    id: "bs-4",
-    title: "LAVA STRIPE CARGO — SAND",
-    href: "/products/lava-stripe-cargo-sand",
-    image:
-      "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&auto=format&fit=crop&q=80",
-    hoverImage:
-      "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&auto=format&fit=crop&q=80",
-    pricePaise: 379900,
-    mrpPaise: 499900,
-    rating: 5,
-    reviewCount: 97,
-    colors: [
-      { hex: "#C4A882", label: "Sand" },
-      { hex: "#556B2F", label: "Olive" },
-      { hex: "#0A0A0A", label: "Black" },
-    ],
-    badge: "LOW STOCK",
-  },
-  {
-    id: "bs-5",
-    title: "ACID STATE SWEATSHIRT — STONE",
-    href: "/products/acid-state-sweatshirt-stone",
-    image:
-      "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=80",
-    hoverImage:
-      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&auto=format&fit=crop&q=80",
-    pricePaise: 259900,
-    mrpPaise: 319900,
-    rating: 4,
-    reviewCount: 76,
-    colors: [
-      { hex: "var(--color-mist)", label: "Stone" },
-      { hex: "#9CA3AF", label: "Washed Grey" },
-    ],
-  },
-  {
-    id: "bs-6",
-    title: "CULTRAVEN RELAXED SHIRT — WHITE",
-    href: "/products/relaxed-shirt-white",
-    image:
-      "https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?w=600&auto=format&fit=crop&q=80",
-    hoverImage:
-      "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=80",
-    pricePaise: 299900,
-    mrpPaise: 299900,
-    rating: 5,
-    reviewCount: 61,
-    colors: [
-      { hex: "#FFFFFF", label: "White" },
-      { hex: "var(--color-mist)", label: "Cream" },
-      { hex: "var(--color-navy)", label: "Navy" },
-    ],
-    badge: "BESTSELLER",
-  },
-];
-
-const fallbackProducts = BESTSELLERS;
-
 const fmt = (p: number) => `\u20b9${(p / 100).toLocaleString("en-IN")}`;
 
 // ─── Section ──────────────────────────────────────────────────────────────────
 
-export function BestsellersSection() {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [products, setProducts] = useState<BestProduct[]>(fallbackProducts);
+export interface BestsellersContent { eyebrow?: string; heading: string }
 
-  React.useEffect(() => {
-    fetch("/api/products")
-      .then(res => res.json())
-      .then(data => {
-        if (data.products && data.products.length > 0) {
-          const mapped = data.products
-            .filter((p: any) => p.pricePaise != null)
-            .slice(0, 6)
-            .map((p: any) => ({
-            id: p.id || p._id,
-            title: p.title,
-            href: `/products/${p.slug || p.id}`,
-            image: p.image || fallbackProducts[0].image,
-            hoverImage: p.hoverImage || p.image || fallbackProducts[0].hoverImage,
-            pricePaise: p.pricePaise,
-            mrpPaise: p.mrpPaise || p.pricePaise,
-            rating: p.rating || 0,
-            reviewCount: p.reviewCount || 0,
-            colors: Array.isArray(p.colors)
-              ? p.colors
-                  .filter((c: any) => c && typeof c.hex === "string" && typeof c.label === "string")
-                  .map((c: any) => ({ hex: String(c.hex), label: String(c.label) }))
-              : [{ hex: "#0A0A0A", label: "Black" }],
-            badge: "BESTSELLER" as const,
-          }));
-          setProducts(mapped);
-        }
-      })
-      .catch(console.error);
-  }, []);
+/** Heading comes from home.bestsellers; products are the database products flagged "Bestseller". */
+export function BestsellersSection({ content, products }: { content: BestsellersContent; products: BestProduct[] }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  if (products.length === 0) return null;
 
   const scroll = (dir: "left" | "right") => {
     const el = scrollRef.current;
@@ -216,7 +73,7 @@ export function BestsellersSection() {
                 marginBottom: "0.6rem",
               }}
             >
-              Customer Favourites
+              {content.eyebrow}
             </span>
             <h2
               id="bs-heading"
@@ -230,7 +87,7 @@ export function BestsellersSection() {
                 letterSpacing: "-0.01em",
               }}
             >
-              The Ones Everyone Wants.
+              {content.heading}
             </h2>
           </div>
 

@@ -5,35 +5,14 @@ import Link from "next/link";
 import type { HeroSlide } from "@shop/types";
 
 interface HeroBannerProps {
+  /** Live hero slides loaded from the database. Empty → the hero is not rendered. */
   slides: HeroSlide[];
   siteUrl?: string;
-  // backward-compat: single slide
-  slide?: HeroSlide;
 }
-
-const FALLBACK_SLIDE: HeroSlide = {
-  id: "fallback",
-  type: "image",
-  srcDesktop: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=1920&auto=format&fit=crop&q=80",
-  srcMobile: "",
-  altText: "CULTRAVEN Streetwear",
-  headline: "Wear Your\nDifference.",
-  subheadline: "260 GSM oversized heavyweights. Drops made for those who don't dress to fit in.",
-  ctaLabel: "Shop the Drop",
-  ctaHref: "/collections/new-in",
-  textColor: "#FFFFFF",
-  overlayOpacity: 0.45,
-};
 
 const DEFAULT_INTERVAL_MS = 5000;
 
-export function HeroBanner({ slides: slidesProp, slide }: HeroBannerProps) {
-  // normalize: accept array or single slide
-  const slides = React.useMemo(() => {
-    const arr = slidesProp?.length > 0 ? slidesProp : slide ? [slide] : [FALLBACK_SLIDE];
-    return arr;
-  }, [slidesProp, slide]);
-
+export function HeroBanner({ slides }: HeroBannerProps) {
   const [active, setActive] = useState(0);
   const [prev, setPrev] = useState<number | null>(null);
   const [paused, setPaused] = useState(false);
@@ -52,6 +31,7 @@ export function HeroBanner({ slides: slidesProp, slide }: HeroBannerProps) {
   }, [active, slides.length, goTo]);
 
   const activeDuration = slides[active]?.durationMs ?? DEFAULT_INTERVAL_MS;
+  const hasSlides = slides.length > 0;
 
   // Auto-advance (per-slide duration)
   useEffect(() => {
@@ -66,6 +46,8 @@ export function HeroBanner({ slides: slidesProp, slide }: HeroBannerProps) {
     const t = setTimeout(() => setPrev(null), 800);
     return () => clearTimeout(t);
   }, [prev]);
+
+  if (!hasSlides) return null;
 
   return (
     <section

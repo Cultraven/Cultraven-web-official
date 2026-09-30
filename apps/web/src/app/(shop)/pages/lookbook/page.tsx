@@ -1,51 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getCmsSection } from "@/lib/cms/server";
+import { liveItems } from "@/lib/cms/registry";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Lookbook | CULTRAVEN",
   description: "CULTRAVEN lookbook — the visual identity of a generation. Shot on the streets of India.",
 };
 
-const LOOKS = [
-  {
-    id: "lk1",
-    season: "AW 2026",
-    title: "RAVEN IN THE CITY",
-    desc: "Oversized graphics, cargo layers, lava accents. The cult on concrete.",
-    img: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800&auto=format&fit=crop&q=80",
-    href: "/collections/dharma",
-    products: ["Dharma EP01 Tee", "Raven Cargo", "Lava Stripe Hoodie"],
-  },
-  {
-    id: "lk2",
-    season: "AW 2026",
-    title: "ACID STATE",
-    desc: "Washed-out finishes, heavyweight cotton, zero compromise.",
-    img: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=800&auto=format&fit=crop&q=80",
-    href: "/collections/acid-state",
-    products: ["Acid State Wash Tee", "Wide-Leg Cargo", "Dragon Blood Hoodie"],
-  },
-  {
-    id: "lk3",
-    season: "SS 2026",
-    title: "CORE ESSENTIALS",
-    desc: "Stripped back. Built to last. The CULTRAVEN uniform.",
-    img: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800&auto=format&fit=crop&q=80",
-    href: "/collections/core",
-    products: ["260 GSM Blank Tee", "Cult Wide-Leg Jeans", "Core Sweat"],
-  },
-  {
-    id: "lk4",
-    season: "SS 2026",
-    title: "DRAGON BLOOD",
-    desc: "Mythic screen-print meets heavyweight silence.",
-    img: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=800&auto=format&fit=crop&q=80",
-    href: "/collections/dragon-blood",
-    products: ["Dragon Blood Graphic Tee", "Raven Black Cargo", "Oversized Coach"],
-  },
-];
+export default async function LookbookPage() {
+  const section = await getCmsSection<any>("page.lookbook");
+  const LOOKS = liveItems<any>(section.data?.items);
 
-export default function LookbookPage() {
   return (
     <main style={{ backgroundColor: "var(--color-cream)", minHeight: "100vh" }}>
 
@@ -64,14 +32,17 @@ export default function LookbookPage() {
 
       {/* ── Looks Grid ── */}
       <section style={{ padding: "5rem clamp(1.25rem,5vw,5rem)" }}>
+        {LOOKS.length === 0 ? (
+          <p style={{ textAlign: "center", fontFamily: "var(--font-sans)", color: "var(--color-gray)" }}>New looks are coming soon.</p>
+        ) : null}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "2.5rem", maxWidth: "1280px", margin: "0 auto" }}>
-          {LOOKS.map((look) => (
+          {LOOKS.map((look: any) => (
             <article key={look.id} style={{ backgroundColor: "white", border: "2px solid var(--color-navy)", boxShadow: "5px 5px 0px 0px var(--color-lava)" }}>
 
               {/* Image */}
               <div style={{ position: "relative", aspectRatio: "3/4", overflow: "hidden", backgroundColor: "var(--color-bone)" }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={look.img} alt={look.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                <img src={look.image} alt={look.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                 <div style={{ position: "absolute", top: "12px", left: "12px", backgroundColor: "var(--color-lava)", color: "var(--color-navy)", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "0.6rem", letterSpacing: "0.14em", textTransform: "uppercase", padding: "3px 10px" }}>
                   {look.season}
                 </div>
@@ -86,9 +57,9 @@ export default function LookbookPage() {
                   {look.desc}
                 </p>
                 <div style={{ display: "flex", flexDirection: "column", gap: "3px", marginBottom: "1.25rem" }}>
-                  {look.products.map((p) => (
-                    <span key={p} style={{ fontFamily: "var(--font-sans)", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--color-navy)", opacity: 0.6 }}>
-                      ✦ {p}
+                  {(look.products ?? []).map((p: { id: string; name: string }) => (
+                    <span key={p.id} style={{ fontFamily: "var(--font-sans)", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--color-navy)", opacity: 0.6 }}>
+                      ✦ {p.name}
                     </span>
                   ))}
                 </div>

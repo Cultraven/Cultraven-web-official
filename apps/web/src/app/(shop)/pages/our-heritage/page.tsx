@@ -1,47 +1,25 @@
 import type { Metadata } from "next";
+import { getCmsSection } from "@/lib/cms/server";
+import { liveItems } from "@/lib/cms/registry";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Our Story | CULTRAVEN",
   description: "The story behind CULTRAVEN — a premium Gen-Z streetwear brand built for the generation creating its own culture.",
 };
 
-export default function AboutPage() {
-  const sections = [
-    {
-      tag: "THE BEGINNING",
-      heading: "It started with a tee.",
-      body: "CULTRAVEN was born out of frustration. Frustration at fashion that asked you to blend in. Frustration at streetwear that was either too cheap or too corporate. We wanted something different — clothes that felt like they belonged to us.",
-      image: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=1200&auto=format&fit=crop&q=85",
-      reverse: false,
-    },
-    {
-      tag: "THE CULTURE",
-      heading: "Built for the ones who create their own culture.",
-      body: "We don't follow trends. We follow people — the artists, the rebels, the ones who refuse to be defined by a category. CULTRAVEN is for the generation that builds its own culture instead of borrowing someone else's.",
-      image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1200&auto=format&fit=crop&q=85",
-      reverse: true,
-    },
-    {
-      tag: "THE DESIGN",
-      heading: "Every detail is a decision.",
-      body: "260 GSM pre-shrunk heavyweight cotton. Acid wash processes done in small batches. Screen prints that survive a hundred washes. We're obsessive about quality because the people who wear our clothes are obsessive about their identity.",
-      image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=1200&auto=format&fit=crop&q=85",
-      reverse: false,
-    },
-    {
-      tag: "THE FUTURE",
-      heading: "Not made to blend in.",
-      body: "We're just getting started. More drops. More stories. More collaborations with artists, photographers and creators who refuse to be ordinary. CULTRAVEN is a movement, not a moment.",
-      image: "https://images.unsplash.com/photo-1529391409740-59f2cea08bc6?w=1200&auto=format&fit=crop&q=85",
-      reverse: true,
-    },
-  ];
+export default async function AboutPage() {
+  const section = await getCmsSection<any>("page.heritage");
+  const sections = liveItems<any>(section.data?.sections);
+  const values: { id: string; title: string; desc: string }[] = section.data?.values ?? [];
+  const heroImage: string = section.data?.heroImage ?? "";
 
   return (
     <div style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh" }}>
       {/* Hero */}
       <div style={{ position: "relative", height: "70vh", minHeight: "400px", overflow: "hidden", backgroundColor: "var(--color-navy)", display: "flex", alignItems: "center" }}>
-        <div style={{ position: "absolute", inset: 0, backgroundImage: "url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&auto=format&fit=crop&q=85')", backgroundSize: "cover", backgroundPosition: "center", opacity: 0.4 }} aria-hidden="true" />
+        <div style={{ position: "absolute", inset: 0, backgroundImage: heroImage ? `url("${heroImage}")` : undefined, backgroundSize: "cover", backgroundPosition: "center", opacity: 0.4 }} aria-hidden="true" />
         <div style={{ position: "relative", zIndex: 10, paddingInline: "clamp(1.25rem,4vw,5rem)" }}>
           <p style={{ fontFamily: "var(--font-sans)", fontSize: "11px", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-crimson)", marginBottom: "1rem" }}>CULTRAVEN</p>
           <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(3rem,8vw,7rem)", fontWeight: 600, color: "var(--color-cream)", lineHeight: 0.95, letterSpacing: "-0.02em" }}>Our Story</h1>
@@ -50,7 +28,7 @@ export default function AboutPage() {
       </div>
 
       {/* Sections */}
-      {sections.map((sec, i) => (
+      {sections.map((sec: any, i: number) => (
         <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: "60vh" }} className="about-section">
           <div style={{ position: "relative", minHeight: "400px", order: sec.reverse ? 2 : 1 }}>
             <img src={sec.image} alt={sec.heading} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
@@ -68,9 +46,9 @@ export default function AboutPage() {
         <p style={{ fontFamily: "var(--font-sans)", fontSize: "11px", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-crimson)", marginBottom: "1.5rem" }}>What we stand for</p>
         <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(2rem,5vw,4rem)", fontWeight: 600, color: "var(--color-cream)", marginBottom: "3rem" }}>The CULTRAVEN Values</h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "2rem" }} className="values-grid">
-          {[{ val: "Bold", desc: "We don't make timid clothes for timid people." }, { val: "Premium", desc: "260 GSM. Garment washed. No compromises." }, { val: "Authentic", desc: "Every design has a story that matters." }, { val: "Rebellious", desc: "Against the ordinary. Always." }].map((v) => (
-            <div key={v.val} style={{ padding: "2rem", borderTop: "2px solid rgba(245,241,232,0.15)" }}>
-              <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1.75rem", color: "var(--color-cream)", marginBottom: "0.75rem" }}>{v.val}</h3>
+          {values.map((v) => (
+            <div key={v.id} style={{ padding: "2rem", borderTop: "2px solid rgba(245,241,232,0.15)" }}>
+              <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1.75rem", color: "var(--color-cream)", marginBottom: "0.75rem" }}>{v.title}</h3>
               <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "rgba(245,241,232,0.6)", lineHeight: 1.7 }}>{v.desc}</p>
             </div>
           ))}

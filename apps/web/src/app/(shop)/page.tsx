@@ -1,21 +1,19 @@
 /**
  * Homepage — CULTRAVEN storefront.
  *
- * Section order:
- *   1.  HeroBanner           — full-screen campaign carousel
- *   2.  FilmstripMarquee     — continuously scrolling campaign images
- *   3.  NewDropSection       — editorial product grid
- *   4.  CategoryTiles        — shop by category
- *   5.  BestsellersSection   — "THE ONES EVERYONE WANTS."
- *   6.  ShopTheLook          — model image + shoppable product list
- *   7.  BrandStory           — "THE CULTURE" manifesto
- *   8.  TrendingNow          — lookbook / latest drop editorial grid
- *   9.  CommunitySection     — "WORN BY THE CULTURE" UGC grid
- *  10.  TrustBadges          — service trust strip
+ * Every section is loaded from MongoDB on the server (lib/cms/server.ts).
+ * A section with no record, or a failed database read (logged server-side),
+ * renders nothing — no content is ever fabricated.
+ *
+ *   1.  HeroBanner (hero slides)        6.  BrandStory
+ *   2.  NewDrop (products flagged new)  7.  TrendingNow
+ *   3.  CategoryTiles                   8.  PromoBanners (scheduled)
+ *   4.  Bestsellers                     9.  Community
+ *   5.  ShopTheLook                    10.  TrustBadges
  */
-
 import type { Metadata } from "next";
-import { getHomepageCms } from "@/lib/api";
+import { getCmsSection, getHeroSlides, getProducts, getShopLook } from "@/lib/cms/server";
+import { liveItems } from "@/lib/cms/registry";
 import { HeroBanner } from "@/components/home/HeroBanner";
 import { NewDropSection } from "@/components/home/NewDropSection";
 import { CategoryTiles } from "@/components/home/CategoryTiles";
@@ -25,6 +23,9 @@ import { BrandStorySection } from "@/components/home/BrandStorySection";
 import { TrendingNow } from "@/components/home/TrendingNow";
 import { CommunitySection } from "@/components/home/CommunitySection";
 import { TrustBadges } from "@/components/home/TrustBadges";
+import { EditorialBanner } from "@/components/home/EditorialBanner";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "NOT MADE TO BLEND IN. | CULTRAVEN — Gen Z Streetwear India",
@@ -34,53 +35,126 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  let cmsData = null;
-  try {
-    cmsData = await getHomepageCms();
-  } catch {
-    // Graceful fallback — static sections still render
-  }
+  const [hero, strip, tiles, newDropCopy, newDrops, bestCopy, bestsellers, look, story, trending, promo, community, trust] =
+    await Promise.all([
+      getHeroSlides(),
+      getCmsSection<any>("home.categoryStrip"),
+      getCmsSection<any>("home.categoryTiles"),
+      getCmsSection<any>("home.newDrop"),
+      getProducts("isNewArrival", 4),
+      getCmsSection<any>("home.bestsellers"),
+      getProducts("isBestseller", 6),
+      getShopLook(),
+      getCmsSection<any>("home.brandStory"),
+      getCmsSection<any>("home.trending"),
+      getCmsSection<any>("home.promoBanner"),
+      getCmsSection<any>("home.community"),
+      getCmsSection<any>("site.trustBadges"),
+    ]);
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://cultraven.com";
+  const heroSlides = (hero.data ?? []).map((b: any) => ({
+    id: b.id,
+    type: b.type,
+    srcDesktop: b.srcDesktop,
+    srcMobile: b.srcMobile || "",
+    posterSrc: b.posterSrc || "",
+    altText: b.altText || "",
+    eyebrow: b.eyebrow || "",
+    objectPosition: b.objectPosition || "center center",
+    durationMs: b.durationMs ?? 5000,
+    headline: b.headline || "",
+    subheadline: b.subheadline || "",
+    ctaLabel: b.ctaLabel || "",
+    ctaHref: b.ctaHref || "/collections/all",
+    textColor: "#FFFFFF",
+    overlayOpacity: b.overlayOpacity ?? 0.45,
+  }));
+
+  const stripItems = liveItems<any>(strip.data?.items).map((i) => ({ id: i.id, label: i.label, href: i.href, accent: i.accent }));
+  const tileItems = liveItems<any>(tiles.data?.items).map((i) => ({ id: i.id, title: i.title, sub: i.sub, href: i.href, image: i.image, size: i.size }));
+
+  const dropProducts = (newDrops.data ?? []).map((p) => ({
+    id: p.id,
+    title: p.title,
+    href: p.href,
+    image: p.image,
+    hoverImage: p.hoverImage,
+    pricePaise: p.pricePaise,
+    mrpPaise: p.mrpPaise,
+    colors: p.colors,
+    isNew: true,
+    badge: p.badge,
+  }));
+
+  const bestProducts = (bestsellers.data ?? []).map((p) => ({
+    id: p.id,
+    title: p.title,
+    href: p.href,
+    image: p.image,
+    hoverImage: p.hoverImage,
+    pricePaise: p.pricePaise,
+    mrpPaise: p.mrpPaise,
+    rating: p.rating,
+    reviewCount: p.reviewCount,
+    colors: p.colors,
+    badge: p.badge === "BESTSELLER" || p.badge === "LOW STOCK" ? (p.badge as "BESTSELLER" | "LOW STOCK") : undefined,
+  }));
+
+  const trendItems = liveItems<any>(trending.data?.items).map((i) => ({ id: i.id, title: i.title, href: i.href, image: i.image, alt: i.alt }));
+  const ugcImages = liveItems<any>(community.data?.items).map((i) => ({ id: i.id, src: i.image, alt: i.alt || "" }));
+  const banners = liveItems<any>(promo.data?.items);
+  const badges = liveItems<any>(trust.data?.items).map((b) => ({ id: b.id, icon: b.icon, title: b.title, subtitle: b.subtitle || undefined }));
 
   return (
     <div className="w-full">
-      {/* 1 — Full-screen campaign hero
-            Negative margin pulls it behind the transparent sticky header.
-            Header height ≈ 65px desktop (60px logo outer box + 2×0.15rem padding). */}
-      <div style={{ marginTop: "-65px" }}>
-        {(cmsData as any)?.heroSlides?.length > 0 ? (
-          <HeroBanner slides={(cmsData as any).heroSlides} siteUrl={siteUrl} />
-        ) : cmsData?.heroSlide ? (
-          <HeroBanner slides={[cmsData.heroSlide]} siteUrl={siteUrl} />
-        ) : null}
-      </div>
+      {/* 1 — Hero. Negative margin tucks it behind the transparent header (≈65px on desktop). */}
+      {heroSlides.length > 0 ? (
+        <div style={{ marginTop: "-65px" }}>
+          <HeroBanner slides={heroSlides as any} />
+        </div>
+      ) : null}
 
-      {/* 2 — New Drop: editorial product grid */}
-      <NewDropSection />
+      {/* 2 — New Drop */}
+      {newDropCopy.data ? <NewDropSection content={newDropCopy.data} products={dropProducts} /> : null}
 
-      {/* 4 — Shop By Category */}
-      <CategoryTiles />
+      {/* 3 — Shop by category */}
+      {tileItems.length > 0 ? <CategoryTiles strip={stripItems} tiles={tileItems} /> : null}
 
-      {/* 5 — Bestsellers */}
-      <BestsellersSection />
+      {/* 4 — Bestsellers */}
+      {bestCopy.data ? <BestsellersSection content={bestCopy.data} products={bestProducts} /> : null}
 
-      {/* 6 — Shop The Look */}
-      <ShopTheLookSection />
+      {/* 5 — Shop The Look */}
+      <ShopTheLookSection look={look.data} />
 
-      {/* 7 — Brand Story */}
-      <BrandStorySection />
+      {/* 6 — Brand Story */}
+      {story.data ? <BrandStorySection content={story.data} /> : null}
 
-      {/* 8 — Latest Drop / Lookbook */}
-      <TrendingNow />
+      {/* 7 — Trending Now */}
+      <TrendingNow heading={trending.data?.heading} items={trendItems} />
+
+      {/* 8 — Promotional banners (only while active and inside their schedule) */}
+      {banners.map((b) => (
+        <EditorialBanner
+          key={b.id}
+          banner={{
+            id: b.id,
+            imageSrc: b.image,
+            imageAlt: b.alt || b.headline,
+            tagline: b.tagline || "",
+            headline: b.headline,
+            ctaLabel: b.ctaLabel || "",
+            ctaHref: b.ctaHref || "/collections/all",
+            textPosition: b.textPosition || "center",
+            textColor: "#EDE3CF",
+          }}
+        />
+      ))}
 
       {/* 9 — Community / UGC */}
-      <CommunitySection />
+      {community.data ? <CommunitySection content={community.data} images={ugcImages} /> : null}
 
       {/* 10 — Trust strip */}
-      {cmsData?.trustBadges && cmsData.trustBadges.length > 0 && (
-        <TrustBadges badges={cmsData.trustBadges} />
-      )}
+      {badges.length > 0 ? <TrustBadges badges={badges as any} /> : null}
     </div>
   );
 }

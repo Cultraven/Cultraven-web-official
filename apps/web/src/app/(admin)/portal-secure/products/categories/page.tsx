@@ -1,145 +1,53 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  productCount: number;
-  status: "active" | "hidden";
-}
+interface Row { name: string; count: number }
 
-const MOCK_CATEGORIES: Category[] = [
-  { id: "c1", name: "Oversized Tees", slug: "oversized-tees", productCount: 12, status: "active" },
-  { id: "c2", name: "Acid Wash", slug: "acid-wash", productCount: 8, status: "active" },
-  { id: "c3", name: "Heavyweight Hoodies", slug: "hoodies", productCount: 5, status: "active" },
-  { id: "c4", name: "Baggy Jeans", slug: "jeans", productCount: 6, status: "active" },
-  { id: "c5", name: "Street Accessories", slug: "accessories", productCount: 4, status: "hidden" },
-];
-
+/**
+ * Categories are the `category` value on each product in the database — there is no
+ * separate category record. This page lists them with live counts (read-only).
+ * To add a category, create a product with that category; rename by editing its products.
+ */
 export default function AdminCategoriesPage() {
-  const [categories, setCategories] = useState<Category[]>(MOCK_CATEGORIES);
+  const [rows, setRows] = useState<Row[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const deleteCategory = (id: string) => {
-    if (!confirm("Are you sure you want to delete this category?")) return;
-    setCategories((prev) => prev.filter((c) => c.id !== id));
-  };
+  useEffect(() => {
+    fetch("/api/products?limit=100", { cache: "no-store" })
+      .then(async (r) => {
+        const d = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(d.error || "HTTP " + r.status);
+        const counts = new Map<string, number>();
+        for (const p of d.products ?? []) counts.set(p.category, (counts.get(p.category) ?? 0) + 1);
+        setRows([...counts.entries()].map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count));
+      })
+      .catch((e) => setError(e.message));
+  }, []);
 
   return (
-    <div style={{ padding: "2.5rem 3rem" }}>
-      {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "2.5rem" }}>
-        <div>
-          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-crimson)", marginBottom: "0.5rem" }}>
-            Catalog
-          </p>
-          <h1 style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "1.75rem", color: "var(--color-cream)", letterSpacing: "-0.02em" }}>
-            Categories
-          </h1>
+    <div style={{ padding: "2.5rem 3rem", maxWidth: 820 }}>
+      <p style={{ fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-lava)", marginBottom: 6 }}>Catalog</p>
+      <h1 style={{ fontWeight: 800, fontSize: "1.75rem", color: "var(--color-cream)", marginBottom: 6 }}>Categories</h1>
+      <p style={{ fontSize: "0.8rem", color: "rgba(245,241,232,0.5)", marginBottom: "1.75rem" }}>
+        Derived from the category of each product in the database. Add or rename a category by editing products.
+      </p>
+      {error && <p role="alert" style={{ color: "#FCA5A5", fontSize: "0.85rem" }}>Could not load categories ({error}).</p>}
+      {!rows && !error && <p style={{ color: "rgba(245,241,232,0.5)" }}>Loading…</p>}
+      {rows && rows.length === 0 && <p style={{ color: "rgba(245,241,232,0.6)" }}>No products yet, so no categories.</p>}
+      {rows && rows.length > 0 && (
+        <div style={{ backgroundColor: "#1A2332", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 6 }}>
+          {rows.map((r, i) => (
+            <div key={r.name} style={{ display: "flex", justifyContent: "space-between", padding: "0.9rem 1.25rem", borderTop: i ? "1px solid rgba(255,255,255,0.06)" : "none" }}>
+              <span style={{ color: "var(--color-cream)", fontWeight: 700, fontSize: "0.85rem", textTransform: "capitalize" }}>{r.name}</span>
+              <span style={{ color: "rgba(245,241,232,0.5)", fontSize: "0.8rem" }}>{r.count} product{r.count === 1 ? "" : "s"}</span>
+            </div>
+          ))}
         </div>
-        <button
-          style={{
-            backgroundColor: "var(--color-crimson)",
-            color: "var(--color-cream)",
-            border: "none",
-            padding: "0.75rem 1.5rem",
-            borderRadius: "4px",
-            fontFamily: "var(--font-sans)",
-            fontSize: "0.75rem",
-            fontWeight: 700,
-            cursor: "pointer",
-            letterSpacing: "0.05em",
-            textTransform: "uppercase",
-            transition: "background-color 0.2s",
-          }}
-          onClick={() => alert("Add Category feature not implemented in this mock.")}
-        >
-          + Add Category
-        </button>
-      </div>
-
-      {/* Main Box */}
-      <div style={{ backgroundColor: "#1A2332", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "6px", overflow: "hidden" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr style={{ backgroundColor: "rgba(255,255,255,0.03)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-              {["Name", "Slug", "Products", "Status", "Actions"].map((h) => (
-                <th
-                  key={h}
-                  style={{
-                    fontFamily: "var(--font-sans)",
-                    fontSize: "0.62rem",
-                    fontWeight: 700,
-                    letterSpacing: "0.1em",
-                    textTransform: "uppercase",
-                    color: "rgba(245,241,232,0.35)",
-                    padding: "1rem 1.5rem",
-                    textAlign: h === "Actions" || h === "Products" ? "center" : "left",
-                  }}
-                >
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {categories.map((cat) => (
-              <tr key={cat.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
-                <td style={{ padding: "1.25rem 1.5rem", fontFamily: "var(--font-sans)", fontSize: "0.82rem", fontWeight: 700, color: "var(--color-cream)" }}>
-                  {cat.name}
-                </td>
-                <td style={{ padding: "1.25rem 1.5rem", fontFamily: "var(--font-sans)", fontSize: "0.78rem", color: "rgba(245,241,232,0.6)" }}>
-                  /{cat.slug}
-                </td>
-                <td style={{ padding: "1.25rem 1.5rem", fontFamily: "var(--font-sans)", fontSize: "0.78rem", color: "rgba(245,241,232,0.6)", textAlign: "center" }}>
-                  {cat.productCount}
-                </td>
-                <td style={{ padding: "1.25rem 1.5rem" }}>
-                  <span
-                    style={{
-                      fontFamily: "var(--font-sans)",
-                      fontSize: "0.65rem",
-                      fontWeight: 700,
-                      letterSpacing: "0.08em",
-                      textTransform: "uppercase",
-                      color: cat.status === "active" ? "#10B981" : "#9CA3AF",
-                      backgroundColor: cat.status === "active" ? "rgba(16,185,129,0.12)" : "rgba(156,163,175,0.12)",
-                      padding: "4px 10px",
-                      borderRadius: "3px",
-                    }}
-                  >
-                    {cat.status}
-                  </span>
-                </td>
-                <td style={{ padding: "1.25rem 1.5rem", textAlign: "center" }}>
-                  <div style={{ display: "flex", gap: "0.75rem", justifyContent: "center" }}>
-                    <button
-                      onClick={() => alert(`Edit ${cat.name}`)}
-                      style={{ background: "none", border: "none", color: "#3B82F6", cursor: "pointer", fontFamily: "var(--font-sans)", fontSize: "0.72rem", fontWeight: 600 }}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => deleteCategory(cat.id)}
-                      style={{ background: "none", border: "none", color: "#EF4444", cursor: "pointer", fontFamily: "var(--font-sans)", fontSize: "0.72rem", fontWeight: 600 }}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {categories.length === 0 && (
-              <tr>
-                <td colSpan={5} style={{ padding: "3rem", textAlign: "center", color: "rgba(245,241,232,0.4)" }}>
-                  No categories found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+      )}
+      <div style={{ marginTop: "1.5rem" }}>
+        <Link href="/portal-secure/products/new" style={{ color: "var(--color-lava)", fontWeight: 700, fontSize: "0.8rem", textDecoration: "none" }}>+ Add a product</Link>
       </div>
     </div>
   );

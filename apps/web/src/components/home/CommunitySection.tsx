@@ -8,52 +8,26 @@
 "use client";
 
 import React, { useState } from "react";
-import Image from "next/image";
+import Image from "@/components/common/CmsImage";
 import Link from "next/link";
 
-interface UGCImage {
+export interface UGCImage {
   id: string;
   src: string;
   alt: string;
-  span?: "wide" | "tall";
 }
 
-const UGC_IMAGES: UGCImage[] = [
-  {
-    id: "ugc-1",
-    src: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=80",
-    alt: "CULTRAVEN community look — oversized tee",
-    span: "tall",
-  },
-  {
-    id: "ugc-2",
-    src: "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600&auto=format&fit=crop&q=80",
-    alt: "CULTRAVEN community look — streetwear",
-  },
-  {
-    id: "ugc-3",
-    src: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600&auto=format&fit=crop&q=80",
-    alt: "CULTRAVEN community — editorial",
-  },
-  {
-    id: "ugc-4",
-    src: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=600&auto=format&fit=crop&q=80",
-    alt: "CULTRAVEN cargo look",
-    span: "wide",
-  },
-  {
-    id: "ugc-5",
-    src: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=80",
-    alt: "CULTRAVEN graphic tee",
-  },
-  {
-    id: "ugc-6",
-    src: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&auto=format&fit=crop&q=80",
-    alt: "CULTRAVEN hoodie street style",
-  },
-];
+export interface CommunityContent {
+  eyebrow?: string;
+  heading?: string;
+  instagramUrl?: string;
+  ctaText?: string;
+}
 
-export function CommunitySection() {
+/** Content + photos come from the database (home.community). */
+export function CommunitySection({ content, images }: { content: CommunityContent; images: UGCImage[] }) {
+  if (images.length === 0) return null;
+
   return (
     <section
       aria-labelledby="community-heading"
@@ -84,7 +58,7 @@ export function CommunitySection() {
                 marginBottom: "0.6rem",
               }}
             >
-              Community
+              {content.eyebrow}
             </span>
             <h2
               id="community-heading"
@@ -97,12 +71,12 @@ export function CommunitySection() {
                 lineHeight: 1,
               }}
             >
-              Worn by the Culture.
+              {content.heading}
             </h2>
           </div>
 
           <Link
-            href="https://www.instagram.com/cultraven"
+            href={content.instagramUrl || "#"}
             target="_blank"
             rel="noopener noreferrer"
             style={{
@@ -146,7 +120,7 @@ export function CommunitySection() {
           }}
           className="ugc-grid"
         >
-          {UGC_IMAGES.map((img) => (
+          {images.map((img) => (
             <UGCTile key={img.id} image={img} />
           ))}
         </div>
@@ -163,11 +137,10 @@ export function CommunitySection() {
               marginBottom: "1.25rem",
             }}
           >
-            Tag{" "}
-            <strong style={{ color: "var(--color-navy)" }}>@cultraven</strong> to be featured
+            {content.ctaText}
           </p>
           <Link
-            href="https://www.instagram.com/cultraven"
+            href={content.instagramUrl || "#"}
             target="_blank"
             rel="noopener noreferrer"
             style={{

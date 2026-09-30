@@ -2,6 +2,8 @@ import type { NextConfig } from "next";
 
 const config: NextConfig = {
   reactStrictMode: true,
+  // Optional: lets CI / verification builds use an isolated output dir (defaults to .next).
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   transpilePackages: ["@shop/ui", "@shop/types", "@shop/api-client"],
 
   images: {

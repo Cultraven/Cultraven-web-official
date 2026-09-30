@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import Image from "@/components/common/CmsImage";
 import { formatPriceINR, lowestMrp, lowestPrice } from "@shop/types";
 import type { Product } from "@shop/types";
 import { useCartStore } from "@/store/cart";
@@ -26,8 +26,6 @@ export function ProductCard({ product, cardWidth = "100%" }: ProductCardProps) {
   const discountPercent = isOnSale ? Math.round(((mrp - price) / mrp) * 100) : 0;
   const badgeText = product.isNewArrival ? "NEW" : (isOnSale ? `-${discountPercent}%` : "");
   
-  const mockRating = "4.8";
-  const mockReviews = "124";
 
   return (
     <article
@@ -209,23 +207,6 @@ export function ProductCard({ product, cardWidth = "100%" }: ProductCardProps) {
             </Link>
           </h3>
           
-          {/* Rating Chip */}
-          <div style={{ 
-            display: "flex", 
-            alignItems: "center", 
-            gap: "4px", 
-            backgroundColor: "var(--color-navy)", 
-            color: "var(--color-cream)", 
-            padding: "2px 6px", 
-            border: "1.5px solid var(--color-navy)",
-            fontFamily: "var(--font-mono)",
-            fontSize: "10px",
-            fontWeight: 700,
-            flexShrink: 0
-          }}>
-            <span style={{ color: "var(--color-yellow)", fontSize: "10px" }}>★</span>
-            <span>{mockRating} <span style={{ color: "rgba(245,241,232,0.7)" }}>({mockReviews})</span></span>
-          </div>
         </div>
 
         <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>

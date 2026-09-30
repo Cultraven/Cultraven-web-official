@@ -103,8 +103,8 @@ function CollectionPageClientInner({
             id: p.id,
             title: p.title,
             href: `/products/${p.slug}`,
-            image: p.image || "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&auto=format&fit=crop&q=80",
-            hoverImage: p.hoverImage || p.image || "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&auto=format&fit=crop&q=80",
+            image: p.image || "",
+            hoverImage: p.hoverImage || p.image || "",
             pricePaise: p.pricePaise,
             mrpPaise: p.mrpPaise || p.pricePaise,
             rating: Number(p.rating) || 0,
@@ -168,7 +168,7 @@ function CollectionPageClientInner({
     <div style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh" }}>
       {/* ── Collection Hero ── */}
       <div style={{ position: "relative", height: "400px", overflow: "hidden", backgroundColor: "var(--color-mist)" }}>
-        <Image src={heroImage} alt={collectionName} fill style={{ objectFit: "cover" }} priority />
+        {heroImage ? <Image src={heroImage} alt={collectionName} fill style={{ objectFit: "cover" }} priority /> : null}
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(23,37,69,0.75) 0%, rgba(23,37,69,0.35) 60%, transparent 100%)" }} />
         <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "center", padding: "clamp(2rem,4vw,4rem)", paddingTop: "80px" }}>
           {/* Back button */}
@@ -313,7 +313,7 @@ function PLPCard({ product: p }: { product: Product }) {
   const [added, setAdded] = useState(false);
   const disc = Math.round(((p.mrpPaise - p.pricePaise) / p.mrpPaise) * 100);
   
-  const mockRating = p.rating || "4.8";
+  const ratingText = p.rating ? String(p.rating) : "";
 
   return (
     <article
@@ -496,7 +496,7 @@ function PLPCard({ product: p }: { product: Product }) {
             </Link>
           </h3>
           
-          {/* Rating Chip */}
+          {ratingText ? (
           <div style={{ 
             display: "flex", 
             alignItems: "center", 
@@ -511,8 +511,9 @@ function PLPCard({ product: p }: { product: Product }) {
             flexShrink: 0
           }}>
             <span style={{ color: "var(--color-yellow)", fontSize: "10px" }}>★</span>
-            <span>{mockRating}</span>
+            <span>{ratingText}</span>
           </div>
+          ) : null}
         </div>
 
         <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>

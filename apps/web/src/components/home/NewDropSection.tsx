@@ -7,11 +7,11 @@
 "use client";
 
 import React, { useState } from "react";
-import Image from "next/image";
+import Image from "@/components/common/CmsImage";
 import Link from "next/link";
 import { useCartStore } from "@/store/cart";
 
-interface DropProduct {
+export interface DropProduct {
   id: string;
   title: string;
   href: string;
@@ -24,87 +24,15 @@ interface DropProduct {
   badge?: string;
 }
 
-const fallbackProducts: DropProduct[] = [
-  {
-    id: "nd-1",
-    title: "Raven Oversized Tee — Acid Black",
-    href: "/products/raven-oversized-tee-acid-black",
-    image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=700&auto=format&fit=crop&q=85",
-    hoverImage: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=700&auto=format&fit=crop&q=85",
-    pricePaise: 199900,
-    mrpPaise: 249900,
-    colors: [{ hex: "#0A0A0A", label: "Acid Black" }, { hex: "#2C2C2C", label: "Charcoal" }, { hex: "#DAB205", label: "Flame" }],
-    isNew: true,
-  },
-  {
-    id: "nd-2",
-    title: "Dharma Graphic Hoodie — Stone Wash",
-    href: "/products/dharma-graphic-hoodie-stone",
-    image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=700&auto=format&fit=crop&q=85",
-    hoverImage: "https://images.unsplash.com/photo-1512411933099-b1d5565538e1?w=700&auto=format&fit=crop&q=85",
-    pricePaise: 299900,
-    mrpPaise: 399900,
-    colors: [{ hex: "#EDE3CF", label: "Stone" }, { hex: "#172554", label: "Navy" }, { hex: "#7A7468", label: "Ash" }],
-    isNew: true,
-  },
-  {
-    id: "nd-3",
-    title: "Raven Cargo — Military Olive",
-    href: "/products/raven-cargo-military-olive",
-    image: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=700&auto=format&fit=crop&q=85",
-    hoverImage: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=700&auto=format&fit=crop&q=85",
-    pricePaise: 249900,
-    mrpPaise: 299900,
-    colors: [{ hex: "#556B2F", label: "Olive" }, { hex: "#172554", label: "Navy" }, { hex: "#0A0A0A", label: "Black" }],
-    isNew: true,
-    badge: "LIMITED",
-  },
-  {
-    id: "nd-4",
-    title: "Acid State Sweatshirt — Washed Grey",
-    href: "/products/acid-state-sweatshirt-washed-grey",
-    image: "https://images.unsplash.com/photo-1578681994506-b8f463449011?w=700&auto=format&fit=crop&q=85",
-    hoverImage: "https://images.unsplash.com/photo-1503342394128-c104d54dba01?w=700&auto=format&fit=crop&q=85",
-    pricePaise: 249900,
-    mrpPaise: 299900,
-    colors: [{ hex: "#9CA3AF", label: "Washed Grey" }, { hex: "#0A0A0A", label: "Black" }, { hex: "#EDE3CF", label: "Cream" }],
-    isNew: true,
-  },
-];
-
 const fmt = (p: number) => `₹${(p / 100).toLocaleString("en-IN")}`;
 
 // ─── Section ──────────────────────────────────────────────────────────────────
 
-export function NewDropSection() {
-  const [products, setProducts] = React.useState<DropProduct[]>(fallbackProducts);
+export interface NewDropContent { eyebrow?: string; heading: string; ctaLabel?: string; ctaHref?: string }
 
-  React.useEffect(() => {
-    fetch("/api/products")
-      .then(res => res.json())
-      .then(data => {
-        if (data.products && data.products.length > 0) {
-          const mapped = data.products
-            .filter((p: any) => p.pricePaise != null)
-            .slice(0, 4)
-            .map((p: any) => ({
-              id: p.id || p._id,
-              title: p.title,
-              href: `/products/${p.slug || p.id}`,
-              image: p.image || fallbackProducts[0].image,
-              hoverImage: p.hoverImage || p.image || fallbackProducts[0].hoverImage,
-              pricePaise: p.pricePaise,
-              mrpPaise: p.mrpPaise || p.pricePaise,
-              colors: Array.isArray(p.colors)
-                ? p.colors.filter((c: any) => c && typeof c.hex === "string").map((c: any) => ({ hex: String(c.hex), label: String(c.label) }))
-                : [{ hex: "#0A0A0A", label: "Black" }],
-              isNew: true,
-            }));
-          setProducts(mapped);
-        }
-      })
-      .catch(console.error);
-  }, []);
+/** Heading comes from home.newDrop; products are the database products flagged "New arrival". */
+export function NewDropSection({ content, products }: { content: NewDropContent; products: DropProduct[] }) {
+  if (products.length === 0) return null;
 
   return (
     <section
@@ -141,7 +69,7 @@ export function NewDropSection() {
                 marginBottom: "0.6rem",
               }}
             >
-              Just Landed
+              {content.eyebrow}
             </span>
             <h2
               id="new-drop-heading"
@@ -155,12 +83,13 @@ export function NewDropSection() {
                 textTransform: "uppercase",
               }}
             >
-              New Drop
+              {content.heading}
             </h2>
           </div>
 
+          {content.ctaLabel && content.ctaHref ? (
           <Link
-            href="/collections/new-in"
+            href={content.ctaHref}
             style={{
               fontFamily: "var(--font-sans)",
               fontSize: "0.72rem",
@@ -177,11 +106,12 @@ export function NewDropSection() {
               transition: "color 0.2s ease, border-color 0.2s ease",
             }}
           >
-            View All New In
+            {content.ctaLabel}
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path d="M5 12h14M12 5l7 7-7 7"/>
             </svg>
           </Link>
+          ) : null}
         </div>
 
         {/* ── Product Grid ────────────────────────────────────────────────── */}

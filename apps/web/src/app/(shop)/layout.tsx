@@ -1,132 +1,61 @@
 /**
- * Shop shell layout — wraps all storefront pages with:
- *   - AnnouncementBar (top)
- *   - Header (sticky)
- *   - Main content
- *   - Footer (bottom)
+ * Shop shell layout — AnnouncementBar, Header, Footer, consent banner.
  *
- * Data is fetched server-side and passed as props to client components.
+ * All chrome content (announcement, navigation, footer) is read from MongoDB on the
+ * server via getCmsSection(). If a section is empty or the database is unreachable
+ * the element renders without content (layout preserved) — nothing is fabricated.
  */
-
 import type { ReactNode } from "react";
 import { AnnouncementBar } from "@/components/home/AnnouncementBar";
 import { Header } from "@/components/home/Header";
 import { Footer } from "@/components/home/Footer";
 import { CookieConsentBanner } from "@/components/common/CookieConsentBanner";
-import { getHomepageCms } from "@/lib/api";
+import { getCmsSection } from "@/lib/cms/server";
+import { liveItems } from "@/lib/cms/registry";
 
-interface ShopLayoutProps {
-  children: ReactNode;
-}
+// Data is cached per-section with tags and revalidated on admin save; the page itself
+// must render per request so it never bakes DB state (or a DB outage) into the build.
+export const dynamic = "force-dynamic";
 
-export default async function ShopLayout({ children }: ShopLayoutProps) {
-  // Fetch CMS data for persistent layout elements (header nav, footer, announcement bar)
-  let cms;
-  try {
-    cms = await getHomepageCms();
-  } catch {
-    // Graceful fallback — show minimal layout without CMS data
-    cms = null;
-  }
+export default async function ShopLayout({ children }: { children: ReactNode }) {
+  const [announcement, nav, footer] = await Promise.all([
+    getCmsSection<any>("site.announcement"),
+    getCmsSection<any>("site.nav"),
+    getCmsSection<any>("site.footer"),
+  ]);
 
-  const defaultNav = {
-    items: [
-      { id: "new-in", label: "NEW", href: "/collections/new-in" },
-      {
-        id: "shop",
-        label: "SHOP",
-        columns: [
-          {
-            heading: "Categories",
-            items: [
-              { label: "T-Shirts & Tees", href: "/collections/tees" },
-              { label: "Hoodies", href: "/collections/hoodies" },
-              { label: "Sweatshirts", href: "/collections/sweatshirts" },
-              { label: "Cargo & Bottoms", href: "/collections/bottoms" },
-              { label: "Shirts", href: "/collections/shirts" },
-              { label: "Outerwear", href: "/collections/outerwear" },
-              { label: "Accessories", href: "/collections/accessories" },
-            ],
-          },
-          {
-            heading: "By Fit",
-            items: [
-              { label: "Oversized", href: "/collections/oversized" },
-              { label: "Relaxed Fit", href: "/collections/relaxed" },
-              { label: "Boxy", href: "/collections/boxy" },
-              { label: "Slim", href: "/collections/slim" },
-            ]
-          }
-        ],
-      },
-      {
-        id: "drops",
-        label: "DROPS",
-        columns: [
-          {
-            heading: "Collections",
-            items: [
-              { label: "Dharma Series", href: "/collections/dharma" },
-              { label: "Dragon Blood", href: "/collections/dragon-blood" },
-              { label: "Acid State", href: "/collections/acid-state" },
-              { label: "Core Essentials", href: "/collections/core" },
-              { label: "All Collections", href: "/collections" },
-            ],
-          },
-          {
-            heading: "Explore",
-            items: [
-              { label: "Latest Drops", href: "/collections/new-in" },
-              { label: "Best Sellers", href: "/collections/bestsellers" },
-              { label: "Under ₹1,999", href: "/collections/sale" },
-            ],
-          },
-        ],
-      },
-      { id: "sale", label: "SALE", href: "/collections/sale" },
-      { id: "about", label: "ABOUT", href: "/pages/about" },
-    ],
+  const navMenu = {
+    items: liveItems<any>(nav.data?.items).map((i) => {
+      const columns = (i.columns ?? []).filter((c: any) => c.items?.length);
+      return {
+        id: i.id,
+        label: i.label,
+        href: i.href || undefined,
+        columns: columns.length ? columns : undefined,
+      };
+    }),
   };
 
-  const defaultFooter = {
-    columns: [],
-    socialLinks: [],
-    copyrightText: `© ${new Date().getFullYear()} CULTRAVEN`,
-    badgeLogos: [],
-  };
-
-  const defaultAnnouncement = {
-    items: [
-      { id: "a1", text: "ACID STATE DROP OUT NOW" },
-      { id: "a2", text: "FREE SHIPPING ON ORDERS ABOVE ₹1,999" },
-      { id: "a3", text: "CASH ON DELIVERY AVAILABLE" },
-      { id: "a4", text: "EASY 7-DAY RETURNS" },
-    ],
+  const announcementData = {
+    items: liveItems<any>(announcement.data?.items).map((i) => ({ id: i.id, text: i.text, link: i.link || undefined })),
+    intervalMs: announcement.data?.intervalMs ?? 4000,
     bgColor: "var(--color-navy)",
     textColor: "var(--color-cream)",
-    intervalMs: 4000,
+  };
+
+  const footerData = {
+    columns: (footer.data?.columns ?? []).map((c: any) => ({ id: c.id, heading: c.heading, links: c.links ?? [] })),
+    socialLinks: footer.data?.socialLinks ?? [],
+    copyrightText: footer.data?.copyrightText ?? "",
+    badgeLogos: [],
   };
 
   return (
     <>
-      {/* ── Announcement bar ──────────────────────────────────────────── */}
-      <AnnouncementBar data={(cms as any)?.announcementBar ?? defaultAnnouncement} />
-
-      {/* ── Sticky header ─────────────────────────────────────────────── */}
-      <Header
-        navMenu={cms?.navMenu ?? defaultNav}
-        deliveryCity="Delhi"
-      />
-
-      {/* ── Page content ──────────────────────────────────────────────── */}
-      <main id="main-content">
-        {children}
-      </main>
-
-      {/* ── Footer ────────────────────────────────────────────────────── */}
-      <Footer config={cms?.footer ?? defaultFooter} />
-
-      {/* ── Cookie consent banner ─────────────────────────────────────── */}
+      <AnnouncementBar data={announcementData as any} />
+      <Header navMenu={navMenu as any} deliveryCity="Delhi" />
+      <main id="main-content">{children}</main>
+      <Footer config={footerData as any} />
       <CookieConsentBanner />
     </>
   );

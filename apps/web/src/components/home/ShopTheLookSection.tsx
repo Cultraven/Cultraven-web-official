@@ -7,8 +7,8 @@
  */
 "use client";
 
-import React, { useState, useEffect } from "react";
-import Image from "next/image";
+import React, { useState } from "react";
+import Image from "@/components/common/CmsImage";
 import Link from "next/link";
 import { useCartStore } from "@/store/cart";
 
@@ -22,65 +22,19 @@ interface LookProduct {
   color: string;
 }
 
-interface ShopLookData {
+export interface ShopLookData {
   lookLabel: string;
   modelImage: string;
   products: LookProduct[];
 }
 
-const DEFAULT_LOOK: ShopLookData = {
-  lookLabel: "LOOK 01",
-  modelImage:
-    "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=900&auto=format&fit=crop&q=85",
-  products: [
-    {
-      id: "look-1",
-      title: "RAVEN OVERSIZED TEE — ACID BLACK",
-      category: "T-SHIRT",
-      href: "/products/raven-oversized-tee-acid-black",
-      image:
-        "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=200&auto=format&fit=crop&q=80",
-      pricePaise: 199900,
-      color: "Acid Black",
-    },
-    {
-      id: "look-2",
-      title: "CARGO WIDE LEG — MILITARY OLIVE",
-      category: "CARGO",
-      href: "/products/cargo-wide-leg-military-olive",
-      image:
-        "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=200&auto=format&fit=crop&q=80",
-      pricePaise: 349900,
-      color: "Military Olive",
-    },
-    {
-      id: "look-3",
-      title: "ESSENTIALS HOODIE — WASHED NAVY",
-      category: "HOODIE",
-      href: "/products/essentials-hoodie-washed-navy",
-      image:
-        "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=200&auto=format&fit=crop&q=80",
-      pricePaise: 319900,
-      color: "Washed Navy",
-    },
-  ],
-};
-
 const fmt = (p: number) => `₹${(p / 100).toLocaleString("en-IN")}`;
 
-export function ShopTheLookSection() {
-  const [look, setLook] = useState<ShopLookData>(DEFAULT_LOOK);
+/** The look is loaded from the database (ShopLook). No record → section not rendered. */
+export function ShopTheLookSection({ look }: { look: ShopLookData | null }) {
   const [allAdded, setAllAdded] = useState(false);
   const addItem = useCartStore((s) => s.addItem);
-
-  useEffect(() => {
-    fetch("/api/cms/shop-the-look")
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.look?.products?.length > 0) setLook(d.look);
-      })
-      .catch(() => {});
-  }, []);
+  if (!look || look.products.length === 0) return null;
 
   const totalLookPrice = look.products.reduce((sum, p) => sum + p.pricePaise, 0);
 
@@ -151,13 +105,15 @@ export function ShopTheLookSection() {
               backgroundColor: "var(--color-mist)",
             }}
           >
-            <Image
-              src={look.modelImage || DEFAULT_LOOK.modelImage}
-              alt="CULTRAVEN styled look — Shop The Look"
-              fill
-              sizes="(max-width: 768px) 100vw, 55vw"
-              style={{ objectFit: "cover" }}
-            />
+            {look.modelImage ? (
+              <Image
+                src={look.modelImage}
+                alt="CULTRAVEN styled look — Shop The Look"
+                fill
+                sizes="(max-width: 768px) 100vw, 55vw"
+                style={{ objectFit: "cover" }}
+              />
+            ) : null}
             {/* Hotspots */}
             {look.products[0] && (
               <Link

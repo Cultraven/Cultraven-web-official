@@ -17,8 +17,9 @@ function serialize(doc: any) {
   };
 }
 
-/** Public read. Returns every slide (admin needs inactive ones); the storefront filters live slides. */
-export async function GET() {
+/** Admin read of the saved hero (incl. hidden/scheduled slides). The website reads the same records server-side. */
+export async function GET(req: Request) {
+  if (!isAdminRequest(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   try {
     await connectToDatabase();
     const [docs, config] = await Promise.all([

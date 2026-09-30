@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
+import Image from "@/components/common/CmsImage";
 import Link from "next/link";
 import type { EditorialBanner as EditorialBannerType } from "@shop/types";
 
@@ -69,19 +69,9 @@ export function EditorialBanner({ banner }: EditorialBannerProps) {
             {banner.headline}
           </h2>
 
-          <p
-            style={{
-              fontFamily: "var(--font-sans)",
-              fontSize: "0.95rem",
-              lineHeight: 1.7,
-              color: "rgba(245,241,232,0.7)",
-              maxWidth: "400px",
-              marginBottom: "2.5rem",
-            }}
-          >
-            Clean oversized essentials, washed textures and breathable styling built for daily movement.
-          </p>
 
+
+          {banner.ctaLabel ? (
           <Link
             href={banner.ctaHref}
             style={{
@@ -113,6 +103,7 @@ export function EditorialBanner({ banner }: EditorialBannerProps) {
           >
             {banner.ctaLabel}
           </Link>
+          ) : null}
         </div>
       </div>
 

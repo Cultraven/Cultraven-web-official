@@ -62,81 +62,6 @@ const safeColors = (p: Product) => Array.isArray(p.colors) ? p.colors.filter((c)
 const safeSizes  = (p: Product) => Array.isArray(p.sizes)  ? p.sizes.filter(Boolean) : [];
 
 // ── Fixtures for offline/fallback ─────────────────────────────────────────────
-const FIXTURE_PRODUCTS: Product[] = [
-  {
-    id: "p1", title: "RAVEN OVERSIZED TEE — ACID BLACK", slug: "raven-oversized-tee-acid-black",
-    href: "/products/raven-oversized-tee-acid-black",
-    image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&auto=format&fit=crop&q=80",
-    hoverImage: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&auto=format&fit=crop&q=80",
-    pricePaise: 199900, mrpPaise: 249900, rating: 5, reviewCount: 124,
-    colors: [{ hex: "#0A0A0A", label: "Black" }, { hex: "var(--color-crimson)", label: "Flame" }],
-    sizes: ["S", "M", "L", "XL", "XXL"], category: "T-Shirts", badge: "NEW", inStock: true,
-  },
-  {
-    id: "p2", title: "DHARMA GRAPHIC HOODIE — STONE", slug: "dharma-graphic-hoodie-stone",
-    href: "/products/dharma-graphic-hoodie-stone",
-    image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&auto=format&fit=crop&q=80",
-    hoverImage: "https://images.unsplash.com/photo-1578768079052-aa76e52ff62e?w=600&auto=format&fit=crop&q=80",
-    pricePaise: 299900, mrpPaise: 399900, rating: 4, reviewCount: 88,
-    colors: [{ hex: "var(--color-mist)", label: "Stone" }, { hex: "var(--color-navy)", label: "Navy" }],
-    sizes: ["S", "M", "L", "XL"], category: "Hoodies", badge: "BESTSELLER", inStock: true,
-  },
-  {
-    id: "p3", title: "CARGO WIDE LEG — MILITARY OLIVE", slug: "cargo-wide-leg-military-olive",
-    href: "/products/cargo-wide-leg-military-olive",
-    image: "https://images.unsplash.com/photo-1519415943484-9fa1873496d4?w=600&auto=format&fit=crop&q=80",
-    hoverImage: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=600&auto=format&fit=crop&q=80",
-    pricePaise: 349900, mrpPaise: 449900, rating: 5, reviewCount: 56,
-    colors: [{ hex: "#4A5240", label: "Olive" }],
-    sizes: ["S", "M", "L", "XL"], category: "Jeans", badge: "HOT", inStock: true,
-  },
-  {
-    id: "p4", title: "ACID STATE WASH TEE — COBALT", slug: "acid-state-wash-tee-cobalt",
-    href: "/products/acid-state-wash-tee-cobalt",
-    image: "https://images.unsplash.com/photo-1529391409740-59f2cea08bc6?w=600&auto=format&fit=crop&q=80",
-    hoverImage: "https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=600&auto=format&fit=crop&q=80",
-    pricePaise: 219900, mrpPaise: 279900, rating: 4, reviewCount: 41,
-    colors: [{ hex: "#2563EB", label: "Cobalt" }],
-    sizes: ["M", "L", "XL", "XXL"], category: "T-Shirts", badge: "LIMITED", inStock: true,
-  },
-  {
-    id: "p5", title: "PIGMENTUM HEAVYWEIGHT TEE", slug: "pigmentum-heavyweight-tee",
-    href: "/products/pigmentum-heavyweight-tee",
-    image: "https://images.unsplash.com/photo-1508427953056-b00b8d78ebf5?w=600&auto=format&fit=crop&q=80",
-    hoverImage: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=80",
-    pricePaise: 189900, mrpPaise: 239900, rating: 5, reviewCount: 211,
-    colors: [{ hex: "var(--color-navy)", label: "Navy" }, { hex: "var(--color-cream)", label: "Cream" }],
-    sizes: ["XS", "S", "M", "L", "XL", "XXL"], category: "T-Shirts", badge: "TOP RATED", inStock: true,
-  },
-  {
-    id: "p6", title: "DRAGON BLOOD ZIP HOODIE", slug: "dragon-blood-zip-hoodie",
-    href: "/products/dragon-blood-zip-hoodie",
-    image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=80",
-    hoverImage: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=600&auto=format&fit=crop&q=80",
-    pricePaise: 399900, mrpPaise: 499900, rating: 5, reviewCount: 77,
-    colors: [{ hex: "var(--color-crimson)", label: "Flame" }, { hex: "#0A0A0A", label: "Black" }],
-    sizes: ["S", "M", "L", "XL"], category: "Hoodies", badge: "NEW", inStock: true,
-  },
-  {
-    id: "p7", title: "RELAXED BAGGY JEANS — INDIGO", slug: "relaxed-baggy-jeans-indigo",
-    href: "/products/relaxed-baggy-jeans-indigo",
-    image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&auto=format&fit=crop&q=80",
-    hoverImage: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=600&auto=format&fit=crop&q=80",
-    pricePaise: 279900, mrpPaise: 349900, rating: 4, reviewCount: 34,
-    colors: [{ hex: "#1e3a5f", label: "Indigo" }],
-    sizes: ["30", "32", "34", "36", "38"], category: "Jeans", inStock: true,
-  },
-  {
-    id: "p8", title: "CORE LOGO HOODIE — ASH", slug: "core-logo-hoodie-ash",
-    href: "/products/core-logo-hoodie-ash",
-    image: "https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=600&auto=format&fit=crop&q=80",
-    hoverImage: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&auto=format&fit=crop&q=80",
-    pricePaise: 249900, mrpPaise: 329900, rating: 4, reviewCount: 102,
-    colors: [{ hex: "#9CA3AF", label: "Ash" }, { hex: "var(--color-mist)", label: "Cream" }],
-    sizes: ["S", "M", "L", "XL", "XXL"], category: "Hoodies", inStock: true,
-  },
-];
-
 const SORT_OPTIONS = [
   { value: "featured", label: "Featured" },
   { value: "newest", label: "Newest" },
@@ -221,14 +146,11 @@ function CategoryClientInner({ slug, categoryName }: CategoryClientProps) {
             return;
           }
         }
-      } catch {/* fallback */}
-      // Filter fixtures by slug/category match
-      const catWord = slug.replace(/-/g, " ").split(" ")[0].toLowerCase();
-      const filtered = FIXTURE_PRODUCTS.filter((p) =>
-        p.category.toLowerCase().includes(catWord) ||
-        slug === "all" || slug === "new-in" || slug === "bestsellers"
-      );
-      setProducts(filtered.length > 0 ? filtered : FIXTURE_PRODUCTS);
+      } catch (e) {
+        console.error("[category] failed to load products", e);
+      }
+      // No products (or a failed request) → empty state. Nothing is fabricated.
+      setProducts([]);
       setLoading(false);
     };
     load();

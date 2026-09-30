@@ -7,6 +7,10 @@ const ProductSchema = new mongoose.Schema(
     description: { type: String, required: true },
     image: { type: String, required: true },
     hoverImage: { type: String },
+    /** Product gallery (ordered). Empty → falls back to image + hoverImage. */
+    images: { type: [String], default: [] },
+    isNewArrival: { type: Boolean, default: false, index: true },
+    isBestseller: { type: Boolean, default: false, index: true },
     pricePaise: { type: Number, required: true },
     mrpPaise: { type: Number, required: true },
     rating: { type: Number, default: 0 },

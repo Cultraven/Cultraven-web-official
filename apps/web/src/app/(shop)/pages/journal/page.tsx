@@ -1,24 +1,21 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
+import Image from "@/components/common/CmsImage";
+import { getCmsSection } from "@/lib/cms/server";
+import { liveItems } from "@/lib/cms/registry";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Journal | CULTRAVEN",
   description: "Stories, style notes, culture and people from the CULTRAVEN journal.",
 };
 
-const ARTICLES = [
-  { id: "j1", title: "The Rise of the Oversized Silhouette in Indian Streetwear", category: "STYLE", date: "Sep 2026", image: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=800&auto=format&fit=crop&q=80", excerpt: "How the oversized drop-shoulder became the defining shape of a generation's wardrobe.", slug: "oversized-silhouette-indian-streetwear", featured: true },
-  { id: "j2", title: "What Fabric Weight Actually Means for Your Wardrobe", category: "FASHION", date: "Aug 2026", image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800&auto=format&fit=crop&q=80", excerpt: "The difference between 160 GSM, 200 GSM and 260 GSM — and why it matters.", slug: "fabric-weight-wardrobe", featured: false },
-  { id: "j3", title: "Delhi Street Culture: The Photographers Shaping Indian Fashion", category: "CULTURE", date: "Aug 2026", image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&auto=format&fit=crop&q=80", excerpt: "Meet the photographers documenting India's growing streetwear scene.", slug: "delhi-street-culture-photographers", featured: false },
-  { id: "j4", title: "Building a Capsule Wardrobe Around Streetwear Basics", category: "STYLE", date: "Jul 2026", image: "https://images.unsplash.com/photo-1529391409740-59f2cea08bc6?w=800&auto=format&fit=crop&q=80", excerpt: "Five essentials that work together and anchor everything else.", slug: "capsule-wardrobe-streetwear-basics", featured: false },
-  { id: "j5", title: "Acid Wash: A History of the Process That Never Goes Out of Style", category: "FASHION", date: "Jul 2026", image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=800&auto=format&fit=crop&q=80", excerpt: "From 1980s rock culture to Gen-Z streetwear — why acid wash endures.", slug: "acid-wash-history", featured: false },
-  { id: "j6", title: "Music and Fashion: The Playlist That's Defining This Season", category: "MUSIC", date: "Jun 2026", image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&auto=format&fit=crop&q=80", excerpt: "The tracks behind the CULTRAVEN AW2026 campaign shoot.", slug: "music-fashion-playlist", featured: false },
-];
-
 const CATEGORIES = ["ALL", "STYLE", "CULTURE", "FASHION", "PEOPLE", "MUSIC"];
 
-export default function JournalPage() {
+export default async function JournalPage() {
+  const section = await getCmsSection<any>("page.journal");
+  const ARTICLES = liveItems<any>(section.data?.items);
   const featured = ARTICLES[0];
   const rest = ARTICLES.slice(1);
 
@@ -38,7 +35,12 @@ export default function JournalPage() {
       </div>
 
       <div style={{ padding: "3rem clamp(1.25rem,4vw,5rem)" }}>
+        {ARTICLES.length === 0 ? (
+          <p style={{ textAlign: "center", fontFamily: "var(--font-sans)", color: "var(--color-gray)" }}>New stories are coming soon.</p>
+        ) : null}
+
         {/* Featured article */}
+        {featured ? (
         <Link href={`/journal/${featured.slug}`} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0", marginBottom: "4rem", textDecoration: "none" }} className="featured-article">
           <div style={{ position: "relative", minHeight: "420px", overflow: "hidden", backgroundColor: "var(--color-mist)" }}>
             <Image src={featured.image} alt={featured.title} fill sizes="50vw" style={{ objectFit: "cover", transition: "transform 0.6s ease" }} className="featured-img" />
@@ -53,10 +55,11 @@ export default function JournalPage() {
             </div>
           </div>
         </Link>
+        ) : null}
 
         {/* Article grid */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "2rem" }} className="journal-grid">
-          {rest.map((a) => (
+          {rest.map((a: any) => (
             <Link key={a.id} href={`/journal/${a.slug}`} style={{ display: "block", textDecoration: "none" }}>
               <div style={{ position: "relative", aspectRatio: "16/10", overflow: "hidden", backgroundColor: "var(--color-mist)", marginBottom: "1rem" }}>
                 <Image src={a.image} alt={a.title} fill sizes="33vw" style={{ objectFit: "cover", transition: "transform 0.5s ease" }} className="article-img" />

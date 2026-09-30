@@ -1,68 +1,16 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import Image from "next/image";
+import Image from "@/components/common/CmsImage";
 import Link from "next/link";
 
-// ─── Category nav strip (GenRage / LP style) ─────────────────────────────────
-const NAV_CATS = [
-  { id: "new-in",     label: "New In",     href: "/collections/new-in" },
-  { id: "t-shirts",   label: "T-Shirts",   href: "/collections/t-shirts" },
-  { id: "hoodies",    label: "Hoodies",    href: "/collections/hoodies" },
-  { id: "sweatshirts",label: "Sweatshirts",href: "/collections/sweatshirts" },
-  { id: "cargos",     label: "Cargos",     href: "/collections/cargos" },
-  { id: "jeans",      label: "Jeans",      href: "/collections/jeans" },
-  { id: "outerwear",  label: "Outerwear",  href: "/collections/outerwear" },
-  { id: "sale",       label: "Sale",       href: "/collections/sale", accent: true },
-];
+export interface StripItem { id: string; label: string; href: string; accent?: boolean }
+export interface Tile { id: string; title: string; sub?: string; href: string; image: string; size?: "normal" | "tall" | "wide" }
 
-// ─── Image tiles (LP-editorial bento) ────────────────────────────────────────
-interface Tile {
-  id: string;
-  title: string;
-  sub: string;
-  href: string;
-  image: string;
-  wide?: boolean;
-  tall?: boolean;
-}
-
-const TILES: Tile[] = [
-  {
-    id: "tees",
-    title: "Oversized Tees",
-    sub: "From ₹1,499",
-    href: "/collections/t-shirts",
-    image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=900&auto=format&fit=crop&q=85",
-    tall: true,
-  },
-  {
-    id: "hoodies",
-    title: "Hoodies",
-    sub: "From ₹2,499",
-    href: "/collections/hoodies",
-    image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=900&auto=format&fit=crop&q=85",
-  },
-  {
-    id: "bottoms",
-    title: "Cargos & Jeans",
-    sub: "From ₹1,999",
-    href: "/collections/cargos",
-    image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=900&auto=format&fit=crop&q=85",
-  },
-  {
-    id: "outerwear",
-    title: "Outerwear",
-    sub: "From ₹3,499",
-    href: "/collections/outerwear",
-    image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=900&auto=format&fit=crop&q=85",
-    wide: true,
-  },
-];
-
-export function CategoryTiles() {
+/** Strip + tiles are loaded from the database (home.categoryStrip / home.categoryTiles). */
+export function CategoryTiles({ strip, tiles }: { strip: StripItem[]; tiles: Tile[] }) {
   const stripRef = useRef<HTMLDivElement>(null);
-  const [active, setActive] = useState("new-in");
+  const [active, setActive] = useState(strip[0]?.id ?? "");
 
   return (
     <section
@@ -90,7 +38,7 @@ export function CategoryTiles() {
             gap: "0",
           }}
         >
-          {NAV_CATS.map((cat) => (
+          {strip.map((cat) => (
             <Link
               key={cat.id}
               href={cat.href}
@@ -158,7 +106,7 @@ export function CategoryTiles() {
 
         {/* LP-clean image grid */}
         <div className="cat-grid">
-          {TILES.map((tile) => (
+          {tiles.map((tile) => (
             <TileCard key={tile.id} tile={tile} />
           ))}
         </div>
@@ -169,18 +117,20 @@ export function CategoryTiles() {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
           grid-template-rows: 340px 240px;
+          grid-auto-rows: 240px;
           gap: 12px;
         }
-        .cat-grid > *:nth-child(1) { grid-row: span 2; }
-        .cat-grid > *:nth-child(4) { grid-column: span 2; }
+        .cat-grid > .cat-tile-tall { grid-row: span 2; }
+        .cat-grid > .cat-tile-wide { grid-column: span 2; }
 
         @media (max-width: 900px) {
           .cat-grid {
             grid-template-columns: repeat(2, 1fr);
             grid-template-rows: auto;
           }
-          .cat-grid > *:nth-child(1) { grid-row: span 1; aspect-ratio: 3/4; }
-          .cat-grid > *:nth-child(4) { grid-column: span 2; aspect-ratio: 16/7; }
+          .cat-grid { grid-auto-rows: auto; }
+          .cat-grid > .cat-tile-tall { grid-row: span 1; aspect-ratio: 3/4; }
+          .cat-grid > .cat-tile-wide { grid-column: span 2; aspect-ratio: 16/7; }
         }
         @media (max-width: 600px) {
           .cat-grid {
@@ -188,8 +138,7 @@ export function CategoryTiles() {
             grid-template-rows: auto;
           }
           .cat-grid > * { aspect-ratio: 4/3 !important; }
-          .cat-grid > *:nth-child(1) { aspect-ratio: 4/3 !important; }
-          .cat-grid > *:nth-child(4) { grid-column: span 1; }
+          .cat-grid > .cat-tile-wide { grid-column: span 1; }
         }
       `}</style>
     </section>
@@ -202,13 +151,13 @@ function TileCard({ tile }: { tile: Tile }) {
   return (
     <Link
       href={tile.href}
-      className="cat-tile"
+      className={`cat-tile cat-tile-${tile.size ?? "normal"}`}
       style={{
         position: "relative",
         display: "block",
         overflow: "hidden",
         backgroundColor: "var(--color-bone)",
-        aspectRatio: tile.wide ? undefined : "auto",
+        aspectRatio: "auto",
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}

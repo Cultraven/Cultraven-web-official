@@ -13,6 +13,7 @@
     "clean": "turbo run clean",
     "build:web": "pnpm --filter=@shop/web... build",
     "typecheck": "turbo run typecheck",
+    "db:seed": "pnpm --filter @shop/web db:seed",
     "test": "turbo run test",
     "format": "prettier --write .",
     "infra:up": "docker compose -f infra/docker/docker-compose.yml up -d",

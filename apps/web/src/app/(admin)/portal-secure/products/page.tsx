@@ -25,15 +25,6 @@ interface Product {
   updatedAt: string;
 }
 
-const MOCK_PRODUCTS: Product[] = [
-  { id: "p1", title: "Raven Oversized Tee — Acid Black", slug: "raven-oversized-tee-acid-black", category: "T-Shirts", price: "₹1,999", stock: 82, status: "active", image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=100&auto=format&fit=crop&q=80", updatedAt: "Today" },
-  { id: "p2", title: "Cargo Wide Leg — Military Olive", slug: "cargo-wide-leg-military-olive", category: "Bottoms", price: "₹3,499", stock: 34, status: "active", image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=100&auto=format&fit=crop&q=80", updatedAt: "Today" },
-  { id: "p3", title: "Raven Oversized Tee — Bone White", slug: "raven-oversized-tee-bone-white", category: "T-Shirts", price: "₹1,999", stock: 120, status: "active", image: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=100&auto=format&fit=crop&q=80", updatedAt: "Yesterday" },
-  { id: "p4", title: "CULTRAVEN Heavyweight Hoodie — Navy", slug: "heavyweight-hoodie-navy", category: "Hoodies", price: "₹3,999", stock: 0, status: "draft", image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=100&auto=format&fit=crop&q=80", updatedAt: "3 days ago" },
-  { id: "p5", title: "Canvas Cargo — Sand Beige", slug: "canvas-cargo-sand-beige", category: "Bottoms", price: "₹3,499", stock: 18, status: "active", image: "https://images.unsplash.com/photo-1529391409740-59f2cea08bc6?w=100&auto=format&fit=crop&q=80", updatedAt: "1 week ago" },
-  { id: "p6", title: "Raven Oversized Tee — Washed Grey", slug: "raven-oversized-tee-washed-grey", category: "T-Shirts", price: "₹1,999", stock: 67, status: "active", image: "https://images.unsplash.com/photo-1525171254930-643fc658b64e?w=100&auto=format&fit=crop&q=80", updatedAt: "1 week ago" },
-  { id: "p7", title: "Legacy Jogger — Black", slug: "legacy-jogger-black", category: "Bottoms", price: "₹2,499", stock: 0, status: "archived", image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=100&auto=format&fit=crop&q=80", updatedAt: "1 month ago" },
-];
 
 const STATUS_BADGE: Record<string, { bg: string; text: string; label: string }> = {
   active: { bg: "rgba(16,185,129,0.12)", text: "#10B981", label: "Active" },

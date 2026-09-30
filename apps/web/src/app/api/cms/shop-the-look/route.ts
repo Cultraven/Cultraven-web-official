@@ -4,25 +4,20 @@ import { ShopLook } from "@/lib/models/ShopLook";
 import { isAdminRequest } from "@/lib/admin-auth";
 import { isSafeMediaUrl } from "@/lib/hero";
 
-const DEFAULT_LOOK = {
-  lookLabel: "LOOK 01",
-  modelImage: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=900&auto=format&fit=crop&q=85",
-  products: [
-    { id: "l1", title: "RAVEN OVERSIZED TEE — ACID BLACK", category: "T-SHIRT", href: "/products/raven-oversized-tee-acid-black", image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=200&auto=format&fit=crop&q=80", pricePaise: 199900, color: "Acid Black" },
-    { id: "l2", title: "CARGO WIDE LEG — MILITARY OLIVE", category: "CARGO", href: "/products/cargo-wide-leg-military-olive", image: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=200&auto=format&fit=crop&q=80", pricePaise: 349900, color: "Military Olive" },
-    { id: "l3", title: "ESSENTIALS HOODIE — WASHED NAVY", category: "HOODIE", href: "/products/essentials-hoodie-washed-navy", image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=200&auto=format&fit=crop&q=80", pricePaise: 319900, color: "Washed Navy" },
-  ],
-};
+export const dynamic = "force-dynamic";
 
-export async function GET() {
+/** Admin read of the saved look. The website reads the same record server-side. */
+export async function GET(req: Request) {
+  if (!isAdminRequest(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   try {
     await connectToDatabase();
-    const doc = await ShopLook.findOne().lean() as any;
-    if (!doc) return NextResponse.json({ look: DEFAULT_LOOK });
+    const doc = (await ShopLook.findOne().lean()) as any;
+    if (!doc) return NextResponse.json({ state: "empty", look: null });
     const { _id, __v, createdAt, updatedAt, ...look } = doc;
-    return NextResponse.json({ look });
-  } catch {
-    return NextResponse.json({ look: DEFAULT_LOOK });
+    return NextResponse.json({ state: "ok", look });
+  } catch (error) {
+    console.error("[cms] GET shop-the-look failed:", error);
+    return NextResponse.json({ error: "Database unavailable" }, { status: 503 });
   }
 }
 
@@ -42,9 +37,11 @@ export async function PUT(req: Request) {
     await connectToDatabase();
     // Replace in place (never delete first) so a failed save cannot wipe the existing look.
     await ShopLook.findOneAndReplace({}, look, { upsert: true });
-    return NextResponse.json({ success: true });
+    const stored = (await ShopLook.findOne().lean()) as any;
+    const { _id, __v, createdAt, updatedAt, ...saved } = stored;
+    return NextResponse.json({ success: true, look: saved });
   } catch (error) {
-    console.error("Failed to save shop-the-look:", error);
-    return NextResponse.json({ error: "Failed to save" }, { status: 500 });
+    console.error("[cms] PUT shop-the-look failed:", error);
+    return NextResponse.json({ error: "Database write failed. Nothing was changed." }, { status: 500 });
   }
 }

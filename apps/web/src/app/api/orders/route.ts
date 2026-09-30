@@ -19,38 +19,6 @@ function verifyAdminToken(req: NextRequest): boolean {
   }
 }
 
-const MOCK_ORDERS = [
-  {
-    id: "ORD-001",
-    customer: "Rohan Sharma",
-    email: "rohan@example.com",
-    items: 2,
-    total: "₹3,498",
-    status: "Processing",
-    paymentMethod: "UPI",
-    date: "2026-09-29",
-  },
-  {
-    id: "ORD-002",
-    customer: "Priya Mehta",
-    email: "priya@example.com",
-    items: 1,
-    total: "₹1,999",
-    status: "Shipped",
-    paymentMethod: "Card",
-    date: "2026-09-28",
-  },
-  {
-    id: "ORD-003",
-    customer: "Arjun Kapoor",
-    email: "arjun@example.com",
-    items: 3,
-    total: "₹6,497",
-    status: "Delivered",
-    paymentMethod: "COD",
-    date: "2026-09-27",
-  },
-];
 
 export async function GET(req: NextRequest) {
   if (!verifyAdminToken(req)) {
@@ -76,10 +44,10 @@ export async function GET(req: NextRequest) {
       date: o.createdAt ? new Date(o.createdAt).toISOString().split("T")[0] : "—",
     }));
 
-    return NextResponse.json({ orders: mapped.length > 0 ? mapped : MOCK_ORDERS });
+    return NextResponse.json({ orders: mapped });
   } catch (error) {
-    console.error("Failed to fetch orders, using mock:", error);
-    return NextResponse.json({ orders: MOCK_ORDERS });
+    console.error("[orders] Failed to fetch orders:", error);
+    return NextResponse.json({ error: "Orders unavailable", orders: [] }, { status: 503 });
   }
 }
 

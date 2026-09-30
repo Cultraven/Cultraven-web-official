@@ -1,24 +1,34 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import ProductDetailClient from "./ProductClient";
+import { getProductBySlug, getProducts } from "@/lib/cms/server";
+
+export const dynamic = "force-dynamic";
 
 interface Props { params: Promise<{ slug: string }> }
 
-function fmtName(slug: string) {
-  return slug.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
-}
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const name = fmtName(slug);
+  const { data: p } = await getProductBySlug(slug);
+  if (!p) return { title: "Product not found" };
+  const description = p.description.slice(0, 160);
   return {
-    title: name,
-    description: `Shop ${name} — premium heavyweight streetwear by CULTRAVEN. Free shipping above ₹1,999.`,
+    title: p.title,
+    description,
     alternates: { canonical: `/products/${slug}` },
-    openGraph: { title: name, description: `Premium Gen-Z streetwear. Shop ${name}.`, type: "website", images: ["https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1200&h=630&fit=crop&q=80"] },
+    openGraph: { title: p.title, description, type: "website", images: p.image ? [p.image] : undefined },
   };
 }
 
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
-  return <ProductDetailClient slug={slug} productName={fmtName(slug)} />;
+  const [product, all] = await Promise.all([getProductBySlug(slug), getProducts("all", 12)]);
+  if (!product.data) notFound();
+
+  const related = (all.data ?? [])
+    .filter((p) => p.slug !== slug)
+    .slice(0, 4)
+    .map((p) => ({ id: p.id, title: p.title, price: p.pricePaise, image: p.image, href: p.href }));
+
+  return <ProductDetailClient product={product.data} related={related} />;
 }

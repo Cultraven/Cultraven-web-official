@@ -14,12 +14,8 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
     notFound();
   }
 
-  // Convert ObjectIds to strings to pass to Client Component
-  const p = product as any;
-  const serializedProduct = {
-    ...p,
-    _id: p._id.toString(),
-  };
+  // Plain JSON for the Client Component (ObjectIds / Dates would fail serialization).
+  const serializedProduct = JSON.parse(JSON.stringify(product));
 
   return (
     <div style={{ padding: "2.5rem 3rem" }}>
