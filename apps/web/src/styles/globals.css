@@ -1,5 +1,6 @@
 /* ── Google Fonts (Loaded via next/font in layout.tsx) ─────────────── */
 @import "tailwindcss";
+@import "./components.css";
 @source "../../../../packages/ui/src";
 
 @theme {
@@ -97,14 +98,14 @@
   img, svg { display: block; max-width: 100%; }
   button { cursor: pointer; font-family: inherit; }
 
-  /* Brutalist defaults for ALL inputs and selects */
-  input[type="text"],
-  input[type="email"],
-  input[type="password"],
-  input[type="tel"],
-  input[type="number"],
-  textarea,
-  select {
+  /* Brutalist defaults for storefront inputs and selects (the admin panel, .adm, has its own design system) */
+  input[type="text"]:not(.adm *),
+  input[type="email"]:not(.adm *),
+  input[type="password"]:not(.adm *),
+  input[type="tel"]:not(.adm *),
+  input[type="number"]:not(.adm *),
+  textarea:not(.adm *),
+  select:not(.adm *) {
     border: var(--border-thick) !important;
     border-radius: 0 !important;
     background-color: var(--color-cream) !important;
@@ -116,12 +117,12 @@
     box-shadow: inset 2px 2px 0px 0px rgba(23,37,69,0.1) !important;
     transition: border-color 0.2s ease !important;
   }
-  input:focus, textarea:focus, select:focus {
+  input:focus:not(.adm *), textarea:focus:not(.adm *), select:focus:not(.adm *) {
     box-shadow: inset 4px 4px 0px 0px rgba(23,37,69,0.15) !important;
   }
 
   /* Brutalist defaults for generic form buttons (excluding special .action-icon) */
-  form button[type="submit"] {
+  form button[type="submit"]:not(.adm *) {
     background-color: var(--color-navy) !important;
     color: var(--color-cream) !important;
     font-family: var(--font-sans) !important;
@@ -132,13 +133,13 @@
     border-radius: 0 !important;
     transition: transform 0.1s ease, box-shadow 0.1s ease !important;
   }
-  form button[type="submit"]:hover {
+  form button[type="submit"]:not(.adm *):hover {
     background-color: var(--color-lava) !important;
     color: var(--color-raven) !important;
     transform: translate(-2px, -2px) !important;
     box-shadow: var(--shadow-lg) !important;
   }
-  form button[type="submit"]:active {
+  form button[type="submit"]:not(.adm *):active {
     transform: translate(2px, 2px) !important;
     box-shadow: 0px 0px 0px 0px var(--color-navy) !important;
   }
@@ -150,6 +151,25 @@
   .container-full {
     width: 100%;
   }
+
+  /* Skip style/layout/paint for sections that are far below the fold until they scroll near the viewport.
+     contain-intrinsic-size keeps the scrollbar stable (remembers the real size once rendered). */
+  .cv-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 720px;
+  }
+
+  /* Hover effects without JS state: parent .hv gets :hover, children react. */
+  .hv-zoom { transition: transform 0.6s ease; }
+  .hv:hover .hv-zoom { transform: scale(1.05); }
+  .hv-reveal { opacity: 0; transition: opacity 0.3s ease, transform 0.25s ease; }
+  .hv:hover .hv-reveal { opacity: 1; }
+  .hv-pill { opacity: 0; transform: translateY(-6px); transition: opacity 0.25s ease, transform 0.25s ease; }
+  .hv:hover .hv-pill { opacity: 1; transform: none; }
+  .btn-outline-navy { background: transparent; color: var(--color-navy); transition: background-color 0.2s ease, color 0.2s ease; }
+  .btn-outline-navy:hover { background: var(--color-navy); color: var(--color-cream); }
+  .link-underline-cta { border-bottom-color: rgba(245,241,232,0.5); transition: border-color 0.2s ease, color 0.2s ease; }
+  .link-underline-cta:hover { border-bottom-color: var(--color-crimson); color: var(--color-crimson); }
 
   /* Constrained wrapper */
   .container {

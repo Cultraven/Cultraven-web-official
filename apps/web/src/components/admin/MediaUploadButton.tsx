@@ -1,5 +1,6 @@
 "use client";
 import React, { useRef, useState } from "react";
+import { Button } from "./ui";
 
 /** Uploads a file through the authenticated /api/upload route and reports the stored URL. */
 export function MediaUploadButton({
@@ -44,14 +45,9 @@ export function MediaUploadButton({
         style={{ display: "none" }}
         onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])}
       />
-      <button
-        type="button"
-        disabled={busy}
-        onClick={() => ref.current?.click()}
-        style={{ padding: "6px 12px", backgroundColor: "rgba(255,255,255,0.06)", color: "rgba(245,241,232,0.8)", fontWeight: 600, fontSize: "0.72rem", border: "none", borderRadius: 3, cursor: "pointer", whiteSpace: "nowrap" }}
-      >
+      <Button size="sm" icon={busy ? undefined : "upload"} loading={busy} onClick={() => ref.current?.click()}>
         {busy ? "Uploading…" : hasValue ? "Replace" : "Upload"}
-      </button>
+      </Button>
     </>
   );
 }

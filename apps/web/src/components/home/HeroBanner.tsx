@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import type { HeroSlide } from "@shop/types";
+import { optimizedImage } from "@/components/common/CmsImage";
 
 interface HeroBannerProps {
   /** Live hero slides loaded from the database. Empty → the hero is not rendered. */
@@ -183,20 +184,6 @@ export function HeroBanner({ slides }: HeroBannerProps) {
         />
       )}
 
-      <style>{`
-        @keyframes heroProgress {
-          from { width: 0%; }
-          to   { width: 100%; }
-        }
-        @keyframes heroScroll {
-          0%   { transform: translateY(-100%); }
-          100% { transform: translateY(300%); }
-        }
-        @keyframes heroFadeIn {
-          from { opacity: 0; }
-          to   { opacity: 1; }
-        }
-      `}</style>
     </section>
   );
 }
@@ -416,16 +403,18 @@ function SlideMedia({ slide: s, index, visible }: { slide: HeroSlide; index: num
   const fallback = s.type === "video" ? s.posterSrc : s.srcDesktop;
   if (!fallback || imageError) return null; // navy section background shows — layout never breaks
 
+  // Art-directed, optimized sources (AVIF/WebP at the right size) — a raw multi-MB upload
+  // would otherwise dominate the page weight and LCP.
+  const desktop = optimizedImage(fallback, { alt: s.altText || "", sizes: "100vw", priority: eager, quality: 70 });
+  const mobileSrc = s.type !== "video" && s.srcMobile ? optimizedImage(s.srcMobile, { alt: "", sizes: "100vw", quality: 70 }) : null;
+  const { fill: _f, style: _s, ...imgProps } = desktop as any;
+
   return (
     <picture>
-      {s.type !== "video" && s.srcMobile ? <source media="(max-width: 768px)" srcSet={s.srcMobile} /> : null}
+      {mobileSrc?.srcSet ? <source media="(max-width: 768px)" srcSet={mobileSrc.srcSet} sizes="100vw" /> : null}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={fallback}
-        alt={s.altText || ""}
-        loading={eager ? "eager" : "lazy"}
-        decoding={eager ? "sync" : "async"}
-        fetchPriority={eager ? "high" : "auto"}
+        {...imgProps}
         onError={() => setImageError(true)}
         style={MEDIA_STYLE(s.objectPosition)}
       />

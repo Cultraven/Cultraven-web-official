@@ -107,11 +107,6 @@ export function EditorialBanner({ banner }: EditorialBannerProps) {
         </div>
       </div>
 
-      <style>{`
-        @media (max-width: 768px) {
-          .editorial-grid { grid-template-columns: 1fr !important; }
-        }
-      `}</style>
     </section>
   );
 }

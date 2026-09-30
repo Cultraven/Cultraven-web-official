@@ -103,9 +103,6 @@ export default function SizeGuidePage() {
         </div>
       </div>
 
-      <style>{`
-        @media (max-width: 768px) { .measure-grid { grid-template-columns: 1fr !important; } .fit-grid { grid-template-columns: repeat(2,1fr) !important; } }
-      `}</style>
     </div>
   );
 }

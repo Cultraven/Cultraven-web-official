@@ -355,47 +355,6 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
         </button>
       </div>
 
-      <style>{`
-        .pdp-grid { @media (max-width: 768px) { grid-template-columns: 1fr !important; } }
-        .review-grid { @media (max-width: 768px) { grid-template-columns: 1fr !important; } }
-        .also-like-grid { @media (max-width: 768px) { grid-template-columns: repeat(2,1fr) !important; } }
-        .also-like-img:hover { transform: scale(1.05) !important; }
-        
-        .gallery-container { display: flex; gap: 1rem; align-items: start; }
-        .swipe-wrapper { width: 100%; height: 100%; }
-        
-        .mobile-sticky-cta {
-          display: none;
-          position: fixed;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          padding: 16px;
-          background-color: var(--color-cream);
-          border-top: var(--border-thick);
-          z-index: 100;
-          box-shadow: 0px -4px 0px rgba(23,37,69,0.1);
-        }
-
-        @media (max-width: 768px) { 
-          .gallery-container { flex-direction: column; }
-          .gallery-thumbs { display: none !important; }
-          .swipe-wrapper {
-            display: flex;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-          }
-          .swipe-wrapper::-webkit-scrollbar { display: none; }
-          .swipe-item {
-            flex: 0 0 100%;
-            scroll-snap-align: start;
-            display: block !important;
-          }
-          .mobile-sticky-cta { display: block; }
-        }
-      `}</style>
     </div>
   );
 }

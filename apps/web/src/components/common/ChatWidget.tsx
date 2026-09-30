@@ -649,24 +649,6 @@ export function ChatWidget() {
         </div>
       )}
 
-      <style>{`
-        @keyframes slideUpFade {
-          from { opacity: 0; transform: translateY(12px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes typingDot {
-          0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
-          30% { transform: translateY(-6px); opacity: 1; }
-        }
-        @keyframes chatPulse {
-          0% { opacity: 0.8; transform: scale(1); }
-          70% { opacity: 0; transform: scale(1.5); }
-          100% { opacity: 0; transform: scale(1.5); }
-        }
-        @media (max-width: 1023px) {
-          #chat-widget-toggle { bottom: calc(env(safe-area-inset-bottom) + 80px) !important; }
-        }
-      `}</style>
     </>
   );
 }

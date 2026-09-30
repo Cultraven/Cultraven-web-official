@@ -1,153 +1,174 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { Alert, Badge, Button, Card, EmptyState, LinkButton, PageHeader, Skeleton, inr, useApi, useToast } from "./ui";
+
+type Item = { productId?: string; title: string; image?: string; size?: string; color?: string; quantity: number; pricePaise: number };
+type Address = { name?: string; email?: string; phone?: string; addressLine1?: string; addressLine2?: string; city?: string; state?: string; pincode?: string };
+type Order = {
+  _id: string;
+  orderNumber?: string;
+  razorpayOrderId?: string;
+  items?: Item[];
+  subtotalPaise?: number;
+  discountPaise?: number;
+  shippingPaise?: number;
+  codFeePaise?: number;
+  totalPaise?: number;
+  deliveryAddress?: Address;
+  paymentMethod?: string;
+  paymentStatus?: string;
+  fulfillmentStatus?: string;
+  createdAt?: string;
+};
+
+const STATUSES = ["processing", "shipped", "delivered", "cancelled"] as const;
+const TONES: Record<string, "warn" | "info" | "success" | "danger"> = { processing: "warn", shipped: "info", delivered: "success", cancelled: "danger" };
+const cap = (s?: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "—");
+
+function Line({ k, v, strong }: { k: string; v: React.ReactNode; strong?: boolean }) {
+  return (
+    <div className="adm-actions" style={{ justifyContent: "space-between", padding: "4px 0", fontWeight: strong ? 700 : 400 }}>
+      <span className={strong ? undefined : "adm-cell-sub"}>{k}</span>
+      <span>{v}</span>
+    </div>
+  );
+}
 
 export default function OrderDetailsClient({ id }: { id: string }) {
-  const [order, setOrder] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [updating, setUpdating] = useState(false);
-  const router = useRouter();
+  const { data, error, loading, reload, setData } = useApi<{ order: Order }>(`/api/orders/${id}`);
+  const { toast } = useToast();
+  const [saving, setSaving] = useState(false);
+  const order = data?.order;
 
-  useEffect(() => {
-    fetch(`/api/orders/${id}`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.order) setOrder(data.order);
-      })
-      .finally(() => setLoading(false));
-  }, [id]);
-
-  const updateStatus = async (status: string) => {
-    setUpdating(true);
+  async function changeStatus(next: string) {
+    if (!order) return;
+    const prev = order.fulfillmentStatus;
+    setData({ order: { ...order, fulfillmentStatus: next } });
+    setSaving(true);
     try {
-      const res = await fetch(`/api/orders/${id}`, {
+      const r = await fetch(`/api/orders/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fulfillmentStatus: status }),
+        body: JSON.stringify({ fulfillmentStatus: next }),
       });
-      if (res.ok) {
-        setOrder({ ...order, fulfillmentStatus: status });
-        router.refresh();
-      } else {
-        alert("Failed to update status");
+      if (!r.ok) {
+        const j = await r.json().catch(() => ({}));
+        throw new Error(j.error || `HTTP ${r.status}`);
       }
-    } catch (err) {
-      alert("Network error");
+      toast(`Order marked ${next}`);
+    } catch (e) {
+      setData({ order: { ...order, fulfillmentStatus: prev } });
+      toast(e instanceof Error ? e.message : "Failed to update status", "error");
     } finally {
-      setUpdating(false);
+      setSaving(false);
     }
-  };
-
-  if (loading) {
-    return <div style={{ padding: "2.5rem 3rem", color: "var(--color-cream)", fontFamily: "var(--font-sans)" }}>Loading...</div>;
   }
 
-  if (!order) {
+  const back = <LinkButton href="/portal-secure/orders" variant="ghost" icon="chevron">Back to orders</LinkButton>;
+
+  if (loading && !data) {
     return (
-      <div style={{ padding: "2.5rem 3rem", color: "var(--color-cream)", fontFamily: "var(--font-sans)" }}>
-        Order not found.
-        <br/><br/>
-        <Link href="/portal-secure/orders" style={{ color: "var(--color-crimson)" }}>Back to Orders</Link>
-      </div>
+      <>
+        <PageHeader title="Loading order…">{back}</PageHeader>
+        <div className="adm-grid adm-grid-main">
+          <Card><Skeleton h={180} /></Card>
+          <Card><Skeleton h={180} /></Card>
+        </div>
+      </>
     );
   }
 
-  const fmt = (p: number) => `₹${(p / 100).toLocaleString("en-IN")}`;
+  if (error || !order) {
+    const notFound = error === "Order not found";
+    return (
+      <>
+        <PageHeader title={notFound ? "Order not found" : "Order"}>{back}</PageHeader>
+        {notFound || !error ? (
+          <Card><EmptyState title="Order not found" description="It may have been removed or the link is incorrect." /></Card>
+        ) : (
+          <Alert><span>{error} </span><Button size="sm" onClick={reload}>Retry</Button></Alert>
+        )}
+      </>
+    );
+  }
+
+  const status = (order.fulfillmentStatus || "processing").toLowerCase();
+  const a = order.deliveryAddress ?? {};
+  const items = order.items ?? [];
+  const subtotal = order.subtotalPaise ?? items.reduce((s, i) => s + i.pricePaise * i.quantity, 0);
+  const title = order.razorpayOrderId || order.orderNumber || order._id;
+  const addr = [a.addressLine1, a.addressLine2, [a.city, a.state].filter(Boolean).join(", "), a.pincode].filter(Boolean);
 
   return (
-    <div style={{ padding: "2.5rem 3rem" }}>
-      <div style={{ marginBottom: "2rem" }}>
-        <Link href="/portal-secure/orders" style={{ color: "rgba(245,241,232,0.5)", textDecoration: "none", fontSize: "0.875rem", fontFamily: "var(--font-sans)", display: "inline-block", marginBottom: "1rem" }}>
-          ← Back to Orders
-        </Link>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <h1 style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "1.75rem", color: "var(--color-cream)", letterSpacing: "-0.02em" }}>
-            Order {order.razorpayOrderId}
-          </h1>
-          <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-            <span style={{ fontFamily: "var(--font-sans)", color: "rgba(245,241,232,0.5)", fontSize: "0.875rem" }}>Update Status:</span>
-            <select
-              value={order.fulfillmentStatus || "processing"}
-              onChange={(e) => updateStatus(e.target.value)}
-              disabled={updating}
-              style={{
-                padding: "0.5rem 1rem",
-                backgroundColor: "#1A2332",
-                border: "1px solid rgba(255,255,255,0.1)",
-                color: "var(--color-cream)",
-                borderRadius: "4px",
-                fontFamily: "var(--font-sans)",
-                outline: "none"
-              }}
-            >
-              <option value="processing">Processing</option>
-              <option value="shipped">Shipped</option>
-              <option value="delivered">Delivered</option>
-              <option value="cancelled">Cancelled</option>
-            </select>
-          </div>
+    <>
+      <PageHeader title={`Order ${title}`} description={order.createdAt ? `Placed ${new Date(order.createdAt).toLocaleString("en-IN")}` : undefined}>
+        {back}
+        <Badge tone={TONES[status] ?? "neutral"}>{cap(status)}</Badge>
+        <select
+          className="adm-select"
+          style={{ width: 160 }}
+          aria-label="Fulfilment status"
+          value={STATUSES.includes(status as (typeof STATUSES)[number]) ? status : ""}
+          disabled={saving}
+          onChange={(e) => changeStatus(e.target.value)}
+        >
+          {!STATUSES.includes(status as (typeof STATUSES)[number]) ? <option value="" disabled>{cap(status)}</option> : null}
+          {STATUSES.map((s) => <option key={s} value={s}>{cap(s)}</option>)}
+        </select>
+      </PageHeader>
+
+      <div className="adm-grid adm-grid-main">
+        <Card title={`Items (${items.length})`} pad={false}>
+          {items.length === 0 ? (
+            <EmptyState title="No items" />
+          ) : (
+            <div className="adm-table-wrap">
+              <table className="adm-table">
+                <thead>
+                  <tr><th scope="col">Product</th><th scope="col">Qty</th><th scope="col" className="num">Price</th></tr>
+                </thead>
+                <tbody>
+                  {items.map((it, i) => (
+                    <tr key={`${it.productId ?? it.title}-${i}`}>
+                      <td>
+                        <div className="adm-cell-media">
+                          {it.image ? <img className="adm-thumb" src={it.image} alt="" loading="lazy" /> : <div className="adm-thumb" />}
+                          <div>
+                            <div className="adm-cell-title">{it.title}</div>
+                            <div className="adm-cell-sub">{[it.size && `Size ${it.size}`, it.color].filter(Boolean).join(" · ")}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>× {it.quantity}</td>
+                      <td className="num">{inr(it.pricePaise * it.quantity)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </Card>
+
+        <div className="adm-list">
+          <Card title="Customer">
+            <div style={{ fontWeight: 600 }}>{a.name || "Unknown"}</div>
+            {a.email ? <div className="adm-cell-sub">{a.email}</div> : null}
+            {a.phone ? <div className="adm-cell-sub">{a.phone}</div> : null}
+          </Card>
+          <Card title="Delivery address">
+            {addr.length ? addr.map((l, i) => <div key={i}>{l}</div>) : <span className="adm-cell-sub">No address on file</span>}
+          </Card>
+          <Card title="Payment">
+            <Line k="Method" v={(order.paymentMethod || "—").toUpperCase()} />
+            <Line k="Status" v={cap(order.paymentStatus)} />
+            <Line k="Subtotal" v={inr(subtotal)} />
+            {order.discountPaise ? <Line k="Discount" v={`− ${inr(order.discountPaise)}`} /> : null}
+            <Line k="Shipping" v={order.shippingPaise ? inr(order.shippingPaise) : "Free"} />
+            {order.codFeePaise ? <Line k="COD fee" v={inr(order.codFeePaise)} /> : null}
+            <Line k="Total" v={inr(order.totalPaise ?? 0)} strong />
+          </Card>
         </div>
       </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "2rem" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-          <div style={{ backgroundColor: "#1A2332", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "6px", padding: "2rem" }}>
-            <h2 style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "1.1rem", color: "var(--color-cream)", marginBottom: "1.5rem" }}>Order Items</h2>
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-              {order.items?.map((item: any, i: number) => (
-                <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: i < order.items.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none", paddingBottom: i < order.items.length - 1 ? "1.5rem" : "0" }}>
-                  <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={item.image} alt={item.title} style={{ width: "60px", height: "75px", objectFit: "cover", borderRadius: "4px" }} />
-                    <div>
-                      <p style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.9rem", color: "var(--color-cream)", marginBottom: "4px" }}>{item.title}</p>
-                      <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.8rem", color: "rgba(245,241,232,0.5)" }}>Size: {item.size} | Qty: {item.quantity}</p>
-                    </div>
-                  </div>
-                  <div style={{ fontFamily: "var(--font-sans)", fontWeight: 700, color: "var(--color-cream)" }}>
-                    {fmt(item.pricePaise)}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-          <div style={{ backgroundColor: "#1A2332", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "6px", padding: "1.5rem" }}>
-            <h3 style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.9rem", color: "rgba(245,241,232,0.5)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "1rem" }}>Customer Details</h3>
-            <p style={{ fontFamily: "var(--font-sans)", color: "var(--color-cream)", fontSize: "0.9rem", marginBottom: "4px" }}><strong>Name:</strong> {order.deliveryAddress?.name}</p>
-            <p style={{ fontFamily: "var(--font-sans)", color: "var(--color-cream)", fontSize: "0.9rem", marginBottom: "4px" }}><strong>Email:</strong> {order.deliveryAddress?.email}</p>
-            <p style={{ fontFamily: "var(--font-sans)", color: "var(--color-cream)", fontSize: "0.9rem", marginBottom: "4px" }}><strong>Phone:</strong> {order.deliveryAddress?.phone}</p>
-          </div>
-
-          <div style={{ backgroundColor: "#1A2332", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "6px", padding: "1.5rem" }}>
-            <h3 style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.9rem", color: "rgba(245,241,232,0.5)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "1rem" }}>Shipping Address</h3>
-            <p style={{ fontFamily: "var(--font-sans)", color: "var(--color-cream)", fontSize: "0.9rem", lineHeight: "1.5" }}>
-              {order.deliveryAddress?.addressLine1}<br/>
-              {order.deliveryAddress?.addressLine2 && <>{order.deliveryAddress?.addressLine2}<br/></>}
-              {order.deliveryAddress?.city}, {order.deliveryAddress?.state} {order.deliveryAddress?.pincode}
-            </p>
-          </div>
-
-          <div style={{ backgroundColor: "#1A2332", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "6px", padding: "1.5rem" }}>
-            <h3 style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.9rem", color: "rgba(245,241,232,0.5)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "1rem" }}>Payment Summary</h3>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-              <span style={{ fontFamily: "var(--font-sans)", color: "rgba(245,241,232,0.7)" }}>Subtotal</span>
-              <span style={{ fontFamily: "var(--font-sans)", color: "var(--color-cream)" }}>{fmt(order.totalPaise)}</span>
-            </div>
-            <div style={{ display: "flex", justifyContent: "space-between", paddingBottom: "1rem", borderBottom: "1px solid rgba(255,255,255,0.06)", marginBottom: "1rem" }}>
-              <span style={{ fontFamily: "var(--font-sans)", color: "rgba(245,241,232,0.7)" }}>Shipping</span>
-              <span style={{ fontFamily: "var(--font-sans)", color: "#10B981" }}>FREE</span>
-            </div>
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ fontFamily: "var(--font-sans)", color: "var(--color-cream)", fontWeight: 700 }}>Total</span>
-              <span style={{ fontFamily: "var(--font-sans)", color: "var(--color-cream)", fontWeight: 700, fontSize: "1.2rem" }}>{fmt(order.totalPaise)}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    </>
   );
 }

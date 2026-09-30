@@ -4,19 +4,22 @@
  * Clicking opens the CartDrawer slide-out panel.
  * Badge shows live item count from Zustand store.
  */
-import React, { useState } from "react";
+import React from "react";
 import { useCartStore } from "@/store/cart";
-import { CartDrawer } from "@/components/cart/CartDrawer";
+import { useUiStore } from "@/store/ui";
+import { preloadCartDrawer } from "@/components/cart/CartDrawerHost";
 
 export function CartBadge({ isScrolled = false }: { isScrolled?: boolean }) {
   const count = useCartStore((s) => s.totalItems());
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const openCart = useUiStore((s) => s.openCart);
 
   return (
     <>
       <button
         aria-label={`Open cart, ${count} item${count !== 1 ? "s" : ""}`}
-        onClick={() => setDrawerOpen(true)}
+        onClick={openCart}
+        onPointerEnter={preloadCartDrawer}
+        onFocus={preloadCartDrawer}
         className="action-icon"
         style={{
           position: "relative",
@@ -78,15 +81,6 @@ export function CartBadge({ isScrolled = false }: { isScrolled?: boolean }) {
         )}
       </button>
 
-      <CartDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
-
-      <style>{`
-        @keyframes cartPop {
-          0% { transform: translate(30%, -30%) scale(0.6); }
-          60% { transform: translate(30%, -30%) scale(1.2); }
-          100% { transform: translate(30%, -30%) scale(1); }
-        }
-      `}</style>
     </>
   );
 }

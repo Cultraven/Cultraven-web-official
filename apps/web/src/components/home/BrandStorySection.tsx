@@ -4,8 +4,6 @@
  * Full-width cinematic image (+ optional looping video) with dark overlay.
  * Every piece of copy, link and media comes from the database (home.brandStory).
  */
-"use client";
-
 import React from "react";
 import Link from "next/link";
 
@@ -24,6 +22,7 @@ export function BrandStorySection({ content }: { content: BrandStoryContent }) {
 
   return (
     <section
+      className="cv-auto"
       aria-labelledby="brand-story-heading"
       style={{
         position: "relative",
@@ -143,18 +142,10 @@ export function BrandStorySection({ content }: { content: BrandStoryContent }) {
               letterSpacing: "0.14em",
               textTransform: "uppercase",
               color: "var(--color-cream)",
-              borderBottom: "2px solid rgba(245,241,232,0.5)",
+              borderBottom: "2px solid",
               paddingBottom: "4px",
-              transition: "border-color 0.2s ease",
             }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLAnchorElement).style.borderColor = "var(--color-crimson)";
-              (e.currentTarget as HTMLAnchorElement).style.color = "var(--color-crimson)";
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLAnchorElement).style.borderColor = "rgba(245,241,232,0.5)";
-              (e.currentTarget as HTMLAnchorElement).style.color = "var(--color-cream)";
-            }}
+            className="link-underline-cta"
           >
             {content.ctaLabel}
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

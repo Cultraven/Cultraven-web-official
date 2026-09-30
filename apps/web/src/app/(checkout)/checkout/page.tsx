@@ -534,12 +534,6 @@ export default function CheckoutPage() {
         </div>
       </div>
 
-      <style>{`
-        @media (max-width: 900px) {
-          .checkout-layout { grid-template-columns: 1fr !important; }
-          .checkout-layout > div:last-child { border-left: none !important; border-top: 1px solid var(--color-border) !important; }
-        }
-      `}</style>
     </div>
   );
 }

@@ -243,14 +243,6 @@ export function ProductCard({ product, cardWidth = "100%" }: ProductCardProps) {
         </div>
       </div>
       
-      <style>{`
-        .product-card:hover { transform: translate(-2px, -2px); box-shadow: var(--shadow-md) !important; }
-        .wishlist-btn:hover { transform: scale(1.1); background-color: var(--color-navy) !important; }
-        .wishlist-btn:hover svg { stroke: var(--color-cream) !important; }
-        @media (max-width: 1024px) {
-          .quick-add-overlay { display: none !important; }
-        }
-      `}</style>
     </article>
   );
 }

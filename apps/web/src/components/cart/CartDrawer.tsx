@@ -24,7 +24,9 @@ import { FREE_SHIPPING_THRESHOLD, SHIPPING_FEE } from "@/lib/constants";
 const fmt = (p: number) => `₹${(p / 100).toLocaleString("en-IN")}`;
 
 export function CartDrawer({ open, onClose }: CartDrawerProps) {
-  const { items, removeItem, setQuantity } = useCartStore();
+  const items = useCartStore((s) => s.items);
+  const removeItem = useCartStore((s) => s.removeItem);
+  const setQuantity = useCartStore((s) => s.setQuantity);
   const drawerRef = useRef<HTMLDivElement>(null);
 
   const subtotal = items.reduce((s, i) => s + i.pricePaise * i.quantity, 0);
@@ -282,15 +284,6 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
         )}
       </div>
 
-      <style>{`
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .hide-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
     </>,
     document.body
   );

@@ -96,7 +96,7 @@ export function Footer({ config }: FooterProps) {
   const socials = (config.socialLinks ?? []) as { platform: string; href: string }[];
 
   return (
-    <footer aria-label="Site footer">
+    <footer aria-label="Site footer" className="cv-auto">
 
 
       {/* ── Main footer body ─────────────────────────────────────────────── */}
@@ -433,17 +433,6 @@ export function Footer({ config }: FooterProps) {
         </div>
       </div>
 
-      <style>{`
-        .social-btn:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0px 0px var(--color-lava) !important; }
-        .footer-whatsapp-btn:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0px 0px var(--color-raven) !important; }
-
-        @media (max-width: 1024px) {
-          .footer-grid { grid-template-columns: 1fr 1fr !important; }
-        }
-        @media (max-width: 640px) {
-          .footer-grid { grid-template-columns: 1fr !important; }
-        }
-      `}</style>
     </footer>
   );
 }

@@ -5,9 +5,7 @@
  * Instagram handle CTA at the top right.
  * Clean mist (var(--color-mist)) background, no heavy UI chrome.
  */
-"use client";
-
-import React, { useState } from "react";
+import React from "react";
 import Image from "@/components/common/CmsImage";
 import Link from "next/link";
 
@@ -30,6 +28,7 @@ export function CommunitySection({ content, images }: { content: CommunityConten
 
   return (
     <section
+      className="cv-auto"
       aria-labelledby="community-heading"
       style={{ backgroundColor: "var(--color-mist)", padding: "clamp(4rem,8vw,8rem) 0" }}
     >
@@ -149,39 +148,19 @@ export function CommunitySection({ content, images }: { content: CommunityConten
               justifyContent: "center",
               padding: "0.875rem 2.25rem",
               border: "2px solid var(--color-navy)",
-              backgroundColor: "transparent",
-              color: "var(--color-navy)",
               fontFamily: "var(--font-sans)",
               fontWeight: 800,
               fontSize: "0.72rem",
               letterSpacing: "0.14em",
               textTransform: "uppercase",
-              transition: "all 0.2s ease",
             }}
-            onMouseEnter={(e) => {
-              const el = e.currentTarget as HTMLAnchorElement;
-              el.style.backgroundColor = "var(--color-navy)";
-              el.style.color = "var(--color-cream)";
-            }}
-            onMouseLeave={(e) => {
-              const el = e.currentTarget as HTMLAnchorElement;
-              el.style.backgroundColor = "transparent";
-              el.style.color = "var(--color-navy)";
-            }}
+            className="btn-outline-navy"
           >
             FOLLOW US ON INSTAGRAM
           </Link>
         </div>
       </div>
 
-      <style>{`
-        @media (max-width: 768px) {
-          .ugc-grid { grid-template-columns: repeat(2, 1fr) !important; grid-auto-rows: clamp(120px, 28vw, 200px) !important; }
-        }
-        @media (max-width: 480px) {
-          .ugc-grid { grid-template-columns: repeat(2, 1fr) !important; grid-auto-rows: clamp(100px, 30vw, 160px) !important; }
-        }
-      `}</style>
     </section>
   );
 }
@@ -189,33 +168,28 @@ export function CommunitySection({ content, images }: { content: CommunityConten
 // ─── Single UGC Tile ───────────────────────────────────────────────────────────
 
 function UGCTile({ image }: { image: UGCImage }) {
-  const [hovered, setHovered] = useState(false);
-
   return (
     <div
+      className="hv"
       style={{
         position: "relative",
         overflow: "hidden",
         backgroundColor: "var(--color-border)",
         cursor: "pointer",
       }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
     >
       <Image
         src={image.src}
         alt={image.alt}
         fill
         sizes="(max-width: 768px) 50vw, 33vw"
-        style={{
-          objectFit: "cover",
-          transition: "transform 0.6s ease",
-          transform: hovered ? "scale(1.06)" : "scale(1)",
-        }}
+        className="hv-zoom"
+        style={{ objectFit: "cover" }}
       />
 
       {/* Hover overlay */}
       <div
+        className="hv-reveal"
         style={{
           position: "absolute",
           inset: 0,
@@ -223,8 +197,6 @@ function UGCTile({ image }: { image: UGCImage }) {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          opacity: hovered ? 1 : 0,
-          transition: "opacity 0.3s ease",
         }}
       >
         <div style={{ textAlign: "center" }}>

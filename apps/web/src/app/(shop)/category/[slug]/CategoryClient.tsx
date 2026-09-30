@@ -93,7 +93,7 @@ interface CategoryClientProps {
 }
 
 function CategoryClientInner({ slug, categoryName }: CategoryClientProps) {
-  const { addItem } = useCartStore();
+  const addItem = useCartStore((s) => s.addItem);
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -444,12 +444,6 @@ function CategoryClientInner({ slug, categoryName }: CategoryClientProps) {
         </div>
       </div>
 
-      <style>{`
-        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
-        @media(max-width:1024px){.prod-grid{grid-template-columns:repeat(3,1fr)!important}}
-        @media(max-width:768px){.plp-grid{grid-template-columns:1fr!important}.filter-panel{position:relative!important;top:auto!important}}
-        @media(max-width:640px){.prod-grid{grid-template-columns:repeat(2,1fr)!important; gap:1rem!important}}
-      `}</style>
     </div>
   );
 }

@@ -3,240 +3,206 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { MediaUploadButton } from "./MediaUploadButton";
+import { Alert, Button, Card, Field, Icon, LinkButton, PageHeader, Switch, useToast } from "./ui";
 
-const INPUT_STYLE: React.CSSProperties = {
-  width: "100%",
-  padding: "0.875rem",
-  backgroundColor: "#0F1419",
-  border: "1px solid rgba(245,241,232,0.1)",
-  color: "var(--color-cream)",
-  fontFamily: "var(--font-sans)",
-  fontSize: "0.875rem",
-  borderRadius: "4px",
-  outline: "none",
-};
-const LABEL_STYLE: React.CSSProperties = {
-  display: "block",
-  fontFamily: "var(--font-sans)",
-  fontSize: "0.75rem",
-  fontWeight: 700,
-  textTransform: "uppercase",
-  letterSpacing: "0.1em",
-  color: "rgba(245,241,232,0.5)",
-  marginBottom: "0.5rem",
-};
-const SMALL_BTN: React.CSSProperties = { padding: "6px 10px", backgroundColor: "rgba(255,255,255,0.06)", color: "rgba(245,241,232,0.8)", fontWeight: 600, fontSize: "0.72rem", border: "none", borderRadius: 3, cursor: "pointer" };
-
-const colorsToText = (colors: { hex: string; label: string }[] | undefined) =>
-  (colors ?? []).map((c) => `${c.label}:${c.hex}`).join(", ");
+const colorsToText = (colors: { hex: string; label: string }[] | undefined) => (colors ?? []).map((c) => `${c.label}:${c.hex}`).join(", ");
 const textToColors = (text: string) =>
-  text
-    .split(",")
-    .map((p) => p.trim())
-    .filter(Boolean)
-    .map((p) => {
-      const [label, hex] = p.split(":").map((x) => x.trim());
-      return { label: label ?? "", hex: hex ?? "" };
-    });
+  text.split(",").map((p) => p.trim()).filter(Boolean).map((p) => {
+    const [label, hex] = p.split(":").map((x) => x.trim());
+    return { label: label ?? "", hex: hex ?? "" };
+  });
+const slugify = (s: string) => s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80);
+const toRupees = (paise: number | undefined) => (paise ? String(paise / 100) : "");
 
 export default function ProductForm({ initialData }: { initialData?: any }) {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { toast } = useToast();
+  const editing = !!initialData;
+  const [saving, setSaving] = useState(false);
+  const [errors, setErrors] = useState<string[]>([]);
+  const [slugTouched, setSlugTouched] = useState(editing);
   const [gallery, setGallery] = useState<string[]>(Array.isArray(initialData?.images) ? initialData.images : []);
-  const [formData, setFormData] = useState({
+  const [f, setF] = useState({
     title: initialData?.title || "",
     slug: initialData?.slug || "",
-    pricePaise: initialData?.pricePaise || 0,
-    mrpPaise: initialData?.mrpPaise || 0,
+    price: toRupees(initialData?.pricePaise),
+    mrp: toRupees(initialData?.mrpPaise),
     description: initialData?.description || "",
     category: initialData?.category || "tees",
     fit: initialData?.fit || "oversized",
     image: initialData?.image || "",
     hoverImage: initialData?.hoverImage || "",
     inStock: initialData ? initialData.inStock !== false : true,
+    stockCount: String(initialData?.stockCount ?? 50),
     sizes: initialData?.sizes?.join(", ") || "S, M, L, XL",
     colors: colorsToText(initialData?.colors),
     badge: initialData?.badge || "",
     isNewArrival: initialData?.isNewArrival === true,
     isBestseller: initialData?.isBestseller === true,
   });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value }));
-  };
+  const set = <K extends keyof typeof f>(k: K, v: (typeof f)[K]) => setF((p) => ({ ...p, [k]: v }));
 
   const moveGallery = (i: number, d: -1 | 1) =>
-    setGallery((g) => {
-      const j = i + d;
-      if (j < 0 || j >= g.length) return g;
-      const c = [...g];
-      [c[i], c[j]] = [c[j], c[i]];
-      return c;
-    });
+    setGallery((g) => { const j = i + d; if (j < 0 || j >= g.length) return g; const c = [...g]; [c[i], c[j]] = [c[j], c[i]]; return c; });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
+    const price = Math.round(parseFloat(f.price) * 100);
+    const mrp = f.mrp ? Math.round(parseFloat(f.mrp) * 100) : price;
+    const local: string[] = [];
+    if (!(price > 0)) local.push("Enter a selling price greater than 0.");
+    if (mrp < price) local.push("MRP cannot be lower than the selling price.");
+    if (!f.image) local.push("A main image is required.");
+    if (local.length) { setErrors(local); return; }
 
+    setSaving(true);
+    setErrors([]);
     const payload = {
-      title: formData.title,
-      slug: formData.slug || undefined,
-      description: formData.description,
-      category: formData.category,
-      fit: formData.fit,
-      image: formData.image,
-      hoverImage: formData.hoverImage || undefined,
-      images: gallery.filter(Boolean),
-      pricePaise: parseInt(String(formData.pricePaise), 10),
-      mrpPaise: parseInt(String(formData.mrpPaise), 10),
-      sizes: formData.sizes.split(",").map((s: string) => s.trim()).filter(Boolean),
-      colors: textToColors(formData.colors),
-      badge: formData.badge || null,
-      inStock: formData.inStock,
-      isNewArrival: formData.isNewArrival,
-      isBestseller: formData.isBestseller,
+      title: f.title, slug: f.slug || slugify(f.title), description: f.description, category: f.category, fit: f.fit,
+      image: f.image, hoverImage: f.hoverImage || (editing ? "" : undefined), images: gallery.filter(Boolean),
+      pricePaise: price, mrpPaise: mrp,
+      sizes: f.sizes.split(",").map((s: string) => s.trim()).filter(Boolean),
+      colors: textToColors(f.colors), badge: f.badge || null,
+      inStock: f.inStock, stockCount: Math.max(0, parseInt(f.stockCount, 10) || 0),
+      isNewArrival: f.isNewArrival, isBestseller: f.isBestseller,
     };
-
     try {
-      const url = initialData ? `/api/products/${initialData._id}` : "/api/products";
-      const res = await fetch(url, { method: initialData ? "PUT" : "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+      const res = await fetch(editing ? `/api/products/${initialData._id ?? initialData.id}` : "/api/products", {
+        method: editing ? "PUT" : "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
+      });
       if (res.ok) {
+        toast(editing ? "Product saved" : "Product created");
         router.push("/portal-secure/products");
         router.refresh();
       } else {
-        const err = await res.json().catch(() => ({}));
-        const detail = err.issues ?? err.error;
-        setError(typeof detail === "string" ? detail : JSON.stringify(detail) || "Save failed");
+        const j = await res.json().catch(() => ({}));
+        const issues: Record<string, string[]> | undefined = j.issues;
+        setErrors(issues ? Object.entries(issues).flatMap(([k, v]) => v.map((m) => `${k}: ${m}`)) : [j.error || "Save failed"]);
       }
     } catch {
-      setError("Network error — nothing was saved.");
+      setErrors(["Network error — nothing was saved."]);
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
+  const mediaInput = (label: string, value: string, onChange: (v: string) => void, required?: boolean) => (
+    <Field label={label} required={required}>
+      <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+        {value ? /* eslint-disable-next-line @next/next/no-img-element */ <img className="adm-thumb" src={value} alt="" style={{ width: 38, height: 46 }} /> : null}
+        <input className="adm-input" value={value} onChange={(e) => onChange(e.target.value)} placeholder="https://… or upload" />
+        <MediaUploadButton hasValue={!!value} onUploaded={onChange} onError={(m) => setErrors([m])} />
+      </div>
+    </Field>
+  );
+
   return (
-    <div style={{ backgroundColor: "#1A2332", padding: "2rem", borderRadius: "6px", border: "1px solid rgba(255,255,255,0.06)", maxWidth: "800px" }}>
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-        {error && (
-          <div role="alert" style={{ padding: "0.85rem 1.1rem", backgroundColor: "rgba(248,113,113,0.1)", border: "1px solid rgba(248,113,113,0.4)", borderRadius: 6, color: "#FCA5A5", fontSize: "0.82rem", wordBreak: "break-word" }}>
-            {error}
-          </div>
-        )}
+    <form onSubmit={submit}>
+      <PageHeader eyebrow="Store" title={editing ? "Edit product" : "New product"} description={editing ? f.title : "Fill in the basics, add images, then publish."}>
+        <LinkButton href="/portal-secure/products" variant="ghost">Cancel</LinkButton>
+      </PageHeader>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
-          <div>
-            <label style={LABEL_STYLE}>Title</label>
-            <input required name="title" value={formData.title} onChange={handleChange} style={INPUT_STYLE} />
-          </div>
-          <div>
-            <label style={LABEL_STYLE}>Slug (a-z, 0-9, dashes)</label>
-            <input name="slug" value={formData.slug} onChange={handleChange} required={!initialData} style={INPUT_STYLE} />
-          </div>
-        </div>
+      {errors.length ? <Alert>{errors.length === 1 ? errors[0] : <ul>{errors.map((m) => <li key={m}>{m}</li>)}</ul>}</Alert> : null}
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1.5rem" }}>
-          <div>
-            <label style={LABEL_STYLE}>Price (Paise)</label>
-            <input required type="number" name="pricePaise" value={formData.pricePaise} onChange={handleChange} style={INPUT_STYLE} />
-          </div>
-          <div>
-            <label style={LABEL_STYLE}>MRP (Paise)</label>
-            <input required type="number" name="mrpPaise" value={formData.mrpPaise} onChange={handleChange} style={INPUT_STYLE} />
-          </div>
-          <div>
-            <label style={LABEL_STYLE}>Category</label>
-            <input required name="category" value={formData.category} onChange={handleChange} style={INPUT_STYLE} />
-          </div>
-        </div>
-
-        <div>
-          <label style={LABEL_STYLE}>Description</label>
-          <textarea required name="description" value={formData.description} onChange={handleChange} rows={4} style={{ ...INPUT_STYLE, resize: "vertical" }} />
-        </div>
-
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
-          <div>
-            <label style={LABEL_STYLE}>Main Image</label>
-            <div style={{ display: "flex", gap: 8 }}>
-              <input required name="image" value={formData.image} onChange={handleChange} placeholder="https://… or upload" style={INPUT_STYLE} />
-              <MediaUploadButton hasValue={!!formData.image} onUploaded={(u) => setFormData((p) => ({ ...p, image: u }))} onError={setError} />
+      <div className="adm-grid adm-grid-main" style={{ alignItems: "start" }}>
+        <div className="adm-grid">
+          <Card title="Basics">
+            <div className="adm-form-grid">
+              <Field label="Title" required span>
+                <input className="adm-input" required value={f.title} onChange={(e) => { set("title", e.target.value); if (!slugTouched) set("slug", slugify(e.target.value)); }} />
+              </Field>
+              <Field label="URL slug" hint="a-z, 0-9 and dashes. Shown in the product link." required>
+                <input className="adm-input" required value={f.slug} onChange={(e) => { setSlugTouched(true); set("slug", e.target.value); }} pattern="[a-z0-9\-]+" />
+              </Field>
+              <Field label="Category" required>
+                <input className="adm-input" required value={f.category} onChange={(e) => set("category", e.target.value)} placeholder="tees, hoodies, bottoms…" />
+              </Field>
+              <Field label="Description" required span>
+                <textarea className="adm-textarea" required rows={5} value={f.description} onChange={(e) => set("description", e.target.value)} />
+              </Field>
             </div>
-          </div>
-          <div>
-            <label style={LABEL_STYLE}>Hover Image</label>
-            <div style={{ display: "flex", gap: 8 }}>
-              <input name="hoverImage" value={formData.hoverImage} onChange={handleChange} placeholder="https://… or upload" style={INPUT_STYLE} />
-              <MediaUploadButton hasValue={!!formData.hoverImage} onUploaded={(u) => setFormData((p) => ({ ...p, hoverImage: u }))} onError={setError} />
-            </div>
-          </div>
-        </div>
+          </Card>
 
-        {/* Gallery */}
-        <div>
-          <label style={LABEL_STYLE}>Product gallery (shown on the product page, in this order)</label>
-          <p style={{ fontSize: "0.72rem", color: "rgba(245,241,232,0.4)", margin: "0 0 0.6rem" }}>Leave empty to use the main + hover image.</p>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {gallery.map((url, i) => (
-              <div key={i} style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={url} alt="" style={{ width: 44, height: 55, objectFit: "cover", borderRadius: 3, backgroundColor: "#0F1419", flexShrink: 0 }} />
-                <input value={url} onChange={(e) => setGallery((g) => g.map((x, k) => (k === i ? e.target.value : x)))} style={INPUT_STYLE} />
-                <button type="button" aria-label="Move up" onClick={() => moveGallery(i, -1)} disabled={i === 0} style={{ ...SMALL_BTN, opacity: i === 0 ? 0.3 : 1 }}>▲</button>
-                <button type="button" aria-label="Move down" onClick={() => moveGallery(i, 1)} disabled={i === gallery.length - 1} style={{ ...SMALL_BTN, opacity: i === gallery.length - 1 ? 0.3 : 1 }}>▼</button>
-                <button type="button" onClick={() => setGallery((g) => g.filter((_, k) => k !== i))} style={{ ...SMALL_BTN, color: "#F87171" }}>Remove</button>
+          <Card title="Images">
+            <div className="adm-form-grid">
+              <div className="adm-span-all">{mediaInput("Main image", f.image, (v) => set("image", v), true)}</div>
+              <div className="adm-span-all">{mediaInput("Hover image", f.hoverImage, (v) => set("hoverImage", v))}</div>
+            </div>
+            <div style={{ marginTop: 18 }}>
+              <div className="adm-label">Gallery (product page, in this order)</div>
+              <div className="adm-hint" style={{ marginBottom: 8 }}>Leave empty to use the main + hover image.</div>
+              <div className="adm-list">
+                {gallery.map((url, i) => (
+                  <div key={i} className="adm-row">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img className="adm-thumb" src={url} alt="" style={{ width: 40, height: 50 }} />
+                    <input className="adm-input" value={url} onChange={(e) => setGallery((g) => g.map((x, k) => (k === i ? e.target.value : x)))} />
+                    <div className="adm-reorder">
+                      <Button size="sm" variant="ghost" onClick={() => moveGallery(i, -1)} disabled={i === 0} aria-label="Move up"><Icon name="up" size={14} /></Button>
+                      <Button size="sm" variant="ghost" onClick={() => moveGallery(i, 1)} disabled={i === gallery.length - 1} aria-label="Move down"><Icon name="down" size={14} /></Button>
+                    </div>
+                    <Button size="icon" variant="danger" onClick={() => setGallery((g) => g.filter((_, k) => k !== i))} aria-label="Remove"><Icon name="trash" size={15} /></Button>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-          <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
-            <MediaUploadButton onUploaded={(u) => setGallery((g) => [...g, u])} onError={setError} />
-            <button type="button" style={SMALL_BTN} onClick={() => setGallery((g) => [...g, ""])}>+ Add URL</button>
-          </div>
+              <div className="adm-actions" style={{ marginTop: 10 }}>
+                <MediaUploadButton onUploaded={(u) => setGallery((g) => [...g, u])} onError={(m) => setErrors([m])} />
+                <Button size="sm" icon="plus" onClick={() => setGallery((g) => [...g, ""])}>Add URL</Button>
+              </div>
+            </div>
+          </Card>
+
+          <Card title="Variants">
+            <div className="adm-form-grid">
+              <Field label="Sizes" hint="Comma separated"><input className="adm-input" required value={f.sizes} onChange={(e) => set("sizes", e.target.value)} /></Field>
+              <Field label="Fit">
+                <select className="adm-select" value={f.fit} onChange={(e) => set("fit", e.target.value)}>
+                  {["oversized", "relaxed", "boxy", "baggy", "regular"].map((x) => <option key={x} value={x}>{x}</option>)}
+                </select>
+              </Field>
+              <Field label="Colors" hint="Name:#hex, comma separated" span>
+                <input className="adm-input" value={f.colors} onChange={(e) => set("colors", e.target.value)} placeholder="Black:#0A0A0A, Olive:#556B2F" />
+              </Field>
+            </div>
+          </Card>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
-          <div>
-            <label style={LABEL_STYLE}>Sizes (comma separated)</label>
-            <input required name="sizes" value={formData.sizes} onChange={handleChange} style={INPUT_STYLE} />
-          </div>
-          <div>
-            <label style={LABEL_STYLE}>Colors (Name:#hex, comma separated)</label>
-            <input name="colors" value={formData.colors} onChange={handleChange} placeholder="Black:#0A0A0A, Olive:#556B2F" style={INPUT_STYLE} />
-          </div>
-          <div>
-            <label style={LABEL_STYLE}>Fit</label>
-            <select name="fit" value={formData.fit} onChange={handleChange} style={INPUT_STYLE}>
-              {["oversized", "relaxed", "boxy", "baggy", "regular"].map((f) => <option key={f} value={f}>{f}</option>)}
-            </select>
-          </div>
-          <div>
-            <label style={LABEL_STYLE}>Badge (e.g. LIMITED, LOW STOCK)</label>
-            <input name="badge" value={formData.badge} onChange={handleChange} style={INPUT_STYLE} />
-          </div>
-        </div>
+        <div className="adm-grid">
+          <Card title="Pricing">
+            <div className="adm-form-grid">
+              <Field label="Selling price (₹)" required><input className="adm-input" required type="number" min="0" step="0.01" value={f.price} onChange={(e) => set("price", e.target.value)} /></Field>
+              <Field label="MRP (₹)" hint="Shows a discount badge"><input className="adm-input" type="number" min="0" step="0.01" value={f.mrp} onChange={(e) => set("mrp", e.target.value)} /></Field>
+            </div>
+          </Card>
 
-        <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap" }}>
-          {([
-            ["inStock", "In stock"],
-            ["isNewArrival", "New arrival (shows in the homepage New Drop)"],
-            ["isBestseller", "Bestseller (shows in the homepage Bestsellers)"],
-          ] as const).map(([name, label]) => (
-            <label key={name} style={{ display: "flex", alignItems: "center", gap: "0.6rem", cursor: "pointer" }}>
-              <input type="checkbox" name={name} checked={(formData as any)[name]} onChange={handleChange} style={{ width: "18px", height: "18px" }} />
-              <span style={{ ...LABEL_STYLE, margin: 0 }}>{label}</span>
-            </label>
-          ))}
+          <Card title="Inventory">
+            <div className="adm-form-grid">
+              <Field label="Units in stock"><input className="adm-input" type="number" min="0" value={f.stockCount} onChange={(e) => set("stockCount", e.target.value)} /></Field>
+              <Field label="Badge" hint="e.g. LIMITED, LOW STOCK"><input className="adm-input" maxLength={30} value={f.badge} onChange={(e) => set("badge", e.target.value)} /></Field>
+            </div>
+            <div style={{ display: "grid", gap: 14, marginTop: 18 }}>
+              {([
+                ["inStock", "Available to buy", "Turn off to mark out of stock."],
+                ["isNewArrival", "New arrival", "Shows in the homepage “New Drop”."],
+                ["isBestseller", "Bestseller", "Shows in the homepage “Bestsellers”."],
+              ] as const).map(([k, title, desc]) => (
+                <div key={k} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
+                  <div><div style={{ fontWeight: 600 }}>{title}</div><div className="adm-hint">{desc}</div></div>
+                  <Switch checked={f[k]} onChange={(v) => set(k, v)} label={title} />
+                </div>
+              ))}
+            </div>
+          </Card>
         </div>
+      </div>
 
-        <div style={{ marginTop: "1rem" }}>
-          <button type="submit" disabled={loading} style={{ padding: "1rem 2rem", backgroundColor: "var(--color-lava)", color: "var(--color-navy)", border: "none", borderRadius: "4px", fontWeight: 800, fontSize: "0.875rem", letterSpacing: "0.1em", textTransform: "uppercase", cursor: loading ? "not-allowed" : "pointer" }}>
-            {loading ? "Saving..." : "Save Product"}
-          </button>
+      <div className="adm-savebar">
+        <span className="adm-hint">{editing ? "Changes go live as soon as you save." : "The product goes live as soon as you save."}</span>
+        <div className="adm-actions">
+          <LinkButton href="/portal-secure/products" variant="ghost">Cancel</LinkButton>
+          <Button variant="primary" type="submit" loading={saving}>{editing ? "Save changes" : "Create product"}</Button>
         </div>
-      </form>
-    </div>
+      </div>
+    </form>
   );
 }

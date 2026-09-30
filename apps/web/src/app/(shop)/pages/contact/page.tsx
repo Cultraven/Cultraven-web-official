@@ -525,12 +525,6 @@ export default function ContactPage() {
         </div>
       </div>
 
-      <style>{`
-        @media (max-width: 900px) {
-          .contact-grid { grid-template-columns: 1fr !important; }
-          .contact-row { grid-template-columns: 1fr !important; }
-        }
-      `}</style>
     </div>
   );
 }

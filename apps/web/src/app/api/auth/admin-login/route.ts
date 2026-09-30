@@ -26,7 +26,8 @@ function isRateLimited(ip: string): boolean {
 }
 
 function createAdminToken(email: string): string {
-  const secret = process.env.SESSION_SECRET || "cultraven-dev-secret-change-in-prod";
+  const secret = process.env.SESSION_SECRET;
+  if (!secret) throw new Error("SESSION_SECRET is not configured");
   const payload = JSON.stringify({ userId: "admin", email, role: "admin", iat: Date.now(), exp: Date.now() + 8 * 60 * 60 * 1000 });
   const encoded = Buffer.from(payload).toString("base64url");
   const sig = crypto.createHmac("sha256", secret).update(encoded).digest("base64url");
@@ -68,7 +69,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid credentials." }, { status: 401 });
   }
 
-  const token = createAdminToken(email);
+  let token: string;
+  try { token = createAdminToken(email); } catch { return NextResponse.json({ error: "Admin not configured." }, { status: 500 }); }
   const res = NextResponse.json({ ok: true }, { status: 200 });
   const cookieOpts = { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax" as const, maxAge: 60 * 60 * 8, path: "/" };
   res.cookies.set("cultraven_session", token, cookieOpts);

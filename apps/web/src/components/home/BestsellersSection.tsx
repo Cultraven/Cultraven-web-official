@@ -45,6 +45,7 @@ export function BestsellersSection({ content, products }: { content: Bestsellers
 
   return (
     <section
+      className="cv-auto"
       aria-labelledby="bs-heading"
       style={{ backgroundColor: "var(--color-mist)", padding: "clamp(4rem,8vw,8rem) 0" }}
     >
@@ -180,12 +181,6 @@ export function BestsellersSection({ content, products }: { content: Bestsellers
         </div>
       </div>
 
-      <style>{`
-        .bs-scroll::-webkit-scrollbar { display: none; }
-        @media (max-width: 640px) {
-          .bs-card { width: calc(50vw - 2rem) !important; min-width: 140px !important; }
-        }
-      `}</style>
     </section>
   );
 }

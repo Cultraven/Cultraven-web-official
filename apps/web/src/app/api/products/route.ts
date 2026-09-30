@@ -20,7 +20,14 @@ export async function GET(req: NextRequest) {
     await connectToDatabase();
     const query = categoryParam ? { category: { $regex: new RegExp(escapeRegex(categoryParam), "i") } } : {};
     const docs = await Product.find(query).sort({ createdAt: -1 }).limit(limit).lean();
-    return NextResponse.json({ products: docs.map(normalizeProduct) });
+    // Inventory counts + timestamps are only exposed to an authenticated admin.
+    const admin = isAdminRequest(req);
+    return NextResponse.json({
+      products: docs.map((d: any) => ({
+        ...normalizeProduct(d),
+        ...(admin ? { stockCount: Number(d.stockCount) || 0, updatedAt: d.updatedAt ?? null } : {}),
+      })),
+    });
   } catch (error) {
     console.error("[products] GET failed:", error);
     return NextResponse.json({ error: "Products unavailable", products: [] }, { status: 503 });

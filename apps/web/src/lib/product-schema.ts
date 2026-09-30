@@ -21,6 +21,7 @@ export const ProductWriteSchema = z.object({
     .max(20)
     .optional(),
   inStock: z.boolean().optional(),
+  stockCount: z.number().int().min(0).max(1000000).optional(),
   badge: z.string().max(30).optional().nullable(),
   isNewArrival: z.boolean().optional(),
   isBestseller: z.boolean().optional(),

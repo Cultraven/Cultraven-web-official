@@ -92,13 +92,6 @@ export function AnnouncementBar({ data }: AnnouncementBarProps) {
         </svg>
       </button>
 
-      <style>{`
-        @keyframes annTicker {
-          from { transform: translateX(0); }
-          to   { transform: translateX(-33.333%); }
-        }
-        .ann-track:hover { animation-play-state: paused; }
-      `}</style>
     </div>
   );
 }

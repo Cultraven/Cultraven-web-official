@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import Image from "@/components/common/CmsImage";
 import Link from "next/link";
@@ -10,6 +8,7 @@ export function TrendingNow({ heading, items }: { heading?: string; items: Trend
   if (items.length === 0) return null;
   return (
     <section
+      className="cv-auto"
       style={{
         backgroundColor: "var(--color-cream)",
         padding: "clamp(4rem,8vw,8rem) 0",
@@ -46,10 +45,6 @@ export function TrendingNow({ heading, items }: { heading?: string; items: Trend
         </div>
       </div>
 
-      <style>{`
-        @media (max-width: 768px) { .trend-grid { grid-template-columns: 1fr; } }
-        @media (max-width: 1024px) and (min-width: 769px) { .trend-grid { grid-template-columns: repeat(2,1fr); } }
-      `}</style>
     </section>
   );
 }
@@ -110,11 +105,6 @@ function TrendCard({ item }: { item: TrendItem }) {
         </div>
       </Link>
 
-      <style>{`
-        .trend-card:hover .trend-img { transform: scale(1.06); }
-        .trend-card:hover .trend-bar { background-color: var(--color-navy); }
-        .trend-card:hover .trend-bar span { color: var(--color-cream); }
-      `}</style>
     </div>
   );
 }

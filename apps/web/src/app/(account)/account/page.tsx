@@ -76,10 +76,6 @@ export default function AccountDashboard() {
           </div>
         </div>
       </div>
-      <style>{`
-        @media (max-width: 900px) { .account-layout { grid-template-columns: 1fr !important; } }
-        @media (max-width: 600px) { .dashboard-grid { grid-template-columns: 1fr !important; } }
-      `}</style>
     </div>
   );
 }

@@ -1,0 +1,351 @@
+/* Component styles that used to be rendered as inline <style> tags inside components.
+   One stylesheet = one style recalculation instead of dozens while the page streams in.
+   (Extracted verbatim; all of these rules were already global.) */
+
+/* ── app/(account)/account/orders/page.tsx ── */
+@media (max-width: 900px) { .account-layout { grid-template-columns: 1fr !important; } }
+
+/* ── app/(account)/account/page.tsx ── */
+@media (max-width: 900px) { .account-layout { grid-template-columns: 1fr !important; } }
+        @media (max-width: 600px) { .dashboard-grid { grid-template-columns: 1fr !important; } }
+
+/* ── app/(account)/account/wishlist/page.tsx ── */
+@media (max-width: 1024px) { .wishlist-grid { grid-template-columns: repeat(3,1fr) !important; } }
+        @media (max-width: 768px) { .wishlist-grid { grid-template-columns: repeat(2,1fr) !important; } }
+
+/* ── app/(auth)/login/page.tsx ── */
+@media (max-width: 768px) {
+          .auth-layout { grid-template-columns: 1fr !important; }
+          .auth-brand-panel { min-height: 200px !important; padding: 2rem !important; }
+          .auth-brand-panel h2 { font-size: 2rem !important; }
+        }
+
+/* ── app/(auth)/register/page.tsx ── */
+@media (max-width: 768px) {
+          .auth-layout { grid-template-columns: 1fr !important; }
+          .auth-brand-panel { min-height: 220px !important; padding: 2rem !important; }
+          .auth-brand-panel h2 { font-size: 2rem !important; }
+        }
+
+/* ── app/(checkout)/checkout/page.tsx ── */
+@media (max-width: 900px) {
+          .checkout-layout { grid-template-columns: 1fr !important; }
+          .checkout-layout > div:last-child { border-left: none !important; border-top: 1px solid var(--color-border) !important; }
+        }
+
+/* ── app/(shop)/cart/page.tsx ── */
+@media (max-width: 900px) { .cart-grid { grid-template-columns: 1fr !important; } }
+
+/* ── app/(shop)/category/[slug]/CategoryClient.tsx ── */
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+        @media(max-width:1024px){.prod-grid{grid-template-columns:repeat(3,1fr)!important}}
+        @media(max-width:768px){.plp-grid{grid-template-columns:1fr!important}.filter-panel{position:relative!important;top:auto!important}}
+        @media(max-width:640px){.prod-grid{grid-template-columns:repeat(2,1fr)!important; gap:1rem!important}}
+
+/* ── app/(shop)/collections/[slug]/CollectionClient.tsx ── */
+@media (max-width: 1024px) { .plp-grid { grid-template-columns: repeat(3,1fr) !important; } }
+        @media (max-width: 768px)  { .plp-grid { grid-template-columns: repeat(2,1fr) !important; } .plp-layout { grid-template-columns: 1fr !important; } }
+
+/* ── app/(shop)/collections/[slug]/CollectionClient.tsx ── */
+.product-card:hover { transform: translate(-2px, -2px); box-shadow: var(--shadow-md) !important; }
+        .wishlist-btn:hover { transform: scale(1.1); }
+        @media (max-width: 1024px) {
+          .quick-add-overlay { display: none !important; }
+        }
+
+/* ── app/(shop)/pages/contact/page.tsx ── */
+@media (max-width: 900px) {
+          .contact-grid { grid-template-columns: 1fr !important; }
+          .contact-row { grid-template-columns: 1fr !important; }
+        }
+
+/* ── app/(shop)/pages/journal/page.tsx ── */
+.featured-img:hover { transform: scale(1.04); }
+        .article-img:hover { transform: scale(1.05); }
+        @media (max-width: 900px) { .featured-article { grid-template-columns: 1fr !important; } .journal-grid { grid-template-columns: repeat(2,1fr) !important; } }
+        @media (max-width: 600px) { .journal-grid { grid-template-columns: 1fr !important; } }
+
+/* ── app/(shop)/pages/our-heritage/page.tsx ── */
+@media (max-width: 768px) {
+          .about-section { grid-template-columns: 1fr !important; }
+          .about-section > div { order: unset !important; }
+          .values-grid { grid-template-columns: repeat(2,1fr) !important; }
+        }
+
+/* ── app/(shop)/pages/returns/page.tsx ── */
+@media (max-width: 768px) {
+          .returns-stats { grid-template-columns: 1fr !important; }
+          .returns-steps { grid-template-columns: 1fr 1fr !important; }
+          .eligible-grid { grid-template-columns: 1fr !important; }
+        }
+        @media (max-width: 480px) {
+          .returns-steps { grid-template-columns: 1fr !important; }
+        }
+
+/* ── app/(shop)/pages/size-guide/page.tsx ── */
+@media (max-width: 768px) { .measure-grid { grid-template-columns: 1fr !important; } .fit-grid { grid-template-columns: repeat(2,1fr) !important; } }
+
+/* ── app/(shop)/products/[slug]/ProductClient.tsx ── */
+.pdp-grid { @media (max-width: 768px) { grid-template-columns: 1fr !important; } }
+        .review-grid { @media (max-width: 768px) { grid-template-columns: 1fr !important; } }
+        .also-like-grid { @media (max-width: 768px) { grid-template-columns: repeat(2,1fr) !important; } }
+        .also-like-img:hover { transform: scale(1.05) !important; }
+        
+        .gallery-container { display: flex; gap: 1rem; align-items: start; }
+        .swipe-wrapper { width: 100%; height: 100%; }
+        
+        .mobile-sticky-cta {
+          display: none;
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          padding: 16px;
+          background-color: var(--color-cream);
+          border-top: var(--border-thick);
+          z-index: 100;
+          box-shadow: 0px -4px 0px rgba(23,37,69,0.1);
+        }
+
+        @media (max-width: 768px) { 
+          .gallery-container { flex-direction: column; }
+          .gallery-thumbs { display: none !important; }
+          .swipe-wrapper {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+          }
+          .swipe-wrapper::-webkit-scrollbar { display: none; }
+          .swipe-item {
+            flex: 0 0 100%;
+            scroll-snap-align: start;
+            display: block !important;
+          }
+          .mobile-sticky-cta { display: block; }
+        }
+
+/* ── app/(shop)/search/page.tsx ── */
+@media (max-width: 768px) { .search-cats { grid-template-columns: repeat(2,1fr) !important; } .search-results { grid-template-columns: repeat(2,1fr) !important; } }
+
+/* ── components/cart/CartDrawer.tsx ── */
+.hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .hide-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+
+/* ── components/common/ChatWidget.tsx ── */
+@keyframes slideUpFade {
+          from { opacity: 0; transform: translateY(12px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes typingDot {
+          0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+          30% { transform: translateY(-6px); opacity: 1; }
+        }
+        @keyframes chatPulse {
+          0% { opacity: 0.8; transform: scale(1); }
+          70% { opacity: 0; transform: scale(1.5); }
+          100% { opacity: 0; transform: scale(1.5); }
+        }
+        @media (max-width: 1023px) {
+          #chat-widget-toggle { bottom: calc(env(safe-area-inset-bottom) + 80px) !important; }
+        }
+
+/* ── components/common/CookieConsentBanner.tsx ── */
+@keyframes slideUpConsent {
+          from { transform: translateY(100%); }
+          to   { transform: translateY(0); }
+        }
+
+/* ── components/common/Toast.tsx ── */
+@keyframes toastSlide {
+          from { opacity: 0; transform: translateY(16px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+
+/* ── components/home/AnnouncementBar.tsx ── */
+@keyframes annTicker {
+          from { transform: translateX(0); }
+          to   { transform: translateX(-33.333%); }
+        }
+        .ann-track:hover { animation-play-state: paused; }
+
+/* ── components/home/BestsellersSection.tsx ── */
+.bs-scroll::-webkit-scrollbar { display: none; }
+        @media (max-width: 640px) {
+          .bs-card { width: calc(50vw - 2rem) !important; min-width: 140px !important; }
+        }
+
+/* ── components/home/CartBadge.tsx ── */
+@keyframes cartPop {
+          0% { transform: translate(30%, -30%) scale(0.6); }
+          60% { transform: translate(30%, -30%) scale(1.2); }
+          100% { transform: translate(30%, -30%) scale(1); }
+        }
+
+/* ── components/home/CategoryTiles.tsx ── */
+.cat-strip-link { flex-shrink: 0; padding: 1rem 1.25rem; font-family: var(--font-sans); font-size: 0.78rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-smoke); border-bottom: 2px solid transparent; white-space: nowrap; text-decoration: none; transition: color 0.2s ease, border-color 0.2s ease; }
+        .cat-strip-link:hover { color: var(--color-navy); border-bottom-color: var(--color-navy); }
+        .cat-strip-link.is-accent { color: var(--color-lava); }
+        .cat-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          grid-template-rows: 340px 240px;
+          grid-auto-rows: 240px;
+          gap: 12px;
+        }
+        .cat-grid > .cat-tile-tall { grid-row: span 2; }
+        .cat-grid > .cat-tile-wide { grid-column: span 2; }
+
+        @media (max-width: 900px) {
+          .cat-grid {
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: auto;
+          }
+          .cat-grid { grid-auto-rows: auto; }
+          .cat-grid > .cat-tile-tall { grid-row: span 1; aspect-ratio: 3/4; }
+          .cat-grid > .cat-tile-wide { grid-column: span 2; aspect-ratio: 16/7; }
+        }
+        @media (max-width: 600px) {
+          .cat-grid {
+            grid-template-columns: 1fr;
+            grid-template-rows: auto;
+          }
+          .cat-grid > * { aspect-ratio: 4/3 !important; }
+          .cat-grid > .cat-tile-wide { grid-column: span 1; }
+        }
+
+/* ── components/home/CommunitySection.tsx ── */
+@media (max-width: 768px) {
+          .ugc-grid { grid-template-columns: repeat(2, 1fr) !important; grid-auto-rows: clamp(120px, 28vw, 200px) !important; }
+        }
+        @media (max-width: 480px) {
+          .ugc-grid { grid-template-columns: repeat(2, 1fr) !important; grid-auto-rows: clamp(100px, 30vw, 160px) !important; }
+        }
+
+/* ── components/home/EditorialBanner.tsx ── */
+@media (max-width: 768px) {
+          .editorial-grid { grid-template-columns: 1fr !important; }
+        }
+
+/* ── components/home/Footer.tsx ── */
+.social-btn:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0px 0px var(--color-lava) !important; }
+        .footer-whatsapp-btn:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0px 0px var(--color-raven) !important; }
+
+        @media (max-width: 1024px) {
+          .footer-grid { grid-template-columns: 1fr 1fr !important; }
+        }
+        @media (max-width: 640px) {
+          .footer-grid { grid-template-columns: 1fr !important; }
+        }
+
+/* ── components/home/Header.tsx ── */
+/* Logo PNG is square with transparent padding. Desktop: 150px box (+50%),
+           negative margins cancel the extra box so header height/nav position shrink-wrap to 60px. */
+        .site-logo { height: 64px; }
+        @media (min-width: 1024px) {
+          .site-logo { height: 195px; margin: -67px -87px -68px -8px; }
+        }
+        @media (min-width: 1024px) {
+          .show-mobile { display: none !important; }
+          .mobile-bottom-nav { display: none !important; }
+        }
+        @media (max-width: 1023px) {
+          .hide-mobile { display: none !important; }
+          .mobile-bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--color-cream);
+            border-top: 1px solid var(--color-line);
+            z-index: 100;
+            padding-bottom: env(safe-area-inset-bottom);
+            box-shadow: 0 -4px 0px 0px rgba(23,37,69,0.1);
+          }
+          .bottom-nav-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            height: 64px;
+          }
+          .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            color: var(--color-navy);
+            text-decoration: none;
+            font-size: 9px;
+            font-family: var(--font-sans);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+          }
+          .bottom-nav-item svg { width: 20px; height: 20px; }
+        }
+        .action-icon:hover {
+          opacity: 0.6;
+        }
+        .action-icon:active {
+          opacity: 1;
+        }
+
+/* ── components/home/HeroBanner.tsx ── */
+@keyframes heroProgress {
+          from { width: 0%; }
+          to   { width: 100%; }
+        }
+        @keyframes heroScroll {
+          0%   { transform: translateY(-100%); }
+          100% { transform: translateY(300%); }
+        }
+        @keyframes heroFadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+
+/* ── components/home/NewDropSection.tsx ── */
+.nd-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: clamp(1rem, 1.5vw, 1.5rem);
+        }
+        @media (max-width: 1024px) { .nd-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 680px)  { .nd-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; } }
+
+/* ── components/home/ProductCard.tsx ── */
+.product-card:hover { transform: translate(-2px, -2px); box-shadow: var(--shadow-md) !important; }
+        .wishlist-btn:hover { transform: scale(1.1); background-color: var(--color-navy) !important; }
+        .wishlist-btn:hover svg { stroke: var(--color-cream) !important; }
+        @media (max-width: 1024px) {
+          .quick-add-overlay { display: none !important; }
+        }
+
+/* ── components/home/ShopTheLookSection.tsx ── */
+@media (max-width: 960px) {
+          .stl-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
+          .stl-grid > div:first-child { max-height: 400px !important; aspect-ratio: 16/9 !important; }
+        }
+        @media (max-width: 600px) {
+          .stl-grid > div:first-child { max-height: 280px !important; }
+        }
+
+/* ── components/home/TrendingNow.tsx ── */
+@media (max-width: 768px) { .trend-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 1024px) and (min-width: 769px) { .trend-grid { grid-template-columns: repeat(2,1fr); } }
+
+/* ── components/home/TrendingNow.tsx ── */
+.trend-card:hover .trend-img { transform: scale(1.06); }
+        .trend-card:hover .trend-bar { background-color: var(--color-navy); }
+        .trend-card:hover .trend-bar span { color: var(--color-cream); }
+
+/* ── Loading skeleton (app/(shop)/loading.tsx) ── */
+.skel { background: linear-gradient(90deg, var(--color-bone) 25%, var(--color-cream) 37%, var(--color-bone) 63%); background-size: 400% 100%; animation: skel-shimmer 1.3s ease infinite; }
+@keyframes skel-shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
+@media (prefers-reduced-motion: reduce) { .skel { animation: none; } }

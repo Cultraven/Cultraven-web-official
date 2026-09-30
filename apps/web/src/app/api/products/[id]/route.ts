@@ -22,7 +22,8 @@ export async function GET(_req: NextRequest, ctx: Ctx) {
     await connectToDatabase();
     const product = await Product.findById(id).lean();
     if (!product) return NextResponse.json({ error: "Product not found" }, { status: 404 });
-    return NextResponse.json({ product: normalizeProduct(product) });
+    const admin = isAdminRequest(_req);
+    return NextResponse.json({ product: { ...normalizeProduct(product), ...(admin ? { stockCount: Number((product as any).stockCount) || 0 } : {}) } });
   } catch (error) {
     console.error("[products/id] GET error:", error);
     return NextResponse.json({ error: "Failed to fetch product" }, { status: 500 });

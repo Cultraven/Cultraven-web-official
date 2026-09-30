@@ -1,10 +1,13 @@
 "use client";
 /**
- * Admin Login — /admin-login
- * Wrapped in Suspense to allow useSearchParams in production builds.
+ * Admin Login. Wrapped in Suspense to allow useSearchParams in production builds.
+ * Lives outside the admin shell, so it imports the admin styles itself.
  */
 import React, { Suspense, useState } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import "@/components/admin/admin.css";
+import { Button, Field } from "@/components/admin/ui";
 
 function AdminLoginForm() {
   const router = useRouter();
@@ -13,130 +16,117 @@ function AdminLoginForm() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [show, setShow] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setLoading(true);
     setError("");
-
+    setLoading(true);
     try {
       const res = await fetch("/api/auth/admin-login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-
+      const data = await res.json().catch(() => ({}));
       if (res.ok) {
         router.push(redirect);
-      } else {
-        const data = await res.json();
-        setError(data.error || "Invalid credentials.");
+        return;
       }
+      setError(data.error || "Login failed. Please try again.");
     } catch {
       setError("Network error. Please try again.");
-    } finally {
-      setLoading(false);
     }
-  };
+    setLoading(false);
+  }
 
   return (
-    <div
-      style={{
-        minHeight: "100dvh",
-        backgroundColor: "#0F1419",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "2rem",
-        fontFamily: "var(--font-sans)",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          maxWidth: "400px",
-          backgroundColor: "#1A2332",
-          border: "1px solid rgba(245,241,232,0.1)",
-          padding: "3rem 2.5rem",
-        }}
-      >
-        {/* Logo */}
-        <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
-          <p style={{ fontWeight: 900, fontSize: "1.1rem", letterSpacing: "0.25em", color: "var(--color-cream)", textTransform: "uppercase", marginBottom: "0.5rem" }}>
-            CULTRAVEN
-          </p>
-          <p style={{ fontSize: "0.72rem", letterSpacing: "0.15em", color: "rgba(245,241,232,0.45)", textTransform: "uppercase" }}>
-            Admin Portal
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-          <div>
-            <label
-              htmlFor="admin-email"
-              style={{ display: "block", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(245,241,232,0.6)", marginBottom: "0.5rem" }}
-            >
-              Admin Email
-            </label>
-            <input
-              id="admin-email"
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={loading}
-              placeholder="Enter admin email"
-              style={{ width: "100%", padding: "0.875rem 1rem", backgroundColor: "#0F1419", border: "1.5px solid rgba(245,241,232,0.15)", color: "var(--color-cream)", fontFamily: "var(--font-sans)", fontSize: "0.9rem", outline: "none", boxSizing: "border-box" }}
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="admin-password"
-              style={{ display: "block", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(245,241,232,0.6)", marginBottom: "0.5rem" }}
-            >
-              Admin Password
-            </label>
-            <input
-              id="admin-password"
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              disabled={loading}
-              placeholder="Enter admin password"
-              style={{ width: "100%", padding: "0.875rem 1rem", backgroundColor: "#0F1419", border: "1.5px solid rgba(245,241,232,0.15)", color: "var(--color-cream)", fontFamily: "var(--font-sans)", fontSize: "0.9rem", outline: "none", boxSizing: "border-box" }}
-            />
-          </div>
-
-          {error && (
-            <p style={{ fontSize: "0.78rem", color: "var(--color-crimson)", fontWeight: 600, padding: "0.75rem 1rem", backgroundColor: "rgba(201,66,39,0.1)", border: "1px solid rgba(201,66,39,0.3)" }}>
-              {error}
-            </p>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            style={{ width: "100%", padding: "1rem", backgroundColor: loading ? "#3a4a6b" : "var(--color-navy)", color: "var(--color-cream)", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.78rem", letterSpacing: "0.14em", textTransform: "uppercase", border: "none", cursor: loading ? "not-allowed" : "pointer" }}
-          >
-            {loading ? "AUTHENTICATING..." : "ACCESS ADMIN"}
-          </button>
-        </form>
+    <form className="adm-card adm-card-pad" onSubmit={handleSubmit} style={{ display: "grid", gap: 16 }}>
+      <div>
+        <h1 style={{ fontSize: 20 }}>Sign in</h1>
+        <p style={{ color: "var(--a-muted)", fontSize: 13.5, marginTop: 2 }}>Enter your admin credentials to continue.</p>
       </div>
-    </div>
+
+      {error ? (
+        <div role="alert" className="adm-alert adm-alert-error" style={{ marginBottom: 0 }}>
+          <div>{error}</div>
+        </div>
+      ) : null}
+
+      <Field label="Email" required>
+        <input
+          className="adm-input"
+          type="email"
+          name="email"
+          autoComplete="username"
+          autoFocus
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          aria-invalid={error ? true : undefined}
+          placeholder="you@example.com"
+        />
+      </Field>
+
+      <Field label="Password" required>
+        <div style={{ position: "relative" }}>
+          <input
+            className="adm-input"
+            type={show ? "text" : "password"}
+            name="password"
+            autoComplete="current-password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            aria-invalid={error ? true : undefined}
+            style={{ paddingRight: 56 }}
+          />
+          <button
+            type="button"
+            className="adm-btn adm-btn-ghost adm-btn-sm"
+            onClick={() => setShow((s) => !s)}
+            aria-label={show ? "Hide password" : "Show password"}
+            aria-pressed={show}
+            style={{ position: "absolute", right: 4, top: 4 }}
+          >
+            {show ? "Hide" : "Show"}
+          </button>
+        </div>
+      </Field>
+
+      <Button type="submit" variant="primary" loading={loading} style={{ width: "100%", height: 40 }}>
+        {loading ? "Signing in…" : "Sign in"}
+      </Button>
+
+      <Link href="/" style={{ fontSize: 13, color: "var(--a-muted)", textAlign: "center" }}>
+        ← Back to website
+      </Link>
+    </form>
   );
 }
 
 export default function AdminLoginPage() {
   return (
-    <Suspense fallback={
-      <div style={{ minHeight: "100dvh", backgroundColor: "#0F1419", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ color: "rgba(245,241,232,0.4)", fontFamily: "var(--font-sans)", fontSize: "0.8rem", letterSpacing: "0.1em" }}>LOADING…</div>
+    <div className="adm">
+      <div className="adm-login">
+        <div className="adm-login-art">
+          <div style={{ fontWeight: 800, letterSpacing: "0.2em", fontSize: 14 }}>CULTRAVEN</div>
+          <div>
+            <h2>Run the store. Shape the site.</h2>
+            <p>Manage products, orders and every piece of website content from one place.</p>
+          </div>
+          <div style={{ fontSize: 12, opacity: 0.6 }}>Admin console</div>
+        </div>
+        <div className="adm-login-form">
+          <div className="adm-login-card">
+            <Suspense fallback={<div className="adm-card adm-card-pad" style={{ height: 320 }} />}>
+              <AdminLoginForm />
+            </Suspense>
+          </div>
+        </div>
       </div>
-    }>
-      <AdminLoginForm />
-    </Suspense>
+    </div>
   );
 }

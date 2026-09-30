@@ -208,13 +208,6 @@ export default function RegisterPage() {
         </div>
       </div>
 
-      <style>{`
-        @media (max-width: 768px) {
-          .auth-layout { grid-template-columns: 1fr !important; }
-          .auth-brand-panel { min-height: 220px !important; padding: 2rem !important; }
-          .auth-brand-panel h2 { font-size: 2rem !important; }
-        }
-      `}</style>
     </div>
   );
 }

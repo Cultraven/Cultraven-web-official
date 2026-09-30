@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import type { NavMenu } from "@shop/types";
 import { MegaMenu } from "./MegaMenu";
 import { CartBadge } from "./CartBadge";
+import { CartDrawerHost } from "@/components/cart/CartDrawerHost";
 
 interface HeaderProps {
   navMenu: NavMenu;
@@ -150,6 +151,8 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
         </div>
       </header>
 
+      <CartDrawerHost />
+
       {/* Mobile Bottom Nav */}
       <nav className="mobile-bottom-nav">
         <div className="bottom-nav-grid">
@@ -188,58 +191,6 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
         </div>
       </nav>
 
-      <style>{`
-        /* Logo PNG is square with transparent padding. Desktop: 150px box (+50%),
-           negative margins cancel the extra box so header height/nav position shrink-wrap to 60px. */
-        .site-logo { height: 64px; }
-        @media (min-width: 1024px) {
-          .site-logo { height: 195px; margin: -67px -87px -68px -8px; }
-        }
-        @media (min-width: 1024px) {
-          .show-mobile { display: none !important; }
-          .mobile-bottom-nav { display: none !important; }
-        }
-        @media (max-width: 1023px) {
-          .hide-mobile { display: none !important; }
-          .mobile-bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: var(--color-cream);
-            border-top: 1px solid var(--color-line);
-            z-index: 100;
-            padding-bottom: env(safe-area-inset-bottom);
-            box-shadow: 0 -4px 0px 0px rgba(23,37,69,0.1);
-          }
-          .bottom-nav-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            height: 64px;
-          }
-          .bottom-nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            color: var(--color-navy);
-            text-decoration: none;
-            font-size: 9px;
-            font-family: var(--font-sans);
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-          }
-          .bottom-nav-item svg { width: 20px; height: 20px; }
-        }
-        .action-icon:hover {
-          opacity: 0.6;
-        }
-        .action-icon:active {
-          opacity: 1;
-        }
-      `}</style>
     </>
   );
 }

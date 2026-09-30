@@ -102,7 +102,7 @@ export async function getShopLook(): Promise<CmsResult<any>> {
 const loadProducts = cache(async (flag: string, limit: number): Promise<PublicProduct[]> => {
   await connectToDatabase();
   const query = flag === "all" ? {} : { [flag]: true };
-  const docs = await Product.find(query).sort({ createdAt: -1 }).limit(limit).lean();
+  const docs = await Product.find(query).select("-description").sort({ createdAt: -1 }).limit(limit).lean();
   return jsonSafe(docs.map(normalizeProduct));
 });
 

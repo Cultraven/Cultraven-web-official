@@ -122,15 +122,6 @@ export function NewDropSection({ content, products }: { content: NewDropContent;
         </div>
       </div>
 
-      <style>{`
-        .nd-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: clamp(1rem, 1.5vw, 1.5rem);
-        }
-        @media (max-width: 1024px) { .nd-grid { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 680px)  { .nd-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; } }
-      `}</style>
     </section>
   );
 }

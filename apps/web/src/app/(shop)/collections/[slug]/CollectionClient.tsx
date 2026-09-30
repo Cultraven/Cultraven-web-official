@@ -261,10 +261,6 @@ function CollectionPageClientInner({
         </div>
       </div>
 
-      <style>{`
-        @media (max-width: 1024px) { .plp-grid { grid-template-columns: repeat(3,1fr) !important; } }
-        @media (max-width: 768px)  { .plp-grid { grid-template-columns: repeat(2,1fr) !important; } .plp-layout { grid-template-columns: 1fr !important; } }
-      `}</style>
     </div>
   );
 }
@@ -556,13 +552,6 @@ function PLPCard({ product: p }: { product: Product }) {
         </div>
       </div>
       
-      <style>{`
-        .product-card:hover { transform: translate(-2px, -2px); box-shadow: var(--shadow-md) !important; }
-        .wishlist-btn:hover { transform: scale(1.1); }
-        @media (max-width: 1024px) {
-          .quick-add-overlay { display: none !important; }
-        }
-      `}</style>
     </article>
   );
 }

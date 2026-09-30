@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Archivo, Hanken_Grotesk, Noto_Sans_Devanagari } from "next/font/google";
 import "@/styles/globals.css";
-import { ChatWidget } from "@/components/common/ChatWidget";
+import { ChatWidgetGate } from "@/components/common/ChatWidgetGate";
 import { ToastProvider } from "@/components/common/Toast";
 
 // ─── Font loading (next/font — zero layout shift) ─────────────────────────────
@@ -23,6 +23,7 @@ const notoDeva = Noto_Sans_Devanagari({
   variable: "--font-noto-deva",
   display: "swap",
   weight: "600",
+  preload: false,
 });
 
 // ─── JSON-LD — Organization ───────────────────────────────────────────────────
@@ -124,19 +125,27 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
         />
-        {/* Analytics placeholders (fired after cookie consent) */}
+        {/* Analytics: nothing loads until the visitor consents (cookie banner dispatches "cookie_consent") */}
         <script
           id="ga4-init"
           dangerouslySetInnerHTML={{
             __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              window.addEventListener('cookie_consent', (e) => {
-                if(e.detail.accepted) {
-                  gtag('js', new Date());
-                  gtag('config', process.env.NEXT_PUBLIC_GA_ID || 'G-XXXXXXXXXX');
+              (function () {
+                var id = ${JSON.stringify(process.env.NEXT_PUBLIC_GA_ID || "")};
+                if (!id || /X{4,}/.test(id)) return;
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){ dataLayer.push(arguments); }
+                var started = false;
+                function start() {
+                  if (started) return; started = true;
+                  var s = document.createElement('script'); s.async = true;
+                  s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(id);
+                  document.head.appendChild(s);
+                  gtag('js', new Date()); gtag('config', id);
                 }
-              });
+                window.addEventListener('cookie_consent', function (e) { if (e.detail && e.detail.accepted) start(); });
+                try { if (localStorage.getItem('cultraven_cookie_consent') === 'accepted') start(); } catch (e) {}
+              })();
             `,
           }}
         />
@@ -144,7 +153,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         <ToastProvider>
           {children}
-          <ChatWidget />
+          <ChatWidgetGate />
         </ToastProvider>
       </body>
     </html>

@@ -7,10 +7,17 @@ import { normalizeMode, validateSlides } from "@/lib/hero";
 
 export const dynamic = "force-dynamic";
 
+const SLIDE_DEFAULTS = {
+  type: "image", srcMobile: "", posterSrc: "", altText: "", eyebrow: "", headline: "", subheadline: "", ctaLabel: "SHOP NOW",
+  ctaHref: "/collections/all", objectPosition: "center center", overlayOpacity: 0.4, durationMs: 5000, active: true, sortOrder: 0,
+};
+
+/** Records saved before newer fields existed are filled with the same defaults the schema uses. */
 function serialize(doc: any) {
   const { _id, __v, createdAt, updatedAt, ...rest } = doc;
   return {
-    ...rest,
+    ...SLIDE_DEFAULTS,
+    ...Object.fromEntries(Object.entries(rest).filter(([, v]) => v !== undefined && v !== null)),
     id: String(_id),
     startsAt: doc.startsAt ? new Date(doc.startsAt).toISOString() : null,
     endsAt: doc.endsAt ? new Date(doc.endsAt).toISOString() : null,

@@ -1,27 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import { Order } from "@/lib/models/Order";
-import crypto from "crypto";
+import { isAdminRequest } from "@/lib/admin-auth";
 import { z } from "zod";
 
-function verifyAdminToken(req: NextRequest): boolean {
-  const session = req.cookies.get("cultraven_session")?.value;
-  if (!session || !session.includes(".")) return false;
-  const [encodedPayload, signature] = session.split(".");
-  try {
-    const secret = process.env.SESSION_SECRET || "cultraven-dev-secret-change-in-prod";
-    const expectedSig = crypto.createHmac("sha256", secret).update(encodedPayload).digest("base64url");
-    if (signature !== expectedSig) return false;
-    const payload = JSON.parse(Buffer.from(encodedPayload, "base64url").toString("utf-8"));
-    if (payload.exp && payload.exp < Date.now()) return false;
-    return payload.role === "admin";
-  } catch {
-    return false;
-  }
-}
-
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  if (!verifyAdminToken(req)) {
+  if (!isAdminRequest(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -41,7 +25,7 @@ const UpdateSchema = z.object({
 });
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  if (!verifyAdminToken(req)) {
+  if (!isAdminRequest(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

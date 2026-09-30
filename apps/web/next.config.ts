@@ -29,6 +29,8 @@ const config: NextConfig = {
       // { protocol: "https", hostname: "cdn.cultraven.com" },
     ],
     formats: ["image/avif", "image/webp"],
+    // Optimized variants are immutable for a given URL — keep them for 30 days instead of the 60s default.
+    minimumCacheTTL: 60 * 60 * 24 * 30,
     deviceSizes: [375, 640, 750, 828, 1080, 1200, 1440, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
@@ -39,6 +41,11 @@ const config: NextConfig = {
   // Strict headers for security (Rule 19 compliance)
   async headers() {
     return [
+      {
+        // Uploaded media has a random, content-unique filename → safe to cache forever.
+        source: "/uploads/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
       {
         source: "/(.*)",
         headers: [
@@ -62,6 +69,7 @@ const config: NextConfig = {
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
               "img-src 'self' data: blob: https: http:",
+              "media-src 'self' blob: https:",
               "frame-src https://api.razorpay.com https://checkout.razorpay.com",
               "connect-src 'self' https://api.razorpay.com https://www.google-analytics.com https://analytics.google.com https://graph.facebook.com",
               "object-src 'none'",

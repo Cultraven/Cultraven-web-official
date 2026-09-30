@@ -34,13 +34,14 @@ const fmt = (p: number) => `₹${(p / 100).toLocaleString("en-IN")}`;
 export function ShopTheLookSection({ look }: { look: ShopLookData | null }) {
   const [allAdded, setAllAdded] = useState(false);
   const addItem = useCartStore((s) => s.addItem);
+  const addItems = useCartStore((s) => s.addItems);
   if (!look || look.products.length === 0) return null;
 
   const totalLookPrice = look.products.reduce((sum, p) => sum + p.pricePaise, 0);
 
   const handleBuyLook = () => {
-    look.products.forEach((p) => {
-      addItem({
+    addItems(
+      look.products.map((p) => ({
         productId: p.id,
         slug: p.href.replace(/^\/products\//, ""),
         title: p.title,
@@ -49,14 +50,15 @@ export function ShopTheLookSection({ look }: { look: ShopLookData | null }) {
         size: "Free Size",
         color: p.color,
         pricePaise: p.pricePaise,
-      });
-    });
+      }))
+    );
     setAllAdded(true);
     setTimeout(() => setAllAdded(false), 2500);
   };
 
   return (
     <section
+      className="cv-auto"
       aria-labelledby="stl-heading"
       style={{ backgroundColor: "var(--color-cream)", padding: "clamp(4rem,8vw,8rem) 0" }}
     >
@@ -298,15 +300,6 @@ export function ShopTheLookSection({ look }: { look: ShopLookData | null }) {
         </div>
       </div>
 
-      <style>{`
-        @media (max-width: 960px) {
-          .stl-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
-          .stl-grid > div:first-child { max-height: 400px !important; aspect-ratio: 16/9 !important; }
-        }
-        @media (max-width: 600px) {
-          .stl-grid > div:first-child { max-height: 280px !important; }
-        }
-      `}</style>
     </section>
   );
 }

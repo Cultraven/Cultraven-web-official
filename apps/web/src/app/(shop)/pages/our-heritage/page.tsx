@@ -55,13 +55,6 @@ export default async function AboutPage() {
         </div>
       </div>
 
-      <style>{`
-        @media (max-width: 768px) {
-          .about-section { grid-template-columns: 1fr !important; }
-          .about-section > div { order: unset !important; }
-          .values-grid { grid-template-columns: repeat(2,1fr) !important; }
-        }
-      `}</style>
     </div>
   );
 }

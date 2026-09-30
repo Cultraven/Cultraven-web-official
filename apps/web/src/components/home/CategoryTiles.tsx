@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useRef, useState } from "react";
+import React from "react";
 import Image from "@/components/common/CmsImage";
 import Link from "next/link";
 
@@ -9,11 +7,9 @@ export interface Tile { id: string; title: string; sub?: string; href: string; i
 
 /** Strip + tiles are loaded from the database (home.categoryStrip / home.categoryTiles). */
 export function CategoryTiles({ strip, tiles }: { strip: StripItem[]; tiles: Tile[] }) {
-  const stripRef = useRef<HTMLDivElement>(null);
-  const [active, setActive] = useState(strip[0]?.id ?? "");
-
   return (
     <section
+      className="cv-auto"
       aria-labelledby="cat-heading"
       style={{
         backgroundColor: "var(--color-cream)",
@@ -29,7 +25,6 @@ export function CategoryTiles({ strip, tiles }: { strip: StripItem[]; tiles: Til
         }}
       >
         <div
-          ref={stripRef}
           className="hide-scrollbar"
           style={{
             display: "flex",
@@ -39,31 +34,7 @@ export function CategoryTiles({ strip, tiles }: { strip: StripItem[]; tiles: Til
           }}
         >
           {strip.map((cat) => (
-            <Link
-              key={cat.id}
-              href={cat.href}
-              onClick={() => setActive(cat.id)}
-              style={{
-                flexShrink: 0,
-                padding: "1rem 1.25rem",
-                fontFamily: "var(--font-sans)",
-                fontSize: "0.78rem",
-                fontWeight: active === cat.id ? 900 : 600,
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                color: cat.accent ? "var(--color-lava)" : active === cat.id ? "var(--color-navy)" : "var(--color-smoke)",
-                borderBottom: active === cat.id ? "2px solid var(--color-navy)" : "2px solid transparent",
-                whiteSpace: "nowrap",
-                transition: "color 0.2s ease, border-color 0.2s ease",
-                textDecoration: "none",
-              }}
-              onMouseEnter={e => {
-                if (active !== cat.id) (e.currentTarget as HTMLElement).style.color = "var(--color-navy)";
-              }}
-              onMouseLeave={e => {
-                if (active !== cat.id) (e.currentTarget as HTMLElement).style.color = cat.accent ? "var(--color-lava)" : "var(--color-smoke)";
-              }}
-            >
+            <Link key={cat.id} href={cat.href} className={`cat-strip-link${cat.accent ? " is-accent" : ""}`}>
               {cat.label}
             </Link>
           ))}
@@ -112,46 +83,15 @@ export function CategoryTiles({ strip, tiles }: { strip: StripItem[]; tiles: Til
         </div>
       </div>
 
-      <style>{`
-        .cat-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          grid-template-rows: 340px 240px;
-          grid-auto-rows: 240px;
-          gap: 12px;
-        }
-        .cat-grid > .cat-tile-tall { grid-row: span 2; }
-        .cat-grid > .cat-tile-wide { grid-column: span 2; }
-
-        @media (max-width: 900px) {
-          .cat-grid {
-            grid-template-columns: repeat(2, 1fr);
-            grid-template-rows: auto;
-          }
-          .cat-grid { grid-auto-rows: auto; }
-          .cat-grid > .cat-tile-tall { grid-row: span 1; aspect-ratio: 3/4; }
-          .cat-grid > .cat-tile-wide { grid-column: span 2; aspect-ratio: 16/7; }
-        }
-        @media (max-width: 600px) {
-          .cat-grid {
-            grid-template-columns: 1fr;
-            grid-template-rows: auto;
-          }
-          .cat-grid > * { aspect-ratio: 4/3 !important; }
-          .cat-grid > .cat-tile-wide { grid-column: span 1; }
-        }
-      `}</style>
     </section>
   );
 }
 
 function TileCard({ tile }: { tile: Tile }) {
-  const [hovered, setHovered] = useState(false);
-
   return (
     <Link
       href={tile.href}
-      className={`cat-tile cat-tile-${tile.size ?? "normal"}`}
+      className={`cat-tile hv cat-tile-${tile.size ?? "normal"}`}
       style={{
         position: "relative",
         display: "block",
@@ -159,8 +99,6 @@ function TileCard({ tile }: { tile: Tile }) {
         backgroundColor: "var(--color-bone)",
         aspectRatio: "auto",
       }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
     >
       {/* Image */}
       <Image
@@ -168,11 +106,8 @@ function TileCard({ tile }: { tile: Tile }) {
         alt={tile.title}
         fill
         sizes="(max-width: 600px) 100vw, (max-width: 1024px) 50vw, 25vw"
-        style={{
-          objectFit: "cover",
-          transform: hovered ? "scale(1.04)" : "scale(1)",
-          transition: "transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
-        }}
+        className="hv-zoom"
+        style={{ objectFit: "cover" }}
       />
 
       {/* Gradient — subtle bottom fade (LP style) */}
@@ -226,6 +161,7 @@ function TileCard({ tile }: { tile: Tile }) {
 
       {/* LP-style "SHOP NOW" pill on hover */}
       <div
+        className="hv-pill"
         style={{
           position: "absolute",
           top: "1rem",
@@ -238,9 +174,6 @@ function TileCard({ tile }: { tile: Tile }) {
           letterSpacing: "0.12em",
           textTransform: "uppercase",
           padding: "6px 12px",
-          opacity: hovered ? 1 : 0,
-          transform: hovered ? "translateY(0)" : "translateY(-6px)",
-          transition: "opacity 0.25s ease, transform 0.25s ease",
         }}
       >
         Shop →

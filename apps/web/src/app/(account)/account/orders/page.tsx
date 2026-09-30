@@ -96,9 +96,6 @@ export default function OrdersPage() {
           )}
         </div>
       </div>
-      <style>{`
-        @media (max-width: 900px) { .account-layout { grid-template-columns: 1fr !important; } }
-      `}</style>
     </div>
   );
 }

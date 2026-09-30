@@ -30,6 +30,9 @@ interface CartState {
   /** Add or increment quantity of a cart item */
   addItem: (item: Omit<CartItem, "quantity">, qty?: number) => void;
 
+  /** Add several items in ONE state update (one re-render, one storage write) */
+  addItems: (items: Omit<CartItem, "quantity">[]) => void;
+
   /** Decrement quantity (removes item when qty reaches 0) */
   removeItem: (sku: string) => void;
 
@@ -68,6 +71,17 @@ export const useCartStore = create<CartState>()(
             };
           }
           return { items: [...state.items, { ...incoming, quantity: qty }] };
+        }),
+
+      addItems: (incoming) =>
+        set((state) => {
+          const items = [...state.items];
+          for (const inc of incoming) {
+            const i = items.findIndex((x) => x.sku === inc.sku);
+            if (i >= 0) items[i] = { ...items[i], quantity: items[i].quantity + 1 };
+            else items.push({ ...inc, quantity: 1 });
+          }
+          return { items };
         }),
 
       removeItem: (sku) =>

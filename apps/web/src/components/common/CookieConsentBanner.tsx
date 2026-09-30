@@ -153,12 +153,6 @@ export function CookieConsentBanner() {
         </button>
       </div>
 
-      <style>{`
-        @keyframes slideUpConsent {
-          from { transform: translateY(100%); }
-          to   { transform: translateY(0); }
-        }
-      `}</style>
     </div>
   );
 }

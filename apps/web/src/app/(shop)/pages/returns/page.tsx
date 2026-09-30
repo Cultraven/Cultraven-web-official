@@ -377,16 +377,6 @@ export default function ReturnsPage() {
         </div>
       </div>
 
-      <style>{`
-        @media (max-width: 768px) {
-          .returns-stats { grid-template-columns: 1fr !important; }
-          .returns-steps { grid-template-columns: 1fr 1fr !important; }
-          .eligible-grid { grid-template-columns: 1fr !important; }
-        }
-        @media (max-width: 480px) {
-          .returns-steps { grid-template-columns: 1fr !important; }
-        }
-      `}</style>
     </div>
   );
 }

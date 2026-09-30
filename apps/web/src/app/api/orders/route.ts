@@ -1,34 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import { Order } from "@/lib/models/Order";
-import crypto from "crypto";
-
-function verifyAdminToken(req: NextRequest): boolean {
-  const session = req.cookies.get("cultraven_session")?.value;
-  if (!session || !session.includes(".")) return false;
-  const [encodedPayload, signature] = session.split(".");
-  try {
-    const secret = process.env.SESSION_SECRET || "cultraven-dev-secret-change-in-prod";
-    const expectedSig = crypto.createHmac("sha256", secret).update(encodedPayload).digest("base64url");
-    if (signature !== expectedSig) return false;
-    const payload = JSON.parse(Buffer.from(encodedPayload, "base64url").toString("utf-8"));
-    if (payload.exp && payload.exp < Date.now()) return false;
-    return payload.role === "admin";
-  } catch {
-    return false;
-  }
-}
+import { isAdminRequest } from "@/lib/admin-auth";
 
 
 export async function GET(req: NextRequest) {
-  if (!verifyAdminToken(req)) {
+  if (!isAdminRequest(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
     await connectToDatabase();
     const orders = await Order.find()
-      .select("orderNumber userId subtotalPaise discountPaise shippingPaise codFeePaise totalPaise paymentMethod paymentStatus fulfillmentStatus createdAt deliveryAddress.name deliveryAddress.email")
+      .select("orderNumber userId subtotalPaise discountPaise shippingPaise codFeePaise totalPaise paymentMethod paymentStatus fulfillmentStatus items createdAt deliveryAddress.name deliveryAddress.email")
       .sort({ createdAt: -1 })
       .limit(100)
       .lean();
@@ -37,7 +21,8 @@ export async function GET(req: NextRequest) {
       id: o._id?.toString() || o.orderNumber,
       customer: o.deliveryAddress?.name || "Unknown",
       email: o.deliveryAddress?.email || "",
-      items: 1,
+      items: o.items?.length ?? 0,
+      totalPaise: o.totalPaise ?? 0,
       total: o.totalPaise ? `₹${(o.totalPaise / 100).toLocaleString("en-IN")}` : "—",
       status: o.fulfillmentStatus || o.paymentStatus || "Processing",
       paymentMethod: o.paymentMethod || "—",
@@ -52,7 +37,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  if (!verifyAdminToken(req)) {
+  if (!isAdminRequest(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

@@ -60,7 +60,7 @@ export function TrustBadges({ badges }: TrustBadgesProps) {
   return (
     <section
       aria-label="Why shop at CULTRAVEN"
-      className="bg-[var(--color-black)] text-[var(--color-white)] border-y-4 border-[var(--color-white)]"
+      className="cv-auto bg-[var(--color-black)] text-[var(--color-white)] border-y-4 border-[var(--color-white)]"
     >
       <div className="container-full px-6 md:px-12 py-6">
         <ul

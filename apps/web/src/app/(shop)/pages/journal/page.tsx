@@ -72,12 +72,6 @@ export default async function JournalPage() {
         </div>
       </div>
 
-      <style>{`
-        .featured-img:hover { transform: scale(1.04); }
-        .article-img:hover { transform: scale(1.05); }
-        @media (max-width: 900px) { .featured-article { grid-template-columns: 1fr !important; } .journal-grid { grid-template-columns: repeat(2,1fr) !important; } }
-        @media (max-width: 600px) { .journal-grid { grid-template-columns: 1fr !important; } }
-      `}</style>
     </div>
   );
 }

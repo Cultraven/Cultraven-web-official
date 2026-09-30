@@ -1,110 +1,137 @@
 "use client";
-/**
- * Admin: Orders List — /admin/orders
- */
-import React, { useState } from "react";
+import React, { useDeferredValue, useMemo, useState } from "react";
 import Link from "next/link";
+import { Alert, Badge, Button, Card, EmptyState, Icon, LinkButton, PageHeader, TableSkeleton, useApi } from "@/components/admin/ui";
 
-interface Order {
-  id: string; customer: string; email: string;
-  items: number; total: string; status: string;
-  paymentMethod: string; date: string;
-}
-const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
-  Processing: { bg: "rgba(245,158,11,0.15)", text: "#D97706" },
-  Shipped: { bg: "rgba(59,130,246,0.15)", text: "#2563EB" },
-  Delivered: { bg: "rgba(16,185,129,0.15)", text: "#059669" },
-  Pending: { bg: "rgba(156,163,175,0.15)", text: "var(--color-gray)" },
-  Cancelled: { bg: "rgba(201,66,39,0.15)", text: "var(--color-crimson)" },
+type OrderRow = {
+  id: string;
+  customer: string;
+  email: string;
+  items: number;
+  total: string;
+  totalPaise: number;
+  status: string;
+  paymentMethod: string;
+  date: string;
 };
 
-export default function AdminOrdersPage() {
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(true);
+const FILTERS = ["all", "processing", "shipped", "delivered", "cancelled"] as const;
+type Filter = (typeof FILTERS)[number];
 
-  React.useEffect(() => {
-    fetch("/api/orders")
-      .then(res => res.json())
-      .then(data => {
-        if (data.orders) {
-          const mapped = data.orders.map((o: any) => ({
-            ...o,
-            id: o._id || o.id || "N/A",
-            customer: o.customer || "Unknown",
-          }));
-          setOrders(mapped);
-        }
-      })
-      .finally(() => setLoading(false));
-  }, []);
+const TONES: Record<string, "warn" | "info" | "success" | "danger"> = {
+  processing: "warn",
+  shipped: "info",
+  delivered: "success",
+  cancelled: "danger",
+};
+const norm = (s: string) => (s || "").toLowerCase();
+const label = (s: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "—");
 
-  const filtered = orders.filter(o => 
-    o.id.toLowerCase().includes(search.toLowerCase()) || 
-    o.customer.toLowerCase().includes(search.toLowerCase())
+const Row = React.memo(function Row({ o }: { o: OrderRow }) {
+  const href = `/portal-secure/orders/${o.id}`;
+  return (
+    <tr>
+      <td>
+        <Link href={href} prefetch={false} style={{ fontWeight: 600 }}>
+          #{o.id.slice(-8).toUpperCase()}
+        </Link>
+      </td>
+      <td>
+        <div className="adm-cell-title">{o.customer}</div>
+        {o.email ? <div className="adm-cell-sub">{o.email}</div> : null}
+      </td>
+      <td>{o.items}</td>
+      <td className="num">{o.total}</td>
+      <td><Badge tone={TONES[norm(o.status)] ?? "neutral"}>{label(o.status)}</Badge></td>
+      <td>{o.paymentMethod}</td>
+      <td>{o.date}</td>
+      <td><LinkButton href={href} size="sm">View</LinkButton></td>
+    </tr>
   );
+});
 
-  const CELL: React.CSSProperties = {
-    padding: "1rem", fontFamily: "var(--font-sans)", fontSize: "0.78rem",
-    color: "rgba(245,241,232,0.75)", borderBottom: "1px solid rgba(255,255,255,0.04)",
-  };
+export default function OrdersPage() {
+  const { data, error, loading, reload } = useApi<{ orders: OrderRow[] }>("/api/orders");
+  const [query, setQuery] = useState("");
+  const [filter, setFilter] = useState<Filter>("all");
+  const dq = useDeferredValue(query);
+
+  const orders = data?.orders ?? [];
+
+  const counts = useMemo(() => {
+    const c: Record<string, number> = { all: orders.length, processing: 0, shipped: 0, delivered: 0, cancelled: 0 };
+    for (const o of orders) { const k = norm(o.status); if (k in c) c[k]++; }
+    return c;
+  }, [orders]);
+
+  const rows = useMemo(() => {
+    const q = dq.trim().toLowerCase();
+    return orders.filter((o) => {
+      if (filter !== "all" && norm(o.status) !== filter) return false;
+      if (!q) return true;
+      return o.id.toLowerCase().includes(q) || o.customer.toLowerCase().includes(q) || o.email.toLowerCase().includes(q);
+    });
+  }, [orders, dq, filter]);
 
   return (
-    <div style={{ padding: "2.5rem 3rem" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "2rem" }}>
-        <div>
-          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-crimson)", marginBottom: "0.4rem" }}>Transactions</p>
-          <h1 style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "1.75rem", color: "var(--color-cream)", letterSpacing: "-0.02em" }}>Orders</h1>
+    <>
+      <PageHeader eyebrow="Sales" title="Orders" description="Track and fulfil customer orders (latest 100)." />
+      {error ? (
+        <Alert>
+          <span>{error} </span>
+          <Button size="sm" onClick={reload}>Retry</Button>
+        </Alert>
+      ) : null}
+      <Card pad={false}>
+        <div className="adm-toolbar">
+          <div className="adm-search">
+            <Icon name="search" size={16} />
+            <input
+              className="adm-input"
+              type="search"
+              aria-label="Search orders by id, customer or email"
+              placeholder="Search order, customer, email"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+          </div>
+          <div className="adm-seg" role="group" aria-label="Filter by status">
+            {FILTERS.map((f) => (
+              <button key={f} type="button" aria-pressed={filter === f} onClick={() => setFilter(f)}>
+                {label(f)} ({counts[f] ?? 0})
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
-
-      <div style={{ marginBottom: "1.5rem" }}>
-        <input
-          type="text" value={search} onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search order ID or customer..."
-          style={{ width: "300px", padding: "0.75rem 1rem", backgroundColor: "#1A2332", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "4px", fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "var(--color-cream)", outline: "none" }}
-        />
-      </div>
-
-      <div style={{ backgroundColor: "#1A2332", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "6px", overflow: "hidden" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr style={{ backgroundColor: "rgba(255,255,255,0.02)" }}>
-              {["Order ID", "Customer", "Items", "Total", "Status", "Payment", "Date", "Action"].map(h => (
-                <th key={h} style={{ ...CELL, color: "rgba(245,241,232,0.35)", fontWeight: 700, fontSize: "0.62rem", letterSpacing: "0.1em", textTransform: "uppercase", textAlign: "left" }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map(order => {
-              const s = STATUS_COLORS[order.status] || { bg: "transparent", text: "#9CA3AF" };
-              return (
-                <tr key={order.id}>
-                  <td style={{ ...CELL, color: "var(--color-cream)", fontWeight: 700 }}>{order.id}</td>
-                  <td style={CELL}>
-                    <p style={{ color: "var(--color-cream)", fontWeight: 600, marginBottom: "2px" }}>{order.customer}</p>
-                    <p style={{ fontSize: "0.68rem", color: "rgba(245,241,232,0.4)" }}>{order.email}</p>
-                  </td>
-                  <td style={CELL}>{order.items}</td>
-                  <td style={{ ...CELL, color: "var(--color-cream)", fontWeight: 700 }}>{order.total}</td>
-                  <td style={CELL}>
-                    <span style={{ backgroundColor: s.bg, color: s.text, fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", padding: "4px 10px", borderRadius: "3px", whiteSpace: "nowrap" }}>
-                      {order.status}
-                    </span>
-                  </td>
-                  <td style={CELL}>{order.paymentMethod}</td>
-                  <td style={{ ...CELL, color: "rgba(245,241,232,0.4)" }}>{order.date}</td>
-                  <td style={CELL}>
-                    <Link href={`/portal-secure/orders/${order.id}`} style={{ padding: "6px 14px", backgroundColor: "rgba(255,255,255,0.06)", color: "rgba(245,241,232,0.75)", fontFamily: "var(--font-sans)", fontWeight: 600, fontSize: "0.72rem", textDecoration: "none", borderRadius: "3px" }}>
-                      View
-                    </Link>
-                  </td>
+        {loading && !data ? (
+          <TableSkeleton rows={8} cols={7} />
+        ) : rows.length === 0 ? (
+          <EmptyState
+            title={orders.length === 0 ? "No orders yet" : "No matching orders"}
+            description={orders.length === 0 ? "Orders will appear here once customers check out." : "Try a different search or status filter."}
+          />
+        ) : (
+          <div className="adm-table-wrap">
+            <table className="adm-table">
+              <thead>
+                <tr>
+                  <th scope="col">Order</th>
+                  <th scope="col">Customer</th>
+                  <th scope="col">Items</th>
+                  <th scope="col" className="num">Total</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Payment</th>
+                  <th scope="col">Date</th>
+                  <th scope="col"><span style={{ position: "absolute", left: -9999 }}>Actions</span></th>
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-    </div>
+              </thead>
+              <tbody>
+                {rows.map((o) => <Row key={o.id} o={o} />)}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Card>
+    </>
   );
 }

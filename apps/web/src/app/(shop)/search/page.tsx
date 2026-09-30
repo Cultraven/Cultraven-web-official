@@ -3,7 +3,7 @@
  * Search Page — /search
  * Full predictive search with trending queries, category/product results.
  */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useDeferredValue, useMemo } from "react";
 import Image from "@/components/common/CmsImage";
 import Link from "next/link";
 
@@ -25,9 +25,12 @@ export default function SearchPage() {
       .catch(() => setProducts([]));
   }, []);
 
-  const results = query.trim().length > 1
-    ? products.filter((p) => p.title.toLowerCase().includes(query.toLowerCase()) || p.category.toLowerCase().includes(query.toLowerCase()))
-    : [];
+  const deferredQuery = useDeferredValue(query);
+  const results = useMemo(() => {
+    const q = deferredQuery.trim().toLowerCase();
+    if (q.length < 2) return [];
+    return products.filter((p) => p.title.toLowerCase().includes(q) || p.category.toLowerCase().includes(q));
+  }, [products, deferredQuery]);
 
   return (
     <div style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh" }}>
@@ -87,9 +90,6 @@ export default function SearchPage() {
         )}
       </div>
 
-      <style>{`
-        @media (max-width: 768px) { .search-cats { grid-template-columns: repeat(2,1fr) !important; } .search-results { grid-template-columns: repeat(2,1fr) !important; } }
-      `}</style>
     </div>
   );
 }
