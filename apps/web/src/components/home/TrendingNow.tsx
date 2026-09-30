@@ -63,6 +63,7 @@ function TrendCard({ item }: { item: TrendingItem }) {
         style={{
           position: "relative",
           display: "block",
+          width: "100%",
           aspectRatio: "3/4",
           maxHeight: "clamp(280px, 30vw, 460px)",
           overflow: "hidden",
