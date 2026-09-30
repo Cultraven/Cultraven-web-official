@@ -8,7 +8,9 @@ const REQUIRED_ENV = ["MONGODB_URI", "SESSION_SECRET", "ADMIN_EMAIL", "ADMIN_PAS
 /** Plain-language cause for a failed database connection. Never returns the error text itself (it can contain hostnames/credentials). */
 function explain(e: unknown): string {
   const msg = String((e as any)?.message ?? e ?? "");
+  const name = String((e as any)?.name ?? "");
   if (!process.env.MONGODB_URI) return "MONGODB_URI is not set on this deployment.";
+  if (/MongoParseError|Invalid scheme|Invalid connection string|URI malformed|must be url encoded|escaped/i.test(name + " " + msg)) return "MONGODB_URI is malformed — use the mongodb+srv:// string from Atlas and URL-encode special characters in the password (@ → %40, # → %23, etc.).";
   if (/authentication failed|bad auth|auth failed/i.test(msg)) return "The database rejected the username or password in MONGODB_URI.";
   if (/querySrv|ENOTFOUND|getaddrinfo/i.test(msg)) return "DNS lookup for the database host failed (check the host in MONGODB_URI).";
   if (/timed out|ReplicaSetNoPrimary|Server selection|ECONNREFUSED|ETIMEDOUT|not allowed|whitelist|IP/i.test(msg))
@@ -28,7 +30,7 @@ export async function GET() {
   } catch (e) {
     console.error("[health] database check failed:", e instanceof Error ? e.message : e);
     return NextResponse.json(
-      { ok: false, database: "unreachable", reason: explain(e), missingEnv },
+      { ok: false, database: "unreachable", reason: explain(e), errorType: String((e as any)?.name ?? "Error"), errorCode: (e as any)?.code ?? null, missingEnv },
       { status: 503, headers: { "Cache-Control": "no-store" } }
     );
   }
