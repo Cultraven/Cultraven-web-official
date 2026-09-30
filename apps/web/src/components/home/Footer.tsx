@@ -57,6 +57,15 @@ const SOCIAL_ICONS: Record<string, React.ReactElement> = {
   ),
 };
 
+const SOCIAL_BRAND_BG: Record<string, string> = {
+  instagram: "linear-gradient(45deg, #F58529 0%, #DD2A7B 45%, #8134AF 75%, #515BD4 100%)",
+  youtube: "#FF0000",
+  pinterest: "#E60023",
+  facebook: "#1877F2",
+  twitter: "#000000",
+  whatsapp: "#25D366",
+};
+
 // ── Default fallback data when CMS is unavailable ─────────────────────────────
 const DEFAULT_SHOP_LINKS = [
   { label: "New Arrivals", href: "/collections/new-in" },
@@ -355,8 +364,8 @@ export function Footer({ config }: FooterProps) {
                   aria-label={`CULTRAVEN on ${s.platform}`}
                   className="social-btn"
                   style={{
-                    color: "var(--color-cream)",
-                    backgroundColor: "var(--color-raven)",
+                    color: "#FFFFFF",
+                    background: SOCIAL_BRAND_BG[s.platform] ?? "var(--color-raven)",
                     border: "2px solid var(--color-raven)",
                     display: "flex",
                     alignItems: "center",
