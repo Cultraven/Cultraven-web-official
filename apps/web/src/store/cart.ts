@@ -19,6 +19,7 @@ export interface CartItem {
   size: string;
   color: string;
   pricePaise: number;
+  mrpPaise?: number;
   quantity: number;
 }
 

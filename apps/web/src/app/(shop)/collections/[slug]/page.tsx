@@ -23,10 +23,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const { name, description } = getMeta(slug);
   return {
-    title: `${name} | CULTRAVEN`,
+    title: name,
     description,
     alternates: { canonical: `/collections/${slug}` },
-    openGraph: { title: `${name} | CULTRAVEN`, description, type: "website" },
+    openGraph: { title: name, description, type: "website", images: [image] },
   };
 }
 

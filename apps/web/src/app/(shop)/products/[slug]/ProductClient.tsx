@@ -106,6 +106,7 @@ export default function ProductDetailClient({ slug, productName }: { slug: strin
       size: selectedSize,
       color: COLORS[selectedColor].label,
       pricePaise: pricePaise,
+      mrpPaise: mrpPaise,
     }, qty);
 
     setAdded(true);

@@ -211,9 +211,15 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
                         {item.title}
                       </Link>
                       <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 700, color: "#6B7280", marginBottom: "0.15rem", textTransform: "uppercase" }}>{item.size && `SIZE: ${item.size}`}{item.color && ` · ${item.color}`}</p>
-                      <p style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "16px", color: "#172545", marginBottom: "0.75rem" }}>
+                      <p style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "16px", color: "#172545", marginBottom: "0.25rem" }}>
                         {fmt(item.pricePaise)}
                       </p>
+                      {item.mrpPaise && item.mrpPaise > item.pricePaise && (
+                        <p style={{ fontFamily: "var(--font-sans)", fontSize: "9px", fontWeight: 900, color: "#C94227", textTransform: "uppercase", marginBottom: "0.75rem", letterSpacing: "0.05em" }}>
+                          FINAL SALE - NO RETURNS
+                        </p>
+                      )}
+                      {!item.mrpPaise || item.mrpPaise <= item.pricePaise ? <div style={{ marginBottom: "0.75rem" }} /> : null}
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                         <div style={{ display: "flex", alignItems: "center", border: "2px solid #172545", boxShadow: "2px 2px 0px 0px #172545", backgroundColor: "#F5F1E8" }}>
                           <button onClick={() => updateQty(item.sku, -1)} aria-label="Decrease" style={{ width: "28px", height: "28px", background: "none", border: "none", cursor: "pointer", color: "#172545", fontSize: "1rem", fontWeight: 900 }}>−</button>
