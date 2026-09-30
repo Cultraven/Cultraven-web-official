@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Cormorant_Garamond, Inter } from "next/font/google";
+import { Anton, Inter, Space_Mono } from "next/font/google";
 import "@/styles/globals.css";
 import { ChatWidget } from "@/components/common/ChatWidget";
 import { ToastProvider } from "@/components/common/Toast";
@@ -11,11 +11,17 @@ const inter = Inter({
   display: "swap",
 });
 
-const cormorant = Cormorant_Garamond({
+const anton = Anton({
+  weight: "400",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-  style: ["normal", "italic"],
-  variable: "--font-cormorant",
+  variable: "--font-anton",
+  display: "swap",
+});
+
+const spaceMono = Space_Mono({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  variable: "--font-space-mono",
   display: "swap",
 });
 
@@ -110,8 +116,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${cormorant.variable}`}
-      suppressHydrationWarning
+      className={`${inter.variable} ${anton.variable} ${spaceMono.variable}`}
     >
       <head>
         {/* JSON-LD — Organization */}

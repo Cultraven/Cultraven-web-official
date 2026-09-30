@@ -78,7 +78,7 @@ export default function TrackOrderPage() {
       >
         <p
           style={{
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "var(--font-sans)",
             fontSize: "11px",
             fontWeight: 800,
             letterSpacing: "0.22em",
@@ -91,8 +91,8 @@ export default function TrackOrderPage() {
         </p>
         <h1
           style={{
-            fontFamily: "'Cormorant Garamond', Georgia, serif",
-            fontStyle: "italic",
+            fontFamily: "var(--font-heading)",
+            
             fontSize: "clamp(2.5rem,6vw,5rem)",
             fontWeight: 600,
             color: "#F5F1E8",
@@ -117,7 +117,7 @@ export default function TrackOrderPage() {
                 htmlFor="track-order-id"
                 style={{
                   display: "block",
-                  fontFamily: "Inter, sans-serif",
+                  fontFamily: "var(--font-sans)",
                   fontWeight: 800,
                   fontSize: "0.68rem",
                   letterSpacing: "0.14em",
@@ -143,15 +143,15 @@ export default function TrackOrderPage() {
                   width: "100%",
                   padding: "0.875rem 1rem",
                   border: `1.5px solid ${errors.orderId ? "#C94227" : "#D9D3C4"}`,
-                  backgroundColor: "#FFFFFF",
-                  fontFamily: "Inter, sans-serif",
+                  backgroundColor: "#F5F1E8",
+                  fontFamily: "var(--font-sans)",
                   fontSize: "0.9rem",
                   color: "#172545",
                   outline: "none",
                 }}
               />
               {errors.orderId && (
-                <p id="track-order-id-error" role="alert" style={{ fontFamily: "Inter, sans-serif", fontSize: "0.72rem", color: "#C94227", marginTop: "0.35rem" }}>
+                <p id="track-order-id-error" role="alert" style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "#C94227", marginTop: "0.35rem" }}>
                   {errors.orderId}
                 </p>
               )}
@@ -162,7 +162,7 @@ export default function TrackOrderPage() {
                 htmlFor="track-phone"
                 style={{
                   display: "block",
-                  fontFamily: "Inter, sans-serif",
+                  fontFamily: "var(--font-sans)",
                   fontWeight: 800,
                   fontSize: "0.68rem",
                   letterSpacing: "0.14em",
@@ -188,15 +188,15 @@ export default function TrackOrderPage() {
                   width: "100%",
                   padding: "0.875rem 1rem",
                   border: `1.5px solid ${errors.phone ? "#C94227" : "#D9D3C4"}`,
-                  backgroundColor: "#FFFFFF",
-                  fontFamily: "Inter, sans-serif",
+                  backgroundColor: "#F5F1E8",
+                  fontFamily: "var(--font-sans)",
                   fontSize: "0.9rem",
                   color: "#172545",
                   outline: "none",
                 }}
               />
               {errors.phone && (
-                <p id="track-phone-error" role="alert" style={{ fontFamily: "Inter, sans-serif", fontSize: "0.72rem", color: "#C94227", marginTop: "0.35rem" }}>
+                <p id="track-phone-error" role="alert" style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "#C94227", marginTop: "0.35rem" }}>
                   {errors.phone}
                 </p>
               )}
@@ -211,7 +211,7 @@ export default function TrackOrderPage() {
               padding: "1.1rem",
               backgroundColor: "#172545",
               color: "#F5F1E8",
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontWeight: 800,
               fontSize: "0.82rem",
               letterSpacing: "0.14em",
@@ -228,7 +228,7 @@ export default function TrackOrderPage() {
 
         <p
           style={{
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "var(--font-sans)",
             fontSize: "0.75rem",
             color: "#6B7280",
             marginTop: "1rem",
@@ -255,7 +255,7 @@ export default function TrackOrderPage() {
           >
             <p
               style={{
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontWeight: 700,
                 fontSize: "0.85rem",
                 color: "#172545",
@@ -266,7 +266,7 @@ export default function TrackOrderPage() {
             </p>
             <p
               style={{
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontSize: "0.82rem",
                 color: "#4B5563",
                 lineHeight: 1.6,
@@ -305,7 +305,7 @@ export default function TrackOrderPage() {
                 <div>
                   <p
                     style={{
-                      fontFamily: "Inter, sans-serif",
+                      fontFamily: "var(--font-sans)",
                       fontSize: "0.65rem",
                       fontWeight: 700,
                       letterSpacing: "0.14em",
@@ -318,7 +318,7 @@ export default function TrackOrderPage() {
                   </p>
                   <p
                     style={{
-                      fontFamily: "Inter, sans-serif",
+                      fontFamily: "var(--font-sans)",
                       fontWeight: 800,
                       fontSize: "1rem",
                       color: "#F5F1E8",
@@ -331,7 +331,7 @@ export default function TrackOrderPage() {
                   style={{
                     backgroundColor: result.statusColor,
                     color: "#FFFFFF",
-                    fontFamily: "Inter, sans-serif",
+                    fontFamily: "var(--font-sans)",
                     fontWeight: 800,
                     fontSize: "0.62rem",
                     letterSpacing: "0.12em",
@@ -353,7 +353,7 @@ export default function TrackOrderPage() {
                   <div key={r.label}>
                     <p
                       style={{
-                        fontFamily: "Inter, sans-serif",
+                        fontFamily: "var(--font-sans)",
                         fontSize: "0.62rem",
                         fontWeight: 700,
                         letterSpacing: "0.12em",
@@ -366,7 +366,7 @@ export default function TrackOrderPage() {
                     </p>
                     <p
                       style={{
-                        fontFamily: "Inter, sans-serif",
+                        fontFamily: "var(--font-sans)",
                         fontSize: "0.78rem",
                         color: "rgba(245,241,232,0.85)",
                         lineHeight: 1.5,
@@ -382,7 +382,7 @@ export default function TrackOrderPage() {
             {/* Timeline */}
             <h2
               style={{
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontWeight: 800,
                 fontSize: "0.72rem",
                 letterSpacing: "0.16em",
@@ -449,7 +449,7 @@ export default function TrackOrderPage() {
                   <div style={{ paddingBottom: i < result.timeline.length - 1 ? "1rem" : 0 }}>
                     <p
                       style={{
-                        fontFamily: "Inter, sans-serif",
+                        fontFamily: "var(--font-sans)",
                         fontWeight: step.done ? 700 : 500,
                         fontSize: "0.85rem",
                         color: step.done ? "#172545" : "#9CA3AF",
@@ -459,7 +459,7 @@ export default function TrackOrderPage() {
                     </p>
                     <p
                       style={{
-                        fontFamily: "Inter, sans-serif",
+                        fontFamily: "var(--font-sans)",
                         fontSize: "0.72rem",
                         color: "#9CA3AF",
                         marginTop: "2px",

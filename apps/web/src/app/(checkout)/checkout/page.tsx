@@ -232,8 +232,8 @@ export default function CheckoutPage() {
     width: "100%",
     padding: "0.875rem 1rem",
     border: `1.5px solid ${hasErr ? "#C94227" : "#D9D3C4"}`,
-    backgroundColor: "#FFFFFF",
-    fontFamily: "Inter, sans-serif",
+    backgroundColor: "#F5F1E8",
+    fontFamily: "var(--font-sans)",
     fontSize: "0.9rem",
     color: "#172545",
     outline: "none",
@@ -241,7 +241,7 @@ export default function CheckoutPage() {
 
   const LABEL: React.CSSProperties = {
     display: "block",
-    fontFamily: "Inter, sans-serif",
+    fontFamily: "var(--font-sans)",
     fontWeight: 800,
     fontSize: "0.68rem",
     letterSpacing: "0.14em",
@@ -251,7 +251,7 @@ export default function CheckoutPage() {
   };
 
   const ERR: React.CSSProperties = {
-    fontFamily: "Inter, sans-serif",
+    fontFamily: "var(--font-sans)",
     fontSize: "0.72rem",
     color: "#C94227",
     marginTop: "0.35rem",
@@ -261,10 +261,10 @@ export default function CheckoutPage() {
     <div style={{ backgroundColor: "#F5F1E8", minHeight: "100vh" }}>
       {/* Minimal header */}
       <header style={{ backgroundColor: "#172545", padding: "1.25rem clamp(1.25rem,4vw,5rem)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <span style={{ fontFamily: "Inter, sans-serif", fontWeight: 900, fontSize: "1.1rem", letterSpacing: "0.2em", color: "#F5F1E8", textTransform: "uppercase" }}>
+        <span style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "1.1rem", letterSpacing: "0.2em", color: "#F5F1E8", textTransform: "uppercase" }}>
           CULTRAVEN
         </span>
-        <span style={{ fontFamily: "Inter, sans-serif", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(245,241,232,0.5)" }}>
+        <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(245,241,232,0.5)" }}>
           SECURE CHECKOUT
         </span>
       </header>
@@ -277,11 +277,11 @@ export default function CheckoutPage() {
         <div style={{ padding: "clamp(2rem,5vw,5rem)" }}>
           {/* Breadcrumb */}
           <div style={{ display: "flex", gap: "0.75rem", alignItems: "center", marginBottom: "2.5rem" }}>
-            <span style={{ fontFamily: "Inter, sans-serif", fontSize: "0.72rem", fontWeight: step === 1 ? 800 : 500, color: step === 1 ? "#172545" : "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+            <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", fontWeight: step === 1 ? 800 : 500, color: step === 1 ? "#172545" : "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.1em" }}>
               Shipping
             </span>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#D9D3C4" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
-            <span style={{ fontFamily: "Inter, sans-serif", fontSize: "0.72rem", fontWeight: step === 2 ? 800 : 500, color: step === 2 ? "#172545" : "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+            <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", fontWeight: step === 2 ? 800 : 500, color: step === 2 ? "#172545" : "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.1em" }}>
               Payment
             </span>
           </div>
@@ -289,7 +289,7 @@ export default function CheckoutPage() {
           {/* STEP 1: Shipping */}
           {step === 1 && (
             <form onSubmit={handleStep1} noValidate>
-              <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontStyle: "italic", fontSize: "clamp(1.75rem,3.5vw,2.5rem)", fontWeight: 600, color: "#172545", marginBottom: "2rem" }}>
+              <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(1.75rem,3.5vw,2.5rem)", fontWeight: 600, color: "#172545", marginBottom: "2rem" }}>
                 Contact & Shipping
               </h1>
 
@@ -376,7 +376,7 @@ export default function CheckoutPage() {
                     padding: "1.1rem",
                     backgroundColor: "#172545",
                     color: "#F5F1E8",
-                    fontFamily: "Inter, sans-serif",
+                    fontFamily: "var(--font-sans)",
                     fontWeight: 800,
                     fontSize: "0.82rem",
                     letterSpacing: "0.14em",
@@ -394,22 +394,22 @@ export default function CheckoutPage() {
           {/* STEP 2: Payment */}
           {step === 2 && (
             <form onSubmit={handlePlaceOrder}>
-              <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontStyle: "italic", fontSize: "clamp(1.75rem,3.5vw,2.5rem)", fontWeight: 600, color: "#172545", marginBottom: "2rem" }}>
+              <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(1.75rem,3.5vw,2.5rem)", fontWeight: 600, color: "#172545", marginBottom: "2rem" }}>
                 Payment
               </h1>
 
               {/* Address summary */}
-              <div style={{ border: "1.5px solid #D9D3C4", marginBottom: "2rem" }}>
+              <div style={{ border: "2px solid #172545", boxShadow: "inset 2px 2px 0px 0px rgba(23,37,69,0.1)", marginBottom: "2rem" }}>
                 {[
                   { label: "Contact", value: form.email },
                   { label: "Ship to", value: `${form.address}, ${form.city}, ${form.state} ${form.pincode}` },
                 ].map((row, i, arr) => (
                   <div key={row.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.875rem 1.25rem", backgroundColor: "#EAE6DB", borderBottom: i < arr.length - 1 ? "1px solid #D9D3C4" : "none" }}>
                     <div>
-                      <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.68rem", color: "#6B7280", marginBottom: "2px", textTransform: "uppercase", letterSpacing: "0.08em" }}>{row.label}</p>
-                      <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.82rem", color: "#172545" }}>{row.value}</p>
+                      <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", color: "#6B7280", marginBottom: "2px", textTransform: "uppercase", letterSpacing: "0.08em" }}>{row.label}</p>
+                      <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "#172545" }}>{row.value}</p>
                     </div>
-                    <button type="button" onClick={() => setStep(1)} style={{ fontFamily: "Inter, sans-serif", fontSize: "0.72rem", fontWeight: 700, color: "#C94227", background: "none", border: "none", cursor: "pointer" }}>
+                    <button type="button" onClick={() => setStep(1)} style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", fontWeight: 700, color: "#C94227", background: "none", border: "none", cursor: "pointer" }}>
                       Change
                     </button>
                   </div>
@@ -417,10 +417,10 @@ export default function CheckoutPage() {
               </div>
 
               {/* Payment method */}
-              <h2 style={{ fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.75rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#172545", marginBottom: "0.875rem" }}>
+              <h2 style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.75rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#172545", marginBottom: "0.875rem" }}>
                 Payment Method
               </h2>
-              <div style={{ border: "1.5px solid #D9D3C4", backgroundColor: "#FFFFFF", marginBottom: "2rem" }}>
+              <div style={{ border: "2px solid #172545", boxShadow: "inset 2px 2px 0px 0px rgba(23,37,69,0.1)", backgroundColor: "#F5F1E8", marginBottom: "2rem" }}>
                 {[
                   { id: "razorpay", label: "UPI / Card / Netbanking / Wallets", sub: "Powered by Razorpay — PCI DSS Level 1 Secure" },
                   { id: "cod", label: "Cash on Delivery", sub: "Available on orders up to ₹5,000. ₹49 handling fee." },
@@ -439,15 +439,15 @@ export default function CheckoutPage() {
                   >
                     <input type="radio" name="payment" value={method.id} checked={paymentMethod === method.id} onChange={(e) => setPaymentMethod(e.target.value)} style={{ accentColor: "#172545", width: "16px", height: "16px", flexShrink: 0 }} />
                     <div>
-                      <p style={{ fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: "0.85rem", color: "#172545" }}>{method.label}</p>
-                      <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.72rem", color: "#6B7280", marginTop: "2px" }}>{method.sub}</p>
+                      <p style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.85rem", color: "#172545" }}>{method.label}</p>
+                      <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "#6B7280", marginTop: "2px" }}>{method.sub}</p>
                     </div>
                   </label>
                 ))}
               </div>
 
               {paymentError && (
-                <p role="alert" style={{ fontFamily: "Inter, sans-serif", fontSize: "0.82rem", color: "#C94227", marginBottom: "1rem", padding: "0.75rem", backgroundColor: "#FEF2F2", border: "1px solid #FECACA" }}>
+                <p role="alert" style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "#C94227", marginBottom: "1rem", padding: "0.75rem", backgroundColor: "#FEF2F2", border: "1px solid #FECACA" }}>
                   {paymentError}
                 </p>
               )}
@@ -456,7 +456,7 @@ export default function CheckoutPage() {
                 <button
                   type="button"
                   onClick={() => { setStep(1); setPaymentError(""); }}
-                  style={{ width: "30%", padding: "1.1rem", backgroundColor: "transparent", color: "#172545", fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.78rem", letterSpacing: "0.12em", textTransform: "uppercase", border: "2px solid #D9D3C4", cursor: "pointer" }}
+                  style={{ width: "30%", padding: "1.1rem", backgroundColor: "transparent", color: "#172545", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.78rem", letterSpacing: "0.12em", textTransform: "uppercase", border: "2px solid #D9D3C4", cursor: "pointer" }}
                 >
                   BACK
                 </button>
@@ -464,13 +464,13 @@ export default function CheckoutPage() {
                   id="checkout-place-order-btn"
                   type="submit"
                   disabled={loading}
-                  style={{ width: "70%", padding: "1.1rem", backgroundColor: "#172545", color: "#F5F1E8", fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.82rem", letterSpacing: "0.14em", textTransform: "uppercase", border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.75 : 1 }}
+                  style={{ width: "70%", padding: "1.1rem", backgroundColor: "#172545", color: "#F5F1E8", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.82rem", letterSpacing: "0.14em", textTransform: "uppercase", border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.75 : 1 }}
                 >
                   {loading ? "PROCESSING..." : `PAY ${fmt(total)}`}
                 </button>
               </div>
 
-              <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.68rem", color: "#9CA3AF", textAlign: "center", marginTop: "1rem", lineHeight: 1.6 }}>
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", color: "#9CA3AF", textAlign: "center", marginTop: "1rem", lineHeight: 1.6 }}>
                 🔒 Secured by Razorpay · 256-bit SSL Encryption
               </p>
             </form>
@@ -479,7 +479,7 @@ export default function CheckoutPage() {
 
         {/* ── Right: Order summary ── */}
         <div style={{ backgroundColor: "#EAE6DB", padding: "clamp(2rem,5vw,3.5rem)", borderLeft: "1px solid #D9D3C4" }}>
-          <h2 style={{ fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.75rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#172545", marginBottom: "1.75rem" }}>
+          <h2 style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.75rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#172545", marginBottom: "1.75rem" }}>
             ORDER SUMMARY
           </h2>
 
@@ -488,14 +488,14 @@ export default function CheckoutPage() {
               <div key={item.id} style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
                 <div style={{ position: "relative", width: "64px", aspectRatio: "3/4", backgroundColor: "#D9D3C4", flexShrink: 0 }}>
                   <Image src={item.image} alt={item.title} fill sizes="64px" style={{ objectFit: "cover" }} />
-                  <span style={{ position: "absolute", top: "-6px", right: "-6px", backgroundColor: "#172545", color: "#F5F1E8", width: "20px", height: "20px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Inter, sans-serif", fontSize: "10px", fontWeight: 700 }}>
+                  <span style={{ position: "absolute", top: "-6px", right: "-6px", backgroundColor: "#172545", color: "#F5F1E8", width: "20px", height: "20px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-sans)", fontSize: "10px", fontWeight: 700 }}>
                     {item.qty}
                   </span>
                 </div>
                 <div style={{ flex: 1 }}>
-                  <p style={{ fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.68rem", color: "#172545", textTransform: "uppercase", marginBottom: "3px", lineHeight: 1.3 }}>{item.title}</p>
-                  <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.72rem", color: "#6B7280" }}>Size: {item.size}</p>
-                  <p style={{ fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: "0.85rem", color: "#172545", marginTop: "4px" }}>{fmt(item.pricePaise)}</p>
+                  <p style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.68rem", color: "#172545", textTransform: "uppercase", marginBottom: "3px", lineHeight: 1.3 }}>{item.title}</p>
+                  <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "#6B7280" }}>Size: {item.size}</p>
+                  <p style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.85rem", color: "#172545", marginTop: "4px" }}>{fmt(item.pricePaise)}</p>
                 </div>
               </div>
             ))}
@@ -503,21 +503,21 @@ export default function CheckoutPage() {
 
           <div style={{ borderTop: "1px solid #D9D3C4", paddingTop: "1.5rem", display: "flex", flexDirection: "column", gap: "0.75rem", marginBottom: "1.5rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ fontFamily: "Inter, sans-serif", fontSize: "0.82rem", color: "#6B7280" }}>Subtotal</span>
-              <span style={{ fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: "0.85rem", color: "#172545" }}>{fmt(subtotal)}</span>
+              <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "#6B7280" }}>Subtotal</span>
+              <span style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.85rem", color: "#172545" }}>{fmt(subtotal)}</span>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ fontFamily: "Inter, sans-serif", fontSize: "0.82rem", color: "#6B7280" }}>Shipping</span>
-              <span style={{ fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: "0.85rem", color: shipping === 0 ? "#059669" : "#172545" }}>{shipping === 0 ? "FREE" : fmt(shipping)}</span>
+              <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "#6B7280" }}>Shipping</span>
+              <span style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.85rem", color: shipping === 0 ? "#059669" : "#172545" }}>{shipping === 0 ? "FREE" : fmt(shipping)}</span>
             </div>
           </div>
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", borderTop: "1px solid #D9D3C4", paddingTop: "1.5rem" }}>
-            <span style={{ fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.82rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "#172545" }}>TOTAL</span>
-            <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontSize: "2rem", color: "#172545" }}>{fmt(total)}</span>
+            <span style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.82rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "#172545" }}>TOTAL</span>
+            <span style={{ fontFamily: "var(--font-heading)", fontWeight: 600, fontSize: "2rem", color: "#172545" }}>{fmt(total)}</span>
           </div>
 
-          <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.68rem", color: "#9CA3AF", marginTop: "0.5rem", textAlign: "right" }}>Inclusive of all taxes</p>
+          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", color: "#9CA3AF", marginTop: "0.5rem", textAlign: "right" }}>Inclusive of all taxes</p>
         </div>
       </div>
 

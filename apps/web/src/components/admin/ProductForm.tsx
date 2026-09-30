@@ -68,7 +68,7 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
     backgroundColor: "#0F1419",
     border: "1px solid rgba(245,241,232,0.1)",
     color: "#F5F1E8",
-    fontFamily: "Inter, sans-serif",
+    fontFamily: "var(--font-sans)",
     fontSize: "0.875rem",
     borderRadius: "4px",
     outline: "none",
@@ -76,7 +76,7 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
 
   const LABEL_STYLE: React.CSSProperties = {
     display: "block",
-    fontFamily: "Inter, sans-serif",
+    fontFamily: "var(--font-sans)",
     fontSize: "0.75rem",
     fontWeight: 700,
     textTransform: "uppercase",

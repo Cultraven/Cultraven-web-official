@@ -78,8 +78,8 @@ export default function ContactPage() {
     width: "100%",
     padding: "0.875rem 1rem",
     border: `1.5px solid ${hasError ? "#C94227" : "#D9D3C4"}`,
-    backgroundColor: "#FFFFFF",
-    fontFamily: "Inter, sans-serif",
+    backgroundColor: "#F5F1E8",
+    fontFamily: "var(--font-sans)",
     fontSize: "0.9rem",
     color: "#172545",
     outline: "none",
@@ -87,7 +87,7 @@ export default function ContactPage() {
 
   const LABEL_STYLE: React.CSSProperties = {
     display: "block",
-    fontFamily: "Inter, sans-serif",
+    fontFamily: "var(--font-sans)",
     fontWeight: 800,
     fontSize: "0.68rem",
     letterSpacing: "0.14em",
@@ -97,7 +97,7 @@ export default function ContactPage() {
   };
 
   const ERR_STYLE: React.CSSProperties = {
-    fontFamily: "Inter, sans-serif",
+    fontFamily: "var(--font-sans)",
     fontSize: "0.72rem",
     color: "#C94227",
     marginTop: "0.35rem",
@@ -114,7 +114,7 @@ export default function ContactPage() {
       >
         <p
           style={{
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "var(--font-sans)",
             fontSize: "11px",
             fontWeight: 800,
             letterSpacing: "0.22em",
@@ -127,8 +127,8 @@ export default function ContactPage() {
         </p>
         <h1
           style={{
-            fontFamily: "'Cormorant Garamond', Georgia, serif",
-            fontStyle: "italic",
+            fontFamily: "var(--font-heading)",
+            
             fontSize: "clamp(2.5rem,6vw,5rem)",
             fontWeight: 600,
             color: "#F5F1E8",
@@ -177,8 +177,8 @@ export default function ContactPage() {
               </div>
               <p
                 style={{
-                  fontFamily: "'Cormorant Garamond', Georgia, serif",
-                  fontStyle: "italic",
+                  fontFamily: "var(--font-heading)",
+                  
                   fontSize: "1.75rem",
                   fontWeight: 600,
                   color: "#F5F1E8",
@@ -189,7 +189,7 @@ export default function ContactPage() {
               </p>
               <p
                 style={{
-                  fontFamily: "Inter, sans-serif",
+                  fontFamily: "var(--font-sans)",
                   fontSize: "0.82rem",
                   color: "rgba(245,241,232,0.65)",
                   lineHeight: 1.7,
@@ -202,8 +202,8 @@ export default function ContactPage() {
             <form onSubmit={handleSubmit} noValidate>
               <h2
                 style={{
-                  fontFamily: "'Cormorant Garamond', Georgia, serif",
-                  fontStyle: "italic",
+                  fontFamily: "var(--font-heading)",
+                  
                   fontSize: "2rem",
                   fontWeight: 600,
                   color: "#172545",
@@ -299,7 +299,7 @@ export default function ContactPage() {
                     placeholder="Tell us how we can help..."
                     aria-invalid={!!errors.message}
                     aria-describedby={errors.message ? "contact-message-error" : undefined}
-                    style={{ ...FIELD_STYLE(errors.message), resize: "vertical", fontFamily: "Inter, sans-serif" }}
+                    style={{ ...FIELD_STYLE(errors.message), resize: "vertical", fontFamily: "var(--font-sans)" }}
                   />
                   <div style={{ display: "flex", justifyContent: "space-between" }}>
                     {errors.message
@@ -324,7 +324,7 @@ export default function ContactPage() {
                     padding: "1.1rem",
                     backgroundColor: "#172545",
                     color: "#F5F1E8",
-                    fontFamily: "Inter, sans-serif",
+                    fontFamily: "var(--font-sans)",
                     fontWeight: 800,
                     fontSize: "0.82rem",
                     letterSpacing: "0.14em",
@@ -345,8 +345,8 @@ export default function ContactPage() {
         <div>
           <h2
             style={{
-              fontFamily: "'Cormorant Garamond', Georgia, serif",
-              fontStyle: "italic",
+              fontFamily: "var(--font-heading)",
+              
               fontSize: "2rem",
               fontWeight: 600,
               color: "#172545",
@@ -392,10 +392,10 @@ export default function ContactPage() {
                 </svg>
               </div>
               <div>
-                <p style={{ fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.85rem", color: "#172545", marginBottom: "3px" }}>
+                <p style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.85rem", color: "#172545", marginBottom: "3px" }}>
                   WhatsApp
                 </p>
-                <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.75rem", color: "#6B7280" }}>
+                <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", color: "#6B7280" }}>
                   Fastest response — typically within 1 hour
                 </p>
               </div>
@@ -438,10 +438,10 @@ export default function ContactPage() {
                 </svg>
               </div>
               <div>
-                <p style={{ fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.85rem", color: "#172545", marginBottom: "3px" }}>
+                <p style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.85rem", color: "#172545", marginBottom: "3px" }}>
                   Instagram DM
                 </p>
-                <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.75rem", color: "#6B7280" }}>
+                <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", color: "#6B7280" }}>
                   @cultraven — usually replies within a few hours
                 </p>
               </div>
@@ -480,10 +480,10 @@ export default function ContactPage() {
                 </svg>
               </div>
               <div>
-                <p style={{ fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.85rem", color: "#172545", marginBottom: "3px" }}>
+                <p style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.85rem", color: "#172545", marginBottom: "3px" }}>
                   Email
                 </p>
-                <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.75rem", color: "#6B7280" }}>
+                <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", color: "#6B7280" }}>
                   support@cultraven.com — reply within 24 hours
                 </p>
               </div>
@@ -499,7 +499,7 @@ export default function ContactPage() {
           >
             <p
               style={{
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontWeight: 800,
                 fontSize: "0.68rem",
                 letterSpacing: "0.12em",
@@ -512,7 +512,7 @@ export default function ContactPage() {
             </p>
             <p
               style={{
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontSize: "0.82rem",
                 color: "#4B5563",
                 lineHeight: 1.6,

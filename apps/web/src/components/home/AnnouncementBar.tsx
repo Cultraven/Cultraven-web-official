@@ -13,11 +13,10 @@ interface AnnouncementBarProps {
 }
 
 const DEFAULT_ITEMS = [
-  "Free Shipping on orders above ₹999",
-  "Express delivery in 2–4 business days",
-  "Easy 15-day hassle-free returns",
-  "Exclusive member offers — Join the Cultraven Circle",
-  "New Arrivals: Pigmentum Collection — Shop Now",
+  "FREE DELIVERY ABOVE ₹999",
+  "CASH ON DELIVERY AVAILABLE",
+  "7-DAY HASSLE-FREE RETURNS",
+  "EXTRA 10% OFF ON PREPAID ORDERS",
 ];
 
 export function AnnouncementBar({ data }: AnnouncementBarProps) {
@@ -26,10 +25,10 @@ export function AnnouncementBar({ data }: AnnouncementBarProps) {
   if (dismissed) return null;
 
   const items: string[] =
-    data?.items?.length > 0 ? data.items.map((i) => i.text) : DEFAULT_ITEMS;
+    data?.items?.length > 0 ? data.items.map((i) => i.text.toUpperCase()) : DEFAULT_ITEMS;
 
   // Double for seamless loop
-  const doubled = [...items, ...items];
+  const doubled = [...items, ...items, ...items, ...items];
 
   return (
     <div
@@ -38,15 +37,17 @@ export function AnnouncementBar({ data }: AnnouncementBarProps) {
       className="relative w-full overflow-hidden"
       style={{
         backgroundColor: "#172545",
-        height: "36px",
+        height: "44px",
         display: "flex",
         alignItems: "center",
+        borderBottom: "var(--border-thick)",
+        boxSizing: "border-box",
       }}
     >
       {/* Ticker track */}
       <div
         className="ticker-track"
-        style={{ gap: "0", animationDuration: `${items.length * 7}s` }}
+        style={{ gap: "0", animationDuration: `${items.length * 5}s` }}
       >
         {doubled.map((text, i) => (
           <span
@@ -54,11 +55,12 @@ export function AnnouncementBar({ data }: AnnouncementBarProps) {
             className="inline-flex items-center"
             style={{
               color: "#F5F1E8",
-              fontSize: "11px",
-              fontWeight: 500,
-              letterSpacing: "0.08em",
-              fontFamily: "var(--font-body)",
+              fontSize: "12px",
+              fontWeight: 800,
+              letterSpacing: "0.1em",
+              fontFamily: "var(--font-sans)",
               paddingRight: "0",
+              whiteSpace: "nowrap",
             }}
           >
             {text}
@@ -66,12 +68,12 @@ export function AnnouncementBar({ data }: AnnouncementBarProps) {
               aria-hidden="true"
               style={{
                 display: "inline-block",
-                width: "6px",
-                height: "6px",
-                borderRadius: "50%",
+                width: "8px",
+                height: "8px",
                 background: "#C94227",
-                margin: "0 2.5rem",
+                margin: "0 2rem",
                 flexShrink: 0,
+                transform: "rotate(45deg)",
               }}
             />
           </span>
@@ -82,24 +84,14 @@ export function AnnouncementBar({ data }: AnnouncementBarProps) {
       <button
         onClick={() => setDismissed(true)}
         aria-label="Dismiss announcement"
-        className="absolute right-3 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center w-5 h-5 rounded-full opacity-60 hover:opacity-100 transition-opacity"
-        style={{ color: "#F5F1E8" }}
+        className="absolute right-3 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center w-6 h-6 rounded-none transition-transform"
+        style={{ color: "#172545", backgroundColor: "#F5F1E8", border: "2px solid #172545" }}
       >
-        <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-          <line x1="1" y1="1" x2="9" y2="9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-          <line x1="9" y1="1" x2="1" y2="9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <svg width="12" height="12" viewBox="0 0 10 10" fill="none">
+          <line x1="1" y1="1" x2="9" y2="9" stroke="currentColor" strokeWidth="2" strokeLinecap="square" />
+          <line x1="9" y1="1" x2="1" y2="9" stroke="currentColor" strokeWidth="2" strokeLinecap="square" />
         </svg>
       </button>
-
-      {/* Subtle left/right fade */}
-      <div
-        className="pointer-events-none absolute inset-y-0 left-0 w-16"
-        style={{ background: "linear-gradient(to right, #172545, transparent)" }}
-      />
-      <div
-        className="pointer-events-none absolute inset-y-0 right-0 w-16"
-        style={{ background: "linear-gradient(to left, #172545, transparent)" }}
-      />
     </div>
   );
 }

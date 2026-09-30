@@ -26,14 +26,14 @@ export default function JournalPage() {
     <div style={{ backgroundColor: "#F5F1E8", minHeight: "100vh" }}>
       {/* Header */}
       <div style={{ backgroundColor: "#172545", padding: "clamp(3rem,6vw,6rem) clamp(1.25rem,4vw,5rem)" }}>
-        <p style={{ fontFamily: "Inter, sans-serif", fontSize: "11px", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#C94227", marginBottom: "0.75rem" }}>STORIES & IDEAS</p>
-        <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontStyle: "italic", fontSize: "clamp(2.5rem,6vw,5rem)", fontWeight: 600, color: "#F5F1E8", lineHeight: 1 }}>The Journal</h1>
+        <p style={{ fontFamily: "var(--font-sans)", fontSize: "11px", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#C94227", marginBottom: "0.75rem" }}>STORIES & IDEAS</p>
+        <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(2.5rem,6vw,5rem)", fontWeight: 600, color: "#F5F1E8", lineHeight: 1 }}>The Journal</h1>
       </div>
 
       {/* Category filter */}
       <div style={{ backgroundColor: "#EAE6DB", padding: "1.25rem clamp(1.25rem,4vw,5rem)", display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
         {CATEGORIES.map((cat) => (
-          <button key={cat} style={{ padding: "0.4rem 1rem", border: "1.5px solid #172545", backgroundColor: cat === "ALL" ? "#172545" : "transparent", color: cat === "ALL" ? "#F5F1E8" : "#172545", fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.68rem", letterSpacing: "0.12em", textTransform: "uppercase", cursor: "pointer" }}>{cat}</button>
+          <button key={cat} style={{ padding: "0.4rem 1rem", border: "1.5px solid #172545", backgroundColor: cat === "ALL" ? "#172545" : "transparent", color: cat === "ALL" ? "#F5F1E8" : "#172545", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.68rem", letterSpacing: "0.12em", textTransform: "uppercase", cursor: "pointer" }}>{cat}</button>
         ))}
       </div>
 
@@ -44,12 +44,12 @@ export default function JournalPage() {
             <Image src={featured.image} alt={featured.title} fill sizes="50vw" style={{ objectFit: "cover", transition: "transform 0.6s ease" }} className="featured-img" />
           </div>
           <div style={{ backgroundColor: "#172545", padding: "clamp(2.5rem,4vw,4rem)", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-            <span style={{ fontFamily: "Inter, sans-serif", fontSize: "10px", fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase", color: "#C94227", marginBottom: "1rem", display: "block" }}>FEATURED · {featured.category}</span>
-            <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontStyle: "italic", fontSize: "clamp(1.75rem,3.5vw,2.75rem)", fontWeight: 600, color: "#F5F1E8", lineHeight: 1.1, marginBottom: "1.25rem" }}>{featured.title}</h2>
-            <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.88rem", lineHeight: 1.7, color: "rgba(245,241,232,0.65)", marginBottom: "2rem" }}>{featured.excerpt}</p>
+            <span style={{ fontFamily: "var(--font-sans)", fontSize: "10px", fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase", color: "#C94227", marginBottom: "1rem", display: "block" }}>FEATURED · {featured.category}</span>
+            <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(1.75rem,3.5vw,2.75rem)", fontWeight: 600, color: "#F5F1E8", lineHeight: 1.1, marginBottom: "1.25rem" }}>{featured.title}</h2>
+            <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.88rem", lineHeight: 1.7, color: "rgba(245,241,232,0.65)", marginBottom: "2rem" }}>{featured.excerpt}</p>
             <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-              <span style={{ fontFamily: "Inter, sans-serif", fontSize: "0.72rem", color: "rgba(245,241,232,0.45)", fontWeight: 600 }}>{featured.date}</span>
-              <span style={{ fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.72rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "#F5F1E8", borderBottom: "1px solid rgba(245,241,232,0.4)", paddingBottom: "1px" }}>READ MORE →</span>
+              <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "rgba(245,241,232,0.45)", fontWeight: 600 }}>{featured.date}</span>
+              <span style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.72rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "#F5F1E8", borderBottom: "1px solid rgba(245,241,232,0.4)", paddingBottom: "1px" }}>READ MORE →</span>
             </div>
           </div>
         </Link>
@@ -61,9 +61,9 @@ export default function JournalPage() {
               <div style={{ position: "relative", aspectRatio: "16/10", overflow: "hidden", backgroundColor: "#EAE6DB", marginBottom: "1rem" }}>
                 <Image src={a.image} alt={a.title} fill sizes="33vw" style={{ objectFit: "cover", transition: "transform 0.5s ease" }} className="article-img" />
               </div>
-              <span style={{ fontFamily: "Inter, sans-serif", fontSize: "10px", fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase", color: "#C94227", display: "block", marginBottom: "0.5rem" }}>{a.category} · {a.date}</span>
-              <h3 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontStyle: "italic", fontSize: "1.4rem", fontWeight: 600, color: "#172545", lineHeight: 1.2, marginBottom: "0.625rem" }}>{a.title}</h3>
-              <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.82rem", lineHeight: 1.7, color: "#4B5563" }}>{a.excerpt}</p>
+              <span style={{ fontFamily: "var(--font-sans)", fontSize: "10px", fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase", color: "#C94227", display: "block", marginBottom: "0.5rem" }}>{a.category} · {a.date}</span>
+              <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1.4rem", fontWeight: 600, color: "#172545", lineHeight: 1.2, marginBottom: "0.625rem" }}>{a.title}</h3>
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", lineHeight: 1.7, color: "#4B5563" }}>{a.excerpt}</p>
             </Link>
           ))}
         </div>

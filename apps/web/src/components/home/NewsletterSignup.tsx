@@ -45,7 +45,7 @@ export function NewsletterSignup({ config }: { config: NewsletterConfig }) {
       >
         <span
           style={{
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "var(--font-sans)",
             fontWeight: 800,
             fontSize: "0.7rem",
             letterSpacing: "0.2em",
@@ -60,8 +60,8 @@ export function NewsletterSignup({ config }: { config: NewsletterConfig }) {
 
         <h2
           style={{
-            fontFamily: "'Cormorant Garamond', Georgia, serif",
-            fontStyle: "italic",
+            fontFamily: "var(--font-heading)",
+            
             fontSize: "clamp(2rem,4.5vw,3.75rem)",
             fontWeight: 600,
             color: "#172545",
@@ -76,7 +76,7 @@ export function NewsletterSignup({ config }: { config: NewsletterConfig }) {
         {config.subtext && (
           <p
             style={{
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontSize: "0.95rem",
               color: "#6B7280",
               marginBottom: "2.5rem",
@@ -94,7 +94,7 @@ export function NewsletterSignup({ config }: { config: NewsletterConfig }) {
               padding: "1rem 2rem",
               backgroundColor: "#172545",
               color: "#F5F1E8",
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontWeight: 800,
               fontSize: "0.75rem",
               letterSpacing: "0.15em",
@@ -121,7 +121,7 @@ export function NewsletterSignup({ config }: { config: NewsletterConfig }) {
                 borderRight: "none",
                 backgroundColor: "#F5F1E8",
                 color: "#172545",
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontSize: "0.85rem",
                 outline: "none",
               }}
@@ -134,7 +134,7 @@ export function NewsletterSignup({ config }: { config: NewsletterConfig }) {
                 backgroundColor: "#172545",
                 color: "#F5F1E8",
                 border: "2px solid #172545",
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontWeight: 800,
                 fontSize: "0.72rem",
                 letterSpacing: "0.12em",

@@ -45,7 +45,7 @@ export default function AdminOrdersPage() {
   );
 
   const CELL: React.CSSProperties = {
-    padding: "1rem", fontFamily: "Inter, sans-serif", fontSize: "0.78rem",
+    padding: "1rem", fontFamily: "var(--font-sans)", fontSize: "0.78rem",
     color: "rgba(245,241,232,0.75)", borderBottom: "1px solid rgba(255,255,255,0.04)",
   };
 
@@ -53,8 +53,8 @@ export default function AdminOrdersPage() {
     <div style={{ padding: "2.5rem 3rem" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "2rem" }}>
         <div>
-          <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#C94227", marginBottom: "0.4rem" }}>Transactions</p>
-          <h1 style={{ fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "1.75rem", color: "#F5F1E8", letterSpacing: "-0.02em" }}>Orders</h1>
+          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#C94227", marginBottom: "0.4rem" }}>Transactions</p>
+          <h1 style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "1.75rem", color: "#F5F1E8", letterSpacing: "-0.02em" }}>Orders</h1>
         </div>
       </div>
 
@@ -62,7 +62,7 @@ export default function AdminOrdersPage() {
         <input
           type="text" value={search} onChange={(e) => setSearch(e.target.value)}
           placeholder="Search order ID or customer..."
-          style={{ width: "300px", padding: "0.75rem 1rem", backgroundColor: "#1A2332", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "4px", fontFamily: "Inter, sans-serif", fontSize: "0.82rem", color: "#F5F1E8", outline: "none" }}
+          style={{ width: "300px", padding: "0.75rem 1rem", backgroundColor: "#1A2332", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "4px", fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "#F5F1E8", outline: "none" }}
         />
       </div>
 
@@ -95,7 +95,7 @@ export default function AdminOrdersPage() {
                   <td style={CELL}>{order.paymentMethod}</td>
                   <td style={{ ...CELL, color: "rgba(245,241,232,0.4)" }}>{order.date}</td>
                   <td style={CELL}>
-                    <Link href={`/admin/orders/${order.id}`} style={{ padding: "6px 14px", backgroundColor: "rgba(255,255,255,0.06)", color: "rgba(245,241,232,0.75)", fontFamily: "Inter, sans-serif", fontWeight: 600, fontSize: "0.72rem", textDecoration: "none", borderRadius: "3px" }}>
+                    <Link href={`/admin/orders/${order.id}`} style={{ padding: "6px 14px", backgroundColor: "rgba(255,255,255,0.06)", color: "rgba(245,241,232,0.75)", fontFamily: "var(--font-sans)", fontWeight: 600, fontSize: "0.72rem", textDecoration: "none", borderRadius: "3px" }}>
                       View
                     </Link>
                   </td>

@@ -141,7 +141,7 @@ export default function FAQPage() {
       >
         <p
           style={{
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "var(--font-sans)",
             fontSize: "11px",
             fontWeight: 800,
             letterSpacing: "0.22em",
@@ -154,8 +154,8 @@ export default function FAQPage() {
         </p>
         <h1
           style={{
-            fontFamily: "'Cormorant Garamond', Georgia, serif",
-            fontStyle: "italic",
+            fontFamily: "var(--font-heading)",
+            
             fontSize: "clamp(2.5rem,6vw,5rem)",
             fontWeight: 600,
             color: "#F5F1E8",
@@ -167,7 +167,7 @@ export default function FAQPage() {
         </h1>
         <p
           style={{
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "var(--font-sans)",
             fontSize: "0.9rem",
             color: "rgba(245,241,232,0.65)",
             maxWidth: "500px",
@@ -183,7 +183,7 @@ export default function FAQPage() {
           <div key={group.category} style={{ marginBottom: "3rem" }}>
             <h2
               style={{
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontWeight: 900,
                 fontSize: "0.68rem",
                 letterSpacing: "0.22em",
@@ -220,7 +220,7 @@ export default function FAQPage() {
                     >
                       <span
                         style={{
-                          fontFamily: "Inter, sans-serif",
+                          fontFamily: "var(--font-sans)",
                           fontWeight: 700,
                           fontSize: "0.92rem",
                           color: "#172545",
@@ -258,7 +258,7 @@ export default function FAQPage() {
                     >
                       <p
                         style={{
-                          fontFamily: "Inter, sans-serif",
+                          fontFamily: "var(--font-sans)",
                           fontSize: "0.875rem",
                           lineHeight: 1.8,
                           color: "#4B5563",
@@ -286,8 +286,8 @@ export default function FAQPage() {
         >
           <p
             style={{
-              fontFamily: "'Cormorant Garamond', Georgia, serif",
-              fontStyle: "italic",
+              fontFamily: "var(--font-heading)",
+              
               fontSize: "1.5rem",
               fontWeight: 600,
               color: "#F5F1E8",
@@ -298,7 +298,7 @@ export default function FAQPage() {
           </p>
           <p
             style={{
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontSize: "0.82rem",
               color: "rgba(245,241,232,0.65)",
               marginBottom: "1.5rem",
@@ -316,7 +316,7 @@ export default function FAQPage() {
                 padding: "0.875rem 1.75rem",
                 backgroundColor: "#25D366",
                 color: "#FFFFFF",
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontWeight: 800,
                 fontSize: "0.72rem",
                 letterSpacing: "0.1em",
@@ -333,7 +333,7 @@ export default function FAQPage() {
                 padding: "0.875rem 1.75rem",
                 border: "2px solid #F5F1E8",
                 color: "#F5F1E8",
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontWeight: 800,
                 fontSize: "0.72rem",
                 letterSpacing: "0.1em",

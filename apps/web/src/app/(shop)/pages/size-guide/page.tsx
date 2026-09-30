@@ -43,15 +43,15 @@ export default function SizeGuidePage() {
     <div style={{ backgroundColor: "#F5F1E8", minHeight: "100vh" }}>
       {/* Header */}
       <div style={{ backgroundColor: "#172545", padding: "clamp(3rem,6vw,6rem) clamp(1.25rem,4vw,5rem)" }}>
-        <p style={{ fontFamily: "Inter, sans-serif", fontSize: "11px", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#C94227", marginBottom: "0.75rem" }}>FIT MATTERS</p>
-        <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontStyle: "italic", fontSize: "clamp(2.5rem,6vw,5rem)", fontWeight: 600, color: "#F5F1E8", lineHeight: 1 }}>Size Guide</h1>
-        <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.9rem", color: "rgba(245,241,232,0.65)", marginTop: "1rem", maxWidth: "500px" }}>All measurements are in inches. Our garments are cut oversized — read the fit guide before selecting your size.</p>
+        <p style={{ fontFamily: "var(--font-sans)", fontSize: "11px", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "#C94227", marginBottom: "0.75rem" }}>FIT MATTERS</p>
+        <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(2.5rem,6vw,5rem)", fontWeight: 600, color: "#F5F1E8", lineHeight: 1 }}>Size Guide</h1>
+        <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.9rem", color: "rgba(245,241,232,0.65)", marginTop: "1rem", maxWidth: "500px" }}>All measurements are in inches. Our garments are cut oversized — read the fit guide before selecting your size.</p>
       </div>
 
       <div style={{ padding: "clamp(3rem,6vw,6rem) clamp(1.25rem,4vw,5rem)" }}>
         {/* How to Measure */}
         <div style={{ marginBottom: "3rem", padding: "2rem", backgroundColor: "#EAE6DB" }}>
-          <h2 style={{ fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.82rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "#172545", marginBottom: "1.5rem" }}>HOW TO MEASURE</h2>
+          <h2 style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.82rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "#172545", marginBottom: "1.5rem" }}>HOW TO MEASURE</h2>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "2rem" }} className="measure-grid">
             {[
               { label: "CHEST", desc: "Measure around the fullest part of your chest, keeping the tape horizontal." },
@@ -59,8 +59,8 @@ export default function SizeGuidePage() {
               { label: "INSEAM", desc: "Measure from the crotch seam down to the bottom of the leg." },
             ].map((m) => (
               <div key={m.label}>
-                <p style={{ fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.7rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "#172545", marginBottom: "0.5rem" }}>{m.label}</p>
-                <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.82rem", color: "#4B5563", lineHeight: 1.7 }}>{m.desc}</p>
+                <p style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.7rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "#172545", marginBottom: "0.5rem" }}>{m.label}</p>
+                <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "#4B5563", lineHeight: 1.7 }}>{m.desc}</p>
               </div>
             ))}
           </div>
@@ -69,18 +69,18 @@ export default function SizeGuidePage() {
         {/* Size Tables */}
         {Object.values(SIZE_CHART).map((chart) => (
           <div key={chart.label} style={{ marginBottom: "3rem" }}>
-            <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontStyle: "italic", fontSize: "2rem", fontWeight: 600, color: "#172545", marginBottom: "1.25rem" }}>{chart.label}</h2>
+            <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "2rem", fontWeight: 600, color: "#172545", marginBottom: "1.25rem" }}>{chart.label}</h2>
             <div style={{ overflowX: "auto" }}>
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
                   <tr style={{ backgroundColor: "#172545" }}>
-                    {chart.headers.map((h) => <th key={h} style={{ fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.68rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#F5F1E8", padding: "0.875rem 1rem", textAlign: "left" }}>{h}</th>)}
+                    {chart.headers.map((h) => <th key={h} style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.68rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#F5F1E8", padding: "0.875rem 1rem", textAlign: "left" }}>{h}</th>)}
                   </tr>
                 </thead>
                 <tbody>
                   {chart.rows.map((row, i) => (
                     <tr key={i} style={{ backgroundColor: i % 2 === 0 ? "#F5F1E8" : "#EAE6DB" }}>
-                      {row.map((cell, j) => <td key={j} style={{ fontFamily: "Inter, sans-serif", fontWeight: j === 0 ? 800 : 600, fontSize: "0.82rem", color: "#172545", padding: "0.875rem 1rem", borderBottom: "1px solid #D9D3C4" }}>{cell}</td>)}
+                      {row.map((cell, j) => <td key={j} style={{ fontFamily: "var(--font-sans)", fontWeight: j === 0 ? 800 : 600, fontSize: "0.82rem", color: "#172545", padding: "0.875rem 1rem", borderBottom: "1px solid #D9D3C4" }}>{cell}</td>)}
                     </tr>
                   ))}
                 </tbody>
@@ -91,12 +91,12 @@ export default function SizeGuidePage() {
 
         {/* Fit Guide */}
         <div>
-          <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontStyle: "italic", fontSize: "2rem", fontWeight: 600, color: "#172545", marginBottom: "1.5rem" }}>Fit Guide</h2>
+          <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "2rem", fontWeight: 600, color: "#172545", marginBottom: "1.5rem" }}>Fit Guide</h2>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "1.25rem" }} className="fit-grid">
             {FITS.map((f) => (
               <div key={f.name} style={{ padding: "2rem", backgroundColor: "#EAE6DB", borderTop: "3px solid #172545" }}>
-                <h3 style={{ fontFamily: "Inter, sans-serif", fontWeight: 900, fontSize: "0.78rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "#172545", marginBottom: "0.75rem" }}>{f.name}</h3>
-                <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.82rem", color: "#4B5563", lineHeight: 1.7 }}>{f.desc}</p>
+                <h3 style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "0.78rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "#172545", marginBottom: "0.75rem" }}>{f.name}</h3>
+                <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "#4B5563", lineHeight: 1.7 }}>{f.desc}</p>
               </div>
             ))}
           </div>

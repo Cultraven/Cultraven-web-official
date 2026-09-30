@@ -87,8 +87,8 @@ export default function RegisterPage() {
     width: "100%",
     padding: "0.875rem 1rem",
     border: `1.5px solid ${fieldErrors[field] ? "#C94227" : "#D9D3C4"}`,
-    backgroundColor: "#FFFFFF",
-    fontFamily: "Inter, sans-serif",
+    backgroundColor: "#F5F1E8",
+    fontFamily: "var(--font-sans)",
     fontSize: "0.9rem",
     color: "#172545",
     outline: "none",
@@ -97,7 +97,7 @@ export default function RegisterPage() {
 
   const labelStyle: React.CSSProperties = {
     display: "block",
-    fontFamily: "Inter, sans-serif",
+    fontFamily: "var(--font-sans)",
     fontWeight: 800,
     fontSize: "0.68rem",
     letterSpacing: "0.14em",
@@ -107,7 +107,7 @@ export default function RegisterPage() {
   };
 
   const errStyle: React.CSSProperties = {
-    fontFamily: "Inter, sans-serif",
+    fontFamily: "var(--font-sans)",
     fontSize: "0.68rem",
     color: "#C94227",
     marginTop: "0.3rem",
@@ -115,14 +115,14 @@ export default function RegisterPage() {
 
   return (
     <div style={{ backgroundColor: "#F5F1E8", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem" }}>
-      <div style={{ maxWidth: "480px", width: "100%", backgroundColor: "#FFFFFF", padding: "clamp(2.5rem,5vw,4rem)", paddingBottom: "clamp(2.5rem,5vw,4rem)", border: "1px solid #D9D3C4" }}>
+      <div style={{ maxWidth: "480px", width: "100%", backgroundColor: "#F5F1E8", padding: "clamp(2.5rem,5vw,4rem)", paddingBottom: "clamp(2.5rem,5vw,4rem)", border: "var(--border-thick)", boxShadow: "var(--shadow-md)" }}>
 
         <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
           <Link href="/" style={{ textDecoration: "none" }}>
-            <h1 style={{ fontFamily: "Inter, sans-serif", fontWeight: 900, fontSize: "1.2rem", letterSpacing: "0.2em", color: "#172545", textTransform: "uppercase", marginBottom: "1rem" }}>CULTRAVEN</h1>
+            <h1 style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "1.2rem", letterSpacing: "0.2em", color: "#172545", textTransform: "uppercase", marginBottom: "1rem" }}>CULTRAVEN</h1>
           </Link>
-          <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontStyle: "italic", fontSize: "2rem", color: "#172545" }}>Create Account</h2>
-          <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.85rem", color: "#6B7280", marginTop: "0.5rem" }}>Join the movement and get 10% off your first order.</p>
+          <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "2rem", color: "#172545" }}>Create Account</h2>
+          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.85rem", color: "#6B7280", marginTop: "0.5rem" }}>Join the movement and get 10% off your first order.</p>
         </div>
 
         <form onSubmit={handleRegister} noValidate style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
@@ -161,7 +161,7 @@ export default function RegisterPage() {
           </div>
 
           {error && (
-            <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.78rem", color: "#C94227", fontWeight: 600, padding: "0.75rem 1rem", backgroundColor: "rgba(201,66,39,0.06)", border: "1px solid rgba(201,66,39,0.25)" }}>
+            <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.78rem", color: "#C94227", fontWeight: 600, padding: "0.75rem 1rem", backgroundColor: "rgba(201,66,39,0.06)", border: "1px solid rgba(201,66,39,0.25)" }}>
               {error}
             </p>
           )}
@@ -169,19 +169,19 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            style={{ width: "100%", padding: "1rem", backgroundColor: loading ? "#9fa8c0" : "#172545", color: "#F5F1E8", fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.78rem", letterSpacing: "0.14em", textTransform: "uppercase", border: "none", cursor: loading ? "not-allowed" : "pointer", transition: "background-color 0.2s" }}
+            style={{ width: "100%", padding: "1rem", backgroundColor: loading ? "#9fa8c0" : "#172545", color: "#F5F1E8", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.78rem", letterSpacing: "0.14em", textTransform: "uppercase", border: "none", cursor: loading ? "not-allowed" : "pointer", transition: "background-color 0.2s" }}
           >
             {loading ? "CREATING ACCOUNT..." : "CREATE ACCOUNT"}
           </button>
 
-          <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.72rem", color: "#6B7280", textAlign: "center", lineHeight: 1.6 }}>
+          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "#6B7280", textAlign: "center", lineHeight: 1.6 }}>
             By registering you agree to our{" "}
             <Link href="/pages/terms" style={{ color: "#172545", textDecoration: "underline" }}>Terms</Link>{" "}and{" "}
             <Link href="/pages/privacy" style={{ color: "#172545", textDecoration: "underline" }}>Privacy Policy</Link>.
           </p>
         </form>
 
-        <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.82rem", color: "#6B7280", textAlign: "center", marginTop: "2rem" }}>
+        <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "#6B7280", textAlign: "center", marginTop: "2rem" }}>
           Already have an account?{" "}
           <Link href="/login" style={{ color: "#172545", fontWeight: 700, textDecoration: "underline" }}>Sign in</Link>
         </p>

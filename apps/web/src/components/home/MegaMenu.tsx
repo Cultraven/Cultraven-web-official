@@ -298,7 +298,7 @@ function MegaPanel({
             >
               <p
                 style={{
-                  fontFamily: "Inter, sans-serif",
+                  fontFamily: "var(--font-sans)",
                   fontSize: "9px",
                   fontWeight: 800,
                   letterSpacing: "0.16em",
@@ -311,7 +311,7 @@ function MegaPanel({
               </p>
               <p
                 style={{
-                  fontFamily: "Inter, sans-serif",
+                  fontFamily: "var(--font-sans)",
                   fontSize: "11px",
                   fontWeight: 900,
                   letterSpacing: "0.1em",

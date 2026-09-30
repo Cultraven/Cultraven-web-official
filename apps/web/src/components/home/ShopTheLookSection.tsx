@@ -68,7 +68,7 @@ export function ShopTheLookSection() {
           <span
             style={{
               display: "block",
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontSize: "11px",
               fontWeight: 800,
               letterSpacing: "0.22em",
@@ -82,8 +82,8 @@ export function ShopTheLookSection() {
           <h2
             id="stl-heading"
             style={{
-              fontFamily: "'Cormorant Garamond', Georgia, serif",
-              fontStyle: "italic",
+              fontFamily: "var(--font-heading)",
+              
               fontSize: "clamp(2rem,4.5vw,3.75rem)",
               fontWeight: 600,
               color: "#172545",
@@ -124,7 +124,7 @@ export function ShopTheLookSection() {
                 left: "1.5rem",
                 backgroundColor: "#172545",
                 color: "#F5F1E8",
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontSize: "10px",
                 fontWeight: 900,
                 letterSpacing: "0.18em",
@@ -140,7 +140,7 @@ export function ShopTheLookSection() {
           <div style={{ display: "flex", flexDirection: "column", gap: "0" }}>
             <p
               style={{
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontSize: "0.8rem",
                 fontWeight: 600,
                 color: "#6B7280",
@@ -163,7 +163,7 @@ export function ShopTheLookSection() {
                   padding: "1.1rem",
                   backgroundColor: "#172545",
                   color: "#F5F1E8",
-                  fontFamily: "Inter, sans-serif",
+                  fontFamily: "var(--font-sans)",
                   fontWeight: 800,
                   fontSize: "0.78rem",
                   letterSpacing: "0.14em",
@@ -245,7 +245,7 @@ function LookProductRow({
         <span
           style={{
             display: "block",
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "var(--font-sans)",
             fontSize: "10px",
             fontWeight: 800,
             letterSpacing: "0.16em",
@@ -259,7 +259,7 @@ function LookProductRow({
         <Link
           href={p.href}
           style={{
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "var(--font-sans)",
             fontWeight: 800,
             fontSize: "0.72rem",
             letterSpacing: "0.04em",
@@ -274,7 +274,7 @@ function LookProductRow({
         </Link>
         <span
           style={{
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "var(--font-sans)",
             fontSize: "0.7rem",
             fontWeight: 500,
             color: "#6B7280",
@@ -297,7 +297,7 @@ function LookProductRow({
           color: added ? "#F5F1E8" : "#172545",
           border: "2px solid",
           borderColor: added ? "#C94227" : "#172545",
-          fontFamily: "Inter, sans-serif",
+          fontFamily: "var(--font-sans)",
           fontWeight: 800,
           fontSize: "0.62rem",
           letterSpacing: "0.1em",

@@ -203,7 +203,7 @@ export function BestsellersSection() {
             <span
               style={{
                 display: "block",
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontSize: "11px",
                 fontWeight: 800,
                 letterSpacing: "0.22em",
@@ -217,8 +217,8 @@ export function BestsellersSection() {
             <h2
               id="bs-heading"
               style={{
-                fontFamily: "'Cormorant Garamond', Georgia, serif",
-                fontStyle: "italic",
+                fontFamily: "var(--font-heading)",
+                
                 fontSize: "clamp(2rem,4.5vw,3.75rem)",
                 fontWeight: 600,
                 color: "#172545",
@@ -234,7 +234,7 @@ export function BestsellersSection() {
             <Link
               href="/collections/bestsellers"
               style={{
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontSize: "0.7rem",
                 fontWeight: 800,
                 letterSpacing: "0.18em",
@@ -369,7 +369,7 @@ function BestsellerCard({ product: p }: { product: BestProduct }) {
               backgroundColor:
                 p.badge === "LOW STOCK" ? "#C94227" : "#172545",
               color: "#F5F1E8",
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontSize: "9px",
               fontWeight: 900,
               letterSpacing: "0.15em",
@@ -456,7 +456,7 @@ function BestsellerCard({ product: p }: { product: BestProduct }) {
               padding: "0.75rem",
               backgroundColor: added ? "#C94227" : "#172545",
               color: "#F5F1E8",
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontWeight: 800,
               fontSize: "0.65rem",
               letterSpacing: "0.14em",
@@ -494,7 +494,7 @@ function BestsellerCard({ product: p }: { product: BestProduct }) {
           </div>
           <span
             style={{
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontSize: "0.68rem",
               fontWeight: 600,
               color: "#6B7280",
@@ -525,7 +525,7 @@ function BestsellerCard({ product: p }: { product: BestProduct }) {
           href={p.href}
           style={{
             display: "block",
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "var(--font-sans)",
             fontWeight: 800,
             fontSize: "0.7rem",
             letterSpacing: "0.06em",
@@ -541,7 +541,7 @@ function BestsellerCard({ product: p }: { product: BestProduct }) {
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <span
             style={{
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontWeight: 700,
               fontSize: "0.85rem",
               color: "#172545",
@@ -553,7 +553,7 @@ function BestsellerCard({ product: p }: { product: BestProduct }) {
             <>
               <span
                 style={{
-                  fontFamily: "Inter, sans-serif",
+                  fontFamily: "var(--font-sans)",
                   fontWeight: 500,
                   fontSize: "0.72rem",
                   color: "#6B7280",
@@ -564,7 +564,7 @@ function BestsellerCard({ product: p }: { product: BestProduct }) {
               </span>
               <span
                 style={{
-                  fontFamily: "Inter, sans-serif",
+                  fontFamily: "var(--font-sans)",
                   fontWeight: 700,
                   fontSize: "0.65rem",
                   color: "#C94227",

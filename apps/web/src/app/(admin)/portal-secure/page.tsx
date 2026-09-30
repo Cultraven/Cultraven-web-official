@@ -75,7 +75,7 @@ export default function AdminDashboardPage() {
       <div style={{ marginBottom: "2.5rem" }}>
         <p
           style={{
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "var(--font-sans)",
             fontSize: "0.68rem",
             fontWeight: 700,
             letterSpacing: "0.14em",
@@ -88,7 +88,7 @@ export default function AdminDashboardPage() {
         </p>
         <h1
           style={{
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "var(--font-sans)",
             fontWeight: 800,
             fontSize: "1.75rem",
             color: "#F5F1E8",
@@ -121,7 +121,7 @@ export default function AdminDashboardPage() {
           >
             <p
               style={{
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontSize: "0.68rem",
                 fontWeight: 600,
                 letterSpacing: "0.1em",
@@ -134,7 +134,7 @@ export default function AdminDashboardPage() {
             </p>
             <p
               style={{
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontWeight: 800,
                 fontSize: "2rem",
                 color: "#F5F1E8",
@@ -147,7 +147,7 @@ export default function AdminDashboardPage() {
             <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
               <span
                 style={{
-                  fontFamily: "Inter, sans-serif",
+                  fontFamily: "var(--font-sans)",
                   fontSize: "0.72rem",
                   fontWeight: 700,
                   color: kpi.up ? "#10B981" : "#C94227",
@@ -157,7 +157,7 @@ export default function AdminDashboardPage() {
               </span>
               <span
                 style={{
-                  fontFamily: "Inter, sans-serif",
+                  fontFamily: "var(--font-sans)",
                   fontSize: "0.68rem",
                   color: "rgba(245,241,232,0.3)",
                 }}
@@ -198,7 +198,7 @@ export default function AdminDashboardPage() {
           >
             <h2
               style={{
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontWeight: 700,
                 fontSize: "0.88rem",
                 color: "#F5F1E8",
@@ -209,7 +209,7 @@ export default function AdminDashboardPage() {
             <Link
               href="/portal-secure/orders"
               style={{
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontSize: "0.72rem",
                 fontWeight: 600,
                 color: "#C94227",
@@ -227,7 +227,7 @@ export default function AdminDashboardPage() {
                   <th
                     key={h}
                     style={{
-                      fontFamily: "Inter, sans-serif",
+                      fontFamily: "var(--font-sans)",
                       fontSize: "0.62rem",
                       fontWeight: 700,
                       letterSpacing: "0.1em",
@@ -245,7 +245,7 @@ export default function AdminDashboardPage() {
             <tbody>
               {recentOrders.length === 0 ? (
                 <tr>
-                  <td colSpan={6} style={{ padding: "1.5rem", textAlign: "center", color: "rgba(245,241,232,0.45)", fontFamily: "Inter, sans-serif", fontSize: "0.82rem" }}>
+                  <td colSpan={6} style={{ padding: "1.5rem", textAlign: "center", color: "rgba(245,241,232,0.45)", fontFamily: "var(--font-sans)", fontSize: "0.82rem" }}>
                     No recent orders.
                   </td>
                 </tr>
@@ -259,24 +259,24 @@ export default function AdminDashboardPage() {
                         borderTop: "1px solid rgba(255,255,255,0.04)",
                       }}
                     >
-                      <td style={{ padding: "1rem", fontFamily: "Inter, sans-serif", fontSize: "0.78rem", fontWeight: 700, color: "#F5F1E8" }}>
+                      <td style={{ padding: "1rem", fontFamily: "var(--font-sans)", fontSize: "0.78rem", fontWeight: 700, color: "#F5F1E8" }}>
                         <Link href={`/admin/orders/${order.id}`} style={{ textDecoration: "none", color: "#C94227" }}>
                           {order.id}
                         </Link>
                       </td>
-                      <td style={{ padding: "1rem", fontFamily: "Inter, sans-serif", fontSize: "0.78rem", color: "rgba(245,241,232,0.75)" }}>
+                      <td style={{ padding: "1rem", fontFamily: "var(--font-sans)", fontSize: "0.78rem", color: "rgba(245,241,232,0.75)" }}>
                         {order.customer}
                       </td>
-                      <td style={{ padding: "1rem", fontFamily: "Inter, sans-serif", fontSize: "0.78rem", color: "rgba(245,241,232,0.75)", textAlign: "center" }}>
+                      <td style={{ padding: "1rem", fontFamily: "var(--font-sans)", fontSize: "0.78rem", color: "rgba(245,241,232,0.75)", textAlign: "center" }}>
                         {order.items}
                       </td>
-                      <td style={{ padding: "1rem", fontFamily: "Inter, sans-serif", fontSize: "0.82rem", fontWeight: 700, color: "#F5F1E8" }}>
+                      <td style={{ padding: "1rem", fontFamily: "var(--font-sans)", fontSize: "0.82rem", fontWeight: 700, color: "#F5F1E8" }}>
                         {order.total}
                       </td>
                       <td style={{ padding: "1rem" }}>
                         <span
                           style={{
-                            fontFamily: "Inter, sans-serif",
+                            fontFamily: "var(--font-sans)",
                             fontSize: "0.65rem",
                             fontWeight: 700,
                             letterSpacing: "0.08em",
@@ -291,7 +291,7 @@ export default function AdminDashboardPage() {
                           {order.status}
                         </span>
                       </td>
-                      <td style={{ padding: "1rem", fontFamily: "Inter, sans-serif", fontSize: "0.72rem", color: "rgba(245,241,232,0.4)", whiteSpace: "nowrap" }}>
+                      <td style={{ padding: "1rem", fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "rgba(245,241,232,0.4)", whiteSpace: "nowrap" }}>
                         {order.date}
                       </td>
                     </tr>
@@ -315,7 +315,7 @@ export default function AdminDashboardPage() {
           >
             <h2
               style={{
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontWeight: 700,
                 fontSize: "0.88rem",
                 color: "#F5F1E8",
@@ -338,7 +338,7 @@ export default function AdminDashboardPage() {
                     border: "1px solid rgba(255,255,255,0.06)",
                     borderRadius: "4px",
                     textDecoration: "none",
-                    fontFamily: "Inter, sans-serif",
+                    fontFamily: "var(--font-sans)",
                     fontSize: "0.78rem",
                     fontWeight: 600,
                     color: "rgba(245,241,232,0.75)",
@@ -375,7 +375,7 @@ export default function AdminDashboardPage() {
           >
             <h2
               style={{
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontWeight: 700,
                 fontSize: "0.88rem",
                 color: "#F5F1E8",
@@ -400,12 +400,12 @@ export default function AdminDashboardPage() {
                   borderBottom: "1px solid rgba(255,255,255,0.04)",
                 }}
               >
-                <span style={{ fontFamily: "Inter, sans-serif", fontSize: "0.72rem", color: "rgba(245,241,232,0.5)" }}>
+                <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "rgba(245,241,232,0.5)" }}>
                   {item.label}
                 </span>
                 <span
                   style={{
-                    fontFamily: "Inter, sans-serif",
+                    fontFamily: "var(--font-sans)",
                     fontSize: "0.75rem",
                     fontWeight: 700,
                     color: item.good ? "#10B981" : "#C94227",

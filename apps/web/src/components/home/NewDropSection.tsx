@@ -139,7 +139,7 @@ export function NewDropSection() {
           <span
             style={{
               display: "block",
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontSize: "11px",
               fontWeight: 800,
               letterSpacing: "0.22em",
@@ -163,8 +163,8 @@ export function NewDropSection() {
             <h2
               id="new-drop-heading"
               style={{
-                fontFamily: "'Cormorant Garamond', Georgia, serif",
-                fontStyle: "italic",
+                fontFamily: "var(--font-heading)",
+                
                 fontSize: "clamp(2.5rem,5.5vw,4.5rem)",
                 fontWeight: 600,
                 color: "#172545",
@@ -178,7 +178,7 @@ export function NewDropSection() {
             <Link
               href="/collections/new-in"
               style={{
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontSize: "0.7rem",
                 fontWeight: 800,
                 letterSpacing: "0.18em",
@@ -195,7 +195,7 @@ export function NewDropSection() {
 
           <p
             style={{
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontSize: "0.8rem",
               fontWeight: 600,
               color: "#6B7280",
@@ -276,7 +276,7 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
               style={{
                 backgroundColor: "#172545",
                 color: "#F5F1E8",
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontSize: "9px",
                 fontWeight: 900,
                 letterSpacing: "0.15em",
@@ -293,7 +293,7 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
               style={{
                 backgroundColor: "#C94227",
                 color: "#F5F1E8",
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontSize: "9px",
                 fontWeight: 900,
                 letterSpacing: "0.15em",
@@ -310,7 +310,7 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
               style={{
                 backgroundColor: "#C94227",
                 color: "#F5F1E8",
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontSize: "9px",
                 fontWeight: 900,
                 letterSpacing: "0.15em",
@@ -401,7 +401,7 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
               padding: "0.75rem",
               backgroundColor: added ? "#C94227" : "#172545",
               color: "#F5F1E8",
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontWeight: 800,
               fontSize: "0.68rem",
               letterSpacing: "0.14em",
@@ -443,7 +443,7 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
           href={p.href}
           style={{
             display: "block",
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "var(--font-sans)",
             fontWeight: 800,
             fontSize: "0.72rem",
             letterSpacing: "0.06em",
@@ -459,7 +459,7 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <span
             style={{
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontWeight: 700,
               fontSize: "0.85rem",
               color: "#172545",
@@ -471,7 +471,7 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
             <>
               <span
                 style={{
-                  fontFamily: "Inter, sans-serif",
+                  fontFamily: "var(--font-sans)",
                   fontWeight: 500,
                   fontSize: "0.75rem",
                   color: "#6B7280",
@@ -482,7 +482,7 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
               </span>
               <span
                 style={{
-                  fontFamily: "Inter, sans-serif",
+                  fontFamily: "var(--font-sans)",
                   fontWeight: 700,
                   fontSize: "0.68rem",
                   color: "#C94227",

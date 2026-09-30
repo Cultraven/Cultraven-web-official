@@ -44,7 +44,7 @@ export default function ReturnsPage() {
       >
         <p
           style={{
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "var(--font-sans)",
             fontSize: "11px",
             fontWeight: 800,
             letterSpacing: "0.22em",
@@ -57,8 +57,8 @@ export default function ReturnsPage() {
         </p>
         <h1
           style={{
-            fontFamily: "'Cormorant Garamond', Georgia, serif",
-            fontStyle: "italic",
+            fontFamily: "var(--font-heading)",
+            
             fontSize: "clamp(2.5rem,6vw,5rem)",
             fontWeight: 600,
             color: "#F5F1E8",
@@ -70,7 +70,7 @@ export default function ReturnsPage() {
         </h1>
         <p
           style={{
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "var(--font-sans)",
             fontSize: "0.9rem",
             color: "rgba(245,241,232,0.65)",
           }}
@@ -98,7 +98,7 @@ export default function ReturnsPage() {
           <div key={s.label} style={{ textAlign: "center", padding: "1rem" }}>
             <p
               style={{
-                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                fontFamily: "var(--font-heading)",
                 fontWeight: 600,
                 fontSize: "clamp(1.75rem,3vw,2.5rem)",
                 color: "#172545",
@@ -109,7 +109,7 @@ export default function ReturnsPage() {
             </p>
             <p
               style={{
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontWeight: 700,
                 fontSize: "0.68rem",
                 letterSpacing: "0.14em",
@@ -131,7 +131,7 @@ export default function ReturnsPage() {
       >
         <h2
           style={{
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "var(--font-sans)",
             fontWeight: 900,
             fontSize: "0.68rem",
             letterSpacing: "0.22em",
@@ -155,7 +155,7 @@ export default function ReturnsPage() {
             <div key={step.step} style={{ paddingTop: "1.5rem", borderTop: "2px solid #172545" }}>
               <p
                 style={{
-                  fontFamily: "'Cormorant Garamond', Georgia, serif",
+                  fontFamily: "var(--font-heading)",
                   fontWeight: 600,
                   fontSize: "2rem",
                   color: "#C94227",
@@ -167,7 +167,7 @@ export default function ReturnsPage() {
               </p>
               <h3
                 style={{
-                  fontFamily: "Inter, sans-serif",
+                  fontFamily: "var(--font-sans)",
                   fontWeight: 800,
                   fontSize: "0.82rem",
                   letterSpacing: "0.1em",
@@ -180,7 +180,7 @@ export default function ReturnsPage() {
               </h3>
               <p
                 style={{
-                  fontFamily: "Inter, sans-serif",
+                  fontFamily: "var(--font-sans)",
                   fontSize: "0.82rem",
                   lineHeight: 1.7,
                   color: "#4B5563",
@@ -208,7 +208,7 @@ export default function ReturnsPage() {
           <div>
             <h2
               style={{
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontWeight: 900,
                 fontSize: "0.68rem",
                 letterSpacing: "0.22em",
@@ -241,7 +241,7 @@ export default function ReturnsPage() {
                   </span>
                   <span
                     style={{
-                      fontFamily: "Inter, sans-serif",
+                      fontFamily: "var(--font-sans)",
                       fontSize: "0.82rem",
                       color: "#172545",
                       lineHeight: 1.5,
@@ -258,7 +258,7 @@ export default function ReturnsPage() {
           <div>
             <h2
               style={{
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontWeight: 900,
                 fontSize: "0.68rem",
                 letterSpacing: "0.22em",
@@ -292,7 +292,7 @@ export default function ReturnsPage() {
                   </span>
                   <span
                     style={{
-                      fontFamily: "Inter, sans-serif",
+                      fontFamily: "var(--font-sans)",
                       fontSize: "0.82rem",
                       color: "#4B5563",
                       lineHeight: 1.5,
@@ -320,8 +320,8 @@ export default function ReturnsPage() {
       >
         <h2
           style={{
-            fontFamily: "'Cormorant Garamond', Georgia, serif",
-            fontStyle: "italic",
+            fontFamily: "var(--font-heading)",
+            
             fontSize: "clamp(1.75rem,3.5vw,2.75rem)",
             fontWeight: 600,
             color: "#172545",
@@ -331,7 +331,7 @@ export default function ReturnsPage() {
         </h2>
         <p
           style={{
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "var(--font-sans)",
             fontSize: "0.88rem",
             color: "#4B5563",
             lineHeight: 1.7,
@@ -347,7 +347,7 @@ export default function ReturnsPage() {
               padding: "0.875rem 2rem",
               backgroundColor: "#172545",
               color: "#F5F1E8",
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontWeight: 800,
               fontSize: "0.72rem",
               letterSpacing: "0.12em",
@@ -364,7 +364,7 @@ export default function ReturnsPage() {
               padding: "0.875rem 2rem",
               border: "2px solid #172545",
               color: "#172545",
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontWeight: 800,
               fontSize: "0.72rem",
               letterSpacing: "0.12em",

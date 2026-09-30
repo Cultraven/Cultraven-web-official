@@ -75,7 +75,7 @@ export function CommunitySection() {
             <span
               style={{
                 display: "block",
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontSize: "11px",
                 fontWeight: 800,
                 letterSpacing: "0.22em",
@@ -89,8 +89,8 @@ export function CommunitySection() {
             <h2
               id="community-heading"
               style={{
-                fontFamily: "'Cormorant Garamond', Georgia, serif",
-                fontStyle: "italic",
+                fontFamily: "var(--font-heading)",
+                
                 fontSize: "clamp(2rem,4.5vw,3.75rem)",
                 fontWeight: 600,
                 color: "#172545",
@@ -109,7 +109,7 @@ export function CommunitySection() {
               display: "inline-flex",
               alignItems: "center",
               gap: "0.5rem",
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontSize: "0.7rem",
               fontWeight: 800,
               letterSpacing: "0.18em",
@@ -155,7 +155,7 @@ export function CommunitySection() {
         <div style={{ textAlign: "center", marginTop: "2.5rem" }}>
           <p
             style={{
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontSize: "0.8rem",
               fontWeight: 600,
               color: "#6B7280",
@@ -178,7 +178,7 @@ export function CommunitySection() {
               border: "2px solid #172545",
               backgroundColor: "transparent",
               color: "#172545",
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontWeight: 800,
               fontSize: "0.72rem",
               letterSpacing: "0.14em",
@@ -270,7 +270,7 @@ function UGCTile({ image }: { image: UGCImage }) {
           </svg>
           <p
             style={{
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontSize: "10px",
               fontWeight: 800,
               letterSpacing: "0.16em",

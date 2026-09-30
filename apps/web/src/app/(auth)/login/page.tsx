@@ -54,19 +54,19 @@ function LoginForm() {
 
   return (
     <div style={{ backgroundColor: "#F5F1E8", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem" }}>
-      <div style={{ maxWidth: "440px", width: "100%", backgroundColor: "#FFFFFF", padding: "clamp(2.5rem,5vw,4rem)", border: "1px solid #D9D3C4" }}>
+      <div style={{ maxWidth: "440px", width: "100%", backgroundColor: "#F5F1E8", padding: "clamp(2.5rem,5vw,4rem)", border: "var(--border-thick)", boxShadow: "var(--shadow-lg)" }}>
 
         <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
           <Link href="/" style={{ textDecoration: "none" }}>
-            <h1 style={{ fontFamily: "Inter, sans-serif", fontWeight: 900, fontSize: "1.2rem", letterSpacing: "0.2em", color: "#172545", textTransform: "uppercase", marginBottom: "1rem" }}>CULTRAVEN</h1>
+            <h1 style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "1.2rem", letterSpacing: "0.2em", color: "#172545", textTransform: "uppercase", marginBottom: "1rem" }}>CULTRAVEN</h1>
           </Link>
-          <h2 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontStyle: "italic", fontSize: "2rem", color: "#172545" }}>Welcome Back</h2>
-          <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.85rem", color: "#6B7280", marginTop: "0.5rem" }}>Log in to access your account and orders.</p>
+          <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "2.5rem", color: "#172545", textTransform: "uppercase" }}>WELCOME BACK BRO</h2>
+          <p style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "12px", color: "#6B7280", marginTop: "0.5rem", textTransform: "uppercase" }}>LOG IN TO ACCESS YOUR ACCOUNT.</p>
         </div>
 
         <form onSubmit={handleLogin} noValidate style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
           <div>
-            <label htmlFor="login-email" style={{ display: "block", fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.68rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#172545", marginBottom: "0.5rem" }}>
+            <label htmlFor="login-email" style={{ display: "block", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "10px", letterSpacing: "0.14em", textTransform: "uppercase", color: "#172545", marginBottom: "0.5rem" }}>
               Email Address
             </label>
             <input
@@ -77,14 +77,14 @@ function LoginForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={loading}
-              style={{ width: "100%", padding: "0.875rem 1rem", border: "1.5px solid #D9D3C4", backgroundColor: "#FFFFFF", fontFamily: "Inter, sans-serif", fontSize: "0.9rem", color: "#172545", outline: "none", boxSizing: "border-box" }}
+              style={{ width: "100%", padding: "1rem", border: "2px solid #172545", backgroundColor: "#F5F1E8", fontFamily: "var(--font-sans)", fontSize: "12px", fontWeight: 800, color: "#172545", outline: "none", boxSizing: "border-box", boxShadow: "inset 2px 2px 0px 0px rgba(23,37,69,0.1)" }}
             />
           </div>
 
           <div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "0.5rem" }}>
-              <label htmlFor="login-password" style={{ fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.68rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#172545" }}>Password</label>
-              <Link href="/forgot-password" style={{ fontFamily: "Inter, sans-serif", fontSize: "0.72rem", color: "#6B7280", textDecoration: "underline" }}>Forgot?</Link>
+              <label htmlFor="login-password" style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "10px", letterSpacing: "0.14em", textTransform: "uppercase", color: "#172545" }}>Password</label>
+              <Link href="/forgot-password" style={{ fontFamily: "var(--font-sans)", fontSize: "10px", fontWeight: 800, color: "#C94227", textDecoration: "underline" }}>Forgot?</Link>
             </div>
             <input
               id="login-password"
@@ -94,12 +94,12 @@ function LoginForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={loading}
-              style={{ width: "100%", padding: "0.875rem 1rem", border: "1.5px solid #D9D3C4", backgroundColor: "#FFFFFF", fontFamily: "Inter, sans-serif", fontSize: "0.9rem", color: "#172545", outline: "none", boxSizing: "border-box" }}
+              style={{ width: "100%", padding: "1rem", border: "2px solid #172545", backgroundColor: "#F5F1E8", fontFamily: "var(--font-sans)", fontSize: "12px", fontWeight: 800, color: "#172545", outline: "none", boxSizing: "border-box", boxShadow: "inset 2px 2px 0px 0px rgba(23,37,69,0.1)" }}
             />
           </div>
 
           {error && (
-            <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.78rem", color: "#C94227", fontWeight: 600, padding: "0.75rem 1rem", backgroundColor: "rgba(201,66,39,0.06)", border: "1px solid rgba(201,66,39,0.25)" }}>
+            <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.78rem", color: "#C94227", fontWeight: 600, padding: "0.75rem 1rem", backgroundColor: "rgba(201,66,39,0.06)", border: "1px solid rgba(201,66,39,0.25)" }}>
               {error}
             </p>
           )}
@@ -107,15 +107,16 @@ function LoginForm() {
           <button
             type="submit"
             disabled={loading}
-            style={{ width: "100%", padding: "1rem", backgroundColor: loading ? "#9fa8c0" : "#172545", color: "#F5F1E8", fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.78rem", letterSpacing: "0.14em", textTransform: "uppercase", border: "none", cursor: loading ? "not-allowed" : "pointer" }}
+            className="btn-primary"
+            style={{ width: "100%", padding: "16px", fontSize: "14px", marginTop: "1rem" }}
           >
-            {loading ? "SIGNING IN..." : "SIGN IN"}
+            {loading ? "RUK JA BRO..." : "ENTER CULTRAVEN"}
           </button>
         </form>
 
-        <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.82rem", color: "#6B7280", textAlign: "center", marginTop: "2rem" }}>
-          Don&apos;t have an account?{" "}
-          <Link href="/register" style={{ color: "#172545", fontWeight: 700, textDecoration: "underline" }}>Create one</Link>
+        <p style={{ fontFamily: "var(--font-sans)", fontSize: "10px", fontWeight: 800, textTransform: "uppercase", color: "#6B7280", textAlign: "center", marginTop: "2rem" }}>
+          NO ACCOUNT?{" "}
+          <Link href="/register" style={{ color: "#172545", fontWeight: 900, textDecoration: "underline" }}>CREATE ONE BRO</Link>
         </p>
       </div>
     </div>
@@ -126,7 +127,7 @@ export default function LoginPage() {
   return (
     <Suspense fallback={
       <div style={{ backgroundColor: "#F5F1E8", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ fontFamily: "Inter, sans-serif", color: "#6B7280", fontSize: "0.8rem", letterSpacing: "0.1em" }}>Loading…</div>
+        <div style={{ fontFamily: "var(--font-sans)", color: "#6B7280", fontSize: "0.8rem", letterSpacing: "0.1em" }}>Loading…</div>
       </div>
     }>
       <LoginForm />

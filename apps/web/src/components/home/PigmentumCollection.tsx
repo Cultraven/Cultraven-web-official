@@ -50,8 +50,8 @@ export function PigmentumCollection({
         >
           <h2
             style={{
-              fontFamily: "'Cormorant Garamond', Georgia, serif",
-              fontStyle: "italic",
+              fontFamily: "var(--font-heading)",
+              
               fontSize: "clamp(2rem,4.5vw,3.75rem)",
               fontWeight: 600,
               color: "#172545",
@@ -63,7 +63,7 @@ export function PigmentumCollection({
           <Link
             href="/collections/pigmentum"
             style={{
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontSize: "0.7rem",
               fontWeight: 800,
               letterSpacing: "0.18em",
@@ -119,7 +119,7 @@ export function PigmentumCollection({
                         left: "12px",
                         backgroundColor: "#C94227",
                         color: "#F5F1E8",
-                        fontFamily: "Inter, sans-serif",
+                        fontFamily: "var(--font-sans)",
                         fontWeight: 900,
                         fontSize: "9px",
                         letterSpacing: "0.15em",
@@ -137,7 +137,7 @@ export function PigmentumCollection({
                 <Link
                   href={p.href}
                   style={{
-                    fontFamily: "Inter, sans-serif",
+                    fontFamily: "var(--font-sans)",
                     fontWeight: 800,
                     fontSize: "0.78rem",
                     letterSpacing: "0.06em",
@@ -151,10 +151,10 @@ export function PigmentumCollection({
                 </Link>
 
                 <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
-                  <span style={{ fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: "0.85rem", color: "#172545" }}>
+                  <span style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.85rem", color: "#172545" }}>
                     {fmt(p.pricePaise)}
                   </span>
-                  <span style={{ fontFamily: "Inter, sans-serif", fontWeight: 500, fontSize: "0.78rem", color: "#6B7280", textDecoration: "line-through" }}>
+                  <span style={{ fontFamily: "var(--font-sans)", fontWeight: 500, fontSize: "0.78rem", color: "#6B7280", textDecoration: "line-through" }}>
                     {fmt(p.mrpPaise)}
                   </span>
                 </div>
@@ -166,7 +166,7 @@ export function PigmentumCollection({
                     border: "2px solid #172545",
                     backgroundColor: addedId === p.id ? "#172545" : "transparent",
                     color: addedId === p.id ? "#F5F1E8" : "#172545",
-                    fontFamily: "Inter, sans-serif",
+                    fontFamily: "var(--font-sans)",
                     fontWeight: 800,
                     fontSize: "0.7rem",
                     letterSpacing: "0.12em",

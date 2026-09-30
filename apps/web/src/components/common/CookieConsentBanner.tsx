@@ -66,7 +66,7 @@ export function CookieConsentBanner() {
     >
       <p
         style={{
-          fontFamily: "Inter, sans-serif",
+          fontFamily: "var(--font-sans)",
           fontSize: "0.82rem",
           lineHeight: 1.6,
           color: "rgba(245,241,232,0.85)",
@@ -92,7 +92,7 @@ export function CookieConsentBanner() {
             padding: "0.625rem 1.5rem",
             backgroundColor: "transparent",
             color: "rgba(245,241,232,0.7)",
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "var(--font-sans)",
             fontWeight: 700,
             fontSize: "0.72rem",
             letterSpacing: "0.1em",
@@ -119,7 +119,7 @@ export function CookieConsentBanner() {
             padding: "0.625rem 1.75rem",
             backgroundColor: "#C94227",
             color: "#F5F1E8",
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "var(--font-sans)",
             fontWeight: 800,
             fontSize: "0.72rem",
             letterSpacing: "0.1em",

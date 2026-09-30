@@ -35,8 +35,8 @@ export function ProductCarousel({ config, products, loading = false }: ProductCa
           <div>
             <h2
               style={{
-                fontFamily: "'Cormorant Garamond', Georgia, serif",
-                fontStyle: "italic",
+                fontFamily: "var(--font-heading)",
+                
                 fontSize: "clamp(2rem,4.5vw,3.75rem)",
                 fontWeight: 600,
                 color: "#172545",
@@ -48,7 +48,7 @@ export function ProductCarousel({ config, products, loading = false }: ProductCa
             {config.subtitle && (
               <p
                 style={{
-                  fontFamily: "Inter, sans-serif",
+                  fontFamily: "var(--font-sans)",
                   fontSize: "0.85rem",
                   color: "#6B7280",
                   marginTop: "0.4rem",
@@ -62,7 +62,7 @@ export function ProductCarousel({ config, products, loading = false }: ProductCa
           <Link
             href={config.viewAllHref}
             style={{
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontSize: "0.7rem",
               fontWeight: 800,
               letterSpacing: "0.18em",

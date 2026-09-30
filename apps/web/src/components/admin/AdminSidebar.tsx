@@ -185,7 +185,7 @@ export function AdminSidebar() {
           <div>
             <span
               style={{
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontWeight: 900,
                 fontSize: "0.85rem",
                 letterSpacing: "0.18em",
@@ -197,7 +197,7 @@ export function AdminSidebar() {
             </span>
             <p
               style={{
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontSize: "0.55rem",
                 fontWeight: 600,
                 letterSpacing: "0.14em",
@@ -240,7 +240,7 @@ export function AdminSidebar() {
                     {item.icon}
                     <span
                       style={{
-                        fontFamily: "Inter, sans-serif",
+                        fontFamily: "var(--font-sans)",
                         fontWeight: 600,
                         fontSize: "0.82rem",
                         letterSpacing: "0.03em",
@@ -282,7 +282,7 @@ export function AdminSidebar() {
                   {item.icon}
                   <span
                     style={{
-                      fontFamily: "Inter, sans-serif",
+                      fontFamily: "var(--font-sans)",
                       fontWeight: active ? 700 : 600,
                       fontSize: "0.82rem",
                       letterSpacing: "0.03em",
@@ -306,7 +306,7 @@ export function AdminSidebar() {
                           display: "block",
                           padding: "0.5rem 1.5rem 0.5rem 3.25rem",
                           textDecoration: "none",
-                          fontFamily: "Inter, sans-serif",
+                          fontFamily: "var(--font-sans)",
                           fontSize: "0.78rem",
                           fontWeight: childActive ? 700 : 500,
                           color: childActive ? "#F5F1E8" : "rgba(245,241,232,0.45)",
@@ -351,7 +351,7 @@ export function AdminSidebar() {
             alignItems: "center",
             gap: "0.5rem",
             textDecoration: "none",
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "var(--font-sans)",
             fontSize: "0.72rem",
             fontWeight: 600,
             color: "rgba(245,241,232,0.4)",
@@ -401,7 +401,7 @@ function AdminLogout() {
         background: "none",
         border: "none",
         cursor: loading ? "not-allowed" : "pointer",
-        fontFamily: "Inter, sans-serif",
+        fontFamily: "var(--font-sans)",
         fontSize: "0.72rem",
         fontWeight: 600,
         color: "rgba(201,66,39,0.7)",

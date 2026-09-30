@@ -29,8 +29,8 @@ class PLPErrorBoundary extends Component<
     if (this.state.hasError) {
       return (
         <div style={{ backgroundColor: "#F5F1E8", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "1.5rem" }}>
-          <p style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", fontSize: "2rem", color: "#172545", textAlign: "center", padding: "0 2rem" }}>Something went wrong loading this collection.</p>
-          <Link href="/" style={{ fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.72rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#F5F1E8", backgroundColor: "#172545", padding: "0.875rem 2rem", textDecoration: "none" }}>BACK TO HOME</Link>
+          <p style={{ fontFamily: "var(--font-heading)", fontSize: "2rem", color: "#172545", textAlign: "center", padding: "0 2rem" }}>Something went wrong loading this collection.</p>
+          <Link href="/" style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.72rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#F5F1E8", backgroundColor: "#172545", padding: "0.875rem 2rem", textDecoration: "none" }}>BACK TO HOME</Link>
         </div>
       );
     }
@@ -275,41 +275,41 @@ function CollectionPageClientInner({
           <nav aria-label="Breadcrumb" style={{ marginBottom: "1rem", display: "flex", gap: "0.5rem", alignItems: "center" }}>
             {[{ label: "Home", href: "/" }, { label: "Collections", href: "/collections" }, { label: collectionName, href: "#" }].map((crumb, i, arr) => (
               <React.Fragment key={crumb.href}>
-                <Link href={crumb.href} style={{ fontFamily: "Inter, sans-serif", fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: i === arr.length - 1 ? "#F5F1E8" : "rgba(245,241,232,0.55)", textDecoration: "none" }}>{crumb.label}</Link>
+                <Link href={crumb.href} style={{ fontFamily: "var(--font-sans)", fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: i === arr.length - 1 ? "#F5F1E8" : "rgba(245,241,232,0.55)", textDecoration: "none" }}>{crumb.label}</Link>
                 {i < arr.length - 1 && <span style={{ color: "rgba(245,241,232,0.4)", fontSize: "10px" }}>/</span>}
               </React.Fragment>
             ))}
           </nav>
-          <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontStyle: "italic", fontSize: "clamp(2.5rem,6vw,5rem)", fontWeight: 600, color: "#F5F1E8", lineHeight: 1, letterSpacing: "-0.01em", marginBottom: "0.75rem" }}>{collectionName}</h1>
-          <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.9rem", color: "rgba(245,241,232,0.75)", maxWidth: "460px", lineHeight: 1.6 }}>{description}</p>
-          <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.72rem", fontWeight: 700, color: "rgba(245,241,232,0.55)", letterSpacing: "0.1em", textTransform: "uppercase", marginTop: "1rem" }}>{filtered.length} Products</p>
+          <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(3rem,8vw,6.5rem)", fontWeight: 400, color: "#F5F1E8", lineHeight: 0.9, letterSpacing: "0.02em", marginBottom: "0.75rem", textTransform: "uppercase" }}>{collectionName}</h1>
+          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.9rem", color: "rgba(245,241,232,0.75)", maxWidth: "460px", lineHeight: 1.6 }}>{description}</p>
+          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", fontWeight: 700, color: "rgba(245,241,232,0.55)", letterSpacing: "0.1em", textTransform: "uppercase", marginTop: "1rem" }}>{filtered.length} Products</p>
         </div>
       </div>
 
       <div style={{ paddingInline: "clamp(1.25rem,4vw,5rem)", paddingBottom: "6rem" }}>
         {/* ── Controls bar ── */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.5rem 0", borderBottom: "1px solid #D9D3C4", flexWrap: "wrap", gap: "1rem", position: "sticky", top: "80px", backgroundColor: "#F5F1E8", zIndex: 40 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.5rem", borderBottom: "var(--border-thick)", borderTop: "var(--border-thick)", flexWrap: "wrap", gap: "1rem", position: "sticky", top: "72px", backgroundColor: "#F5F1E8", zIndex: 40, marginTop: "2rem", boxShadow: "0 4px 0px rgba(23,37,69,1)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
             {/* Filter toggle */}
-            <button onClick={() => setFilterOpen(!filterOpen)} style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.6rem 1.25rem", border: "2px solid #172545", backgroundColor: filterOpen ? "#172545" : "transparent", color: filterOpen ? "#F5F1E8" : "#172545", fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.68rem", letterSpacing: "0.14em", textTransform: "uppercase", cursor: "pointer" }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+            <button onClick={() => setFilterOpen(!filterOpen)} style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.6rem 1.25rem", border: "2px solid #172545", backgroundColor: filterOpen ? "#172545" : "#F5F1E8", color: filterOpen ? "#F5F1E8" : "#172545", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", boxShadow: "2px 2px 0px 0px #172545" }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square" strokeLinejoin="miter"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
               FILTER {activeCount > 0 && `(${activeCount})`}
             </button>
             {/* Active filter chips */}
             {activeCount > 0 && (
-              <button onClick={clearAll} style={{ fontFamily: "Inter, sans-serif", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#C94227", background: "none", border: "none", borderBottom: "1px solid #C94227", cursor: "pointer", paddingBottom: "1px" }}>CLEAR ALL</button>
+              <button onClick={clearAll} style={{ fontFamily: "var(--font-sans)", fontSize: "11px", fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", color: "#C94227", background: "none", border: "none", cursor: "pointer", paddingBottom: "1px", textDecoration: "underline" }}>SAB HATAAO</button>
             )}
           </div>
           {/* Sort */}
           <div style={{ position: "relative" }}>
-            <button onClick={() => setSortOpen(!sortOpen)} style={{ display: "flex", alignItems: "center", gap: "0.75rem", padding: "0.6rem 1.25rem", border: "2px solid #D9D3C4", backgroundColor: "transparent", color: "#172545", fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: "0.68rem", letterSpacing: "0.12em", textTransform: "uppercase", cursor: "pointer", minWidth: "180px", justifyContent: "space-between" }}>
+            <button onClick={() => setSortOpen(!sortOpen)} style={{ display: "flex", alignItems: "center", gap: "0.75rem", padding: "0.6rem 1.25rem", border: "2px solid #172545", backgroundColor: "#F5F1E8", color: "#172545", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", minWidth: "180px", justifyContent: "space-between", boxShadow: "2px 2px 0px 0px #172545" }}>
               {SORT_OPTIONS.find((s) => s.value === sort)?.label ?? "Sort"}
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
             {sortOpen && (
-              <div style={{ position: "absolute", top: "110%", right: 0, backgroundColor: "#F5F1E8", border: "1px solid #D9D3C4", zIndex: 50, minWidth: "200px", boxShadow: "0 8px 24px rgba(23,37,69,0.12)" }}>
+              <div style={{ position: "absolute", top: "110%", right: 0, backgroundColor: "#F5F1E8", border: "2px solid #172545", zIndex: 50, minWidth: "200px", boxShadow: "4px 4px 0px #172545" }}>
                 {SORT_OPTIONS.map((opt) => (
-                  <button key={opt.value} onClick={() => { setSort(opt.value); setSortOpen(false); }} style={{ display: "block", width: "100%", textAlign: "left", padding: "0.875rem 1.25rem", fontFamily: "Inter, sans-serif", fontWeight: sort === opt.value ? 800 : 600, fontSize: "0.72rem", letterSpacing: "0.08em", textTransform: "uppercase", color: sort === opt.value ? "#C94227" : "#172545", backgroundColor: "transparent", border: "none", borderBottom: "1px solid #EAE6DB", cursor: "pointer" }}>{opt.label}</button>
+                  <button key={opt.value} onClick={() => { setSort(opt.value); setSortOpen(false); }} style={{ display: "block", width: "100%", textAlign: "left", padding: "0.875rem 1.25rem", fontFamily: "var(--font-sans)", fontWeight: sort === opt.value ? 900 : 700, fontSize: "11px", letterSpacing: "0.08em", textTransform: "uppercase", color: sort === opt.value ? "#F5F1E8" : "#172545", backgroundColor: sort === opt.value ? "#172545" : "transparent", border: "none", borderBottom: "2px solid #172545", cursor: "pointer" }}>{opt.label}</button>
                 ))}
               </div>
             )}
@@ -324,7 +324,7 @@ function CollectionPageClientInner({
               <FilterBlock title="Size" options={SIZES} selected={filterSize} onToggle={(v) => toggleFilter(filterSize, v, setFilterSize)} pills />
               <FilterBlock title="Fit" options={FITS} selected={filterFit} onToggle={(v) => toggleFilter(filterFit, v, setFilterFit)} />
               <div style={{ paddingTop: "1rem", borderTop: "1px solid #D9D3C4", marginTop: "0.5rem" }}>
-                <label style={{ display: "flex", alignItems: "center", gap: "0.75rem", cursor: "pointer", fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: "0.72rem", letterSpacing: "0.08em", textTransform: "uppercase", color: "#172545" }}>
+                <label style={{ display: "flex", alignItems: "center", gap: "0.75rem", cursor: "pointer", fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.72rem", letterSpacing: "0.08em", textTransform: "uppercase", color: "#172545" }}>
                   <input type="checkbox" checked={filterInStock} onChange={(e) => setFilterInStock(e.target.checked)} style={{ width: "16px", height: "16px", accentColor: "#172545" }} />
                   In Stock Only
                 </label>
@@ -336,13 +336,21 @@ function CollectionPageClientInner({
           <div>
             {filtered.length === 0 ? (
               <div style={{ textAlign: "center", padding: "6rem 2rem" }}>
-                <p style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", fontSize: "2rem", color: "#172545", marginBottom: "1rem" }}>No products found.</p>
-                <button onClick={clearAll} style={{ fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.72rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#172545", border: "2px solid #172545", padding: "0.75rem 2rem", cursor: "pointer", background: "none" }}>CLEAR FILTERS</button>
+                <p style={{ fontFamily: "var(--font-heading)", fontSize: "2rem", fontWeight: 400, color: "#172545", marginBottom: "1rem" }}>KUCH NAHI MILA BRO.</p>
+                <button onClick={clearAll} style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#F5F1E8", backgroundColor: "#172545", border: "2px solid #172545", padding: "1rem 2rem", cursor: "pointer", boxShadow: "4px 4px 0px #172545" }}>SAB HATAAO</button>
               </div>
             ) : (
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "1.25rem" }} className="plp-grid">
-                {filtered.map((p) => <PLPCard key={p.id} product={p} />)}
-              </div>
+              <>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "1.25rem" }} className="plp-grid">
+                  {filtered.map((p) => <PLPCard key={p.id} product={p} />)}
+                </div>
+                {/* Load More */}
+                <div style={{ display: "flex", justifyContent: "center", marginTop: "4rem" }}>
+                  <button className="btn-primary" style={{ padding: "16px 40px", fontSize: "14px" }}>
+                    AUR DIKHAO
+                  </button>
+                </div>
+              </>
             )}
           </div>
         </div>
@@ -372,16 +380,16 @@ function FilterBlock({ title, options, selected, onToggle, pills = false }: {
   const [open, setOpen] = useState(true);
   return (
     <div style={{ borderTop: "1px solid #D9D3C4", paddingBlock: "1rem" }}>
-      <button onClick={() => setOpen(!open)} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", background: "none", border: "none", cursor: "pointer", padding: 0, fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#172545" }}>
+      <button onClick={() => setOpen(!open)} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", background: "none", border: "none", cursor: "pointer", padding: 0, fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#172545" }}>
         {title}
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#172545" strokeWidth="2.5" style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}><polyline points="6 9 12 15 18 9"/></svg>
       </button>
       {open && (
         <div style={{ marginTop: "0.875rem", display: pills ? "flex" : "block", flexWrap: "wrap", gap: pills ? "0.5rem" : undefined }}>
           {options.map((opt) => pills ? (
-            <button key={opt} onClick={() => onToggle(opt)} style={{ padding: "0.35rem 0.75rem", border: "1.5px solid", borderColor: selected.includes(opt) ? "#172545" : "#D9D3C4", backgroundColor: selected.includes(opt) ? "#172545" : "transparent", color: selected.includes(opt) ? "#F5F1E8" : "#172545", fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: "0.65rem", letterSpacing: "0.08em", cursor: "pointer" }}>{opt}</button>
+            <button key={opt} onClick={() => onToggle(opt)} style={{ padding: "0.35rem 0.75rem", border: "1.5px solid", borderColor: selected.includes(opt) ? "#172545" : "#D9D3C4", backgroundColor: selected.includes(opt) ? "#172545" : "transparent", color: selected.includes(opt) ? "#F5F1E8" : "#172545", fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.65rem", letterSpacing: "0.08em", cursor: "pointer" }}>{opt}</button>
           ) : (
-            <label key={opt} style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.5rem", cursor: "pointer", fontFamily: "Inter, sans-serif", fontWeight: 600, fontSize: "0.75rem", color: "#172545" }}>
+            <label key={opt} style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "0.5rem", cursor: "pointer", fontFamily: "var(--font-sans)", fontWeight: 600, fontSize: "0.75rem", color: "#172545" }}>
               <input type="checkbox" checked={selected.includes(opt)} onChange={() => onToggle(opt)} style={{ width: "14px", height: "14px", accentColor: "#172545" }} />
               {opt}
             </label>
@@ -399,39 +407,256 @@ function PLPCard({ product: p }: { product: Product }) {
   const [wishlisted, setWishlisted] = useState(false);
   const [added, setAdded] = useState(false);
   const disc = Math.round(((p.mrpPaise - p.pricePaise) / p.mrpPaise) * 100);
+  
+  const mockRating = p.rating || "4.8";
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", opacity: p.inStock ? 1 : 0.65 }} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
-      <Link href={p.href} style={{ position: "relative", display: "block", aspectRatio: "3/4", overflow: "hidden", backgroundColor: "#EAE6DB", marginBottom: "0.85rem" }}>
-        {/* Badges */}
-        <div style={{ position: "absolute", top: "10px", left: "10px", zIndex: 10, display: "flex", flexDirection: "column", gap: "3px" }}>
-          {p.badge && <span style={{ backgroundColor: p.badge === "LIMITED" || p.badge === "SALE" ? "#C94227" : "#172545", color: "#F5F1E8", fontFamily: "Inter, sans-serif", fontSize: "8px", fontWeight: 900, letterSpacing: "0.14em", textTransform: "uppercase", padding: "3px 7px" }}>{p.badge}</span>}
-          {!p.inStock && <span style={{ backgroundColor: "#6B7280", color: "#F5F1E8", fontFamily: "Inter, sans-serif", fontSize: "8px", fontWeight: 900, letterSpacing: "0.14em", textTransform: "uppercase", padding: "3px 7px" }}>SOLD OUT</span>}
-        </div>
-        {/* Wishlist */}
-        <button onClick={(e) => { e.preventDefault(); setWishlisted((w) => !w); }} aria-label="Toggle wishlist" style={{ position: "absolute", top: "10px", right: "10px", zIndex: 10, background: "rgba(245,241,232,0.92)", border: "none", width: "32px", height: "32px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", opacity: hovered || wishlisted ? 1 : 0, transition: "opacity 0.2s" }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill={wishlisted ? "#C94227" : "none"} stroke={wishlisted ? "#C94227" : "#172545"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-        </button>
-        <Image src={hovered && p.inStock ? p.hoverImage : p.image} alt={p.title} fill sizes="(max-width: 768px) 50vw, 25vw" style={{ objectFit: "cover", transition: "transform 0.6s ease", transform: hovered && p.inStock ? "scale(1.04)" : "scale(1)" }} />
-        {/* Quick Add */}
+    <article
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        backgroundColor: "#F5F1E8",
+        border: "var(--border-thick)",
+        boxShadow: "var(--shadow-sm)",
+        transition: "box-shadow 0.2s ease, transform 0.2s ease",
+        position: "relative",
+        opacity: p.inStock ? 1 : 0.65
+      }}
+      className="product-card"
+      onMouseEnter={() => setHovered(true)} 
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* Wishlist Heart */}
+      <button 
+        aria-label="Toggle wishlist"
+        onClick={(e) => { e.preventDefault(); setWishlisted((w) => !w); }}
+        style={{
+          position: "absolute",
+          top: "12px",
+          right: "12px",
+          zIndex: 20,
+          background: wishlisted ? "#C94227" : "#F5F1E8",
+          border: "2px solid #172545",
+          borderRadius: "50%",
+          width: "32px",
+          height: "32px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          cursor: "pointer",
+          boxShadow: "2px 2px 0px 0px #172545",
+          transition: "transform 0.1s ease",
+        }}
+        className="wishlist-btn"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill={wishlisted ? "#C94227" : "none"} stroke={wishlisted ? "#F5F1E8" : "#172545"} strokeWidth="2.5" strokeLinecap="square" strokeLinejoin="miter">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+      </button>
+
+      {/* Image block */}
+      <Link
+        href={p.href}
+        style={{
+          position: "relative",
+          display: "block",
+          aspectRatio: "3/4",
+          overflow: "hidden",
+          backgroundColor: "#EAE6DB",
+          borderBottom: "var(--border-thick)",
+        }}
+        tabIndex={-1}
+        className="pc-link"
+      >
+        <Image
+          src={p.image}
+          alt={p.title}
+          fill
+          sizes="(max-width: 768px) 50vw, 25vw"
+          style={{ objectFit: "cover", opacity: hovered && p.inStock ? 0 : 1, transition: "opacity 0.4s ease" }}
+        />
         {p.inStock && (
-          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "0.75rem", transform: hovered ? "translateY(0)" : "translateY(100%)", transition: "transform 0.28s ease", zIndex: 10 }}>
-            <button onClick={(e) => { e.preventDefault(); setAdded(true); setTimeout(() => setAdded(false), 1800); }} style={{ width: "100%", padding: "0.7rem", backgroundColor: added ? "#C94227" : "#172545", color: "#F5F1E8", fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.65rem", letterSpacing: "0.14em", textTransform: "uppercase", border: "none", cursor: "pointer", transition: "background-color 0.2s" }}>
-              {added ? "ADDED ✓" : "QUICK ADD"}
+          <Image
+            src={p.hoverImage}
+            alt={`${p.title} alt`}
+            fill
+            sizes="(max-width: 768px) 50vw, 25vw"
+            style={{ objectFit: "cover", position: "absolute", inset: 0, opacity: hovered ? 1 : 0, transition: "opacity 0.4s ease, transform 0.4s ease", transform: hovered ? "scale(1.05)" : "scale(1)" }}
+          />
+        )}
+
+        {/* ONE Badge Max */}
+        <div style={{ position: "absolute", top: "12px", left: "12px", zIndex: 10 }}>
+          {p.badge && p.inStock && (
+            <span style={{ 
+              backgroundColor: p.badge === "LIMITED" || p.badge === "SALE" ? "#C94227" : "#172545", 
+              color: "#F5F1E8", 
+              fontFamily: "var(--font-mono)", 
+              fontWeight: 700, 
+              fontSize: "10px", 
+              letterSpacing: "0.1em", 
+              textTransform: "uppercase", 
+              padding: "4px 8px",
+              border: "2px solid #172545",
+              boxShadow: "2px 2px 0px 0px #172545",
+              display: "inline-block",
+              transform: "rotate(-3deg)",
+              marginBottom: "4px"
+            }}>
+              {p.badge}
+            </span>
+          )}
+          {!p.inStock && (
+             <span style={{ 
+              backgroundColor: "#6B7280", 
+              color: "#F5F1E8", 
+              fontFamily: "var(--font-mono)", 
+              fontWeight: 700, 
+              fontSize: "10px", 
+              letterSpacing: "0.1em", 
+              textTransform: "uppercase", 
+              padding: "4px 8px",
+              border: "2px solid #172545",
+              boxShadow: "2px 2px 0px 0px #172545",
+              display: "inline-block",
+              transform: "rotate(-3deg)"
+            }}>
+              SOLD OUT
+            </span>
+          )}
+        </div>
+
+        {/* Quick Add Overlay */}
+        {p.inStock && (
+          <div 
+            className="quick-add-overlay"
+            style={{
+              position: "absolute",
+              bottom: "0",
+              left: "0",
+              right: "0",
+              padding: "12px",
+              background: "linear-gradient(to top, rgba(23,37,69,0.8) 0%, transparent 100%)",
+              transform: hovered ? "translateY(0)" : "translateY(100%)",
+              transition: "transform 0.3s ease",
+              display: "flex",
+              justifyContent: "center"
+            }}
+          >
+            <button 
+              onClick={(e) => { e.preventDefault(); setAdded(true); setTimeout(() => setAdded(false), 1800); }}
+              style={{
+                width: "100%",
+                backgroundColor: added ? "#C94227" : "#F5F1E8",
+                color: added ? "#F5F1E8" : "#172545",
+                border: "2px solid #172545",
+                boxShadow: "2px 2px 0px 0px #172545",
+                padding: "8px",
+                fontFamily: "var(--font-sans)",
+                fontWeight: 900,
+                fontSize: "11px",
+                textTransform: "uppercase",
+                letterSpacing: "0.05em",
+                cursor: "pointer",
+                transition: "background-color 0.2s"
+            }}>
+              {added ? "ADDED ✓" : "JALDI ADD KAR"}
             </button>
           </div>
         )}
       </Link>
-      <div>
-        <div style={{ display: "flex", gap: "5px", marginBottom: "6px" }}>
-          {safeColors(p).map((c) => <div key={c.hex} title={c.label} style={{ width: "11px", height: "11px", borderRadius: "50%", backgroundColor: c.hex, border: "1.5px solid rgba(23,37,69,0.2)" }} />)}
+
+      {/* Info */}
+      <div style={{ padding: "12px", display: "flex", flexDirection: "column", gap: "8px", flex: 1 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "8px" }}>
+          <h3 style={{ margin: 0 }}>
+            <Link
+              href={p.href}
+              style={{
+                fontFamily: "var(--font-heading)",
+                fontWeight: 400,
+                fontSize: "16px",
+                lineHeight: "1",
+                letterSpacing: "0.02em",
+                textTransform: "uppercase",
+                color: "#172545",
+                display: "-webkit-box",
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+                textDecoration: "none"
+              }}
+            >
+              {p.title}
+            </Link>
+          </h3>
+          
+          {/* Rating Chip */}
+          <div style={{ 
+            display: "flex", 
+            alignItems: "center", 
+            gap: "2px", 
+            backgroundColor: "#172545", 
+            color: "#F5F1E8", 
+            padding: "2px 6px", 
+            border: "1.5px solid #172545",
+            fontFamily: "var(--font-mono)",
+            fontSize: "10px",
+            fontWeight: 700,
+            flexShrink: 0
+          }}>
+            <span style={{ color: "var(--color-yellow)", fontSize: "10px" }}>★</span>
+            <span>{mockRating}</span>
+          </div>
         </div>
-        <Link href={p.href} style={{ display: "block", fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.7rem", letterSpacing: "0.05em", textTransform: "uppercase", color: "#172545", marginBottom: "5px", lineHeight: 1.35 }}>{p.title}</Link>
-        <div style={{ display: "flex", alignItems: "center", gap: "7px" }}>
-          <span style={{ fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: "0.85rem", color: "#172545" }}>{fmt(p.pricePaise)}</span>
-          {disc > 0 && <><span style={{ fontFamily: "Inter, sans-serif", fontWeight: 500, fontSize: "0.72rem", color: "#6B7280", textDecoration: "line-through" }}>{fmt(p.mrpPaise)}</span><span style={{ fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: "0.65rem", color: "#C94227" }}>{disc}% off</span></>}
+
+        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+          <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "14px", color: "#172545" }}>
+            {fmt(p.pricePaise)}
+          </span>
+          {disc > 0 && (
+            <>
+              <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "11px", color: "#6B7280", textDecoration: "line-through" }}>
+                {fmt(p.mrpPaise)}
+              </span>
+              <span style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "10px", color: "#C94227" }}>
+                {disc}% off
+              </span>
+            </>
+          )}
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "auto", paddingTop: "4px" }}>
+          {/* Color Swatches */}
+          <div style={{ display: "flex", gap: "4px" }}>
+            {safeColors(p).map((c) => (
+              <div key={c.hex} title={c.label} style={{ width: "12px", height: "12px", borderRadius: "50%", backgroundColor: c.hex, border: "1px solid #172545" }} />
+            ))}
+          </div>
+
+          {/* Size Chips */}
+          <div style={{ display: "flex", gap: "4px" }}>
+            {safeSizes(p).slice(0,4).map((sz) => (
+              <span key={sz} style={{
+                fontSize: "9px",
+                fontWeight: 700,
+                color: "#172545",
+                fontFamily: "var(--font-mono)",
+              }}>
+                {sz}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+      
+      <style>{`
+        .product-card:hover { transform: translate(-2px, -2px); box-shadow: var(--shadow-md) !important; }
+        .wishlist-btn:hover { transform: scale(1.1); }
+        @media (max-width: 1024px) {
+          .quick-add-overlay { display: none !important; }
+        }
+      `}</style>
+    </article>
   );
 }

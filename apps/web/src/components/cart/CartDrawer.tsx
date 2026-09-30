@@ -8,7 +8,8 @@
  * Uses Zustand useCartStore for live cart data.
  * Provides: quantity update, remove, proceed to checkout.
  */
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import { useCartStore } from "@/store/cart";
@@ -61,7 +62,12 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
     else setQuantity(sku, newQty);
   };
 
-  return (
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted) return null;
+
+  return createPortal(
     <>
       {/* Backdrop */}
       <div
@@ -96,7 +102,8 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
           transition: "transform 0.35s cubic-bezier(0.4,0,0.2,1)",
           display: "flex",
           flexDirection: "column",
-          boxShadow: "-8px 0 32px rgba(23,37,69,0.15)",
+          borderLeft: "var(--border-thick)",
+          boxShadow: "-8px 0 0 rgba(23,37,69,1)",
         }}
       >
         {/* Header */}
@@ -106,17 +113,17 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
             alignItems: "center",
             justifyContent: "space-between",
             padding: "1.25rem 1.5rem",
-            borderBottom: "1px solid #D9D3C4",
-            backgroundColor: "#172545",
+            borderBottom: "var(--border-thick)",
+            backgroundColor: "#F5F1E8",
           }}
         >
           <div>
-            <h2 style={{ fontFamily: "Inter, sans-serif", fontWeight: 900, fontSize: "0.78rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "#F5F1E8", margin: 0 }}>
+            <h2 style={{ fontFamily: "var(--font-heading)", fontWeight: 400, fontSize: "20px", letterSpacing: "0.05em", textTransform: "uppercase", color: "#172545", margin: 0 }}>
               YOUR BAG
             </h2>
             {items.length > 0 && (
-              <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.65rem", color: "rgba(245,241,232,0.6)", margin: "0.15rem 0 0", letterSpacing: "0.06em" }}>
-                {items.length} {items.length === 1 ? "item" : "items"}
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: "12px", fontWeight: 700, color: "#C94227", margin: "0.15rem 0 0", letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                {items.length} {items.length === 1 ? "ITEM" : "ITEMS"}
               </p>
             )}
           </div>
@@ -124,18 +131,18 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
             onClick={onClose}
             aria-label="Close cart"
             style={{
-              background: "none",
-              border: "none",
+              background: "#172545",
+              border: "2px solid #172545",
               cursor: "pointer",
               color: "#F5F1E8",
               padding: "0.5rem",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              opacity: 0.8,
+              boxShadow: "2px 2px 0px 0px #172545",
             }}
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square">
               <line x1="18" y1="6" x2="6" y2="18" />
               <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
@@ -144,116 +151,150 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
 
         {/* Free shipping progress */}
         {items.length > 0 && (
-          <div style={{ padding: "0.875rem 1.5rem", backgroundColor: "#EAE6DB", borderBottom: "1px solid #D9D3C4" }}>
+          <div style={{ padding: "0.875rem 1.5rem", backgroundColor: "#EAE6DB", borderBottom: "var(--border-thick)" }}>
             {toFree > 0 ? (
               <>
-                <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.72rem", fontWeight: 600, color: "#172545", marginBottom: "0.5rem" }}>
-                  Add <strong>{fmt(toFree)}</strong> more for free shipping
+                <p style={{ fontFamily: "var(--font-sans)", fontSize: "12px", fontWeight: 900, color: "#172545", marginBottom: "0.5rem", textTransform: "uppercase" }}>
+                  AUR <strong style={{ color: "#C94227", fontFamily: "var(--font-mono)" }}>{fmt(toFree)}</strong> DAAL FOR FREE SHIPPING
                 </p>
-                <div style={{ height: "3px", backgroundColor: "#D9D3C4", borderRadius: "2px" }}>
+                <div style={{ height: "12px", backgroundColor: "#F5F1E8", border: "2px solid #172545" }}>
                   <div
                     style={{
                       height: "100%",
                       width: `${Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100)}%`,
                       backgroundColor: "#172545",
-                      borderRadius: "2px",
                       transition: "width 0.4s ease",
                     }}
                   />
                 </div>
               </>
             ) : (
-              <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.72rem", fontWeight: 700, color: "#172545", letterSpacing: "0.08em" }}>
-                🎉 FREE SHIPPING UNLOCKED
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: "12px", fontWeight: 900, color: "#172545", letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                🎉 SCENE SET HAI. FREE SHIPPING!
               </p>
             )}
           </div>
         )}
 
         {/* Cart Items */}
-        <div style={{ flex: 1, overflowY: "auto", padding: "0 1.5rem" }}>
+        <div style={{ flex: 1, overflowY: "auto" }}>
           {items.length === 0 ? (
             <div style={{ textAlign: "center", padding: "3rem 1rem" }}>
-              <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>🛍️</div>
-              <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontStyle: "italic", fontSize: "1.5rem", color: "#172545", marginBottom: "0.75rem" }}>
-                Your bag is empty.
+              <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🛍️</div>
+              <p style={{ fontFamily: "var(--font-heading)", fontSize: "28px", fontWeight: 400, color: "#172545", marginBottom: "1.5rem", textTransform: "uppercase" }}>
+                BAG KHALI HAI BRO.
               </p>
               <button
                 onClick={onClose}
-                style={{ fontFamily: "Inter, sans-serif", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#172545", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}
+                style={{ fontFamily: "var(--font-sans)", fontSize: "12px", fontWeight: 900, letterSpacing: "0.12em", textTransform: "uppercase", color: "#F5F1E8", backgroundColor: "#172545", border: "2px solid #172545", padding: "12px 24px", cursor: "pointer", boxShadow: "4px 4px 0px 0px #172545" }}
               >
-                Continue Shopping
+                AUR DIKHAO
               </button>
             </div>
           ) : (
-            <div>
-              {items.map((item) => (
-                <div
-                  key={item.sku}
-                  style={{ display: "grid", gridTemplateColumns: "80px 1fr", gap: "1rem", padding: "1.25rem 0", borderBottom: "1px solid #D9D3C4" }}
-                >
-                  <Link href={`/products/${item.slug}`} onClick={onClose} style={{ position: "relative", display: "block", aspectRatio: "3/4", overflow: "hidden", backgroundColor: "#EAE6DB", flexShrink: 0 }}>
-                    <Image src={item.image} alt={item.title} fill sizes="80px" style={{ objectFit: "cover" }} />
-                  </Link>
-                  <div>
-                    <Link href={`/products/${item.slug}`} onClick={onClose} style={{ fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: "0.72rem", letterSpacing: "0.04em", textTransform: "uppercase", color: "#172545", display: "block", marginBottom: "0.3rem", textDecoration: "none", lineHeight: 1.3 }}>
-                      {item.title}
+            <>
+              <div style={{ padding: "0 1.5rem" }}>
+                {items.map((item) => (
+                  <div
+                    key={item.sku}
+                    style={{ display: "grid", gridTemplateColumns: "80px 1fr", gap: "1rem", padding: "1.25rem 0", borderBottom: "var(--border-thick)" }}
+                  >
+                    <Link href={`/products/${item.slug}`} onClick={onClose} style={{ position: "relative", display: "block", aspectRatio: "3/4", overflow: "hidden", backgroundColor: "#EAE6DB", flexShrink: 0, border: "2px solid #172545", boxShadow: "2px 2px 0px 0px #172545" }}>
+                      <Image src={item.image} alt={item.title} fill sizes="80px" style={{ objectFit: "cover" }} />
                     </Link>
-                    <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.65rem", color: "#6B7280", marginBottom: "0.15rem" }}>{item.size && `Size: ${item.size}`}{item.color && ` · ${item.color}`}</p>
-                    <p style={{ fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: "0.88rem", color: "#172545", marginBottom: "0.75rem" }}>
-                      {fmt(item.pricePaise)}
-                    </p>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                      <div style={{ display: "flex", alignItems: "center", border: "1px solid #D9D3C4" }}>
-                        <button onClick={() => updateQty(item.sku, -1)} aria-label="Decrease" style={{ width: "28px", height: "28px", background: "none", border: "none", cursor: "pointer", color: "#172545", fontSize: "1rem" }}>−</button>
-                        <span style={{ width: "28px", textAlign: "center", fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: "0.78rem", color: "#172545" }}>{item.quantity}</span>
-                        <button onClick={() => updateQty(item.sku, 1)} aria-label="Increase" style={{ width: "28px", height: "28px", background: "none", border: "none", cursor: "pointer", color: "#172545", fontSize: "1rem" }}>+</button>
+                    <div>
+                      <Link href={`/products/${item.slug}`} onClick={onClose} style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", letterSpacing: "0.04em", textTransform: "uppercase", color: "#172545", display: "block", marginBottom: "0.3rem", textDecoration: "none", lineHeight: 1.3 }}>
+                        {item.title}
+                      </Link>
+                      <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 700, color: "#6B7280", marginBottom: "0.15rem", textTransform: "uppercase" }}>{item.size && `SIZE: ${item.size}`}{item.color && ` · ${item.color}`}</p>
+                      <p style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "16px", color: "#172545", marginBottom: "0.75rem" }}>
+                        {fmt(item.pricePaise)}
+                      </p>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                        <div style={{ display: "flex", alignItems: "center", border: "2px solid #172545", boxShadow: "2px 2px 0px 0px #172545", backgroundColor: "#F5F1E8" }}>
+                          <button onClick={() => updateQty(item.sku, -1)} aria-label="Decrease" style={{ width: "28px", height: "28px", background: "none", border: "none", cursor: "pointer", color: "#172545", fontSize: "1rem", fontWeight: 900 }}>−</button>
+                          <span style={{ width: "28px", textAlign: "center", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", color: "#172545" }}>{item.quantity}</span>
+                          <button onClick={() => updateQty(item.sku, 1)} aria-label="Increase" style={{ width: "28px", height: "28px", background: "none", border: "none", cursor: "pointer", color: "#172545", fontSize: "1rem", fontWeight: 900 }}>+</button>
+                        </div>
+                        <button onClick={() => removeItem(item.sku)} style={{ fontFamily: "var(--font-sans)", fontSize: "10px", fontWeight: 900, letterSpacing: "0.08em", textTransform: "uppercase", color: "#C94227", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}>
+                          HATAO
+                        </button>
                       </div>
-                      <button onClick={() => removeItem(item.sku)} style={{ fontFamily: "Inter, sans-serif", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "#C94227", background: "none", border: "none", cursor: "pointer" }}>
-                        REMOVE
-                      </button>
                     </div>
                   </div>
+                ))}
+              </div>
+              
+              {/* Upsell Section */}
+              <div style={{ padding: "1.5rem", backgroundColor: "#EAE6DB" }}>
+                <p style={{ fontFamily: "var(--font-heading)", fontWeight: 400, fontSize: "18px", letterSpacing: "0.02em", color: "#172545", marginBottom: "1rem", textTransform: "uppercase" }}>YOU MIGHT ALSO LIKE</p>
+                <div style={{ display: "flex", gap: "1rem", overflowX: "auto", paddingBottom: "1rem" }} className="hide-scrollbar">
+                  {[
+                    { id: "al1", title: "DHARMA GRAPHIC HOODIE", price: 299900, image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=400&auto=format&fit=crop&q=80", href: "/products/dharma-graphic-hoodie-stone" },
+                    { id: "al2", title: "CARGO WIDE LEG", price: 349900, image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=400&auto=format&fit=crop&q=80", href: "/products/cargo-wide-leg-military-olive" }
+                  ].map((p) => (
+                    <div key={p.id} style={{ minWidth: "140px", backgroundColor: "#F5F1E8", border: "2px solid #172545", boxShadow: "2px 2px 0px 0px #172545", padding: "8px" }}>
+                      <Link href={p.href} onClick={onClose} style={{ display: "block" }}>
+                        <div style={{ position: "relative", aspectRatio: "3/4", border: "2px solid #172545", marginBottom: "8px" }}>
+                          <Image src={p.image} alt={p.title} fill sizes="140px" style={{ objectFit: "cover" }} />
+                        </div>
+                        <p style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "10px", color: "#172545", textTransform: "uppercase", marginBottom: "4px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.title}</p>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                          <p style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "12px", color: "#172545" }}>{fmt(p.price)}</p>
+                          <span style={{ backgroundColor: "#172545", color: "#F5F1E8", width: "24px", height: "24px", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900 }}>+</span>
+                        </div>
+                      </Link>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            </>
           )}
         </div>
 
         {/* Footer */}
         {items.length > 0 && (
-          <div style={{ padding: "1.25rem 1.5rem", borderTop: "1px solid #D9D3C4", backgroundColor: "#EAE6DB" }}>
+          <div style={{ padding: "1.5rem", borderTop: "var(--border-thick)", backgroundColor: "#EAE6DB" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "1rem" }}>
-              <span style={{ fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: "0.8rem", letterSpacing: "0.06em", textTransform: "uppercase", color: "#172545" }}>SUBTOTAL</span>
-              <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontSize: "1.35rem", color: "#172545" }}>
+              <span style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "14px", letterSpacing: "0.06em", textTransform: "uppercase", color: "#172545" }}>SUBTOTAL</span>
+              <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "24px", color: "#172545", textShadow: "2px 2px 0px rgba(23,37,69,0.2)" }}>
                 {fmt(subtotal)}
               </span>
             </div>
             {shipping > 0 && (
-              <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.65rem", color: "#6B7280", marginBottom: "1rem" }}>
-                +{fmt(shipping)} shipping · Free above ₹1,999
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: "10px", fontWeight: 800, color: "#C94227", marginBottom: "1rem", textTransform: "uppercase" }}>
+                +{fmt(shipping)} SHIPPING · FREE ABOVE ₹1,999
               </p>
             )}
             <Link
               href="/checkout"
               onClick={onClose}
-              style={{ display: "block", width: "100%", padding: "1rem", backgroundColor: "#172545", color: "#F5F1E8", fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.78rem", letterSpacing: "0.14em", textTransform: "uppercase", textAlign: "center", textDecoration: "none", marginBottom: "0.75rem" }}
+              className="btn-primary"
+              style={{ display: "block", width: "100%", padding: "16px", marginBottom: "0.75rem", fontSize: "16px" }}
             >
               CHECKOUT
             </Link>
             <Link
               href="/cart"
               onClick={onClose}
-              style={{ display: "block", width: "100%", padding: "0.875rem", backgroundColor: "transparent", color: "#172545", fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", textAlign: "center", textDecoration: "none", border: "1.5px solid #172545" }}
+              style={{ display: "block", width: "100%", padding: "14px", backgroundColor: "transparent", color: "#172545", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "14px", letterSpacing: "0.12em", textTransform: "uppercase", textAlign: "center", textDecoration: "none", border: "2px solid #172545", boxShadow: "4px 4px 0px 0px #172545" }}
             >
               VIEW FULL BAG
             </Link>
-            <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.62rem", color: "#6B7280", textAlign: "center", marginTop: "0.75rem", letterSpacing: "0.04em" }}>
-              🔒 Secure · UPI · Cards · COD
-            </p>
           </div>
         )}
       </div>
-    </>
+
+      <style>{`
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .hide-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
+    </>,
+    document.body
   );
 }

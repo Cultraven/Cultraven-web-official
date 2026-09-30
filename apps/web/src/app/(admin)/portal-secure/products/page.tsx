@@ -124,7 +124,7 @@ export default function AdminProductsPage() {
 
   const CELL: React.CSSProperties = {
     padding: "1rem",
-    fontFamily: "Inter, sans-serif",
+    fontFamily: "var(--font-sans)",
     fontSize: "0.78rem",
     color: "rgba(245,241,232,0.75)",
     borderBottom: "1px solid rgba(255,255,255,0.04)",
@@ -136,10 +136,10 @@ export default function AdminProductsPage() {
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "2rem" }}>
         <div>
-          <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#C94227", marginBottom: "0.4rem" }}>
+          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#C94227", marginBottom: "0.4rem" }}>
             Catalog
           </p>
-          <h1 style={{ fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "1.75rem", color: "#F5F1E8", letterSpacing: "-0.02em" }}>
+          <h1 style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "1.75rem", color: "#F5F1E8", letterSpacing: "-0.02em" }}>
             Products
           </h1>
         </div>
@@ -153,7 +153,7 @@ export default function AdminProductsPage() {
             padding: "0.75rem 1.5rem",
             backgroundColor: "#C94227",
             color: "#F5F1E8",
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "var(--font-sans)",
             fontWeight: 700,
             fontSize: "0.78rem",
             letterSpacing: "0.08em",
@@ -203,7 +203,7 @@ export default function AdminProductsPage() {
               backgroundColor: "#1A2332",
               border: "1px solid rgba(255,255,255,0.08)",
               borderRadius: "4px",
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontSize: "0.82rem",
               color: "#F5F1E8",
               outline: "none",
@@ -220,7 +220,7 @@ export default function AdminProductsPage() {
               padding: "0.625rem 1.25rem",
               backgroundColor: statusFilter === s ? "#C94227" : "rgba(255,255,255,0.04)",
               color: statusFilter === s ? "#F5F1E8" : "rgba(245,241,232,0.55)",
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontWeight: 600,
               fontSize: "0.72rem",
               letterSpacing: "0.08em",
@@ -251,7 +251,7 @@ export default function AdminProductsPage() {
             marginBottom: "1rem",
           }}
         >
-          <span style={{ fontFamily: "Inter, sans-serif", fontSize: "0.78rem", fontWeight: 700, color: "#C94227" }}>
+          <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.78rem", fontWeight: 700, color: "#C94227" }}>
             {selected.size} selected
           </span>
           <button
@@ -269,7 +269,7 @@ export default function AdminProductsPage() {
                 setSelected(new Set());
               } catch (e) { alert("Failed to archive some products"); }
             }}
-            style={{ fontFamily: "Inter, sans-serif", fontSize: "0.72rem", fontWeight: 600, color: "#D97706", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+            style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", fontWeight: 600, color: "#D97706", background: "none", border: "none", cursor: "pointer", padding: 0 }}
           >
             Archive Selected
           </button>
@@ -284,13 +284,13 @@ export default function AdminProductsPage() {
                 setSelected(new Set());
               } catch (e) { alert("Failed to delete some products"); }
             }}
-            style={{ fontFamily: "Inter, sans-serif", fontSize: "0.72rem", fontWeight: 600, color: "#C94227", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+            style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", fontWeight: 600, color: "#C94227", background: "none", border: "none", cursor: "pointer", padding: 0 }}
           >
             Delete Selected
           </button>
           <button
             onClick={() => setSelected(new Set())}
-            style={{ fontFamily: "Inter, sans-serif", fontSize: "0.72rem", fontWeight: 600, color: "rgba(245,241,232,0.45)", background: "none", border: "none", cursor: "pointer", padding: 0, marginLeft: "auto" }}
+            style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", fontWeight: 600, color: "rgba(245,241,232,0.45)", background: "none", border: "none", cursor: "pointer", padding: 0, marginLeft: "auto" }}
           >
             Clear selection
           </button>
@@ -368,10 +368,10 @@ export default function AdminProductsPage() {
                           style={{ width: "44px", height: "56px", objectFit: "cover", borderRadius: "2px", flexShrink: 0 }}
                         />
                         <div>
-                          <p style={{ fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: "0.82rem", color: "#F5F1E8", marginBottom: "3px" }}>
+                          <p style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.82rem", color: "#F5F1E8", marginBottom: "3px" }}>
                             {product.title}
                           </p>
-                          <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.68rem", color: "rgba(245,241,232,0.35)" }}>
+                          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", color: "rgba(245,241,232,0.35)" }}>
                             /{product.slug}
                           </p>
                         </div>
@@ -383,7 +383,7 @@ export default function AdminProductsPage() {
                       {product.stock === 0 ? "Out of stock" : product.stock}
                     </td>
                     <td style={CELL}>
-                      <span style={{ backgroundColor: badge.bg, color: badge.text, fontFamily: "Inter, sans-serif", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", padding: "3px 8px", borderRadius: "3px" }}>
+                      <span style={{ backgroundColor: badge.bg, color: badge.text, fontFamily: "var(--font-sans)", fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", padding: "3px 8px", borderRadius: "3px" }}>
                         {badge.label}
                       </span>
                     </td>
@@ -399,7 +399,7 @@ export default function AdminProductsPage() {
                             padding: "5px 10px",
                             backgroundColor: "rgba(255,255,255,0.06)",
                             color: "rgba(245,241,232,0.7)",
-                            fontFamily: "Inter, sans-serif",
+                            fontFamily: "var(--font-sans)",
                             fontSize: "0.68rem",
                             fontWeight: 600,
                             textDecoration: "none",
@@ -412,14 +412,14 @@ export default function AdminProductsPage() {
                         <button
                           title="Archive"
                           onClick={() => archiveProduct(product.id)}
-                          style={{ padding: "5px 10px", backgroundColor: "rgba(255,255,255,0.06)", color: "rgba(245,241,232,0.5)", fontFamily: "Inter, sans-serif", fontSize: "0.68rem", fontWeight: 600, border: "none", borderRadius: "3px", cursor: "pointer" }}
+                          style={{ padding: "5px 10px", backgroundColor: "rgba(255,255,255,0.06)", color: "rgba(245,241,232,0.5)", fontFamily: "var(--font-sans)", fontSize: "0.68rem", fontWeight: 600, border: "none", borderRadius: "3px", cursor: "pointer" }}
                         >
                           Archive
                         </button>
                         <button
                           title="Delete"
                           onClick={() => deleteProduct(product.id)}
-                          style={{ padding: "5px 10px", backgroundColor: "rgba(201,66,39,0.1)", color: "#C94227", fontFamily: "Inter, sans-serif", fontSize: "0.68rem", fontWeight: 600, border: "none", borderRadius: "3px", cursor: "pointer" }}
+                          style={{ padding: "5px 10px", backgroundColor: "rgba(201,66,39,0.1)", color: "#C94227", fontFamily: "var(--font-sans)", fontSize: "0.68rem", fontWeight: 600, border: "none", borderRadius: "3px", cursor: "pointer" }}
                         >
                           Delete
                         </button>
@@ -433,7 +433,7 @@ export default function AdminProductsPage() {
         </table>
       </div>
 
-      <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.72rem", color: "rgba(245,241,232,0.3)", marginTop: "1rem" }}>
+      <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "rgba(245,241,232,0.3)", marginTop: "1rem" }}>
         Showing {filtered.length} of {products.length} products
       </p>
     </div>

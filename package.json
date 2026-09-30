@@ -1,10 +1,11 @@
 {
   "name": "fashion-commerce",
   "private": true,
-  "packageManager": "pnpm@9.15.0",
+  "packageManager": "pnpm@12.8.1",
+
   "engines": { "node": ">=20" },
   "scripts": {
-    "dev": "turbo run dev",
+    "dev": "turbo run dev --concurrency=20",
     "dev:web": "turbo run dev --filter=@shop/web",
     "dev:admin": "turbo run dev --filter=@shop/admin",
     "dev:delivery": "turbo run dev --filter=@shop/delivery",

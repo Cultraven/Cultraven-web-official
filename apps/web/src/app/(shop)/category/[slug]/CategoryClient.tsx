@@ -48,8 +48,8 @@ class PLPErrorBoundary extends Component<
     if (this.state.hasError) {
       return (
         <div style={{ backgroundColor: "#F5F1E8", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "1.5rem" }}>
-          <p style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", fontSize: "2rem", color: "#172545", textAlign: "center", padding: "0 2rem" }}>Something went wrong loading this collection.</p>
-          <Link href="/" style={{ fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.72rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#F5F1E8", backgroundColor: "#172545", padding: "0.875rem 2rem", textDecoration: "none" }}>BACK TO HOME</Link>
+          <p style={{ fontFamily: "var(--font-heading)", fontSize: "2rem", color: "#172545", textAlign: "center", padding: "0 2rem" }}>Something went wrong loading this collection.</p>
+          <Link href="/" style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.72rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#F5F1E8", backgroundColor: "#172545", padding: "0.875rem 2rem", textDecoration: "none" }}>BACK TO HOME</Link>
         </div>
       );
     }
@@ -306,14 +306,14 @@ function CategoryClientInner({ slug, categoryName }: CategoryClientProps) {
       {/* ── Hero ──────────────────────────────────────────────────────────── */}
       <div style={{ backgroundColor: "#172545", padding: "clamp(3rem,6vw,6rem) clamp(1.25rem,4vw,5rem)", paddingTop: "calc(clamp(3rem,6vw,6rem) + 80px)" }}>
         <nav style={{ marginBottom: "1rem" }}>
-          <Link href="/" style={{ fontFamily: "Inter, sans-serif", fontSize: "0.68rem", color: "rgba(245,241,232,0.5)", textDecoration: "none", letterSpacing: "0.1em" }}>HOME</Link>
+          <Link href="/" style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", color: "rgba(245,241,232,0.5)", textDecoration: "none", letterSpacing: "0.1em" }}>HOME</Link>
           <span style={{ color: "rgba(245,241,232,0.3)", margin: "0 0.5rem" }}>/</span>
-          <span style={{ fontFamily: "Inter, sans-serif", fontSize: "0.68rem", color: "rgba(245,241,232,0.9)", letterSpacing: "0.1em" }}>{categoryName.toUpperCase()}</span>
+          <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", color: "rgba(245,241,232,0.9)", letterSpacing: "0.1em" }}>{categoryName.toUpperCase()}</span>
         </nav>
-        <h1 style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontStyle: "italic", fontSize: "clamp(2.5rem,6vw,5rem)", fontWeight: 600, color: "#F5F1E8", lineHeight: 1 }}>
+        <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(2.5rem,6vw,5rem)", fontWeight: 600, color: "#F5F1E8", lineHeight: 1 }}>
           {categoryName}
         </h1>
-        <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.85rem", color: "rgba(245,241,232,0.6)", marginTop: "1rem" }}>
+        <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.85rem", color: "rgba(245,241,232,0.6)", marginTop: "1rem" }}>
           {filtered.length} {filtered.length === 1 ? "style" : "styles"}
         </p>
       </div>
@@ -324,13 +324,13 @@ function CategoryClientInner({ slug, categoryName }: CategoryClientProps) {
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
             <button
               onClick={() => setFilterOpen(!filterOpen)}
-              style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#172545", background: "none", border: "1.5px solid #172545", padding: "0.5rem 1rem", cursor: "pointer" }}
+              style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "#172545", background: "none", border: "1.5px solid #172545", padding: "0.5rem 1rem", cursor: "pointer" }}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
               FILTER {activeFiltersCount > 0 && `(${activeFiltersCount})`}
             </button>
             {activeFiltersCount > 0 && (
-              <button onClick={clearAllFilters} style={{ fontFamily: "Inter, sans-serif", fontSize: "0.65rem", color: "#6B7280", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}>
+              <button onClick={clearAllFilters} style={{ fontFamily: "var(--font-sans)", fontSize: "0.65rem", color: "#6B7280", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}>
                 Clear all
               </button>
             )}
@@ -338,7 +338,7 @@ function CategoryClientInner({ slug, categoryName }: CategoryClientProps) {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            style={{ fontFamily: "Inter, sans-serif", fontSize: "0.72rem", color: "#172545", border: "1.5px solid #D9D3C4", padding: "0.5rem 0.75rem", backgroundColor: "transparent", cursor: "pointer", letterSpacing: "0.06em" }}
+            style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "#172545", border: "2px solid #172545", boxShadow: "inset 2px 2px 0px 0px rgba(23,37,69,0.1)", padding: "0.5rem 0.75rem", backgroundColor: "transparent", cursor: "pointer", letterSpacing: "0.06em" }}
           >
             {SORT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
           </select>
@@ -348,17 +348,17 @@ function CategoryClientInner({ slug, categoryName }: CategoryClientProps) {
         {activeFiltersCount > 0 && (
           <div style={{ display: "flex", gap: "0.5rem", padding: "0.75rem 0", flexWrap: "wrap" }}>
             {selectedSizes.map((s) => (
-              <button key={s} onClick={() => toggleSize(s)} style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontFamily: "Inter, sans-serif", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#F5F1E8", backgroundColor: "#172545", padding: "0.35rem 0.75rem", border: "none", cursor: "pointer" }}>
+              <button key={s} onClick={() => toggleSize(s)} style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontFamily: "var(--font-sans)", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#F5F1E8", backgroundColor: "#172545", padding: "0.35rem 0.75rem", border: "none", cursor: "pointer" }}>
                 Size: {s} ×
               </button>
             ))}
             {selectedColors.map((c) => (
-              <button key={c} onClick={() => toggleColor(c)} style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontFamily: "Inter, sans-serif", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#F5F1E8", backgroundColor: "#172545", padding: "0.35rem 0.75rem", border: "none", cursor: "pointer" }}>
+              <button key={c} onClick={() => toggleColor(c)} style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontFamily: "var(--font-sans)", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "#F5F1E8", backgroundColor: "#172545", padding: "0.35rem 0.75rem", border: "none", cursor: "pointer" }}>
                 {c} ×
               </button>
             ))}
             {inStockOnly && (
-              <button onClick={() => setInStockOnly(false)} style={{ fontFamily: "Inter, sans-serif", fontSize: "0.65rem", fontWeight: 700, color: "#F5F1E8", backgroundColor: "#172545", padding: "0.35rem 0.75rem", border: "none", cursor: "pointer" }}>
+              <button onClick={() => setInStockOnly(false)} style={{ fontFamily: "var(--font-sans)", fontSize: "0.65rem", fontWeight: 700, color: "#F5F1E8", backgroundColor: "#172545", padding: "0.35rem 0.75rem", border: "none", cursor: "pointer" }}>
                 In Stock ×
               </button>
             )}
@@ -369,13 +369,13 @@ function CategoryClientInner({ slug, categoryName }: CategoryClientProps) {
 
           {/* ── Filter Panel ── */}
           {filterOpen && (
-            <aside style={{ position: "sticky", top: "90px", backgroundColor: "#FFFFFF", border: "1px solid #D9D3C4", padding: "1.5rem" }} className="filter-panel">
+            <aside style={{ position: "sticky", top: "90px", backgroundColor: "#F5F1E8", border: "var(--border-thick)", boxShadow: "var(--shadow-md)", padding: "1.5rem" }} className="filter-panel">
               {/* Sizes */}
               <div style={{ marginBottom: "1.5rem" }}>
-                <h3 style={{ fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.68rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#172545", marginBottom: "0.75rem" }}>SIZE</h3>
+                <h3 style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.68rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#172545", marginBottom: "0.75rem" }}>SIZE</h3>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
                   {allSizes.map((s) => (
-                    <button key={s} onClick={() => toggleSize(s)} style={{ padding: "0.35rem 0.6rem", fontFamily: "Inter, sans-serif", fontSize: "0.72rem", fontWeight: 700, color: selectedSizes.includes(s) ? "#F5F1E8" : "#172545", backgroundColor: selectedSizes.includes(s) ? "#172545" : "transparent", border: "1.5px solid #172545", cursor: "pointer", minWidth: "36px" }}>
+                    <button key={s} onClick={() => toggleSize(s)} style={{ padding: "0.35rem 0.6rem", fontFamily: "var(--font-sans)", fontSize: "0.72rem", fontWeight: 700, color: selectedSizes.includes(s) ? "#F5F1E8" : "#172545", backgroundColor: selectedSizes.includes(s) ? "#172545" : "transparent", border: "1.5px solid #172545", cursor: "pointer", minWidth: "36px" }}>
                       {s}
                     </button>
                   ))}
@@ -384,10 +384,10 @@ function CategoryClientInner({ slug, categoryName }: CategoryClientProps) {
 
               {/* Colors */}
               <div style={{ marginBottom: "1.5rem" }}>
-                <h3 style={{ fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.68rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#172545", marginBottom: "0.75rem" }}>COLOR</h3>
+                <h3 style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.68rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#172545", marginBottom: "0.75rem" }}>COLOR</h3>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                   {allColors.filter((c) => c?.hex && c?.label).map(({ label, hex }) => (
-                    <button key={label} onClick={() => toggleColor(label)} style={{ display: "flex", alignItems: "center", gap: "0.75rem", fontFamily: "Inter, sans-serif", fontSize: "0.78rem", color: "#172545", background: "none", border: "none", cursor: "pointer", textAlign: "left", fontWeight: selectedColors.includes(label) ? 800 : 400 }}>
+                    <button key={label} onClick={() => toggleColor(label)} style={{ display: "flex", alignItems: "center", gap: "0.75rem", fontFamily: "var(--font-sans)", fontSize: "0.78rem", color: "#172545", background: "none", border: "none", cursor: "pointer", textAlign: "left", fontWeight: selectedColors.includes(label) ? 800 : 400 }}>
                       <span style={{ width: "18px", height: "18px", borderRadius: "50%", backgroundColor: hex, border: selectedColors.includes(label) ? "2px solid #172545" : "1px solid #D9D3C4", flexShrink: 0 }} />
                       {label}
                       {selectedColors.includes(label) && <span style={{ marginLeft: "auto", fontSize: "0.65rem" }}>✓</span>}
@@ -398,19 +398,19 @@ function CategoryClientInner({ slug, categoryName }: CategoryClientProps) {
 
               {/* Price */}
               <div style={{ marginBottom: "1.5rem" }}>
-                <h3 style={{ fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.68rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#172545", marginBottom: "0.75rem" }}>MAX PRICE: {fmt(priceMax * 100)}</h3>
+                <h3 style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.68rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#172545", marginBottom: "0.75rem" }}>MAX PRICE: {fmt(priceMax * 100)}</h3>
                 <input type="range" min={500} max={100000} step={500} value={priceMax} onChange={(e) => setPriceMax(Number(e.target.value))} style={{ width: "100%", accentColor: "#172545" }} />
-                <div style={{ display: "flex", justifyContent: "space-between", fontFamily: "Inter, sans-serif", fontSize: "0.65rem", color: "#6B7280", marginTop: "0.25rem" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontFamily: "var(--font-sans)", fontSize: "0.65rem", color: "#6B7280", marginTop: "0.25rem" }}>
                   <span>₹500</span><span>₹1,000</span>
                 </div>
               </div>
 
               {/* Availability */}
               <div>
-                <h3 style={{ fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.68rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#172545", marginBottom: "0.75rem" }}>AVAILABILITY</h3>
+                <h3 style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.68rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "#172545", marginBottom: "0.75rem" }}>AVAILABILITY</h3>
                 <label style={{ display: "flex", alignItems: "center", gap: "0.75rem", cursor: "pointer" }}>
                   <input type="checkbox" checked={inStockOnly} onChange={(e) => setInStockOnly(e.target.checked)} style={{ accentColor: "#172545", width: "16px", height: "16px" }} />
-                  <span style={{ fontFamily: "Inter, sans-serif", fontSize: "0.78rem", color: "#172545" }}>In Stock Only</span>
+                  <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.78rem", color: "#172545" }}>In Stock Only</span>
                 </label>
               </div>
             </aside>
@@ -430,8 +430,8 @@ function CategoryClientInner({ slug, categoryName }: CategoryClientProps) {
               </div>
             ) : filtered.length === 0 ? (
               <div style={{ textAlign: "center", padding: "5rem 2rem" }}>
-                <p style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: "italic", fontSize: "1.5rem", color: "#172545", marginBottom: "1rem" }}>No products found.</p>
-                <button onClick={clearAllFilters} style={{ fontFamily: "Inter, sans-serif", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#F5F1E8", backgroundColor: "#172545", border: "none", padding: "0.875rem 2rem", cursor: "pointer" }}>
+                <p style={{ fontFamily: "var(--font-heading)", fontSize: "1.5rem", color: "#172545", marginBottom: "1rem" }}>No products found.</p>
+                <button onClick={clearAllFilters} style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#F5F1E8", backgroundColor: "#172545", border: "none", padding: "0.875rem 2rem", cursor: "pointer" }}>
                   CLEAR FILTERS
                 </button>
               </div>
@@ -444,7 +444,7 @@ function CategoryClientInner({ slug, categoryName }: CategoryClientProps) {
                   >
                     {/* Badge */}
                     {p.badge && (
-                      <div style={{ position: "absolute", top: "12px", left: "12px", zIndex: 2, backgroundColor: "#C94227", color: "#F5F1E8", fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.6rem", letterSpacing: "0.1em", padding: "0.25rem 0.6rem" }}>
+                      <div style={{ position: "absolute", top: "12px", left: "12px", zIndex: 2, backgroundColor: "#C94227", color: "#F5F1E8", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.6rem", letterSpacing: "0.1em", padding: "0.25rem 0.6rem" }}>
                         {p.badge}
                       </div>
                     )}
@@ -470,7 +470,7 @@ function CategoryClientInner({ slug, categoryName }: CategoryClientProps) {
                             padding: "0.75rem",
                             backgroundColor: addedId === p.id ? "#172545" : "#F5F1E8",
                             color: addedId === p.id ? "#F5F1E8" : "#172545",
-                            fontFamily: "Inter, sans-serif",
+                            fontFamily: "var(--font-sans)",
                             fontWeight: 800,
                             fontSize: "0.65rem",
                             letterSpacing: "0.12em",
@@ -488,27 +488,27 @@ function CategoryClientInner({ slug, categoryName }: CategoryClientProps) {
                     {/* Info */}
                     <div style={{ paddingTop: "0.75rem" }}>
                       <Link href={p.href} style={{ textDecoration: "none" }}>
-                        <p style={{ fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: "0.72rem", letterSpacing: "0.04em", textTransform: "uppercase", color: "#172545", lineHeight: 1.3, marginBottom: "0.35rem" }}>
+                        <p style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.72rem", letterSpacing: "0.04em", textTransform: "uppercase", color: "#172545", lineHeight: 1.3, marginBottom: "0.35rem" }}>
                           {p.title}
                         </p>
                       </Link>
                       <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.4rem" }}>
                         <StarRating rating={p.rating} />
-                        <span style={{ fontFamily: "Inter, sans-serif", fontSize: "0.6rem", color: "#6B7280" }}>({p.reviewCount})</span>
+                        <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.6rem", color: "#6B7280" }}>({p.reviewCount})</span>
                       </div>
                       <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem" }}>
-                        <span style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600, fontSize: "1rem", color: "#172545" }}>{fmt(p.pricePaise)}</span>
+                        <span style={{ fontFamily: "var(--font-heading)", fontWeight: 600, fontSize: "1rem", color: "#172545" }}>{fmt(p.pricePaise)}</span>
                         {p.mrpPaise > p.pricePaise && (
-                          <span style={{ fontFamily: "Inter, sans-serif", fontSize: "0.7rem", color: "#9CA3AF", textDecoration: "line-through" }}>{fmt(p.mrpPaise)}</span>
+                          <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.7rem", color: "#9CA3AF", textDecoration: "line-through" }}>{fmt(p.mrpPaise)}</span>
                         )}
                       </div>
                       {/* Color swatches */}
                       {safeColors(p).length > 0 && (
                         <div style={{ display: "flex", gap: "4px", marginTop: "0.4rem" }}>
                           {safeColors(p).slice(0, 4).map((c) => (
-                            <span key={c.label} title={c.label} style={{ width: "14px", height: "14px", borderRadius: "50%", backgroundColor: c.hex, border: "1px solid #D9D3C4" }} />
+                            <span key={c.label} title={c.label} style={{ width: "14px", height: "14px", borderRadius: "50%", backgroundColor: c.hex, border: "var(--border-thick)", boxShadow: "var(--shadow-md)" }} />
                           ))}
-                          {safeColors(p).length > 4 && <span style={{ fontFamily: "Inter, sans-serif", fontSize: "0.6rem", color: "#6B7280", alignSelf: "center" }}>+{safeColors(p).length - 4}</span>}
+                          {safeColors(p).length > 4 && <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.6rem", color: "#6B7280", alignSelf: "center" }}>+{safeColors(p).length - 4}</span>}
                         </div>
                       )}
                     </div>

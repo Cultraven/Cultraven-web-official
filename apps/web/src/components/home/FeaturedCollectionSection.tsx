@@ -58,7 +58,7 @@ export function FeaturedCollectionSection() {
           <span
             style={{
               display: "block",
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontSize: "11px",
               fontWeight: 800,
               letterSpacing: "0.22em",
@@ -73,8 +73,8 @@ export function FeaturedCollectionSection() {
           <h2
             id="featured-col-heading"
             style={{
-              fontFamily: "'Cormorant Garamond', Georgia, serif",
-              fontStyle: "italic",
+              fontFamily: "var(--font-heading)",
+              
               fontSize: "clamp(2.5rem,5vw,5rem)",
               fontWeight: 600,
               color: "#F5F1E8",
@@ -88,7 +88,7 @@ export function FeaturedCollectionSection() {
 
           <p
             style={{
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontSize: "0.9rem",
               lineHeight: 1.75,
               color: "rgba(245,241,232,0.65)",
@@ -110,7 +110,7 @@ export function FeaturedCollectionSection() {
                 padding: "1rem 2.25rem",
                 backgroundColor: "#F5F1E8",
                 color: "#172545",
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontWeight: 800,
                 fontSize: "0.72rem",
                 letterSpacing: "0.12em",
@@ -142,7 +142,7 @@ export function FeaturedCollectionSection() {
                 padding: "1rem 2.25rem",
                 backgroundColor: "transparent",
                 color: "#F5F1E8",
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontWeight: 800,
                 fontSize: "0.72rem",
                 letterSpacing: "0.12em",
@@ -183,7 +183,7 @@ export function FeaturedCollectionSection() {
               <div key={stat.label}>
                 <p
                   style={{
-                    fontFamily: "'Cormorant Garamond', Georgia, serif",
+                    fontFamily: "var(--font-heading)",
                     fontSize: "1.6rem",
                     fontWeight: 600,
                     color: "#F5F1E8",
@@ -195,7 +195,7 @@ export function FeaturedCollectionSection() {
                 </p>
                 <p
                   style={{
-                    fontFamily: "Inter, sans-serif",
+                    fontFamily: "var(--font-sans)",
                     fontSize: "0.65rem",
                     fontWeight: 700,
                     letterSpacing: "0.14em",

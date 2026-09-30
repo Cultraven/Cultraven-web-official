@@ -61,7 +61,7 @@ export function BrandStorySection() {
         <span
           style={{
             display: "block",
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "var(--font-sans)",
             fontSize: "11px",
             fontWeight: 800,
             letterSpacing: "0.22em",
@@ -76,8 +76,8 @@ export function BrandStorySection() {
         <h2
           id="brand-story-heading"
           style={{
-            fontFamily: "'Cormorant Garamond', Georgia, serif",
-            fontStyle: "italic",
+            fontFamily: "var(--font-heading)",
+            
             fontSize: "clamp(2.5rem,6vw,5.5rem)",
             fontWeight: 600,
             color: "#F5F1E8",
@@ -92,7 +92,7 @@ export function BrandStorySection() {
 
         <p
           style={{
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "var(--font-sans)",
             fontSize: "1rem",
             lineHeight: 1.8,
             color: "rgba(245,241,232,0.75)",
@@ -109,7 +109,7 @@ export function BrandStorySection() {
             display: "inline-flex",
             alignItems: "center",
             gap: "0.75rem",
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "var(--font-sans)",
             fontWeight: 800,
             fontSize: "0.75rem",
             letterSpacing: "0.14em",

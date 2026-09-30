@@ -32,10 +32,10 @@ export default function AdminCategoriesPage() {
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "2.5rem" }}>
         <div>
-          <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#C94227", marginBottom: "0.5rem" }}>
+          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "#C94227", marginBottom: "0.5rem" }}>
             Catalog
           </p>
-          <h1 style={{ fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "1.75rem", color: "#F5F1E8", letterSpacing: "-0.02em" }}>
+          <h1 style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "1.75rem", color: "#F5F1E8", letterSpacing: "-0.02em" }}>
             Categories
           </h1>
         </div>
@@ -46,7 +46,7 @@ export default function AdminCategoriesPage() {
             border: "none",
             padding: "0.75rem 1.5rem",
             borderRadius: "4px",
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "var(--font-sans)",
             fontSize: "0.75rem",
             fontWeight: 700,
             cursor: "pointer",
@@ -69,7 +69,7 @@ export default function AdminCategoriesPage() {
                 <th
                   key={h}
                   style={{
-                    fontFamily: "Inter, sans-serif",
+                    fontFamily: "var(--font-sans)",
                     fontSize: "0.62rem",
                     fontWeight: 700,
                     letterSpacing: "0.1em",
@@ -87,19 +87,19 @@ export default function AdminCategoriesPage() {
           <tbody>
             {categories.map((cat) => (
               <tr key={cat.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
-                <td style={{ padding: "1.25rem 1.5rem", fontFamily: "Inter, sans-serif", fontSize: "0.82rem", fontWeight: 700, color: "#F5F1E8" }}>
+                <td style={{ padding: "1.25rem 1.5rem", fontFamily: "var(--font-sans)", fontSize: "0.82rem", fontWeight: 700, color: "#F5F1E8" }}>
                   {cat.name}
                 </td>
-                <td style={{ padding: "1.25rem 1.5rem", fontFamily: "Inter, sans-serif", fontSize: "0.78rem", color: "rgba(245,241,232,0.6)" }}>
+                <td style={{ padding: "1.25rem 1.5rem", fontFamily: "var(--font-sans)", fontSize: "0.78rem", color: "rgba(245,241,232,0.6)" }}>
                   /{cat.slug}
                 </td>
-                <td style={{ padding: "1.25rem 1.5rem", fontFamily: "Inter, sans-serif", fontSize: "0.78rem", color: "rgba(245,241,232,0.6)", textAlign: "center" }}>
+                <td style={{ padding: "1.25rem 1.5rem", fontFamily: "var(--font-sans)", fontSize: "0.78rem", color: "rgba(245,241,232,0.6)", textAlign: "center" }}>
                   {cat.productCount}
                 </td>
                 <td style={{ padding: "1.25rem 1.5rem" }}>
                   <span
                     style={{
-                      fontFamily: "Inter, sans-serif",
+                      fontFamily: "var(--font-sans)",
                       fontSize: "0.65rem",
                       fontWeight: 700,
                       letterSpacing: "0.08em",
@@ -117,13 +117,13 @@ export default function AdminCategoriesPage() {
                   <div style={{ display: "flex", gap: "0.75rem", justifyContent: "center" }}>
                     <button
                       onClick={() => alert(`Edit ${cat.name}`)}
-                      style={{ background: "none", border: "none", color: "#3B82F6", cursor: "pointer", fontFamily: "Inter, sans-serif", fontSize: "0.72rem", fontWeight: 600 }}
+                      style={{ background: "none", border: "none", color: "#3B82F6", cursor: "pointer", fontFamily: "var(--font-sans)", fontSize: "0.72rem", fontWeight: 600 }}
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => deleteCategory(cat.id)}
-                      style={{ background: "none", border: "none", color: "#EF4444", cursor: "pointer", fontFamily: "Inter, sans-serif", fontSize: "0.72rem", fontWeight: 600 }}
+                      style={{ background: "none", border: "none", color: "#EF4444", cursor: "pointer", fontFamily: "var(--font-sans)", fontSize: "0.72rem", fontWeight: 600 }}
                     >
                       Delete
                     </button>

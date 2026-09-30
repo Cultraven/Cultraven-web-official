@@ -187,7 +187,7 @@ export function ChatWidget() {
             zIndex: 9998,
             width: "360px",
             maxWidth: "calc(100vw - 2rem)",
-            backgroundColor: "#FFFFFF",
+            backgroundColor: "#F5F1E8",
             boxShadow: "0 8px 40px rgba(23,37,69,0.22)",
             borderRadius: "4px",
             overflow: "hidden",
@@ -207,7 +207,7 @@ export function ChatWidget() {
             <div>
               <p
                 style={{
-                  fontFamily: "Inter, sans-serif",
+                  fontFamily: "var(--font-sans)",
                   fontWeight: 800,
                   fontSize: "0.88rem",
                   letterSpacing: "0.08em",
@@ -220,7 +220,7 @@ export function ChatWidget() {
               </p>
               <p
                 style={{
-                  fontFamily: "Inter, sans-serif",
+                  fontFamily: "var(--font-sans)",
                   fontSize: "0.7rem",
                   color: "rgba(245,241,232,0.65)",
                 }}
@@ -240,7 +240,7 @@ export function ChatWidget() {
                     borderRadius: "3px",
                     border: "none",
                     cursor: "pointer",
-                    fontFamily: "Inter, sans-serif",
+                    fontFamily: "var(--font-sans)",
                     fontSize: "0.65rem",
                     fontWeight: 800,
                     letterSpacing: "0.1em",
@@ -261,7 +261,7 @@ export function ChatWidget() {
             <div style={{ padding: "1.25rem" }}>
               <p
                 style={{
-                  fontFamily: "Inter, sans-serif",
+                  fontFamily: "var(--font-sans)",
                   fontSize: "0.75rem",
                   color: "#6B7280",
                   marginBottom: "1rem",
@@ -323,7 +323,7 @@ export function ChatWidget() {
                   <div>
                     <p
                       style={{
-                        fontFamily: "Inter, sans-serif",
+                        fontFamily: "var(--font-sans)",
                         fontWeight: 700,
                         fontSize: "0.85rem",
                         color: "#172545",
@@ -334,7 +334,7 @@ export function ChatWidget() {
                     </p>
                     <p
                       style={{
-                        fontFamily: "Inter, sans-serif",
+                        fontFamily: "var(--font-sans)",
                         fontSize: "0.7rem",
                         color: "#6B7280",
                       }}
@@ -396,7 +396,7 @@ export function ChatWidget() {
                   <div>
                     <p
                       style={{
-                        fontFamily: "Inter, sans-serif",
+                        fontFamily: "var(--font-sans)",
                         fontWeight: 700,
                         fontSize: "0.85rem",
                         color: "#172545",
@@ -407,7 +407,7 @@ export function ChatWidget() {
                     </p>
                     <p
                       style={{
-                        fontFamily: "Inter, sans-serif",
+                        fontFamily: "var(--font-sans)",
                         fontSize: "0.7rem",
                         color: "#6B7280",
                       }}
@@ -423,7 +423,7 @@ export function ChatWidget() {
 
               <p
                 style={{
-                  fontFamily: "Inter, sans-serif",
+                  fontFamily: "var(--font-sans)",
                   fontSize: "0.68rem",
                   color: "#9CA3AF",
                   textAlign: "center",
@@ -500,7 +500,7 @@ export function ChatWidget() {
                         borderRadius: msg.from === "user" ? "12px 12px 3px 12px" : "12px 12px 12px 3px",
                         backgroundColor: msg.from === "user" ? "#172545" : "#F5F1E8",
                         color: msg.from === "user" ? "#F5F1E8" : "#172545",
-                        fontFamily: "Inter, sans-serif",
+                        fontFamily: "var(--font-sans)",
                         fontSize: "0.82rem",
                         lineHeight: 1.55,
                       }}
@@ -548,7 +548,7 @@ export function ChatWidget() {
                     flex: 1,
                     padding: "0.625rem 0.875rem",
                     border: "1.5px solid #E5E7EB",
-                    fontFamily: "Inter, sans-serif",
+                    fontFamily: "var(--font-sans)",
                     fontSize: "0.82rem",
                     color: "#172545",
                     outline: "none",
@@ -606,9 +606,9 @@ export function ChatWidget() {
                     style={{
                       padding: "3px 10px",
                       backgroundColor: "#EAE6DB",
-                      border: "1px solid #D9D3C4",
+                      border: "var(--border-thick)", boxShadow: "var(--shadow-md)",
                       borderRadius: "20px",
-                      fontFamily: "Inter, sans-serif",
+                      fontFamily: "var(--font-sans)",
                       fontSize: "0.65rem",
                       fontWeight: 600,
                       color: "#172545",

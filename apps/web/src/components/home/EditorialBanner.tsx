@@ -42,7 +42,7 @@ export function EditorialBanner({ banner }: EditorialBannerProps) {
         >
           <span
             style={{
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontWeight: 800,
               fontSize: "0.7rem",
               letterSpacing: "0.2em",
@@ -57,8 +57,8 @@ export function EditorialBanner({ banner }: EditorialBannerProps) {
 
           <h2
             style={{
-              fontFamily: "'Cormorant Garamond', Georgia, serif",
-              fontStyle: "italic",
+              fontFamily: "var(--font-heading)",
+              
               fontWeight: 400,
               fontSize: "clamp(2.5rem,5vw,5rem)",
               lineHeight: 1.05,
@@ -71,7 +71,7 @@ export function EditorialBanner({ banner }: EditorialBannerProps) {
 
           <p
             style={{
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontSize: "0.95rem",
               lineHeight: 1.7,
               color: "rgba(245,241,232,0.7)",
@@ -92,7 +92,7 @@ export function EditorialBanner({ banner }: EditorialBannerProps) {
               border: "2px solid #F5F1E8",
               backgroundColor: "transparent",
               color: "#F5F1E8",
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontWeight: 800,
               fontSize: "0.75rem",
               letterSpacing: "0.12em",

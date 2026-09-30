@@ -81,7 +81,7 @@ export default function TermsPage() {
       >
         <p
           style={{
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "var(--font-sans)",
             fontSize: "11px",
             fontWeight: 800,
             letterSpacing: "0.22em",
@@ -94,8 +94,8 @@ export default function TermsPage() {
         </p>
         <h1
           style={{
-            fontFamily: "'Cormorant Garamond', Georgia, serif",
-            fontStyle: "italic",
+            fontFamily: "var(--font-heading)",
+            
             fontSize: "clamp(2.5rem,6vw,5rem)",
             fontWeight: 600,
             color: "#F5F1E8",
@@ -114,7 +114,7 @@ export default function TermsPage() {
       >
         <p
           style={{
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "var(--font-sans)",
             fontSize: "0.9rem",
             lineHeight: 1.8,
             color: "#4B5563",
@@ -138,7 +138,7 @@ export default function TermsPage() {
           >
             <h2
               style={{
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontWeight: 800,
                 fontSize: "0.82rem",
                 letterSpacing: "0.16em",
@@ -151,7 +151,7 @@ export default function TermsPage() {
             </h2>
             <p
               style={{
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 fontSize: "0.9rem",
                 lineHeight: 1.8,
                 color: "#4B5563",
@@ -166,7 +166,7 @@ export default function TermsPage() {
         <div style={{ backgroundColor: "#172545", padding: "2rem" }}>
           <p
             style={{
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontWeight: 700,
               fontSize: "0.78rem",
               color: "#F5F1E8",
@@ -177,7 +177,7 @@ export default function TermsPage() {
           </p>
           <p
             style={{
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontSize: "0.82rem",
               color: "rgba(245,241,232,0.7)",
             }}

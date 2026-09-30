@@ -23,30 +23,30 @@ interface FooterProps {
 // ── Social icon SVGs ───────────────────────────────────────────────────────────
 const SOCIAL_ICONS: Record<string, React.ReactElement> = {
   instagram: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square" aria-hidden="true">
+      <rect x="2" y="2" width="20" height="20" rx="0" ry="0" />
       <circle cx="12" cy="12" r="4" />
       <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
     </svg>
   ),
   youtube: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square" aria-hidden="true">
       <path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 001.46 6.42 29 29 0 001 12a29 29 0 00.46 5.58 2.78 2.78 0 001.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.47a2.78 2.78 0 001.95-1.95A29 29 0 0023 12a29 29 0 00-.46-5.58z" />
       <polygon fill="currentColor" stroke="none" points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" />
     </svg>
   ),
   pinterest: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
       <path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 01.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z" />
     </svg>
   ),
   facebook: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square" aria-hidden="true">
       <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" />
     </svg>
   ),
   twitter: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square" aria-hidden="true">
       <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z" />
     </svg>
   ),
@@ -126,41 +126,37 @@ export function Footer({ config }: FooterProps) {
       {/* ── Trust strip ─────────────────────────────────────────────────── */}
       <div
         style={{
-          backgroundColor: "#0A0A0A",
-          borderTop: "1px solid rgba(255,255,255,0.05)",
-          borderBottom: "1px solid rgba(255,255,255,0.05)",
-          overflowX: "auto",
+          backgroundColor: "#C94227",
+          borderTop: "var(--border-thick)",
+          borderBottom: "var(--border-thick)",
+          overflowX: "hidden",
+          whiteSpace: "nowrap",
         }}
       >
         <div
+          className="marquee-content"
           style={{
-            display: "flex",
+            display: "inline-flex",
             alignItems: "center",
-            justifyContent: "center",
-            flexWrap: "wrap",
-            padding: "1rem clamp(1.25rem,4vw,5rem)",
-            gap: 0,
+            padding: "1rem 0",
           }}
         >
-          {TRUST_STRIP.map((item, i) => (
-            <span key={item} style={{ display: "flex", alignItems: "center" }}>
+          {Array(4).fill(TRUST_STRIP).flat().map((item, i) => (
+            <span key={i} style={{ display: "flex", alignItems: "center" }}>
               <span
                 style={{
-                  fontFamily: "Inter, sans-serif",
-                  fontWeight: 800,
-                  fontSize: "0.62rem",
-                  letterSpacing: "0.2em",
+                  fontFamily: "var(--font-heading)",
+                  fontWeight: 400,
+                  fontSize: "18px",
+                  letterSpacing: "0.1em",
                   textTransform: "uppercase",
-                  color: "rgba(245,241,232,0.8)",
-                  whiteSpace: "nowrap",
-                  padding: "0 1.5rem",
+                  color: "#F5F1E8",
+                  padding: "0 2rem",
                 }}
               >
                 {item}
               </span>
-              {i < TRUST_STRIP.length - 1 && (
-                <span style={{ color: "rgba(245,241,232,0.2)", fontSize: "0.6rem" }}>|</span>
-              )}
+              <span style={{ color: "#172545", fontSize: "16px", fontWeight: 900 }}>*</span>
             </span>
           ))}
         </div>
@@ -169,7 +165,7 @@ export function Footer({ config }: FooterProps) {
       {/* ── Main footer body ─────────────────────────────────────────────── */}
       <div
         style={{
-          backgroundColor: "#172545",
+          backgroundColor: "#F5F1E8",
           padding: "clamp(4rem,8vw,6rem) clamp(1.25rem,4vw,5rem) 0",
         }}
       >
@@ -197,27 +193,29 @@ export function Footer({ config }: FooterProps) {
             >
               <div
                 style={{
-                  width: "32px",
-                  height: "32px",
-                  border: "2px solid #F5F1E8",
+                  width: "40px",
+                  height: "40px",
+                  border: "var(--border-thick)",
+                  backgroundColor: "#172545",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   flexShrink: 0,
+                  boxShadow: "2px 2px 0px 0px #172545"
                 }}
               >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#F5F1E8" strokeWidth="2.5">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F5F1E8" strokeWidth="2.5" strokeLinecap="square">
                   <path d="M12 21V12M12 12L4 4M12 12L20 4" />
                 </svg>
               </div>
               <span
                 style={{
-                  fontFamily: "Inter, sans-serif",
-                  fontWeight: 900,
-                  fontSize: "1rem",
-                  letterSpacing: "0.22em",
+                  fontFamily: "var(--font-heading)",
+                  fontWeight: 400,
+                  fontSize: "32px",
+                  letterSpacing: "0.05em",
                   textTransform: "uppercase",
-                  color: "#F5F1E8",
+                  color: "#172545",
                 }}
               >
                 CULTRAVEN
@@ -226,12 +224,14 @@ export function Footer({ config }: FooterProps) {
 
             <p
               style={{
-                fontFamily: "Inter, sans-serif",
-                fontSize: "0.82rem",
-                lineHeight: 1.75,
-                color: "rgba(245,241,232,0.6)",
+                fontFamily: "var(--font-sans)",
+                fontSize: "12px",
+                fontWeight: 800,
+                lineHeight: 1.5,
+                color: "#172545",
                 maxWidth: "240px",
                 marginBottom: "2rem",
+                textTransform: "uppercase"
               }}
             >
               Premium oversized streetwear built for modern India. Heavyweight cotton. Bold identity. Not made to blend in.
@@ -246,17 +246,19 @@ export function Footer({ config }: FooterProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`CULTRAVEN on ${s.platform}`}
+                  className="social-btn"
                   style={{
-                    color: "rgba(245,241,232,0.6)",
-                    transition: "color 0.2s ease",
+                    color: "#F5F1E8",
+                    backgroundColor: "#172545",
+                    border: "2px solid #172545",
                     display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "44px",
+                    height: "44px",
+                    boxShadow: "2px 2px 0px 0px #172545",
+                    transition: "transform 0.1s ease"
                   }}
-                  onMouseEnter={(e) =>
-                    ((e.currentTarget as HTMLAnchorElement).style.color = "#F5F1E8")
-                  }
-                  onMouseLeave={(e) =>
-                    ((e.currentTarget as HTMLAnchorElement).style.color = "rgba(245,241,232,0.6)")
-                  }
                 >
                   {SOCIAL_ICONS[s.platform]}
                 </a>
@@ -268,16 +270,16 @@ export function Footer({ config }: FooterProps) {
           <div>
             <h3
               style={{
-                fontFamily: "Inter, sans-serif",
-                fontWeight: 800,
-                fontSize: "0.68rem",
-                letterSpacing: "0.2em",
+                fontFamily: "var(--font-sans)",
+                fontWeight: 900,
+                fontSize: "14px",
+                letterSpacing: "0.1em",
                 textTransform: "uppercase",
-                color: "rgba(245,241,232,0.45)",
+                color: "#172545",
                 marginBottom: "1.5rem",
               }}
             >
-              Shop
+              SHOP
             </h3>
             <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "1rem" }}>
               {shopLinks.map((link) => (
@@ -287,20 +289,20 @@ export function Footer({ config }: FooterProps) {
                     target={link.openInNew ? "_blank" : undefined}
                     rel={link.openInNew ? "noopener noreferrer" : undefined}
                     style={{
-                      fontFamily: "Inter, sans-serif",
-                      fontWeight: 600,
-                      fontSize: "0.82rem",
-                      letterSpacing: "0.04em",
+                      fontFamily: "var(--font-sans)",
+                      fontWeight: 800,
+                      fontSize: "12px",
                       textTransform: "uppercase",
-                      color: "rgba(245,241,232,0.75)",
-                      transition: "color 0.2s ease",
+                      color: "#172545",
                       textDecoration: "none",
+                      borderBottom: "2px solid transparent",
+                      transition: "border-color 0.2s ease"
                     }}
                     onMouseEnter={(e) =>
-                      ((e.currentTarget as HTMLAnchorElement).style.color = "#F5F1E8")
+                      ((e.currentTarget as HTMLAnchorElement).style.borderBottomColor = "#172545")
                     }
                     onMouseLeave={(e) =>
-                      ((e.currentTarget as HTMLAnchorElement).style.color = "rgba(245,241,232,0.75)")
+                      ((e.currentTarget as HTMLAnchorElement).style.borderBottomColor = "transparent")
                     }
                   >
                     {link.label}
@@ -314,16 +316,16 @@ export function Footer({ config }: FooterProps) {
           <div>
             <h3
               style={{
-                fontFamily: "Inter, sans-serif",
-                fontWeight: 800,
-                fontSize: "0.68rem",
-                letterSpacing: "0.2em",
+                fontFamily: "var(--font-sans)",
+                fontWeight: 900,
+                fontSize: "14px",
+                letterSpacing: "0.1em",
                 textTransform: "uppercase",
-                color: "rgba(245,241,232,0.45)",
+                color: "#172545",
                 marginBottom: "1.5rem",
               }}
             >
-              Support
+              SUPPORT
             </h3>
             <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "1rem" }}>
               {supportLinks.map((link) => (
@@ -331,20 +333,20 @@ export function Footer({ config }: FooterProps) {
                   <Link
                     href={link.href}
                     style={{
-                      fontFamily: "Inter, sans-serif",
-                      fontWeight: 600,
-                      fontSize: "0.82rem",
-                      letterSpacing: "0.04em",
+                      fontFamily: "var(--font-sans)",
+                      fontWeight: 800,
+                      fontSize: "12px",
                       textTransform: "uppercase",
-                      color: "rgba(245,241,232,0.75)",
-                      transition: "color 0.2s ease",
+                      color: "#172545",
                       textDecoration: "none",
+                      borderBottom: "2px solid transparent",
+                      transition: "border-color 0.2s ease"
                     }}
                     onMouseEnter={(e) =>
-                      ((e.currentTarget as HTMLAnchorElement).style.color = "#F5F1E8")
+                      ((e.currentTarget as HTMLAnchorElement).style.borderBottomColor = "#172545")
                     }
                     onMouseLeave={(e) =>
-                      ((e.currentTarget as HTMLAnchorElement).style.color = "rgba(245,241,232,0.75)")
+                      ((e.currentTarget as HTMLAnchorElement).style.borderBottomColor = "transparent")
                     }
                   >
                     {link.label}
@@ -358,45 +360,50 @@ export function Footer({ config }: FooterProps) {
           <div>
             <h3
               style={{
-                fontFamily: "Inter, sans-serif",
-                fontWeight: 800,
-                fontSize: "0.68rem",
-                letterSpacing: "0.2em",
+                fontFamily: "var(--font-sans)",
+                fontWeight: 900,
+                fontSize: "14px",
+                letterSpacing: "0.1em",
                 textTransform: "uppercase",
-                color: "rgba(245,241,232,0.45)",
+                color: "#172545",
                 marginBottom: "1.5rem",
               }}
             >
-              Stay Updated
+              STAY UPDATED
             </h3>
             <p
               style={{
-                fontFamily: "Inter, sans-serif",
-                fontSize: "0.82rem",
-                lineHeight: 1.65,
-                color: "rgba(245,241,232,0.65)",
+                fontFamily: "var(--font-sans)",
+                fontSize: "12px",
+                fontWeight: 800,
+                lineHeight: 1.5,
+                color: "#172545",
                 marginBottom: "1.25rem",
+                textTransform: "uppercase"
               }}
             >
-              Be first to know about drops, restocks and limited releases.
+              BE FIRST TO KNOW ABOUT DROPS, RESTOCKS AND LIMITED RELEASES.
             </p>
 
             {status === "success" ? (
               <p
                 style={{
-                  fontFamily: "Inter, sans-serif",
-                  fontWeight: 700,
-                  fontSize: "0.78rem",
-                  color: "#C94227",
-                  padding: "0.875rem",
-                  border: "1.5px solid #C94227",
+                  fontFamily: "var(--font-sans)",
+                  fontWeight: 900,
+                  fontSize: "12px",
+                  color: "#F5F1E8",
+                  backgroundColor: "#172545",
+                  padding: "1rem",
+                  border: "2px solid #172545",
+                  boxShadow: "4px 4px 0px 0px #172545",
+                  textTransform: "uppercase"
                 }}
               >
-                ✓ You&apos;re in. Welcome to the culture.
+                ✓ SCENE SET HAI. YOU'RE IN.
               </p>
             ) : (
               <form onSubmit={handleNewsletter} noValidate>
-                <div style={{ display: "flex", gap: 0 }}>
+                <div style={{ display: "flex", gap: "0.5rem", flexDirection: "column" }}>
                   <label htmlFor="footer-email" style={{ position: "absolute", width: "1px", height: "1px", overflow: "hidden", clip: "rect(0,0,0,0)" }}>
                     Email address
                   </label>
@@ -406,93 +413,89 @@ export function Footer({ config }: FooterProps) {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Email address"
+                    placeholder="EMAIL ADDRESS"
                     disabled={status === "loading"}
                     style={{
-                      flex: 1,
-                      padding: "0.75rem 1rem",
-                      backgroundColor: "rgba(245,241,232,0.07)",
-                      border: "1.5px solid rgba(245,241,232,0.2)",
-                      borderRight: "none",
-                      color: "#F5F1E8",
-                      fontFamily: "Inter, sans-serif",
-                      fontSize: "0.82rem",
+                      width: "100%",
+                      padding: "12px",
+                      backgroundColor: "#F5F1E8",
+                      border: "2px solid #172545",
+                      color: "#172545",
+                      fontFamily: "var(--font-sans)",
+                      fontSize: "12px",
+                      fontWeight: 800,
                       outline: "none",
-                      minWidth: 0,
+                      boxShadow: "inset 2px 2px 0px 0px rgba(23,37,69,0.1)"
                     }}
                   />
                   <button
                     type="submit"
                     disabled={status === "loading"}
                     style={{
-                      padding: "0.75rem 1.25rem",
+                      width: "100%",
+                      padding: "12px",
                       backgroundColor: "#C94227",
                       color: "#F5F1E8",
-                      fontFamily: "Inter, sans-serif",
-                      fontWeight: 800,
-                      fontSize: "0.65rem",
-                      letterSpacing: "0.12em",
+                      fontFamily: "var(--font-sans)",
+                      fontWeight: 900,
+                      fontSize: "12px",
+                      letterSpacing: "0.1em",
                       textTransform: "uppercase",
-                      border: "none",
+                      border: "2px solid #172545",
+                      boxShadow: "4px 4px 0px 0px #172545",
                       cursor: status === "loading" ? "not-allowed" : "pointer",
-                      whiteSpace: "nowrap",
-                      flexShrink: 0,
-                      transition: "background-color 0.2s ease",
+                      transition: "transform 0.1s ease",
                     }}
-                    onMouseEnter={(e) => {
-                      if (status !== "loading")
-                        (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#a8361f";
-                    }}
-                    onMouseLeave={(e) =>
-                      ((e.currentTarget as HTMLButtonElement).style.backgroundColor = "#C94227")
-                    }
+                    className="newsletter-btn"
                   >
-                    {status === "loading" ? "..." : "Subscribe"}
+                    {status === "loading" ? "..." : "SUBSCRIBE"}
                   </button>
                 </div>
                 {status === "error" && (
                   <p
                     style={{
-                      fontFamily: "Inter, sans-serif",
-                      fontSize: "0.72rem",
+                      fontFamily: "var(--font-sans)",
+                      fontSize: "10px",
+                      fontWeight: 900,
                       color: "#C94227",
                       marginTop: "0.5rem",
+                      textTransform: "uppercase"
                     }}
                   >
-                    Something went wrong. Please try again.
+                    KUCH LOCHA HAI BRO. TRY AGAIN.
                   </p>
                 )}
               </form>
             )}
 
             {/* Payment badges */}
-            <div style={{ marginTop: "1.75rem" }}>
+            <div style={{ marginTop: "2rem" }}>
               <p
                 style={{
-                  fontFamily: "Inter, sans-serif",
-                  fontWeight: 700,
-                  fontSize: "0.62rem",
-                  letterSpacing: "0.14em",
+                  fontFamily: "var(--font-sans)",
+                  fontWeight: 900,
+                  fontSize: "10px",
+                  letterSpacing: "0.1em",
                   textTransform: "uppercase",
-                  color: "rgba(245,241,232,0.35)",
+                  color: "#172545",
                   marginBottom: "0.75rem",
                 }}
               >
-                We accept
+                WE ACCEPT
               </p>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
                 {PAYMENT_BADGES.map((badge) => (
                   <span
                     key={badge}
                     style={{
-                      padding: "4px 8px",
-                      border: "1px solid rgba(245,241,232,0.2)",
-                      fontFamily: "Inter, sans-serif",
-                      fontWeight: 800,
-                      fontSize: "0.55rem",
-                      letterSpacing: "0.1em",
-                      color: "rgba(245,241,232,0.6)",
-                      backgroundColor: "rgba(245,241,232,0.04)",
+                      padding: "6px 10px",
+                      border: "2px solid #172545",
+                      fontFamily: "var(--font-mono)",
+                      fontWeight: 700,
+                      fontSize: "10px",
+                      color: "#172545",
+                      backgroundColor: "#F5F1E8",
+                      boxShadow: "2px 2px 0px 0px #172545"
                     }}
                   >
                     {badge}
@@ -507,7 +510,7 @@ export function Footer({ config }: FooterProps) {
         <div
           style={{
             marginTop: "4rem",
-            borderTop: "1px solid rgba(245,241,232,0.08)",
+            borderTop: "var(--border-thick)",
             padding: "1.75rem 0",
             display: "flex",
             alignItems: "center",
@@ -518,44 +521,52 @@ export function Footer({ config }: FooterProps) {
         >
           <p
             style={{
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-mono)",
               fontWeight: 700,
-              fontSize: "0.62rem",
-              letterSpacing: "0.14em",
+              fontSize: "12px",
               textTransform: "uppercase",
-              color: "rgba(245,241,232,0.4)",
+              color: "#172545",
             }}
           >
             {config.copyrightText}
           </p>
           <p
             style={{
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-mono)",
               fontWeight: 700,
-              fontSize: "0.62rem",
-              letterSpacing: "0.14em",
+              fontSize: "12px",
               textTransform: "uppercase",
-              color: "rgba(245,241,232,0.4)",
+              color: "#172545",
             }}
           >
-            Made in India
+            MADE IN INDIA
           </p>
           <p
             style={{
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-mono)",
               fontWeight: 700,
-              fontSize: "0.62rem",
-              letterSpacing: "0.14em",
+              fontSize: "12px",
               textTransform: "uppercase",
-              color: "rgba(245,241,232,0.4)",
+              color: "#172545",
             }}
           >
-            Premium Streetwear
+            PREMIUM STREETWEAR
           </p>
         </div>
       </div>
 
       <style>{`
+        .social-btn:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0px 0px #172545 !important; }
+        .newsletter-btn:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px 0px #172545 !important; }
+        
+        .marquee-content {
+          animation: marquee 20s linear infinite;
+        }
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        
         @media (max-width: 1024px) {
           .footer-grid { grid-template-columns: 1fr 1fr !important; }
         }

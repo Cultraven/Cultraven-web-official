@@ -16,7 +16,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         display: "flex",
         minHeight: "100vh",
         backgroundColor: "#0F1419",
-        fontFamily: "Inter, sans-serif",
+        fontFamily: "var(--font-sans)",
       }}
     >
       <AdminSidebar />

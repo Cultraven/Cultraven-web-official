@@ -17,8 +17,8 @@ export function TrendingNow({ items = TRENDING_NOW_ITEMS }: { items?: TrendingIt
         {/* Section heading */}
         <h2
           style={{
-            fontFamily: "var(--font-display, 'Cormorant Garamond', serif)",
-            fontStyle: "italic",
+            fontFamily: "var(--font-heading)",
+            
             fontSize: "clamp(2rem,4.5vw,3.75rem)",
             fontWeight: 600,
             color: "#172545",
@@ -93,7 +93,7 @@ function TrendCard({ item }: { item: TrendingItem }) {
         >
           <span
             style={{
-              fontFamily: "Inter, sans-serif",
+              fontFamily: "var(--font-sans)",
               fontWeight: 900,
               fontSize: "0.7rem",
               letterSpacing: "0.14em",

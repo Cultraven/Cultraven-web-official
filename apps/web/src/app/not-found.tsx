@@ -44,7 +44,7 @@ export default function NotFound() {
         </div>
         <span
           style={{
-            fontFamily: "Inter, sans-serif",
+            fontFamily: "var(--font-sans)",
             fontWeight: 900,
             fontSize: "1.1rem",
             letterSpacing: "0.22em",
@@ -57,7 +57,7 @@ export default function NotFound() {
 
       <p
         style={{
-          fontFamily: "Inter, sans-serif",
+          fontFamily: "var(--font-sans)",
           fontWeight: 800,
           fontSize: "0.75rem",
           letterSpacing: "0.25em",
@@ -71,8 +71,8 @@ export default function NotFound() {
 
       <h1
         style={{
-          fontFamily: "'Cormorant Garamond', Georgia, serif",
-          fontStyle: "italic",
+          fontFamily: "var(--font-heading)",
+          
           fontWeight: 400,
           fontSize: "clamp(3.5rem, 10vw, 7rem)",
           lineHeight: 0.95,
@@ -87,7 +87,7 @@ export default function NotFound() {
 
       <p
         style={{
-          fontFamily: "Inter, sans-serif",
+          fontFamily: "var(--font-sans)",
           fontSize: "1rem",
           lineHeight: 1.7,
           color: "rgba(245,241,232,0.65)",
@@ -105,7 +105,7 @@ export default function NotFound() {
           padding: "1rem 2.5rem",
           backgroundColor: "#C94227",
           color: "#F5F1E8",
-          fontFamily: "Inter, sans-serif",
+          fontFamily: "var(--font-sans)",
           fontWeight: 800,
           fontSize: "0.75rem",
           letterSpacing: "0.15em",

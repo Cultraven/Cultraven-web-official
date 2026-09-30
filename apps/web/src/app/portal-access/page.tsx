@@ -50,7 +50,7 @@ function AdminLoginForm() {
         alignItems: "center",
         justifyContent: "center",
         padding: "2rem",
-        fontFamily: "Inter, sans-serif",
+        fontFamily: "var(--font-sans)",
       }}
     >
       <div
@@ -88,7 +88,7 @@ function AdminLoginForm() {
               onChange={(e) => setEmail(e.target.value)}
               disabled={loading}
               placeholder="Enter admin email"
-              style={{ width: "100%", padding: "0.875rem 1rem", backgroundColor: "#0F1419", border: "1.5px solid rgba(245,241,232,0.15)", color: "#F5F1E8", fontFamily: "Inter, sans-serif", fontSize: "0.9rem", outline: "none", boxSizing: "border-box" }}
+              style={{ width: "100%", padding: "0.875rem 1rem", backgroundColor: "#0F1419", border: "1.5px solid rgba(245,241,232,0.15)", color: "#F5F1E8", fontFamily: "var(--font-sans)", fontSize: "0.9rem", outline: "none", boxSizing: "border-box" }}
             />
           </div>
           <div>
@@ -106,7 +106,7 @@ function AdminLoginForm() {
               onChange={(e) => setPassword(e.target.value)}
               disabled={loading}
               placeholder="Enter admin password"
-              style={{ width: "100%", padding: "0.875rem 1rem", backgroundColor: "#0F1419", border: "1.5px solid rgba(245,241,232,0.15)", color: "#F5F1E8", fontFamily: "Inter, sans-serif", fontSize: "0.9rem", outline: "none", boxSizing: "border-box" }}
+              style={{ width: "100%", padding: "0.875rem 1rem", backgroundColor: "#0F1419", border: "1.5px solid rgba(245,241,232,0.15)", color: "#F5F1E8", fontFamily: "var(--font-sans)", fontSize: "0.9rem", outline: "none", boxSizing: "border-box" }}
             />
           </div>
 
@@ -119,7 +119,7 @@ function AdminLoginForm() {
           <button
             type="submit"
             disabled={loading}
-            style={{ width: "100%", padding: "1rem", backgroundColor: loading ? "#3a4a6b" : "#172545", color: "#F5F1E8", fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "0.78rem", letterSpacing: "0.14em", textTransform: "uppercase", border: "none", cursor: loading ? "not-allowed" : "pointer" }}
+            style={{ width: "100%", padding: "1rem", backgroundColor: loading ? "#3a4a6b" : "#172545", color: "#F5F1E8", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.78rem", letterSpacing: "0.14em", textTransform: "uppercase", border: "none", cursor: loading ? "not-allowed" : "pointer" }}
           >
             {loading ? "AUTHENTICATING..." : "ACCESS ADMIN"}
           </button>
@@ -133,7 +133,7 @@ export default function AdminLoginPage() {
   return (
     <Suspense fallback={
       <div style={{ minHeight: "100vh", backgroundColor: "#0F1419", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ color: "rgba(245,241,232,0.4)", fontFamily: "Inter, sans-serif", fontSize: "0.8rem", letterSpacing: "0.1em" }}>LOADING…</div>
+        <div style={{ color: "rgba(245,241,232,0.4)", fontFamily: "var(--font-sans)", fontSize: "0.8rem", letterSpacing: "0.1em" }}>LOADING…</div>
       </div>
     }>
       <AdminLoginForm />

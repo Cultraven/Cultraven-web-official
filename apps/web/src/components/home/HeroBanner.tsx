@@ -1,10 +1,3 @@
-/**
- * HeroBanner — Full-viewport campaign hero.
- *
- * Uses a CSS background-image (not next/image) for the full-bleed effect
- * to avoid the `fill` + relative parent gotcha.
- * Text overlaid on the left with a dark gradient for legibility.
- */
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -16,86 +9,25 @@ interface HeroBannerProps {
   siteUrl: string;
 }
 
-interface SlideData {
-  id: string;
-  bgImage: string;
-  tag: string;
-  headline: string;
-  subline: string;
-  cta1Text: string;
-  cta1Href: string;
-  cta2Text: string;
-  cta2Href: string;
-}
-
-const SLIDES: SlideData[] = [
-  {
-    id: "s1",
-    bgImage:
-      "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=1920&auto=format&fit=crop&q=85",
-    tag: "AW2026 — NEW DROP",
-    headline: "NOT MADE TO\nBLEND IN.",
-    subline: "Built for the generation creating its own culture.",
-    cta1Text: "SHOP NEW DROP",
-    cta1Href: "/collections/new-in",
-    cta2Text: "EXPLORE COLLECTION",
-    cta2Href: "/collections/all",
-  },
-  {
-    id: "s2",
-    bgImage:
-      "https://images.unsplash.com/photo-1529391409740-59f2cea08bc6?w=1920&auto=format&fit=crop&q=85",
-    tag: "ACID STATE — VINTAGE WASH COLLECTION",
-    headline: "WASHED.\nRAW.\nDIFFERENT.",
-    subline: "Pre-washed distressed 260 GSM heavyweights.\nEvery piece tells a story no one else can copy.",
-    cta1Text: "SHOP ACID STATE",
-    cta1Href: "/collections/acid-state",
-    cta2Text: "VIEW LOOKBOOK",
-    cta2Href: "/collections/lookbook",
-  },
-  {
-    id: "s3",
-    bgImage:
-      "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1920&auto=format&fit=crop&q=85",
-    tag: "DHARMA EP01 — MYTHOLOGY REIMAGINED",
-    headline: "YOUR\nMYTH.\nYOUR\nARMOR.",
-    subline: "Original Indian mythological screen-prints\non heavyweight cotton. Wear what they can't understand.",
-    cta1Text: "SHOP DHARMA",
-    cta1Href: "/collections/dharma",
-    cta2Text: "OUR STORY",
-    cta2Href: "/pages/our-heritage",
-  },
-];
-
 export function HeroBanner({ slide: _slide, siteUrl: _siteUrl }: HeroBannerProps) {
-  const [active, setActive] = useState(0);
-  const [fading, setFading] = useState(false);
-
-  // Auto-advance slides
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const dropDate = new Date();
+  dropDate.setDate(dropDate.getDate() + 3); // mock 3 days from now
+  
   useEffect(() => {
     const timer = setInterval(() => {
-      setFading(true);
-      setTimeout(() => {
-        setActive((prev) => (prev + 1) % SLIDES.length);
-        setFading(false);
-      }, 400);
-    }, 6000);
+      const difference = dropDate.getTime() - new Date().getTime();
+      if (difference > 0) {
+        setTimeLeft({
+          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+          minutes: Math.floor((difference / 1000 / 60) % 60),
+          seconds: Math.floor((difference / 1000) % 60),
+        });
+      }
+    }, 1000);
     return () => clearInterval(timer);
   }, []);
-
-  const goTo = (idx: number) => {
-    if (idx === active) return;
-    setFading(true);
-    setTimeout(() => {
-      setActive(idx);
-      setFading(false);
-    }, 300);
-  };
-
-  const prev = () => goTo((active - 1 + SLIDES.length) % SLIDES.length);
-  const next = () => goTo((active + 1) % SLIDES.length);
-
-  const slide = SLIDES[active];
 
   return (
     <section
@@ -103,34 +35,57 @@ export function HeroBanner({ slide: _slide, siteUrl: _siteUrl }: HeroBannerProps
       style={{
         position: "relative",
         width: "100%",
+        height: "100vh",
         minHeight: "100vh",
         overflow: "hidden",
         backgroundColor: "#172545",
       }}
     >
-      {/* ── Background image (CSS bg for reliable rendering) ── */}
+      {/* ── Background looping videos (Horizontal scroll track) ── */}
       <div
-        aria-hidden="true"
+        className="hide-scrollbar"
         style={{
           position: "absolute",
           inset: 0,
-          backgroundImage: `url('${slide.bgImage}')`,
-          backgroundSize: "cover",
-          backgroundPosition: "center top",
-          opacity: fading ? 0 : 1,
-          transition: "opacity 0.4s ease",
-          willChange: "opacity",
+          zIndex: 0,
+          display: "flex",
+          overflowX: "auto",
+          scrollSnapType: "x mandatory",
+          scrollBehavior: "smooth",
         }}
-      />
+      >
+        {[
+          "https://assets.mixkit.co/videos/preview/mixkit-young-man-in-streetwear-standing-outdoors-42289-large.mp4",
+          "https://assets.mixkit.co/videos/preview/mixkit-shoes-of-a-skateboarder-doing-tricks-41689-large.mp4",
+          "https://assets.mixkit.co/videos/preview/mixkit-urban-style-girl-with-sunglasses-42296-large.mp4"
+        ].map((src, i) => (
+          <div key={i} style={{ flex: "0 0 100vw", height: "100vh", scrollSnapAlign: "start", position: "relative" }}>
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+              }}
+            >
+              <source src={src} type="video/mp4" />
+            </video>
+          </div>
+        ))}
+      </div>
 
-      {/* ── Gradient overlay (left-heavy for text legibility) ── */}
+      {/* ── Gradient overlay ── */}
       <div
         aria-hidden="true"
         style={{
           position: "absolute",
           inset: 0,
-          background:
-            "linear-gradient(105deg, rgba(23,37,69,0.82) 0%, rgba(23,37,69,0.55) 50%, rgba(23,37,69,0.20) 100%)",
+          background: "linear-gradient(to bottom, rgba(23,37,69,0.2) 0%, rgba(23,37,69,0.7) 100%)",
+          zIndex: 1,
+          pointerEvents: "none",
         }}
       />
 
@@ -142,236 +97,90 @@ export function HeroBanner({ slide: _slide, siteUrl: _siteUrl }: HeroBannerProps
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
-          minHeight: "100vh",
-          padding: "clamp(1.5rem, 4vw, 6rem)",
-          paddingTop: "100px", // clear sticky header
-          maxWidth: "760px",
+          alignItems: "center",
+          height: "100%",
+          padding: "clamp(1.5rem, 4vw, 4rem)",
+          textAlign: "center",
+          pointerEvents: "none",
         }}
       >
-        {/* Tag */}
-        <span
-          style={{
-            display: "block",
-            marginBottom: "1rem",
-            fontSize: "11px",
-            fontWeight: 800,
-            letterSpacing: "0.2em",
-            textTransform: "uppercase",
-            color: "#C94227",
-            fontFamily: "var(--font-inter, Inter, sans-serif)",
-            opacity: fading ? 0 : 1,
-            transition: "opacity 0.4s ease 0.1s",
-          }}
-        >
-          {slide.tag}
-        </span>
-
-        {/* Headline — massive */}
-        <h1
-          style={{
-            fontFamily: "var(--font-inter, Inter, sans-serif)",
-            fontWeight: 900,
-            fontSize: "clamp(3.5rem, 10vw, 8.5rem)",
-            lineHeight: 0.9,
-            letterSpacing: "-0.03em",
-            textTransform: "uppercase",
-            color: "#F5F1E8",
-            whiteSpace: "pre-line",
-            marginBottom: "1.75rem",
-            opacity: fading ? 0 : 1,
-            transition: "opacity 0.4s ease 0.15s",
-          }}
-        >
-          {slide.headline}
-        </h1>
-
-        {/* Subline */}
-        <p
-          style={{
-            fontSize: "clamp(0.9rem, 1.6vw, 1.1rem)",
-            fontWeight: 500,
-            lineHeight: 1.6,
-            color: "rgba(245,241,232,0.85)",
-            whiteSpace: "pre-line",
-            maxWidth: "420px",
-            marginBottom: "2.5rem",
-            fontFamily: "var(--font-inter, Inter, sans-serif)",
-            opacity: fading ? 0 : 1,
-            transition: "opacity 0.4s ease 0.2s",
-          }}
-        >
-          {slide.subline}
-        </p>
-
-        {/* Buttons */}
+        {/* Drop Countdown (Sticker Style) */}
         <div
           style={{
-            display: "flex",
-            gap: "1rem",
-            flexWrap: "wrap",
-            opacity: fading ? 0 : 1,
-            transition: "opacity 0.4s ease 0.25s",
+            display: "inline-flex",
+            gap: "8px",
+            backgroundColor: "#F5F1E8",
+            border: "var(--border-thick)",
+            boxShadow: "4px 4px 0px 0px #172545",
+            padding: "8px 16px",
+            marginBottom: "24px",
+            transform: "rotate(-2deg)",
+            pointerEvents: "auto",
           }}
         >
-          <Link
-            href={slide.cta1Href}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "1rem 2.25rem",
-              backgroundColor: "#F5F1E8",
-              color: "#172545",
-              fontFamily: "var(--font-inter, Inter, sans-serif)",
-              fontWeight: 800,
-              fontSize: "0.78rem",
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-              textDecoration: "none",
-              border: "2px solid #F5F1E8",
-              transition: "all 0.2s ease",
-            }}
-            onMouseEnter={(e) => {
-              const el = e.currentTarget as HTMLAnchorElement;
-              el.style.backgroundColor = "#C94227";
-              el.style.borderColor = "#C94227";
-              el.style.color = "#F5F1E8";
-            }}
-            onMouseLeave={(e) => {
-              const el = e.currentTarget as HTMLAnchorElement;
-              el.style.backgroundColor = "#F5F1E8";
-              el.style.borderColor = "#F5F1E8";
-              el.style.color = "#172545";
-            }}
-          >
-            {slide.cta1Text}
-          </Link>
+          <span style={{ fontSize: "12px", fontWeight: 900, color: "#172545", textTransform: "uppercase" }}>NEXT DROP IN:</span>
+          <div style={{ display: "flex", gap: "4px", fontSize: "12px", fontWeight: 900, color: "#C94227" }}>
+            <span>{timeLeft.days}D</span>:
+            <span>{String(timeLeft.hours).padStart(2, "0")}H</span>:
+            <span>{String(timeLeft.minutes).padStart(2, "0")}M</span>:
+            <span>{String(timeLeft.seconds).padStart(2, "0")}S</span>
+          </div>
+        </div>
 
-          <Link
-            href={slide.cta2Href}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "1rem 2.25rem",
-              backgroundColor: "transparent",
-              color: "#F5F1E8",
-              fontFamily: "var(--font-inter, Inter, sans-serif)",
-              fontWeight: 800,
-              fontSize: "0.78rem",
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-              textDecoration: "none",
-              border: "2px solid rgba(245,241,232,0.6)",
-              transition: "all 0.2s ease",
-            }}
-            onMouseEnter={(e) => {
-              const el = e.currentTarget as HTMLAnchorElement;
-              el.style.borderColor = "#F5F1E8";
-              el.style.backgroundColor = "rgba(245,241,232,0.1)";
-            }}
-            onMouseLeave={(e) => {
-              const el = e.currentTarget as HTMLAnchorElement;
-              el.style.borderColor = "rgba(245,241,232,0.6)";
-              el.style.backgroundColor = "transparent";
-            }}
-          >
-            {slide.cta2Text}
+        {/* Headline — massive oversized */}
+        <h1
+          style={{
+            fontFamily: "var(--font-heading)",
+            fontWeight: 400,
+            fontSize: "clamp(4rem, 15vw, 12rem)",
+            lineHeight: 0.85,
+            letterSpacing: "0.02em",
+            textTransform: "uppercase",
+            color: "#F5F1E8",
+            marginBottom: "32px",
+            textShadow: "4px 4px 0px #172545, 8px 8px 0px rgba(23,37,69,0.5)",
+          }}
+        >
+          ACID STATE
+        </h1>
+
+        {/* ONE CTA */}
+        <div style={{ pointerEvents: "auto" }}>
+          <Link href="/collections/acid-state" className="btn-primary" style={{ fontSize: "16px", padding: "16px 40px" }}>
+            SHOP THE DROP
           </Link>
         </div>
       </div>
 
-      {/* ── Slide dots ── */}
+      {/* ── Scroll Label ── */}
       <div
         style={{
           position: "absolute",
           bottom: "2rem",
-          left: "clamp(1.5rem, 4vw, 6rem)",
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: 10,
           display: "flex",
-          gap: "10px",
-          zIndex: 20,
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "8px",
+          pointerEvents: "none",
         }}
       >
-        {SLIDES.map((s, i) => (
-          <button
-            key={s.id}
-            onClick={() => goTo(i)}
-            aria-label={`Go to slide ${i + 1}`}
-            style={{
-              width: i === active ? "32px" : "8px",
-              height: "8px",
-              borderRadius: "4px",
-              background: i === active ? "#C94227" : "rgba(245,241,232,0.4)",
-              border: "none",
-              cursor: "pointer",
-              transition: "all 0.3s ease",
-              padding: 0,
-            }}
-          />
-        ))}
+        <span style={{ fontFamily: "var(--font-sans)", fontSize: "10px", fontWeight: 900, letterSpacing: "0.2em", color: "#F5F1E8", textTransform: "uppercase" }}>
+          SCROLL TO EXPLORE
+        </span>
+        <div style={{ width: "2px", height: "40px", backgroundColor: "rgba(245,241,232,0.3)", position: "relative", overflow: "hidden" }}>
+          <div style={{ width: "100%", height: "50%", backgroundColor: "#F5F1E8", animation: "scrollDown 1.5s infinite" }} />
+        </div>
       </div>
 
-      {/* ── Arrow controls ── */}
-      {(["prev", "next"] as const).map((dir) => (
-        <button
-          key={dir}
-          onClick={dir === "prev" ? prev : next}
-          aria-label={dir === "prev" ? "Previous slide" : "Next slide"}
-          style={{
-            position: "absolute",
-            top: "50%",
-            [dir === "prev" ? "left" : "right"]: "clamp(1rem, 2vw, 2.5rem)",
-            transform: "translateY(-50%)",
-            zIndex: 20,
-            width: "48px",
-            height: "48px",
-            borderRadius: "50%",
-            background: "rgba(245,241,232,0.12)",
-            border: "1.5px solid rgba(245,241,232,0.35)",
-            color: "#F5F1E8",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: "pointer",
-            backdropFilter: "blur(6px)",
-            transition: "all 0.2s ease",
-          }}
-          onMouseEnter={(e) => {
-            const el = e.currentTarget as HTMLButtonElement;
-            el.style.background = "#C94227";
-            el.style.borderColor = "#C94227";
-          }}
-          onMouseLeave={(e) => {
-            const el = e.currentTarget as HTMLButtonElement;
-            el.style.background = "rgba(245,241,232,0.12)";
-            el.style.borderColor = "rgba(245,241,232,0.35)";
-          }}
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            {dir === "prev"
-              ? <polyline points="15 18 9 12 15 6" />
-              : <polyline points="9 18 15 12 9 6" />
-            }
-          </svg>
-        </button>
-      ))}
-
-      {/* ── Slide count ── */}
-      <div
-        style={{
-          position: "absolute",
-          bottom: "2rem",
-          right: "clamp(1.5rem, 4vw, 6rem)",
-          zIndex: 20,
-          fontSize: "11px",
-          fontWeight: 700,
-          letterSpacing: "0.15em",
-          color: "rgba(245,241,232,0.6)",
-          fontFamily: "var(--font-inter, Inter, sans-serif)",
-        }}
-      >
-        {String(active + 1).padStart(2, "0")} / {String(SLIDES.length).padStart(2, "0")}
-      </div>
+      <style>{`
+        @keyframes scrollDown {
+          0% { transform: translateY(-100%); }
+          100% { transform: translateY(200%); }
+        }
+      `}</style>
     </section>
   );
 }

@@ -40,12 +40,12 @@ export default function OrderDetailsClient({ id }: { id: string }) {
   };
 
   if (loading) {
-    return <div style={{ padding: "2.5rem 3rem", color: "#F5F1E8", fontFamily: "Inter, sans-serif" }}>Loading...</div>;
+    return <div style={{ padding: "2.5rem 3rem", color: "#F5F1E8", fontFamily: "var(--font-sans)" }}>Loading...</div>;
   }
 
   if (!order) {
     return (
-      <div style={{ padding: "2.5rem 3rem", color: "#F5F1E8", fontFamily: "Inter, sans-serif" }}>
+      <div style={{ padding: "2.5rem 3rem", color: "#F5F1E8", fontFamily: "var(--font-sans)" }}>
         Order not found.
         <br/><br/>
         <Link href="/portal-secure/orders" style={{ color: "#C94227" }}>Back to Orders</Link>
@@ -58,15 +58,15 @@ export default function OrderDetailsClient({ id }: { id: string }) {
   return (
     <div style={{ padding: "2.5rem 3rem" }}>
       <div style={{ marginBottom: "2rem" }}>
-        <Link href="/portal-secure/orders" style={{ color: "rgba(245,241,232,0.5)", textDecoration: "none", fontSize: "0.875rem", fontFamily: "Inter, sans-serif", display: "inline-block", marginBottom: "1rem" }}>
+        <Link href="/portal-secure/orders" style={{ color: "rgba(245,241,232,0.5)", textDecoration: "none", fontSize: "0.875rem", fontFamily: "var(--font-sans)", display: "inline-block", marginBottom: "1rem" }}>
           ← Back to Orders
         </Link>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <h1 style={{ fontFamily: "Inter, sans-serif", fontWeight: 800, fontSize: "1.75rem", color: "#F5F1E8", letterSpacing: "-0.02em" }}>
+          <h1 style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "1.75rem", color: "#F5F1E8", letterSpacing: "-0.02em" }}>
             Order {order.razorpayOrderId}
           </h1>
           <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-            <span style={{ fontFamily: "Inter, sans-serif", color: "rgba(245,241,232,0.5)", fontSize: "0.875rem" }}>Update Status:</span>
+            <span style={{ fontFamily: "var(--font-sans)", color: "rgba(245,241,232,0.5)", fontSize: "0.875rem" }}>Update Status:</span>
             <select
               value={order.fulfillmentStatus || "processing"}
               onChange={(e) => updateStatus(e.target.value)}
@@ -77,7 +77,7 @@ export default function OrderDetailsClient({ id }: { id: string }) {
                 border: "1px solid rgba(255,255,255,0.1)",
                 color: "#F5F1E8",
                 borderRadius: "4px",
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "var(--font-sans)",
                 outline: "none"
               }}
             >
@@ -93,7 +93,7 @@ export default function OrderDetailsClient({ id }: { id: string }) {
       <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "2rem" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
           <div style={{ backgroundColor: "#1A2332", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "6px", padding: "2rem" }}>
-            <h2 style={{ fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: "1.1rem", color: "#F5F1E8", marginBottom: "1.5rem" }}>Order Items</h2>
+            <h2 style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "1.1rem", color: "#F5F1E8", marginBottom: "1.5rem" }}>Order Items</h2>
             <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
               {order.items?.map((item: any, i: number) => (
                 <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: i < order.items.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none", paddingBottom: i < order.items.length - 1 ? "1.5rem" : "0" }}>
@@ -101,11 +101,11 @@ export default function OrderDetailsClient({ id }: { id: string }) {
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={item.image} alt={item.title} style={{ width: "60px", height: "75px", objectFit: "cover", borderRadius: "4px" }} />
                     <div>
-                      <p style={{ fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: "0.9rem", color: "#F5F1E8", marginBottom: "4px" }}>{item.title}</p>
-                      <p style={{ fontFamily: "Inter, sans-serif", fontSize: "0.8rem", color: "rgba(245,241,232,0.5)" }}>Size: {item.size} | Qty: {item.quantity}</p>
+                      <p style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.9rem", color: "#F5F1E8", marginBottom: "4px" }}>{item.title}</p>
+                      <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.8rem", color: "rgba(245,241,232,0.5)" }}>Size: {item.size} | Qty: {item.quantity}</p>
                     </div>
                   </div>
-                  <div style={{ fontFamily: "Inter, sans-serif", fontWeight: 700, color: "#F5F1E8" }}>
+                  <div style={{ fontFamily: "var(--font-sans)", fontWeight: 700, color: "#F5F1E8" }}>
                     {fmt(item.pricePaise)}
                   </div>
                 </div>
@@ -116,15 +116,15 @@ export default function OrderDetailsClient({ id }: { id: string }) {
 
         <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
           <div style={{ backgroundColor: "#1A2332", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "6px", padding: "1.5rem" }}>
-            <h3 style={{ fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: "0.9rem", color: "rgba(245,241,232,0.5)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "1rem" }}>Customer Details</h3>
-            <p style={{ fontFamily: "Inter, sans-serif", color: "#F5F1E8", fontSize: "0.9rem", marginBottom: "4px" }}><strong>Name:</strong> {order.deliveryAddress?.name}</p>
-            <p style={{ fontFamily: "Inter, sans-serif", color: "#F5F1E8", fontSize: "0.9rem", marginBottom: "4px" }}><strong>Email:</strong> {order.deliveryAddress?.email}</p>
-            <p style={{ fontFamily: "Inter, sans-serif", color: "#F5F1E8", fontSize: "0.9rem", marginBottom: "4px" }}><strong>Phone:</strong> {order.deliveryAddress?.phone}</p>
+            <h3 style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.9rem", color: "rgba(245,241,232,0.5)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "1rem" }}>Customer Details</h3>
+            <p style={{ fontFamily: "var(--font-sans)", color: "#F5F1E8", fontSize: "0.9rem", marginBottom: "4px" }}><strong>Name:</strong> {order.deliveryAddress?.name}</p>
+            <p style={{ fontFamily: "var(--font-sans)", color: "#F5F1E8", fontSize: "0.9rem", marginBottom: "4px" }}><strong>Email:</strong> {order.deliveryAddress?.email}</p>
+            <p style={{ fontFamily: "var(--font-sans)", color: "#F5F1E8", fontSize: "0.9rem", marginBottom: "4px" }}><strong>Phone:</strong> {order.deliveryAddress?.phone}</p>
           </div>
 
           <div style={{ backgroundColor: "#1A2332", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "6px", padding: "1.5rem" }}>
-            <h3 style={{ fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: "0.9rem", color: "rgba(245,241,232,0.5)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "1rem" }}>Shipping Address</h3>
-            <p style={{ fontFamily: "Inter, sans-serif", color: "#F5F1E8", fontSize: "0.9rem", lineHeight: "1.5" }}>
+            <h3 style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.9rem", color: "rgba(245,241,232,0.5)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "1rem" }}>Shipping Address</h3>
+            <p style={{ fontFamily: "var(--font-sans)", color: "#F5F1E8", fontSize: "0.9rem", lineHeight: "1.5" }}>
               {order.deliveryAddress?.addressLine1}<br/>
               {order.deliveryAddress?.addressLine2 && <>{order.deliveryAddress?.addressLine2}<br/></>}
               {order.deliveryAddress?.city}, {order.deliveryAddress?.state} {order.deliveryAddress?.pincode}
@@ -132,18 +132,18 @@ export default function OrderDetailsClient({ id }: { id: string }) {
           </div>
 
           <div style={{ backgroundColor: "#1A2332", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "6px", padding: "1.5rem" }}>
-            <h3 style={{ fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: "0.9rem", color: "rgba(245,241,232,0.5)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "1rem" }}>Payment Summary</h3>
+            <h3 style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.9rem", color: "rgba(245,241,232,0.5)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "1rem" }}>Payment Summary</h3>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-              <span style={{ fontFamily: "Inter, sans-serif", color: "rgba(245,241,232,0.7)" }}>Subtotal</span>
-              <span style={{ fontFamily: "Inter, sans-serif", color: "#F5F1E8" }}>{fmt(order.totalPaise)}</span>
+              <span style={{ fontFamily: "var(--font-sans)", color: "rgba(245,241,232,0.7)" }}>Subtotal</span>
+              <span style={{ fontFamily: "var(--font-sans)", color: "#F5F1E8" }}>{fmt(order.totalPaise)}</span>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", paddingBottom: "1rem", borderBottom: "1px solid rgba(255,255,255,0.06)", marginBottom: "1rem" }}>
-              <span style={{ fontFamily: "Inter, sans-serif", color: "rgba(245,241,232,0.7)" }}>Shipping</span>
-              <span style={{ fontFamily: "Inter, sans-serif", color: "#10B981" }}>FREE</span>
+              <span style={{ fontFamily: "var(--font-sans)", color: "rgba(245,241,232,0.7)" }}>Shipping</span>
+              <span style={{ fontFamily: "var(--font-sans)", color: "#10B981" }}>FREE</span>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ fontFamily: "Inter, sans-serif", color: "#F5F1E8", fontWeight: 700 }}>Total</span>
-              <span style={{ fontFamily: "Inter, sans-serif", color: "#F5F1E8", fontWeight: 700, fontSize: "1.2rem" }}>{fmt(order.totalPaise)}</span>
+              <span style={{ fontFamily: "var(--font-sans)", color: "#F5F1E8", fontWeight: 700 }}>Total</span>
+              <span style={{ fontFamily: "var(--font-sans)", color: "#F5F1E8", fontWeight: 700, fontSize: "1.2rem" }}>{fmt(order.totalPaise)}</span>
             </div>
           </div>
         </div>

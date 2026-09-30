@@ -1,5 +1,4 @@
-/* ── Google Fonts ─────────────────────────────────────────────────────────── */
-@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Inter:wght@400;500;600;700;800;900&display=swap");
+/* ── Google Fonts (Loaded via next/font in layout.tsx) ─────────────── */
 @import "tailwindcss";
 @source "../../../../packages/ui/src";
 
@@ -22,8 +21,9 @@
   --color-star:   var(--color-yellow);
 
   /* Typography */
-  --font-sans:    var(--font-inter, "Inter", "Helvetica Neue", sans-serif);
-  --font-display: var(--font-cormorant, "Cormorant Garamond", Georgia, serif);
+  --font-heading: var(--font-anton), Impact, sans-serif;
+  --font-sans:    var(--font-inter), "Helvetica Neue", sans-serif;
+  --font-mono:    var(--font-space-mono), monospace;
 
   /* Border-radius */
   --radius-none: 0px;
@@ -36,10 +36,14 @@
   --z-modal:    60;
   --z-header:   70;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 3px rgba(23, 37, 69, 0.08);
-  --shadow-md: 0 4px 16px rgba(23, 37, 69, 0.12);
-  --shadow-lg: 0 12px 40px rgba(23, 37, 69, 0.18);
+  /* Shadows (Neo-brutalism hard shadows) */
+  --shadow-sm: 2px 2px 0px 0px var(--color-navy);
+  --shadow-md: 4px 4px 0px 0px var(--color-navy);
+  --shadow-lg: 8px 8px 0px 0px var(--color-navy);
+
+  /* Thick borders */
+  --border-thick: 3px solid var(--color-navy);
+  --border-base: 2px solid var(--color-navy);
 }
 
 /* ── Base resets ──────────────────────────────────────────────────────────── */
@@ -62,16 +66,61 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-display);
-    font-weight: 600;
-    line-height: 1.1;
-    letter-spacing: -0.01em;
+    font-family: var(--font-heading);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
     color: var(--color-navy);
   }
 
   a { text-decoration: none; color: inherit; }
   img, svg { display: block; max-width: 100%; }
   button { cursor: pointer; font-family: inherit; }
+
+  /* Brutalist defaults for ALL inputs and selects */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="tel"],
+  input[type="number"],
+  textarea,
+  select {
+    border: var(--border-thick) !important;
+    border-radius: 0 !important;
+    background-color: var(--color-cream) !important;
+    color: var(--color-navy) !important;
+    font-family: var(--font-sans) !important;
+    font-weight: 800 !important;
+    outline: none !important;
+    box-shadow: inset 2px 2px 0px 0px rgba(23,37,69,0.1) !important;
+    transition: border-color 0.2s ease !important;
+  }
+  input:focus, textarea:focus, select:focus {
+    box-shadow: inset 4px 4px 0px 0px rgba(23,37,69,0.15) !important;
+  }
+
+  /* Brutalist defaults for generic form buttons (excluding special .action-icon) */
+  form button[type="submit"] {
+    background-color: var(--color-navy) !important;
+    color: var(--color-cream) !important;
+    font-family: var(--font-sans) !important;
+    font-weight: 900 !important;
+    text-transform: uppercase !important;
+    border: var(--border-thick) !important;
+    box-shadow: var(--shadow-md) !important;
+    border-radius: 0 !important;
+    transition: transform 0.1s ease, box-shadow 0.1s ease !important;
+  }
+  form button[type="submit"]:hover {
+    background-color: var(--color-crimson) !important;
+    transform: translate(-2px, -2px) !important;
+    box-shadow: var(--shadow-lg) !important;
+  }
+  form button[type="submit"]:active {
+    transform: translate(2px, 2px) !important;
+    box-shadow: 0px 0px 0px 0px var(--color-navy) !important;
+  }
 }
 
 /* ── Layout utilities ─────────────────────────────────────────────────────── */
@@ -97,32 +146,32 @@
   /* ── Typography scales ──────────────────────────────────────────────────── */
   /* Display serif — hero headlines */
   .heading-mega {
-    font-family: var(--font-display);
+    font-family: var(--font-heading);
     font-size: clamp(3rem, 8vw, 7.5rem);
-    font-weight: 900;
-    font-style: italic;
+    font-weight: 400;
     line-height: 0.92;
-    letter-spacing: -0.02em;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
     color: var(--color-navy);
   }
 
   /* Section headings */
   .heading-display {
-    font-family: var(--font-display);
+    font-family: var(--font-heading);
     font-size: clamp(2rem, 4.5vw, 3.75rem);
-    font-weight: 600;
-    font-style: italic;
-    line-height: 1.05;
-    letter-spacing: -0.01em;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
     color: var(--color-navy);
   }
 
   /* Small uppercase labels / eyebrows */
   .label-tag {
-    font-family: var(--font-sans);
+    font-family: var(--font-mono);
     font-size: 0.7rem;
-    font-weight: 800;
-    letter-spacing: 0.18em;
+    font-weight: 700;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--color-crimson);
   }
@@ -136,18 +185,24 @@
     background-color: var(--color-navy);
     color: var(--color-cream);
     font-family: var(--font-sans);
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     font-weight: 800;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
-    border: 2px solid var(--color-navy);
-    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    border: var(--border-thick);
+    box-shadow: var(--shadow-md);
+    transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.2s ease;
     white-space: nowrap;
   }
   .btn-primary:hover {
     background-color: var(--color-crimson);
-    border-color: var(--color-crimson);
     color: var(--color-cream);
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px 0px var(--color-navy);
+  }
+  .btn-primary:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0px 0px 0px 0px var(--color-navy);
   }
 
   .btn-secondary {
@@ -155,20 +210,26 @@
     align-items: center;
     justify-content: center;
     padding: 0.875rem 2rem;
-    background-color: transparent;
+    background-color: var(--color-cream);
     color: var(--color-navy);
     font-family: var(--font-sans);
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     font-weight: 800;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
-    border: 2px solid var(--color-navy);
-    transition: background-color 0.2s ease, color 0.2s ease;
+    border: var(--border-thick);
+    box-shadow: var(--shadow-md);
+    transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.2s ease;
     white-space: nowrap;
   }
   .btn-secondary:hover {
-    background-color: var(--color-navy);
-    color: var(--color-cream);
+    background-color: var(--color-mist);
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px 0px var(--color-navy);
+  }
+  .btn-secondary:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0px 0px 0px 0px var(--color-navy);
   }
 
   /* ── Scrollbar hiding ──────────────────────────────────────────────────── */
