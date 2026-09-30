@@ -26,8 +26,8 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
       setIsScrolled(true);
       return;
     }
-    setIsScrolled(window.scrollY > 100);
-    const onScroll = () => setIsScrolled(window.scrollY > 100);
+    setIsScrolled(window.scrollY > 65);
+    const onScroll = () => setIsScrolled(window.scrollY > 65);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, [isHomepage]);
@@ -189,10 +189,11 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
       </nav>
 
       <style>{`
-        /* Logo: 64px on mobile, 100px on desktop (25% up from prior 80px) */
+        /* Logo PNG is square with transparent padding. Desktop: 150px box (+50%),
+           negative margins cancel the extra box so header height/nav position shrink-wrap to 60px. */
         .site-logo { height: 64px; }
         @media (min-width: 1024px) {
-          .site-logo { height: 100px; }
+          .site-logo { height: 150px; margin: -45px -46px -45px -4px; }
         }
         @media (min-width: 1024px) {
           .show-mobile { display: none !important; }
