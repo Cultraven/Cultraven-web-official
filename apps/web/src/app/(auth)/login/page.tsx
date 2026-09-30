@@ -60,7 +60,7 @@ function LoginForm() {
           <Link href="/" style={{ textDecoration: "none" }}>
             <h1 style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "1.2rem", letterSpacing: "0.2em", color: "var(--color-navy)", textTransform: "uppercase", marginBottom: "1rem" }}>CULTRAVEN</h1>
           </Link>
-          <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "2.5rem", color: "var(--color-navy)", textTransform: "uppercase" }}>WELCOME BACK BRO</h2>
+          <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "2.5rem", color: "var(--color-navy)", textTransform: "uppercase" }}>WELCOME BACK</h2>
           <p style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "12px", color: "var(--color-gray)", marginTop: "0.5rem", textTransform: "uppercase" }}>LOG IN TO ACCESS YOUR ACCOUNT.</p>
         </div>
 
@@ -110,13 +110,13 @@ function LoginForm() {
             className="btn-primary"
             style={{ width: "100%", padding: "16px", fontSize: "14px", marginTop: "1rem" }}
           >
-            {loading ? "RUK JA BRO..." : "ENTER CULTRAVEN"}
+            {loading ? "SIGNING IN..." : "SIGN IN"}
           </button>
         </form>
 
         <p style={{ fontFamily: "var(--font-sans)", fontSize: "10px", fontWeight: 800, textTransform: "uppercase", color: "var(--color-gray)", textAlign: "center", marginTop: "2rem" }}>
-          NO ACCOUNT?{" "}
-          <Link href="/register" style={{ color: "var(--color-navy)", fontWeight: 900, textDecoration: "underline" }}>CREATE ONE BRO</Link>
+          DON'T HAVE AN ACCOUNT?{" "}
+          <Link href="/register" style={{ color: "var(--color-navy)", fontWeight: 900, textDecoration: "underline" }}>CREATE ACCOUNT</Link>
         </p>
       </div>
     </div>

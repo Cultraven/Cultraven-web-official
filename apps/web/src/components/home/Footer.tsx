@@ -126,21 +126,20 @@ export function Footer({ config }: FooterProps) {
       {/* ── Main footer body ─────────────────────────────────────────────── */}
       <div
         style={{
-          backgroundColor: "var(--color-cream)",
+          backgroundColor: "var(--color-stone)",
           padding: "clamp(4rem,8vw,6rem) clamp(1.25rem,4vw,5rem) 0",
         }}
       >
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "1.5fr 1fr 1fr 1.4fr",
+            gridTemplateColumns: "1.5fr 1fr 1fr 1.5fr",
             gap: "3rem",
           }}
           className="footer-grid"
         >
-          {/* ── Column 1: Brand ── */}
+          {/* ── Column 1: Brand Info & Address ── */}
           <div>
-            {/* Logo */}
             <Link
               href="/"
               aria-label="CULTRAVEN home"
@@ -156,27 +155,27 @@ export function Footer({ config }: FooterProps) {
                 style={{
                   width: "40px",
                   height: "40px",
-                  border: "var(--border-thick)",
-                  backgroundColor: "var(--color-navy)",
+                  border: "2px solid var(--color-raven)",
+                  backgroundColor: "var(--color-raven)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   flexShrink: 0,
-                  boxShadow: "2px 2px 0px 0px var(--color-navy)"
+                  boxShadow: "2px 2px 0px 0px var(--color-raven)"
                 }}
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-cream)" strokeWidth="2.5" strokeLinecap="square">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-bone)" strokeWidth="2.5" strokeLinecap="square">
                   <path d="M12 21V12M12 12L4 4M12 12L20 4" />
                 </svg>
               </div>
               <span
                 style={{
                   fontFamily: "var(--font-heading)",
-                  fontWeight: 400,
+                  fontWeight: 900,
                   fontSize: "32px",
                   letterSpacing: "0.05em",
                   textTransform: "uppercase",
-                  color: "var(--color-navy)",
+                  color: "var(--color-raven)",
                 }}
               >
                 CULTRAVEN
@@ -187,44 +186,48 @@ export function Footer({ config }: FooterProps) {
               style={{
                 fontFamily: "var(--font-sans)",
                 fontSize: "12px",
-                fontWeight: 800,
+                fontWeight: 600,
                 lineHeight: 1.5,
-                color: "var(--color-navy)",
+                color: "var(--color-raven)",
                 maxWidth: "240px",
-                marginBottom: "2rem",
-                textTransform: "uppercase"
+                marginBottom: "1.5rem",
               }}
             >
-              Premium oversized streetwear built for modern India. Heavyweight cotton. Bold identity. Not made to blend in.
+              Premium oversized streetwear built for modern India. Heavyweight cotton. Bold identity.
             </p>
 
-            {/* Social links */}
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-              {socials.map((s) => (
-                <a
-                  key={s.platform}
-                  href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`CULTRAVEN on ${s.platform}`}
-                  className="social-btn"
-                  style={{
-                    color: "var(--color-cream)",
-                    backgroundColor: "var(--color-navy)",
-                    border: "2px solid var(--color-navy)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    width: "44px",
-                    height: "44px",
-                    boxShadow: "2px 2px 0px 0px var(--color-navy)",
-                    transition: "transform 0.1s ease"
-                  }}
-                >
-                  {SOCIAL_ICONS[s.platform]}
-                </a>
-              ))}
+            <div style={{ marginBottom: "1.5rem", fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 700, color: "var(--color-smoke)", lineHeight: 1.6, textTransform: "uppercase" }}>
+              <p>CULTRAVEN CLOTHING PVT LTD</p>
+              <p>123 INDUSTRIAL AREA, SECTOR 4</p>
+              <p>MUMBAI, MAHARASHTRA 400001</p>
+              <p>GSTIN: 27AABCB1234D1Z5</p>
             </div>
+
+            <a
+              href="https://wa.me/919999999999"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                padding: "8px 12px",
+                backgroundColor: "var(--color-bone)",
+                color: "var(--color-raven)",
+                border: "2px solid var(--color-raven)",
+                fontFamily: "var(--font-sans)",
+                fontWeight: 900,
+                fontSize: "11px",
+                textTransform: "uppercase",
+                textDecoration: "none",
+                boxShadow: "2px 2px 0px 0px var(--color-raven)",
+                transition: "transform 0.1s ease",
+              }}
+              className="social-btn"
+            >
+              {SOCIAL_ICONS.whatsapp}
+              WhatsApp Support
+            </a>
           </div>
 
           {/* ── Column 2: Shop ── */}
@@ -236,7 +239,7 @@ export function Footer({ config }: FooterProps) {
                 fontSize: "14px",
                 letterSpacing: "0.1em",
                 textTransform: "uppercase",
-                color: "var(--color-navy)",
+                color: "var(--color-raven)",
                 marginBottom: "1.5rem",
               }}
             >
@@ -247,24 +250,14 @@ export function Footer({ config }: FooterProps) {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    target={link.openInNew ? "_blank" : undefined}
-                    rel={link.openInNew ? "noopener noreferrer" : undefined}
                     style={{
                       fontFamily: "var(--font-sans)",
                       fontWeight: 800,
                       fontSize: "12px",
                       textTransform: "uppercase",
-                      color: "var(--color-navy)",
+                      color: "var(--color-raven)",
                       textDecoration: "none",
-                      borderBottom: "2px solid transparent",
-                      transition: "border-color 0.2s ease"
                     }}
-                    onMouseEnter={(e) =>
-                      ((e.currentTarget as HTMLAnchorElement).style.borderBottomColor = "var(--color-navy)")
-                    }
-                    onMouseLeave={(e) =>
-                      ((e.currentTarget as HTMLAnchorElement).style.borderBottomColor = "transparent")
-                    }
                   >
                     {link.label}
                   </Link>
@@ -282,7 +275,7 @@ export function Footer({ config }: FooterProps) {
                 fontSize: "14px",
                 letterSpacing: "0.1em",
                 textTransform: "uppercase",
-                color: "var(--color-navy)",
+                color: "var(--color-raven)",
                 marginBottom: "1.5rem",
               }}
             >
@@ -298,17 +291,9 @@ export function Footer({ config }: FooterProps) {
                       fontWeight: 800,
                       fontSize: "12px",
                       textTransform: "uppercase",
-                      color: "var(--color-navy)",
+                      color: "var(--color-raven)",
                       textDecoration: "none",
-                      borderBottom: "2px solid transparent",
-                      transition: "border-color 0.2s ease"
                     }}
-                    onMouseEnter={(e) =>
-                      ((e.currentTarget as HTMLAnchorElement).style.borderBottomColor = "var(--color-navy)")
-                    }
-                    onMouseLeave={(e) =>
-                      ((e.currentTarget as HTMLAnchorElement).style.borderBottomColor = "transparent")
-                    }
                   >
                     {link.label}
                   </Link>
@@ -317,7 +302,7 @@ export function Footer({ config }: FooterProps) {
             </ul>
           </div>
 
-          {/* ── Column 4: Stay Updated ── */}
+          {/* ── Column 4: Brand & Payments ── */}
           <div>
             <h3
               style={{
@@ -326,111 +311,66 @@ export function Footer({ config }: FooterProps) {
                 fontSize: "14px",
                 letterSpacing: "0.1em",
                 textTransform: "uppercase",
-                color: "var(--color-navy)",
+                color: "var(--color-raven)",
                 marginBottom: "1.5rem",
               }}
             >
-              STAY UPDATED
+              THE CULT
             </h3>
-            <p
-              style={{
-                fontFamily: "var(--font-sans)",
-                fontSize: "12px",
-                fontWeight: 800,
-                lineHeight: 1.5,
-                color: "var(--color-navy)",
-                marginBottom: "1.25rem",
-                textTransform: "uppercase"
-              }}
-            >
-              JOIN THE CULT. GET ₹500 OFF YOUR FIRST ORDER AND BE FIRST TO KNOW ABOUT DROPS.
-            </p>
-
-            {status === "success" ? (
-              <p
-                style={{
-                  fontFamily: "var(--font-sans)",
-                  fontWeight: 900,
-                  fontSize: "12px",
-                  color: "var(--color-cream)",
-                  backgroundColor: "var(--color-navy)",
-                  padding: "1rem",
-                  border: "2px solid var(--color-navy)",
-                  boxShadow: "4px 4px 0px 0px var(--color-navy)",
-                  textTransform: "uppercase"
-                }}
-              >
-                ✓ SCENE SET HAI. YOU'RE IN.
-              </p>
-            ) : (
-              <form onSubmit={handleNewsletter} noValidate>
-                <div style={{ display: "flex", gap: "0.5rem", flexDirection: "column" }}>
-                  <label htmlFor="footer-email" style={{ position: "absolute", width: "1px", height: "1px", overflow: "hidden", clip: "rect(0,0,0,0)" }}>
-                    Email address
-                  </label>
-                  <input
-                    id="footer-email"
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="EMAIL ADDRESS"
-                    disabled={status === "loading"}
+            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "1rem", marginBottom: "2rem" }}>
+              {(config.columns.find(c => c.id === "brand")?.links ?? [
+                { href: "/pages/our-heritage", label: "Our Heritage", openInNew: false },
+                { href: "/pages/journal", label: "Journal", openInNew: false },
+                { href: "/pages/size-guide", label: "Size Guide", openInNew: false },
+                { href: "/pages/contact", label: "Contact", openInNew: false },
+              ]).map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
                     style={{
-                      width: "100%",
-                      padding: "12px",
-                      backgroundColor: "var(--color-cream)",
-                      border: "2px solid var(--color-navy)",
-                      color: "var(--color-navy)",
                       fontFamily: "var(--font-sans)",
-                      fontSize: "12px",
                       fontWeight: 800,
-                      outline: "none",
-                      boxShadow: "inset 2px 2px 0px 0px rgba(23,37,69,0.1)"
-                    }}
-                  />
-                  <button
-                    type="submit"
-                    disabled={status === "loading"}
-                    style={{
-                      width: "100%",
-                      padding: "12px",
-                      backgroundColor: "var(--color-crimson)",
-                      color: "var(--color-cream)",
-                      fontFamily: "var(--font-sans)",
-                      fontWeight: 900,
                       fontSize: "12px",
-                      letterSpacing: "0.1em",
                       textTransform: "uppercase",
-                      border: "2px solid var(--color-navy)",
-                      boxShadow: "4px 4px 0px 0px var(--color-navy)",
-                      cursor: status === "loading" ? "not-allowed" : "pointer",
-                      transition: "transform 0.1s ease",
-                    }}
-                    className="newsletter-btn"
-                  >
-                    {status === "loading" ? "..." : "SUBSCRIBE"}
-                  </button>
-                </div>
-                {status === "error" && (
-                  <p
-                    style={{
-                      fontFamily: "var(--font-sans)",
-                      fontSize: "10px",
-                      fontWeight: 900,
-                      color: "var(--color-crimson)",
-                      marginTop: "0.5rem",
-                      textTransform: "uppercase"
+                      color: "var(--color-raven)",
+                      textDecoration: "none",
                     }}
                   >
-                    KUCH LOCHA HAI BRO. TRY AGAIN.
-                  </p>
-                )}
-              </form>
-            )}
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+
+            <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "2rem" }}>
+              {socials.filter(s => s.platform !== "whatsapp").map((s) => (
+                <a
+                  key={s.platform}
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`CULTRAVEN on ${s.platform}`}
+                  className="social-btn"
+                  style={{
+                    color: "var(--color-bone)",
+                    backgroundColor: "var(--color-raven)",
+                    border: "2px solid var(--color-raven)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "36px",
+                    height: "36px",
+                    boxShadow: "2px 2px 0px 0px var(--color-raven)",
+                    transition: "transform 0.1s ease"
+                  }}
+                >
+                  {SOCIAL_ICONS[s.platform]}
+                </a>
+              ))}
+            </div>
 
             {/* Payment badges */}
-            <div style={{ marginTop: "2rem" }}>
+            <div>
               <p
                 style={{
                   fontFamily: "var(--font-sans)",
@@ -438,7 +378,7 @@ export function Footer({ config }: FooterProps) {
                   fontSize: "10px",
                   letterSpacing: "0.1em",
                   textTransform: "uppercase",
-                  color: "var(--color-navy)",
+                  color: "var(--color-smoke)",
                   marginBottom: "0.75rem",
                 }}
               >
@@ -449,14 +389,14 @@ export function Footer({ config }: FooterProps) {
                   <span
                     key={badge}
                     style={{
-                      padding: "6px 10px",
-                      border: "2px solid var(--color-navy)",
+                      padding: "4px 8px",
+                      border: "1px solid var(--color-raven)",
                       fontFamily: "var(--font-mono)",
                       fontWeight: 700,
-                      fontSize: "10px",
-                      color: "var(--color-navy)",
-                      backgroundColor: "var(--color-cream)",
-                      boxShadow: "2px 2px 0px 0px var(--color-navy)"
+                      fontSize: "9px",
+                      color: "var(--color-raven)",
+                      backgroundColor: "var(--color-stone)",
+                      boxShadow: "2px 2px 0px 0px var(--color-raven)"
                     }}
                   >
                     {badge}
@@ -471,7 +411,7 @@ export function Footer({ config }: FooterProps) {
         <div
           style={{
             marginTop: "4rem",
-            borderTop: "var(--border-thick)",
+            borderTop: "2px solid var(--color-raven)",
             padding: "1.75rem 0",
             display: "flex",
             alignItems: "center",
@@ -486,7 +426,7 @@ export function Footer({ config }: FooterProps) {
               fontWeight: 700,
               fontSize: "12px",
               textTransform: "uppercase",
-              color: "var(--color-navy)",
+              color: "var(--color-raven)",
             }}
           >
             {config.copyrightText}
@@ -497,7 +437,7 @@ export function Footer({ config }: FooterProps) {
               fontWeight: 700,
               fontSize: "12px",
               textTransform: "uppercase",
-              color: "var(--color-navy)",
+              color: "var(--color-raven)",
             }}
           >
             MADE IN INDIA
@@ -508,7 +448,7 @@ export function Footer({ config }: FooterProps) {
               fontWeight: 700,
               fontSize: "12px",
               textTransform: "uppercase",
-              color: "var(--color-navy)",
+              color: "var(--color-raven)",
             }}
           >
             PREMIUM STREETWEAR
@@ -517,8 +457,7 @@ export function Footer({ config }: FooterProps) {
       </div>
 
       <style>{`
-        .social-btn:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0px 0px var(--color-navy) !important; }
-        .newsletter-btn:active { transform: translate(2px, 2px); box-shadow: 0px 0px 0px 0px var(--color-navy) !important; }
+        .social-btn:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0px 0px var(--color-raven) !important; }
         
         .marquee-content {
           animation: marquee 20s linear infinite;

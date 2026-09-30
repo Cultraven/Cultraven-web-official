@@ -21,8 +21,8 @@ const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
   Processing: { bg: "rgba(245,158,11,0.15)", text: "#D97706" },
   Shipped: { bg: "rgba(59,130,246,0.15)", text: "#2563EB" },
   Delivered: { bg: "rgba(16,185,129,0.15)", text: "#059669" },
-  Pending: { bg: "rgba(156,163,175,0.15)", text: "var(--color-gray)" },
-  Cancelled: { bg: "rgba(201,66,39,0.15)", text: "var(--color-crimson)" },
+  Pending: { bg: "rgba(156,163,175,0.15)", text: "var(--color-smoke)" },
+  Cancelled: { bg: "rgba(201,66,39,0.15)", text: "#C42936" },
 };
 
 const QUICK_ACTIONS = [
@@ -260,7 +260,7 @@ export default function AdminDashboardPage() {
                       }}
                     >
                       <td style={{ padding: "1rem", fontFamily: "var(--font-sans)", fontSize: "0.78rem", fontWeight: 700, color: "var(--color-cream)" }}>
-                        <Link href={`/admin/orders/${order.id}`} style={{ textDecoration: "none", color: "var(--color-crimson)" }}>
+                        <Link href={`/portal-secure/orders/${order.id}`} style={{ textDecoration: "none", color: "var(--color-crimson)" }}>
                           {order.id}
                         </Link>
                       </td>

@@ -3,32 +3,49 @@
 @source "../../../../packages/ui/src";
 
 @theme {
-  /* ── CULTRAVEN Brand Palette ──────────────────────────────────────────── */
-  --color-cream:   #FAF9F6; /* 60% — primary bg (off-white) */
-  --color-navy:    #172545; /* 30% — headings, buttons, footer */
-  --color-crimson: #C94227; /* 10% — accents, CTAs, badges */
-  --color-yellow:  #DAB205; /* PDF brand yellow — star ratings, gold accents */
-  --color-gold:    #DAB205; /* alias */
-  --color-mist:    #F0F0F0; /* slight gray for alternating sections */
-  --color-white:   #FFFFFF;
-  --color-gray:    #6B7280;
-  --color-border:  #E5E5E5;
+  /* ── CULTRAVEN Brand Palette ─────────────────────────────────────────────
+     Psychology-backed 60 / 30 / 10 ratio:
+       60% Cream/Off-white  — warmth, openness, premium feel
+       30% Deep Navy        — authority, trust, premium quality
+       10% Gold Yellow      — energy, Gen-Z optimism, urgency
+  ─────────────────────────────────────────────────────────────────────── */
+  --color-stone: #F5F1E8; /* page background — warm cream (60%) */
+  --color-bone:  #EDE3CF; /* cards, panels, surfaces — warm cream (60%) */
+  --color-raven: #172554; /* primary text, borders, headers — deep navy (30%) */
+  --color-lava:  #DAB205; /* primary CTA, accent highlights — gold yellow (10%) */
+  --color-olive: #DAB205; /* star ratings, gold labels — same yellow */
+  --color-smoke: #7A7468; /* secondary text — warm gray */
+  --color-line:  #C8BEA8; /* dividers, subtle borders — warm cream border */
 
-  /* Convenience aliases that components use */
-  --color-black: var(--color-navy);
-  --color-stone: var(--color-mist);
-  --color-accent: var(--color-crimson);
-  --color-star:   var(--color-yellow);
+  /* Semantic aliases — all components use these */
+  --color-cream:   var(--color-stone);
+  --color-navy:    var(--color-raven);
+  --color-crimson: var(--color-lava);
+  --color-yellow:  var(--color-lava);
+  --color-gold:    var(--color-lava);
+  --color-mist:    var(--color-bone);
+  --color-white:   var(--color-bone);
+  --color-gray:    var(--color-smoke);
+  --color-border:  var(--color-line);
+  --color-black:   var(--color-raven);
+  --color-accent:  var(--color-lava);
+  --color-star:    var(--color-lava);
 
   /* Typography */
-  --font-heading: var(--font-anton), Impact, sans-serif;
-  --font-sans:    var(--font-inter), "Helvetica Neue", sans-serif;
-  --font-mono:    var(--font-space-mono), monospace;
+  --font-display: var(--font-archivo), "Arial Narrow", system-ui, sans-serif;
+  --font-body: var(--font-hanken), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-deva: var(--font-noto-deva), system-ui, sans-serif;
+  --font-heading: var(--font-display);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-body); /* Retaining alias */
 
   /* Border-radius */
   --radius-none: 0px;
-  --radius-sm:   4px;
-  --radius-md:   8px;
+  --radius-btn: 2px;
+  --radius-chip: 999px;
+  --radius-img: 0px;
+  --radius-sm: var(--radius-btn);
+  --radius-md: var(--radius-btn);
 
   /* Z-index */
   --z-dropdown: 40;
@@ -36,14 +53,16 @@
   --z-modal:    60;
   --z-header:   70;
 
-  /* Shadows (Neo-brutalism hard shadows) */
-  --shadow-sm: 2px 2px 0px 0px var(--color-navy);
-  --shadow-md: 4px 4px 0px 0px var(--color-navy);
-  --shadow-lg: 8px 8px 0px 0px var(--color-navy);
+  /* Shadows — navy offset shadow, premium look */
+  --shadow-sm: 2px 2px 0px 0px var(--color-raven);
+  --shadow-md: 4px 4px 0px 0px var(--color-raven);
+  --shadow-lg: 8px 8px 0px 0px var(--color-raven);
+  --shadow-gold: 4px 4px 0px 0px var(--color-lava); /* yellow glow CTA variant */
 
-  /* Thick borders */
-  --border-thick: 3px solid var(--color-navy);
-  --border-base: 2px solid var(--color-navy);
+  /* Borders */
+  --border-thick: 2px solid var(--color-raven);
+  --border-base: 1px solid var(--color-raven);
+  --border-light: 1px solid var(--color-line);
 }
 
 /* ── Base resets ──────────────────────────────────────────────────────────── */
@@ -114,7 +133,8 @@
     transition: transform 0.1s ease, box-shadow 0.1s ease !important;
   }
   form button[type="submit"]:hover {
-    background-color: var(--color-crimson) !important;
+    background-color: var(--color-lava) !important;
+    color: var(--color-raven) !important;
     transform: translate(-2px, -2px) !important;
     box-shadow: var(--shadow-lg) !important;
   }
@@ -174,7 +194,7 @@
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--color-crimson);
+    color: var(--color-lava);
   }
 
   /* ── Buttons ─────────────────────────────────────────────────────────────── */
@@ -196,8 +216,8 @@
     white-space: nowrap;
   }
   .btn-primary:hover {
-    background-color: var(--color-crimson);
-    color: var(--color-cream);
+    background-color: var(--color-lava);
+    color: var(--color-navy);
     transform: translate(-2px, -2px);
     box-shadow: 6px 6px 0px 0px var(--color-navy);
   }

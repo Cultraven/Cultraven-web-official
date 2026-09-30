@@ -120,7 +120,7 @@ export default function ProductDetailClient({ slug, productName }: { slug: strin
     }, qty);
 
     setAdded(true);
-    toast.success("BAG MEIN GAYA ✓");
+    toast.success("Added to bag ✓");
     setTimeout(() => setAdded(false), 2000);
   };
 
@@ -134,8 +134,12 @@ export default function ProductDetailClient({ slug, productName }: { slug: strin
 
   return (
     <div style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh" }}>
-      {/* Breadcrumb */}
-      <div style={{ paddingInline: "clamp(1.25rem,4vw,5rem)", paddingTop: "calc(80px + 1.5rem)", paddingBottom: "0.5rem" }}>
+      {/* Back + Breadcrumb */}
+      <div style={{ paddingInline: "clamp(1.25rem,4vw,5rem)", paddingTop: "2rem", paddingBottom: "0.5rem" }}>
+        <Link href="/collections/all" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", fontFamily: "var(--font-sans)", fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-gray)", textDecoration: "none", marginBottom: "0.6rem" }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square"><polyline points="15 18 9 12 15 6"/></svg>
+          Back to Shop
+        </Link>
         <nav style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
           {[{ label: "Home", href: "/" }, { label: "Shop", href: "/collections/all" }, { label: finalName }].map((c, i, arr) => (
             <React.Fragment key={i}>
@@ -227,7 +231,7 @@ export default function ProductDetailClient({ slug, productName }: { slug: strin
           {/* Size selector */}
           <div style={{ marginBottom: "1.5rem" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>
-              <p style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", letterSpacing: "0.12em", textTransform: "uppercase", color: sizeError ? "var(--color-crimson)" : "var(--color-navy)" }}>{sizeError ? "SIZE KAHAN HAI BRO?" : "SIZE"}</p>
+              <p style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", letterSpacing: "0.12em", textTransform: "uppercase", color: sizeError ? "var(--color-crimson)" : "var(--color-navy)" }}>{sizeError ? "PLEASE SELECT A SIZE" : "SIZE"}</p>
               <div style={{ textAlign: "right" }}>
                 <Link href="/size-guide" style={{ fontFamily: "var(--font-sans)", fontSize: "10px", fontWeight: 800, color: "var(--color-navy)", textDecoration: "underline", display: "block", marginBottom: "2px" }}>SIZE GUIDE</Link>
                 <span style={{ fontFamily: "var(--font-sans)", fontSize: "9px", fontWeight: 800, color: "var(--color-gray)", textTransform: "uppercase", letterSpacing: "0.05em" }}>FIT NOTE: SIZE DOWN FOR REGULAR</span>

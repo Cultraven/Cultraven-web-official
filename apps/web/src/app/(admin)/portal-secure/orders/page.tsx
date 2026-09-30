@@ -95,7 +95,7 @@ export default function AdminOrdersPage() {
                   <td style={CELL}>{order.paymentMethod}</td>
                   <td style={{ ...CELL, color: "rgba(245,241,232,0.4)" }}>{order.date}</td>
                   <td style={CELL}>
-                    <Link href={`/admin/orders/${order.id}`} style={{ padding: "6px 14px", backgroundColor: "rgba(255,255,255,0.06)", color: "rgba(245,241,232,0.75)", fontFamily: "var(--font-sans)", fontWeight: 600, fontSize: "0.72rem", textDecoration: "none", borderRadius: "3px" }}>
+                    <Link href={`/portal-secure/orders/${order.id}`} style={{ padding: "6px 14px", backgroundColor: "rgba(255,255,255,0.06)", color: "rgba(245,241,232,0.75)", fontFamily: "var(--font-sans)", fontWeight: 600, fontSize: "0.72rem", textDecoration: "none", borderRadius: "3px" }}>
                       View
                     </Link>
                   </td>

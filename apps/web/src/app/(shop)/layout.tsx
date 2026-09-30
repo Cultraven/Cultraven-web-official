@@ -31,8 +31,7 @@ export default async function ShopLayout({ children }: ShopLayoutProps) {
 
   const defaultNav = {
     items: [
-      { id: "new-in", label: "NEW IN", href: "/collections/new-in" },
-      { id: "sale", label: "SALE", href: "/collections/sale" },
+      { id: "new-in", label: "NEW", href: "/collections/new-in" },
       {
         id: "shop",
         label: "SHOP",
@@ -40,41 +39,51 @@ export default async function ShopLayout({ children }: ShopLayoutProps) {
           {
             heading: "Categories",
             items: [
-              { label: "T-Shirts", href: "/collections/t-shirts" },
-              { label: "Shirts", href: "/collections/shirts" },
+              { label: "T-Shirts & Tees", href: "/collections/tees" },
               { label: "Hoodies", href: "/collections/hoodies" },
               { label: "Sweatshirts", href: "/collections/sweatshirts" },
-              { label: "Cargos", href: "/collections/cargos" },
-              { label: "Jeans", href: "/collections/jeans" },
-              { label: "Trousers", href: "/collections/trousers" },
+              { label: "Cargo & Bottoms", href: "/collections/bottoms" },
+              { label: "Shirts", href: "/collections/shirts" },
               { label: "Outerwear", href: "/collections/outerwear" },
+              { label: "Accessories", href: "/collections/accessories" },
             ],
           },
           {
-            heading: "Fits",
+            heading: "By Fit",
             items: [
               { label: "Oversized", href: "/collections/oversized" },
-              { label: "Relaxed", href: "/collections/relaxed" },
+              { label: "Relaxed Fit", href: "/collections/relaxed" },
               { label: "Boxy", href: "/collections/boxy" },
+              { label: "Slim", href: "/collections/slim" },
             ]
           }
         ],
       },
       {
-        id: "collections",
-        label: "COLLECTIONS",
+        id: "drops",
+        label: "DROPS",
         columns: [
           {
-            heading: "Featured",
+            heading: "Collections",
             items: [
-              { label: "Dharma Collection", href: "/collections/dharma" },
+              { label: "Dharma Series", href: "/collections/dharma" },
               { label: "Dragon Blood", href: "/collections/dragon-blood" },
               { label: "Acid State", href: "/collections/acid-state" },
               { label: "Core Essentials", href: "/collections/core" },
+              { label: "All Collections", href: "/collections" },
+            ],
+          },
+          {
+            heading: "Explore",
+            items: [
+              { label: "Latest Drops", href: "/collections/new-in" },
+              { label: "Best Sellers", href: "/collections/bestsellers" },
+              { label: "Under ₹1,999", href: "/collections/sale" },
             ],
           },
         ],
       },
+      { id: "sale", label: "SALE", href: "/collections/sale" },
       { id: "about", label: "ABOUT", href: "/pages/our-heritage" },
     ],
   };
@@ -100,11 +109,13 @@ export default async function ShopLayout({ children }: ShopLayoutProps) {
 
   return (
     <>
+      {/* ── Announcement bar ──────────────────────────────────────────── */}
+      <AnnouncementBar data={(cms as any)?.announcementBar ?? defaultAnnouncement} />
+
       {/* ── Sticky header ─────────────────────────────────────────────── */}
       <Header
         navMenu={cms?.navMenu ?? defaultNav}
         deliveryCity="Delhi"
-        hasHero={!!(cms?.heroSlide)}
       />
 
       {/* ── Page content ──────────────────────────────────────────────── */}

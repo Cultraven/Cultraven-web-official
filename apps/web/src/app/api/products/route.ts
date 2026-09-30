@@ -1,6 +1,26 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import crypto from "crypto";
 import { connectToDatabase } from "@/lib/db";
 import { Product } from "@/lib/models/Product";
+
+function escapeRegex(s: string) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function verifyAdminSession(req: NextRequest): boolean {
+  const token = req.cookies.get("cultraven_session")?.value;
+  if (!token || !token.includes(".")) return false;
+  const secret = process.env.SESSION_SECRET;
+  if (!secret) return false;
+  const [encodedPayload, sig] = token.split(".");
+  const expected = crypto.createHmac("sha256", secret).update(encodedPayload).digest("base64url");
+  if (expected !== sig) return false;
+  try {
+    const payload = JSON.parse(Buffer.from(encodedPayload, "base64url").toString());
+    return payload.role === "admin" && payload.exp > Date.now();
+  } catch { return false; }
+}
 
 const MOCK_PRODUCTS = [
   {
@@ -66,24 +86,27 @@ function normalizeProduct(doc: any) {
   };
 }
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const categoryParam = searchParams.get("category")?.toLowerCase().trim() ?? "";
-  const limitParam = parseInt(searchParams.get("limit") ?? "100", 10);
+  const rawCategory = searchParams.get("category")?.toLowerCase().trim() ?? "";
+  const categoryParam = rawCategory.slice(0, 64); // cap length
+  const limitParam = Math.min(Math.max(parseInt(searchParams.get("limit") ?? "50", 10), 1), 100);
+  // Admin requests skip the mock fallback so the admin sees real DB state
+  const noMock = searchParams.get("noMock") === "true" || verifyAdminSession(req);
 
   try {
     await connectToDatabase();
 
-    // Build Mongo query — if a category filter is provided, apply it case-insensitively
+    // Escape user input before building regex — prevents ReDoS
     const query = categoryParam
-      ? { category: { $regex: new RegExp(categoryParam, "i") } }
+      ? { category: { $regex: new RegExp(escapeRegex(categoryParam), "i") } }
       : {};
 
     const docs = await Product.find(query).sort({ createdAt: -1 }).limit(limitParam).lean();
 
     let products = docs.map(normalizeProduct);
 
-    if (products.length === 0) {
+    if (products.length === 0 && !noMock) {
       // Filter mocks too when a category was requested
       const mocks = categoryParam
         ? MOCK_PRODUCTS.filter((p) => p.category.toLowerCase().includes(categoryParam))
@@ -94,25 +117,45 @@ export async function GET(req: Request) {
     return NextResponse.json({ products });
   } catch (error) {
     console.error("Failed to fetch products from DB, falling back to mock:", error);
+    if (noMock) return NextResponse.json({ products: [] });
     return NextResponse.json({ products: MOCK_PRODUCTS.map(normalizeProduct) });
   }
 }
 
-export async function POST(req: Request) {
+const ProductCreateSchema = z.object({
+  title: z.string().min(1).max(200),
+  slug: z.string().min(1).max(200).regex(/^[a-z0-9-]+$/),
+  pricePaise: z.number().int().positive(),
+  mrpPaise: z.number().int().positive().optional(),
+  image: z.string().url(),
+  hoverImage: z.string().url().optional(),
+  category: z.string().min(1).max(50),
+  sizes: z.array(z.string().max(20)).max(20).optional(),
+  colors: z.array(z.object({ hex: z.string().regex(/^#[0-9a-fA-F]{6}$/), label: z.string().max(50) })).max(20).optional(),
+  inStock: z.boolean().optional(),
+  badge: z.string().max(50).optional(),
+});
+
+export async function POST(req: NextRequest) {
+  if (!verifyAdminSession(req)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  let body: unknown;
+  try { body = await req.json(); } catch {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  }
+
+  const parsed = ProductCreateSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error.flatten().fieldErrors }, { status: 422 });
+  }
+
   try {
     await connectToDatabase();
-    const body = await req.json();
-    
-    const newProduct = new Product(body);
+    const newProduct = new Product(parsed.data);
     const savedDoc = await newProduct.save();
-    
-    const product = {
-      ...savedDoc.toObject(),
-      id: savedDoc._id.toString(),
-      _id: undefined,
-      __v: undefined,
-    };
-
+    const product = { ...savedDoc.toObject(), id: savedDoc._id.toString(), _id: undefined, __v: undefined };
     return NextResponse.json({ success: true, product }, { status: 201 });
   } catch (error) {
     console.error("Failed to create product:", error);

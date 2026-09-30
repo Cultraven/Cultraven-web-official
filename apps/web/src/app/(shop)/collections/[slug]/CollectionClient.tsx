@@ -62,118 +62,6 @@ interface Product {
   inStock: boolean;
 }
 
-// ─── Mock Data ────────────────────────────────────────────────────────────────
-
-const ALL_PRODUCTS: Product[] = [
-  {
-    id: "p1", title: "RAVEN OVERSIZED TEE — ACID BLACK",
-    href: "/products/raven-oversized-tee-acid-black",
-    image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&auto=format&fit=crop&q=80",
-    hoverImage: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&auto=format&fit=crop&q=80",
-    pricePaise: 199900, mrpPaise: 249900, rating: 5, reviewCount: 124,
-    colors: [{ hex: "#0A0A0A", label: "Black" }, { hex: "var(--color-crimson)", label: "Flame" }],
-    sizes: ["S", "M", "L", "XL", "XXL"], category: "T-Shirts", fit: "Oversized", badge: "NEW", inStock: true,
-  },
-  {
-    id: "p2", title: "DHARMA GRAPHIC HOODIE — STONE",
-    href: "/products/dharma-graphic-hoodie-stone",
-    image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&auto=format&fit=crop&q=80",
-    hoverImage: "https://images.unsplash.com/photo-1578768079052-aa76e52ff62e?w=600&auto=format&fit=crop&q=80",
-    pricePaise: 299900, mrpPaise: 399900, rating: 4, reviewCount: 88,
-    colors: [{ hex: "var(--color-mist)", label: "Stone" }, { hex: "var(--color-navy)", label: "Navy" }],
-    sizes: ["S", "M", "L", "XL"], category: "Hoodies", fit: "Oversized", badge: "BESTSELLER", inStock: true,
-  },
-  {
-    id: "p3", title: "CARGO WIDE LEG — MILITARY OLIVE",
-    href: "/products/cargo-wide-leg-military-olive",
-    image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&auto=format&fit=crop&q=80",
-    hoverImage: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&auto=format&fit=crop&q=80",
-    pricePaise: 349900, mrpPaise: 499900, rating: 5, reviewCount: 67,
-    colors: [{ hex: "#556B2F", label: "Olive" }, { hex: "#0A0A0A", label: "Black" }],
-    sizes: ["S", "M", "L", "XL"], category: "Cargos", fit: "Baggy", badge: "LIMITED", inStock: true,
-  },
-  {
-    id: "p4", title: "ACID STATE SWEATSHIRT — WASHED GREY",
-    href: "/products/acid-state-sweatshirt-washed-grey",
-    image: "https://images.unsplash.com/photo-1529391409740-59f2cea08bc6?w=600&auto=format&fit=crop&q=80",
-    hoverImage: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=80",
-    pricePaise: 249900, mrpPaise: 299900, rating: 4, reviewCount: 52,
-    colors: [{ hex: "#9CA3AF", label: "Grey" }, { hex: "var(--color-mist)", label: "Cream" }],
-    sizes: ["XS", "S", "M", "L", "XL"], category: "Sweatshirts", fit: "Relaxed", inStock: true,
-  },
-  {
-    id: "p5", title: "CLASSIC OVERSIZED TEE — WHITE",
-    href: "/products/classic-oversized-tee-white",
-    image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&auto=format&fit=crop&q=80",
-    hoverImage: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&auto=format&fit=crop&q=80",
-    pricePaise: 189900, mrpPaise: 189900, rating: 5, reviewCount: 203,
-    colors: [{ hex: "#FFFFFF", label: "White" }, { hex: "#0A0A0A", label: "Black" }, { hex: "var(--color-navy)", label: "Navy" }],
-    sizes: ["XS", "S", "M", "L", "XL", "XXL"], category: "T-Shirts", fit: "Oversized", badge: "BESTSELLER", inStock: true,
-  },
-  {
-    id: "p6", title: "CULTRAVEN RELAXED SHIRT — CREAM",
-    href: "/products/relaxed-shirt-cream",
-    image: "https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?w=600&auto=format&fit=crop&q=80",
-    hoverImage: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=80",
-    pricePaise: 299900, mrpPaise: 299900, rating: 5, reviewCount: 41,
-    colors: [{ hex: "var(--color-mist)", label: "Cream" }, { hex: "#FFFFFF", label: "White" }],
-    sizes: ["S", "M", "L", "XL"], category: "Shirts", fit: "Relaxed", badge: "NEW", inStock: true,
-  },
-  {
-    id: "p7", title: "ESSENTIALS HOODIE — JET BLACK",
-    href: "/products/essentials-hoodie-jet-black",
-    image: "https://images.unsplash.com/photo-1578768079052-aa76e52ff62e?w=600&auto=format&fit=crop&q=80",
-    hoverImage: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&auto=format&fit=crop&q=80",
-    pricePaise: 319900, mrpPaise: 399900, rating: 4, reviewCount: 76,
-    colors: [{ hex: "#0A0A0A", label: "Jet Black" }, { hex: "#2C2C2C", label: "Charcoal" }],
-    sizes: ["S", "M", "L", "XL", "XXL"], category: "Hoodies", fit: "Regular", inStock: true,
-  },
-  {
-    id: "p8", title: "STREET CARGO — WASHED NAVY",
-    href: "/products/street-cargo-washed-navy",
-    image: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&auto=format&fit=crop&q=80",
-    hoverImage: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&auto=format&fit=crop&q=80",
-    pricePaise: 379900, mrpPaise: 499900, rating: 5, reviewCount: 33,
-    colors: [{ hex: "var(--color-navy)", label: "Washed Navy" }, { hex: "#556B2F", label: "Olive" }],
-    sizes: ["S", "M", "L", "XL"], category: "Cargos", fit: "Baggy", badge: "NEW", inStock: false,
-  },
-  {
-    id: "p9", title: "DRAGON BLOOD GRAPHIC TEE — CHARCOAL",
-    href: "/products/dragon-blood-graphic-tee-charcoal",
-    image: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=600&auto=format&fit=crop&q=80",
-    hoverImage: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=80",
-    pricePaise: 229900, mrpPaise: 279900, rating: 5, reviewCount: 118,
-    colors: [{ hex: "#2C2C2C", label: "Charcoal" }, { hex: "var(--color-navy)", label: "Navy" }],
-    sizes: ["S", "M", "L", "XL", "XXL"], category: "T-Shirts", fit: "Oversized", badge: "BESTSELLER", inStock: true,
-  },
-  {
-    id: "p10", title: "CORE STRAIGHT JEANS — INDIGO",
-    href: "/products/core-straight-jeans-indigo",
-    image: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&auto=format&fit=crop&q=80",
-    hoverImage: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&auto=format&fit=crop&q=80",
-    pricePaise: 299900, mrpPaise: 399900, rating: 4, reviewCount: 56,
-    colors: [{ hex: "#3F5B8A", label: "Indigo" }, { hex: "#0A0A0A", label: "Black" }],
-    sizes: ["28", "30", "32", "34", "36"], category: "Jeans", fit: "Regular", inStock: true,
-  },
-  {
-    id: "p11", title: "WIDE PLEATED TROUSER — SAND",
-    href: "/products/wide-pleated-trouser-sand",
-    image: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&auto=format&fit=crop&q=80",
-    hoverImage: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&auto=format&fit=crop&q=80",
-    pricePaise: 329900, mrpPaise: 429900, rating: 4, reviewCount: 29,
-    colors: [{ hex: "#C4A882", label: "Sand" }, { hex: "var(--color-mist)", label: "Cream" }],
-    sizes: ["S", "M", "L", "XL"], category: "Trousers", fit: "Relaxed", badge: "NEW", inStock: true,
-  },
-  {
-    id: "p12", title: "BOMBER JACKET — OLIVE BLACK",
-    href: "/products/bomber-jacket-olive-black",
-    image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=80",
-    hoverImage: "https://images.unsplash.com/photo-1529391409740-59f2cea08bc6?w=600&auto=format&fit=crop&q=80",
-    pricePaise: 599900, mrpPaise: 799900, rating: 5, reviewCount: 22,
-    colors: [{ hex: "#556B2F", label: "Olive" }, { hex: "#0A0A0A", label: "Black" }],
-    sizes: ["S", "M", "L", "XL"], category: "Outerwear", fit: "Regular", badge: "LIMITED", inStock: true,
-  },
-];
 
 const fmt = (p: number) => `₹${(p / 100).toLocaleString("en-IN")}`;
 
@@ -283,6 +171,11 @@ function CollectionPageClientInner({
         <Image src={heroImage} alt={collectionName} fill style={{ objectFit: "cover" }} priority />
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(23,37,69,0.75) 0%, rgba(23,37,69,0.35) 60%, transparent 100%)" }} />
         <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "center", padding: "clamp(2rem,4vw,4rem)", paddingTop: "80px" }}>
+          {/* Back button */}
+          <Link href="/collections" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", fontFamily: "var(--font-sans)", fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(245,241,232,0.65)", textDecoration: "none", marginBottom: "0.75rem" }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square"><polyline points="15 18 9 12 15 6"/></svg>
+            All Collections
+          </Link>
           {/* Breadcrumb */}
           <nav aria-label="Breadcrumb" style={{ marginBottom: "1rem", display: "flex", gap: "0.5rem", alignItems: "center" }}>
             {[{ label: "Home", href: "/" }, { label: "Collections", href: "/collections" }, { label: collectionName, href: "#" }].map((crumb, i, arr) => (
@@ -309,7 +202,7 @@ function CollectionPageClientInner({
             </button>
             {/* Active filter chips */}
             {activeCount > 0 && (
-              <button onClick={clearAll} style={{ fontFamily: "var(--font-sans)", fontSize: "11px", fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-crimson)", background: "none", border: "none", cursor: "pointer", paddingBottom: "1px", textDecoration: "underline" }}>SAB HATAAO</button>
+              <button onClick={clearAll} style={{ fontFamily: "var(--font-sans)", fontSize: "11px", fontWeight: 900, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-crimson)", background: "none", border: "none", cursor: "pointer", paddingBottom: "1px", textDecoration: "underline" }}>CLEAR ALL</button>
             )}
           </div>
           {/* Sort */}
@@ -348,8 +241,8 @@ function CollectionPageClientInner({
           <div>
             {filtered.length === 0 ? (
               <div style={{ textAlign: "center", padding: "6rem 2rem" }}>
-                <p style={{ fontFamily: "var(--font-heading)", fontSize: "2rem", fontWeight: 400, color: "var(--color-navy)", marginBottom: "1rem" }}>KUCH NAHI MILA BRO.</p>
-                <button onClick={clearAll} style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-cream)", backgroundColor: "var(--color-navy)", border: "2px solid var(--color-navy)", padding: "1rem 2rem", cursor: "pointer", boxShadow: "4px 4px 0px var(--color-navy)" }}>SAB HATAAO</button>
+                <p style={{ fontFamily: "var(--font-heading)", fontSize: "2rem", fontWeight: 400, color: "var(--color-navy)", marginBottom: "1rem" }}>NO PRODUCTS FOUND.</p>
+                <button onClick={clearAll} style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-cream)", backgroundColor: "var(--color-navy)", border: "2px solid var(--color-navy)", padding: "1rem 2rem", cursor: "pointer", boxShadow: "4px 4px 0px var(--color-navy)" }}>CLEAR FILTERS</button>
               </div>
             ) : (
               <>
@@ -359,7 +252,7 @@ function CollectionPageClientInner({
                 {/* Load More */}
                 <div style={{ display: "flex", justifyContent: "center", marginTop: "4rem" }}>
                   <button className="btn-primary" style={{ padding: "16px 40px", fontSize: "14px" }}>
-                    AUR DIKHAO
+                    LOAD MORE
                   </button>
                 </div>
               </>

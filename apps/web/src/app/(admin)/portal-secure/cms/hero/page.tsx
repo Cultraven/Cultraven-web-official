@@ -71,8 +71,11 @@ export default function AdminCmsHeroPage() {
     fetch("/api/cms/hero")
       .then((res) => res.json())
       .then((data) => {
-        if (data.banners) setBanners(data.banners);
+        const loaded = data.banners || [];
+        // If DB has no banners yet, seed with initial templates
+        setBanners(loaded.length > 0 ? loaded : INITIAL_BANNERS);
       })
+      .catch(() => setBanners(INITIAL_BANNERS))
       .finally(() => setLoading(false));
   }, []);
 
@@ -134,15 +137,20 @@ export default function AdminCmsHeroPage() {
   const saveAll = async () => {
     setSaving(true);
     try {
-      await fetch("/api/cms/hero", {
+      const res = await fetch("/api/cms/hero", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ banners }),
       });
-      setSaved(true);
-      setTimeout(() => setSaved(false), 3000);
+      if (res.ok) {
+        setSaved(true);
+        setTimeout(() => setSaved(false), 3000);
+      } else {
+        const err = await res.json().catch(() => ({}));
+        alert("Save failed: " + (err.error || res.statusText));
+      }
     } catch {
-      alert("Save failed. Please try again.");
+      alert("Network error — could not save. Check your connection.");
     }
     setSaving(false);
   };

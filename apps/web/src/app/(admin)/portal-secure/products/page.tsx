@@ -49,7 +49,7 @@ export default function AdminProductsPage() {
   const [loading, setLoading] = useState(true);
 
   React.useEffect(() => {
-    fetch("/api/products")
+    fetch("/api/products?noMock=true")
       .then(res => res.json())
       .then(data => {
         if (data.products) {
@@ -338,8 +338,15 @@ export default function AdminProductsPage() {
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={8} style={{ ...CELL, textAlign: "center", padding: "3rem", color: "rgba(245,241,232,0.3)" }}>
-                  No products found
+                <td colSpan={8} style={{ ...CELL, textAlign: "center", padding: "3rem" }}>
+                  <p style={{ color: "rgba(245,241,232,0.3)", fontFamily: "var(--font-sans)", marginBottom: "0.75rem" }}>
+                    {search || statusFilter !== "all" ? "No products match your filters." : "No products in database yet."}
+                  </p>
+                  {(!search && statusFilter === "all") && (
+                    <a href="/portal-secure/products/new" style={{ color: "var(--color-crimson)", fontFamily: "var(--font-sans)", fontSize: "0.78rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                      + Add Your First Product
+                    </a>
+                  )}
                 </td>
               </tr>
             ) : (
@@ -393,7 +400,7 @@ export default function AdminProductsPage() {
                     <td style={CELL}>
                       <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
                         <Link
-                          href={`/admin/products/${product.id}/edit`}
+                          href={`/portal-secure/products/${product.id}/edit`}
                           title="Edit"
                           style={{
                             padding: "5px 10px",

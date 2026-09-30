@@ -14,6 +14,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 interface NavItem {
@@ -28,7 +29,7 @@ const NAV: NavItem[] = [
   {
     id: "dashboard",
     label: "Dashboard",
-    href: "/admin",
+    href: "/portal-secure",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
         <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" />
@@ -39,7 +40,7 @@ const NAV: NavItem[] = [
   {
     id: "products",
     label: "Products",
-    href: "/admin/products",
+    href: "/portal-secure/products",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
         <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" />
@@ -47,16 +48,15 @@ const NAV: NavItem[] = [
       </svg>
     ),
     children: [
-      { label: "All Products", href: "/admin/products" },
-      { label: "Add New Product", href: "/admin/products/new" },
-      { label: "Categories", href: "/admin/products/categories" },
-      { label: "Inventory", href: "/admin/products/inventory" },
+      { label: "All Products", href: "/portal-secure/products" },
+      { label: "Add New Product", href: "/portal-secure/products/new" },
+      { label: "Categories", href: "/portal-secure/products/categories" },
     ],
   },
   {
     id: "orders",
     label: "Orders",
-    href: "/admin/orders",
+    href: "/portal-secure/orders",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
         <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
@@ -66,36 +66,32 @@ const NAV: NavItem[] = [
       </svg>
     ),
     children: [
-      { label: "All Orders", href: "/admin/orders" },
-      { label: "Pending", href: "/admin/orders?status=pending" },
-      { label: "Processing", href: "/admin/orders?status=processing" },
-      { label: "Shipped", href: "/admin/orders?status=shipped" },
-      { label: "Completed", href: "/admin/orders?status=completed" },
-      { label: "Cancelled", href: "/admin/orders?status=cancelled" },
+      { label: "All Orders", href: "/portal-secure/orders" },
+      { label: "Pending", href: "/portal-secure/orders?status=pending" },
+      { label: "Processing", href: "/portal-secure/orders?status=processing" },
+      { label: "Shipped", href: "/portal-secure/orders?status=shipped" },
+      { label: "Completed", href: "/portal-secure/orders?status=completed" },
+      { label: "Cancelled", href: "/portal-secure/orders?status=cancelled" },
     ],
   },
   {
     id: "cms",
     label: "CMS",
-    href: "/admin/cms",
+    href: "/portal-secure/cms",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
         <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
       </svg>
     ),
     children: [
-      { label: "Hero Banners", href: "/admin/cms/hero" },
-      { label: "Announcements", href: "/admin/cms/announcements" },
-      { label: "Product Rails", href: "/admin/cms/rails" },
-      { label: "Editorial Banners", href: "/admin/cms/editorial" },
-      { label: "Navigation", href: "/admin/cms/navigation" },
-      { label: "Footer", href: "/admin/cms/footer" },
+      { label: "Hero Banners", href: "/portal-secure/cms/hero" },
+      { label: "Shop The Look", href: "/portal-secure/cms/shop-the-look" },
     ],
   },
   {
     id: "customers",
     label: "Customers",
-    href: "/admin/customers",
+    href: "/portal-secure/customers",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
         <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" />
@@ -106,7 +102,7 @@ const NAV: NavItem[] = [
   {
     id: "analytics",
     label: "Analytics",
-    href: "/admin/analytics",
+    href: "/portal-secure/analytics",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
         <line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" />
@@ -117,7 +113,7 @@ const NAV: NavItem[] = [
   {
     id: "settings",
     label: "Settings",
-    href: "/admin/settings",
+    href: "/portal-secure/settings",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
         <circle cx="12" cy="12" r="3" />
@@ -135,7 +131,7 @@ export function AdminSidebar() {
     setCollapsed((prev) => ({ ...prev, [id]: !prev[id] }));
 
   const isActive = (href: string) =>
-    href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
+    href === "/portal-secure" ? pathname === "/portal-secure" : pathname.startsWith(href);
 
   return (
     <aside
@@ -159,56 +155,34 @@ export function AdminSidebar() {
         }}
       >
         <Link
-          href="/admin"
+          href="/portal-secure"
           style={{
             display: "flex",
-            alignItems: "center",
-            gap: "0.6rem",
+            flexDirection: "column",
+            alignItems: "flex-start",
+            gap: "0.25rem",
             textDecoration: "none",
           }}
         >
-          <div
+          <Image
+            src="/logo.png"
+            alt="CULTRAVEN"
+            width={140}
+            height={46}
+            style={{ objectFit: "contain", height: "34px", width: "auto", filter: "brightness(0) invert(1)" }}
+          />
+          <p
             style={{
-              width: "28px",
-              height: "28px",
-              border: "2px solid var(--color-crimson)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0,
+              fontFamily: "var(--font-sans)",
+              fontSize: "0.55rem",
+              fontWeight: 600,
+              letterSpacing: "0.14em",
+              textTransform: "uppercase",
+              color: "rgba(245,241,232,0.35)",
             }}
           >
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--color-crimson)" strokeWidth="2.5">
-              <path d="M12 21V12M12 12L4 4M12 12L20 4" />
-            </svg>
-          </div>
-          <div>
-            <span
-              style={{
-                fontFamily: "var(--font-sans)",
-                fontWeight: 900,
-                fontSize: "0.85rem",
-                letterSpacing: "0.18em",
-                textTransform: "uppercase",
-                color: "var(--color-cream)",
-              }}
-            >
-              CULTRAVEN
-            </span>
-            <p
-              style={{
-                fontFamily: "var(--font-sans)",
-                fontSize: "0.55rem",
-                fontWeight: 600,
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                color: "rgba(245,241,232,0.35)",
-                marginTop: "1px",
-              }}
-            >
-              Admin Panel
-            </p>
-          </div>
+            Admin Panel
+          </p>
         </Link>
       </div>
 
@@ -386,7 +360,7 @@ function AdminLogout() {
     try {
       await fetch("/api/auth/admin-logout", { method: "POST" });
     } finally {
-      window.location.href = "/admin-login";
+      window.location.href = "/portal-access";
     }
   };
 

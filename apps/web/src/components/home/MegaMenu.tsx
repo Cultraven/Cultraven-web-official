@@ -77,8 +77,8 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
     }, 200);
   };
 
-  const textColor = isScrolled ? "text-[var(--color-black)]" : "text-[var(--color-white)]";
-  const hoverColor = "hover:opacity-60";
+  // When isScrolled=false the header is transparent (over hero) → white text
+  const navFg = isScrolled ? "var(--color-navy)" : "#FFFFFF";
 
   return (
     <>
@@ -101,7 +101,7 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
                   onFocus={() => handleMouseEnter(item.id)}
                   onClick={() => toggle(item.id)}
                   onKeyDown={(e) => handleTriggerKey(e, item.id)}
-                  style={{ display: "flex", alignItems: "center", gap: "0.25rem", fontFamily: "'Inter', sans-serif", fontSize: "13px", fontWeight: 900, letterSpacing: "0.05em", textTransform: "uppercase", background: "none", border: "none", cursor: "pointer", color: "var(--color-cream)", transition: "opacity 0.2s" }}
+                  style={{ display: "flex", alignItems: "center", gap: "0.25rem", fontFamily: "var(--font-sans)", fontSize: "13px", fontWeight: 900, letterSpacing: "0.05em", textTransform: "uppercase", background: "none", border: "none", cursor: "pointer", color: navFg, transition: "opacity 0.2s, color 0.4s ease" }}
                   onMouseOver={(e) => (e.currentTarget.style.opacity = "0.6")}
                   onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
                 >
@@ -117,7 +117,7 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
                 <Link
                   href={item.href ?? "#"}
                   role="menuitem"
-                  style={{ display: "block", fontFamily: "'Inter', sans-serif", fontSize: "13px", fontWeight: 900, letterSpacing: "0.05em", textTransform: "uppercase", color: "var(--color-cream)", textDecoration: "none", transition: "opacity 0.2s" }}
+                  style={{ display: "block", fontFamily: "var(--font-sans)", fontSize: "13px", fontWeight: 900, letterSpacing: "0.05em", textTransform: "uppercase", color: navFg, textDecoration: "none", transition: "opacity 0.2s, color 0.4s ease" }}
                   onMouseOver={(e) => (e.currentTarget.style.opacity = "0.6")}
                   onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
                 >
@@ -140,11 +140,11 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
                     top: "100%",
                     left: 0,
                     width: "100%",
-                    backgroundColor: "var(--color-cream)",
+                    backgroundColor: "var(--color-bone)",
                     color: "var(--color-navy)",
                     zIndex: 100,
-                    boxShadow: "0 8px 24px rgba(23,37,69,0.12)",
-                    borderTop: "1px solid var(--color-border)"
+                    boxShadow: "0 8px 32px rgba(23,37,84,0.15)",
+                    borderTop: "var(--border-thick)"
                   }}
                 >
                   <div style={{ maxWidth: "1152px", margin: "0 auto", padding: "3rem" }}>
@@ -179,9 +179,9 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
           transform: mobileOpen ? "translateX(0)" : "translateX(-100%)",
           transition: "transform 350ms ease",
         }}
-        className="fixed top-0 left-0 h-full w-[min(340px,85vw)] z-[var(--z-modal)] bg-[var(--color-white)] text-[var(--color-black)] overflow-y-auto flex flex-col lg:hidden shadow-2xl"
+        className="fixed top-0 left-0 h-full w-[min(340px,85vw)] z-[var(--z-modal)] bg-[var(--color-bone)] text-[var(--color-navy)] overflow-y-auto flex flex-col lg:hidden shadow-2xl"
       >
-        <div className="flex items-center justify-between px-6 py-6 border-b border-[var(--color-border)]">
+        <div className="flex items-center justify-between px-6 py-6 border-b-2 border-[var(--color-navy)]">
           <span className="font-display text-xl font-black tracking-widest uppercase">
             CULTRAVEN
           </span>
@@ -234,7 +234,7 @@ function MegaPanel({
       {/* Category columns */}
       {item.columns?.map((col) => (
         <div key={col.heading} style={{ minWidth: "150px" }}>
-          <h3 style={{ fontFamily: "'Inter', sans-serif", fontSize: "11px", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--color-gray)", margin: "0 0 1.5rem 0" }}>
+          <h3 style={{ fontFamily: "var(--font-sans)", fontSize: "11px", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--color-smoke)", margin: "0 0 1.5rem 0" }}>
             {col.heading}
           </h3>
           <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "1rem" }}>
@@ -243,13 +243,13 @@ function MegaPanel({
                 <Link
                   href={sub.href}
                   onClick={onClose}
-                  style={{ fontFamily: "'Inter', sans-serif", fontSize: "14px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--color-navy)", textDecoration: "none", display: "flex", alignItems: "center", transition: "color 0.2s" }}
-                  onMouseOver={(e) => (e.currentTarget.style.color = "var(--color-gray)")}
+                  style={{ fontFamily: "var(--font-sans)", fontSize: "14px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--color-navy)", textDecoration: "none", display: "flex", alignItems: "center", transition: "color 0.2s" }}
+                  onMouseOver={(e) => (e.currentTarget.style.color = "var(--color-lava)")}
                   onMouseOut={(e) => (e.currentTarget.style.color = "var(--color-navy)")}
                 >
                   {sub.label}
                   {sub.isNew && (
-                    <span style={{ marginLeft: "0.75rem", fontSize: "9px", fontWeight: 900, textTransform: "uppercase", color: "#fff", backgroundColor: "#000", padding: "2px 6px", letterSpacing: "0.1em" }}>
+                    <span style={{ marginLeft: "0.75rem", fontSize: "9px", fontWeight: 900, textTransform: "uppercase", color: "var(--color-bone)", backgroundColor: "var(--color-lava)", padding: "2px 6px", letterSpacing: "0.1em" }}>
                       New
                     </span>
                   )}
@@ -266,7 +266,7 @@ function MegaPanel({
           <Link
             href={featuredHref}
             onClick={onClose}
-            style={{ display: "block", position: "relative", aspectRatio: "3/4", overflow: "hidden", backgroundColor: "var(--color-mist)" }}
+            style={{ display: "block", position: "relative", aspectRatio: "3/4", overflow: "hidden", backgroundColor: "var(--color-stone)" }}
             onMouseOver={(e) => {
               const img = e.currentTarget.querySelector('img');
               if(img) img.style.transform = "scale(1.05)";
@@ -316,7 +316,7 @@ function MegaPanel({
                   fontWeight: 900,
                   letterSpacing: "0.1em",
                   textTransform: "uppercase",
-                  color: "var(--color-cream)",
+                  color: "var(--color-bone)",
                 }}
               >
                 {featuredLabel}
@@ -347,7 +347,7 @@ function MobileNavItem({
       <Link
         href={item.href ?? "#"}
         onClick={onClose}
-        className="block px-8 py-4 font-display text-lg font-black tracking-wider uppercase text-[var(--color-black)] hover:bg-[var(--color-stone)] transition-colors"
+        className="block px-8 py-4 font-display text-lg font-black tracking-wider uppercase text-[var(--color-navy)] hover:bg-[var(--color-cream)] transition-colors"
       >
         {item.label}
       </Link>
@@ -359,7 +359,7 @@ function MobileNavItem({
       <button
         aria-expanded={isExpanded}
         onClick={onToggle}
-        className="w-full flex items-center justify-between px-8 py-4 font-display text-lg font-black tracking-wider uppercase text-[var(--color-black)] hover:bg-[var(--color-stone)] transition-colors"
+        className="w-full flex items-center justify-between px-8 py-4 font-display text-lg font-black tracking-wider uppercase text-[var(--color-navy)] hover:bg-[var(--color-cream)] transition-colors"
       >
         {item.label}
         <ChevronDown
@@ -378,7 +378,7 @@ function MobileNavItem({
         <div className="px-8 py-6 space-y-8">
           {item.columns?.map((col) => (
             <div key={col.heading}>
-              <p className="font-display text-[11px] font-black uppercase tracking-widest text-[var(--color-gray)] mb-4">
+              <p className="font-display text-[11px] font-black uppercase tracking-widest text-[var(--color-lava)] mb-4">
                 {col.heading}
               </p>
               <ul className="space-y-4">
@@ -387,11 +387,11 @@ function MobileNavItem({
                     <Link
                       href={sub.href}
                       onClick={onClose}
-                      className="font-display text-sm font-bold uppercase tracking-wide text-[var(--color-black)] hover:text-[var(--color-gray)] transition-colors flex items-center"
+                      className="font-display text-sm font-bold uppercase tracking-wide text-[var(--color-navy)] hover:text-[var(--color-lava)] transition-colors flex items-center"
                     >
                       {sub.label}
                       {sub.isNew && (
-                        <span className="ml-3 text-[9px] font-black uppercase text-[var(--color-white)] bg-[var(--color-black)] px-1.5 py-0.5 tracking-widest">
+                        <span className="ml-3 text-[9px] font-black uppercase text-[var(--color-navy)] bg-[var(--color-lava)] px-1.5 py-0.5 tracking-widest">
                           New
                         </span>
                       )}

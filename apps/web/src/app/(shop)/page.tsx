@@ -1,19 +1,17 @@
 /**
  * Homepage — CULTRAVEN storefront.
  *
- * Section order (matches brand spec):
- *   1.  HeroBanner           — full-screen campaign
- *   2.  NewDropSection       — editorial product grid "NEW DROP"
- *   3.  CategoryTiles        — shop by category (8 categories)
- *   4.  BestsellersSection   — "THE ONES EVERYONE WANTS."
- *   5.  EditorialBanner      — "THE CULTRAVEN IDENTITY" campaign
- *   6.  FeaturedCollection   — Street collection editorial split
- *   7.  ShopTheLook          — model image + shoppable product list
- *   8.  BrandStory           — "THE CULTURE" manifesto
- *   9.  TrendingNow          — lookbook / latest drop editorial grid
- *  10.  CommunitySection     — "WORN BY THE CULTURE" UGC grid
- *  11.  TrustBadges          — service trust strip
- *  12.  NewsletterSignup     — "JOIN THE CULTURE." email signup
+ * Section order:
+ *   1.  HeroBanner           — full-screen campaign carousel
+ *   2.  FilmstripMarquee     — continuously scrolling campaign images
+ *   3.  NewDropSection       — editorial product grid
+ *   4.  CategoryTiles        — shop by category
+ *   5.  BestsellersSection   — "THE ONES EVERYONE WANTS."
+ *   6.  ShopTheLook          — model image + shoppable product list
+ *   7.  BrandStory           — "THE CULTURE" manifesto
+ *   8.  TrendingNow          — lookbook / latest drop editorial grid
+ *   9.  CommunitySection     — "WORN BY THE CULTURE" UGC grid
+ *  10.  TrustBadges          — service trust strip
  */
 
 import type { Metadata } from "next";
@@ -22,27 +20,18 @@ import { HeroBanner } from "@/components/home/HeroBanner";
 import { NewDropSection } from "@/components/home/NewDropSection";
 import { CategoryTiles } from "@/components/home/CategoryTiles";
 import { BestsellersSection } from "@/components/home/BestsellersSection";
-import { EditorialBanner } from "@/components/home/EditorialBanner";
-import { FeaturedCollectionSection } from "@/components/home/FeaturedCollectionSection";
 import { ShopTheLookSection } from "@/components/home/ShopTheLookSection";
 import { BrandStorySection } from "@/components/home/BrandStorySection";
 import { TrendingNow } from "@/components/home/TrendingNow";
 import { CommunitySection } from "@/components/home/CommunitySection";
 import { TrustBadges } from "@/components/home/TrustBadges";
-import { NewsletterSignup } from "@/components/home/NewsletterSignup";
-
-// ─── Dynamic metadata ─────────────────────────────────────────────────────────
 
 export const metadata: Metadata = {
   title: "NOT MADE TO BLEND IN. | CULTRAVEN — Gen Z Streetwear India",
   description:
     "Shop CULTRAVEN's latest drops — oversized 260 GSM heavyweights, acid-state washes, mythic graphic tees & cargo pants. India's Gen Z streetwear cult. Free delivery above ₹999.",
-  alternates: {
-    canonical: "/",
-  },
+  alternates: { canonical: "/" },
 };
-
-// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function HomePage() {
   let cmsData = null;
@@ -52,44 +41,46 @@ export default async function HomePage() {
     // Graceful fallback — static sections still render
   }
 
-  const siteUrl =
-    process.env.NEXT_PUBLIC_SITE_URL || "https://cultraven.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://cultraven.com";
 
   return (
     <div className="w-full">
-      {/* 1 — Full-screen campaign hero */}
-      {cmsData?.heroSlide && (
-        <HeroBanner slide={cmsData.heroSlide} siteUrl={siteUrl} />
-      )}
+      {/* 1 — Full-screen campaign hero
+            Negative margin pulls it behind the transparent sticky header.
+            Header height ≈ 100px (68px logo + 2×16px padding). */}
+      <div style={{ marginTop: "-100px" }}>
+        {(cmsData as any)?.heroSlides?.length > 0 ? (
+          <HeroBanner slides={(cmsData as any).heroSlides} siteUrl={siteUrl} />
+        ) : cmsData?.heroSlide ? (
+          <HeroBanner slides={[cmsData.heroSlide]} siteUrl={siteUrl} />
+        ) : null}
+      </div>
 
       {/* 2 — New Drop: editorial product grid */}
       <NewDropSection />
 
-      {/* 3 — Shop By Category: 8 category tiles */}
+      {/* 4 — Shop By Category */}
       <CategoryTiles />
 
-      {/* 4 — Bestsellers: "THE ONES EVERYONE WANTS." */}
+      {/* 5 — Bestsellers */}
       <BestsellersSection />
 
-      {/* Sections 5 & 6 removed per user request */}
-
-      {/* 7 — Shop The Look: model image + shoppable product list */}
+      {/* 6 — Shop The Look */}
       <ShopTheLookSection />
 
-      {/* 8 — Brand Story: "THE CULTURE" manifesto */}
+      {/* 7 — Brand Story */}
       <BrandStorySection />
 
-      {/* 9 — Latest Drop / Lookbook editorial grid */}
+      {/* 8 — Latest Drop / Lookbook */}
       <TrendingNow />
 
-      {/* 10 — Community / Social UGC grid */}
+      {/* 9 — Community / UGC */}
       <CommunitySection />
 
-      {/* 11 — Trust / service strip */}
+      {/* 10 — Trust strip */}
       {cmsData?.trustBadges && cmsData.trustBadges.length > 0 && (
         <TrustBadges badges={cmsData.trustBadges} />
       )}
-
     </div>
   );
 }
