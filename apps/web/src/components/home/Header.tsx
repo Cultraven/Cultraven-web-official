@@ -193,7 +193,7 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
            negative margins cancel the extra box so header height/nav position shrink-wrap to 60px. */
         .site-logo { height: 64px; }
         @media (min-width: 1024px) {
-          .site-logo { height: 150px; margin: -45px -46px -45px -4px; }
+          .site-logo { height: 195px; margin: -67px -87px -68px -8px; }
         }
         @media (min-width: 1024px) {
           .show-mobile { display: none !important; }
