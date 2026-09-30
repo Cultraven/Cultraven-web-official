@@ -47,7 +47,13 @@ export const HeroSlideSchema = z.object({
   type: z.enum(["image", "video"]),
   srcDesktop: z.string(),
   srcMobile: z.string(),
+  /** Poster / fallback image for video slides (also shown if the video fails). */
+  posterSrc: z.string().optional(),
   altText: z.string(),
+  eyebrow: z.string().optional(),
+  /** CSS object-position, e.g. "center top". */
+  objectPosition: z.string().optional(),
+  durationMs: z.number().optional(),
   headline: z.string(),
   subheadline: z.string().optional(),
   ctaLabel: z.string(),

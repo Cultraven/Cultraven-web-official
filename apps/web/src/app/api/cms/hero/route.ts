@@ -1,102 +1,91 @@
 import { NextResponse } from "next/server";
+import mongoose from "mongoose";
 import { connectToDatabase } from "@/lib/db";
-import { HeroBanner } from "@/lib/models/HeroBanner";
+import { HeroBanner, HeroConfig } from "@/lib/models/HeroBanner";
+import { isAdminRequest } from "@/lib/admin-auth";
+import { normalizeMode, validateSlides } from "@/lib/hero";
 
-const MOCK_BANNERS = [
-  {
-    id: "mock1",
-    headline: "THE RAVEN DROP",
-    subheadline: "Heavyweight Oversized Tees. Now Live.",
-    srcDesktop: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=1920&auto=format&fit=crop&q=80",
-    imageMobile: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=800&auto=format&fit=crop&q=80",
-    ctaLabel: "SHOP NOW",
-    ctaHref: "/collections/all",
-    active: true,
-  }
-];
+export const dynamic = "force-dynamic";
 
+function serialize(doc: any) {
+  const { _id, __v, createdAt, updatedAt, ...rest } = doc;
+  return {
+    ...rest,
+    id: String(_id),
+    startsAt: doc.startsAt ? new Date(doc.startsAt).toISOString() : null,
+    endsAt: doc.endsAt ? new Date(doc.endsAt).toISOString() : null,
+  };
+}
+
+/** Public read. Returns every slide (admin needs inactive ones); the storefront filters live slides. */
 export async function GET() {
   try {
     await connectToDatabase();
-    
-    // Fetch all banners from DB, sorted by creation date or any other order
-    // Convert _id to id for the frontend
-    const docs = await HeroBanner.find().lean();
-    
-    let banners = docs.map((doc: any) => ({
-      ...doc,
-      id: doc._id.toString(),
-      _id: undefined,
-      __v: undefined,
-    }));
-
-    if (banners.length === 0) {
-      banners = MOCK_BANNERS;
-    }
-
-    return NextResponse.json({ banners });
+    const [docs, config] = await Promise.all([
+      HeroBanner.find().sort({ sortOrder: 1, createdAt: 1 }).lean(),
+      HeroConfig.findOne({ key: "homepage" }).lean() as Promise<any>,
+    ]);
+    return NextResponse.json({
+      mode: normalizeMode(config?.mode),
+      banners: docs.map(serialize),
+    });
   } catch (error) {
-    console.error("Failed to fetch banners, falling back to mock:", error);
-    return NextResponse.json({ banners: MOCK_BANNERS });
+    console.error("Failed to fetch hero banners:", error);
+    return NextResponse.json({ error: "Hero data unavailable" }, { status: 503 });
   }
 }
 
-import crypto from "crypto";
-
-function verifyAdminToken(req: Request): boolean {
-  // @ts-ignore
-  const cookies = req.headers.get("cookie") || "";
-  const match = cookies.match(/cultraven_session=([^;]+)/);
-  if (!match) return false;
-  const session = match[1];
-  if (!session || !session.includes(".")) return false;
-  const [encodedPayload, signature] = session.split(".");
-  try {
-    const secret = process.env.SESSION_SECRET || "cultraven-dev-secret-change-in-prod";
-    const expectedSig = crypto.createHmac("sha256", secret).update(encodedPayload).digest("base64url");
-    if (signature !== expectedSig) return false;
-    const payload = JSON.parse(Buffer.from(encodedPayload, "base64url").toString("utf-8"));
-    if (payload.exp && payload.exp < Date.now()) return false;
-    return payload.role === "admin";
-  } catch {
-    return false;
-  }
-}
-
+/**
+ * Admin save. Validates the full payload first, then upserts/inserts, and only
+ * deletes removed slides last — so a failure part-way never wipes existing hero data.
+ */
 export async function PUT(req: Request) {
-  if (!verifyAdminToken(req)) {
+  if (!isAdminRequest(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  let body: any;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+
+  const { slides, errors } = validateSlides(body?.banners);
+  if (errors.length > 0) {
+    return NextResponse.json({ error: errors[0], errors }, { status: 400 });
+  }
+  const mode = normalizeMode(body?.mode);
+
   try {
     await connectToDatabase();
-    const body = await req.json();
-    
-    if (body.banners && Array.isArray(body.banners)) {
-      // For simplicity: clear existing and insert new
-      // In a production app, you might want to do upserts based on ID
-      await HeroBanner.deleteMany({});
-      
-      const toInsert = body.banners.map((b: any) => {
-        const { id, ...rest } = b; // Strip string id
-        return rest;
-      });
-      
-      const newDocs = await HeroBanner.insertMany(toInsert);
-      
-      const banners = newDocs.map(doc => ({
-        ...doc.toObject(),
-        id: doc._id.toString(),
-        _id: undefined,
-        __v: undefined,
-      }));
 
-      return NextResponse.json({ success: true, banners });
+    // Every slide gets a known _id up front (existing id, or a fresh one), so the final cleanup is exact.
+    const ids = slides.map((_, i) => {
+      const rawId = body.banners[i]?.id;
+      return typeof rawId === "string" && mongoose.isValidObjectId(rawId)
+        ? new mongoose.Types.ObjectId(rawId)
+        : new mongoose.Types.ObjectId();
+    });
+
+    if (slides.length > 0) {
+      await HeroBanner.bulkWrite(
+        slides.map((slide, i) => ({
+          updateOne: { filter: { _id: ids[i] }, update: { $set: slide }, upsert: true },
+        })) as any,
+        { ordered: true }
+      );
     }
-    
-    return NextResponse.json({ error: "Invalid data format" }, { status: 400 });
+
+    // Remove slides that are no longer in the payload — done last, after the writes above succeeded.
+    await HeroBanner.deleteMany({ _id: { $nin: ids } });
+
+    await HeroConfig.updateOne({ key: "homepage" }, { $set: { mode } }, { upsert: true });
+
+    const docs = await HeroBanner.find().sort({ sortOrder: 1, createdAt: 1 }).lean();
+    return NextResponse.json({ success: true, mode, banners: docs.map(serialize) });
   } catch (error) {
-    console.error("Failed to update banners:", error);
-    return NextResponse.json({ error: "Failed to update banners" }, { status: 500 });
+    console.error("Failed to update hero banners:", error);
+    return NextResponse.json({ error: "Failed to save hero. Existing hero was not changed." }, { status: 500 });
   }
 }

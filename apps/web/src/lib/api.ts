@@ -13,6 +13,7 @@ import type { HomepageCms } from "@shop/types";
 import type { Product } from "@shop/types";
 
 import { HOMEPAGE_CMS_FIXTURE, FEATURED_PRODUCTS_FIXTURE } from "./fixtures";
+import { normalizeMode, selectLiveSlides } from "./hero";
 
 // ─── API client (server-only, no auth token needed for public routes) ────────
 
@@ -32,15 +33,19 @@ export async function getHomepageCms(): Promise<HomepageCms> {
     const res = await fetch(`${baseUrl}/api/cms/hero`, { cache: 'no-store' });
     if (res.ok) {
       const data = await res.json();
-      const dbBanners = (data.banners || []).filter((b: any) => b.active !== false);
+      const dbBanners = selectLiveSlides(data.banners || [], normalizeMode(data.mode));
       if (dbBanners.length > 0) {
         const mapped = dbBanners.map((b: any, idx: number) => ({
           id: b.id || `cms-hero-${idx}`,
           type: b.type || "image",
           srcDesktop: b.srcDesktop || "",
-          srcMobile: b.imageMobile || b.srcDesktop || "",
+          srcMobile: b.srcMobile || "",
+          posterSrc: b.posterSrc || "",
           altText: b.altText || "",
-          headline: b.headline || HOMEPAGE_CMS_FIXTURE.heroSlide.headline,
+          eyebrow: b.eyebrow || "",
+          objectPosition: b.objectPosition || "center center",
+          durationMs: typeof b.durationMs === "number" ? b.durationMs : 5000,
+          headline: b.headline || "",
           subheadline: b.subheadline || "",
           ctaLabel: b.ctaLabel || HOMEPAGE_CMS_FIXTURE.heroSlide.ctaLabel,
           ctaHref: b.ctaHref || HOMEPAGE_CMS_FIXTURE.heroSlide.ctaHref,

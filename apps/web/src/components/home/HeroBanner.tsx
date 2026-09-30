@@ -25,7 +25,7 @@ const FALLBACK_SLIDE: HeroSlide = {
   overlayOpacity: 0.45,
 };
 
-const INTERVAL_MS = 5000;
+const DEFAULT_INTERVAL_MS = 5000;
 
 export function HeroBanner({ slides: slidesProp, slide }: HeroBannerProps) {
   // normalize: accept array or single slide
@@ -51,12 +51,14 @@ export function HeroBanner({ slides: slidesProp, slide }: HeroBannerProps) {
     goTo((active - 1 + slides.length) % slides.length);
   }, [active, slides.length, goTo]);
 
-  // Auto-advance
+  const activeDuration = slides[active]?.durationMs ?? DEFAULT_INTERVAL_MS;
+
+  // Auto-advance (per-slide duration)
   useEffect(() => {
     if (slides.length <= 1 || paused) return;
-    const timer = setInterval(next, INTERVAL_MS);
-    return () => clearInterval(timer);
-  }, [slides.length, paused, next]);
+    const timer = setTimeout(next, activeDuration);
+    return () => clearTimeout(timer);
+  }, [slides.length, paused, next, activeDuration]);
 
   // Clear prev after transition
   useEffect(() => {
@@ -82,7 +84,7 @@ export function HeroBanner({ slides: slidesProp, slide }: HeroBannerProps) {
     >
       {/* ── Slides stack ─────────────────────────────────────────────────── */}
       {slides.map((s, i) => (
-        <SlideLayer key={s.id} slide={s} visible={i === active} isPrev={i === prev} />
+        <SlideLayer key={s.id} slide={s} index={i} visible={i === active} isPrev={i === prev} />
       ))}
 
       {/* ── Prev / Next arrows ───────────────────────────────────────────── */}
@@ -192,7 +194,7 @@ export function HeroBanner({ slides: slidesProp, slide }: HeroBannerProps) {
             height: "3px",
             backgroundColor: "var(--color-lava)",
             zIndex: 20,
-            animation: `heroProgress ${INTERVAL_MS}ms linear`,
+            animation: `heroProgress ${activeDuration}ms linear`,
             animationFillMode: "forwards",
           }}
           key={`progress-${active}`}
@@ -219,12 +221,8 @@ export function HeroBanner({ slides: slidesProp, slide }: HeroBannerProps) {
 
 // ─── Single slide layer (crossfade) ──────────────────────────────────────────
 
-function SlideLayer({ slide: s, visible, isPrev }: { slide: HeroSlide; visible: boolean; isPrev: boolean }) {
-  const [videoError, setVideoError] = useState(false);
-
+function SlideLayer({ slide: s, index, visible, isPrev }: { slide: HeroSlide; index: number; visible: boolean; isPrev: boolean }) {
   const overlayOpacity = s.overlayOpacity ?? 0.45;
-  const isVideo = s.type === "video" && !videoError;
-  const mediaSrc = s.srcDesktop || null;
   const headlineLines = (s.headline || "").split("\n");
 
   return (
@@ -238,22 +236,8 @@ function SlideLayer({ slide: s, visible, isPrev }: { slide: HeroSlide; visible: 
         pointerEvents: visible ? "auto" : "none",
       }}
     >
-      {/* Media */}
-      {isVideo && mediaSrc ? (
-        <video
-          autoPlay muted loop playsInline
-          onError={() => setVideoError(true)}
-          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: 0 }}
-        >
-          <source src={mediaSrc} type="video/mp4" />
-        </video>
-      ) : mediaSrc ? (
-        <img
-          src={mediaSrc}
-          alt={s.altText || ""}
-          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: 0 }}
-        />
-      ) : null}
+      {/* Media — image (responsive <picture>), video (with poster fallback) */}
+      <SlideMedia slide={s} index={index} visible={visible} />
 
       {/* Gradient overlay */}
       <div
@@ -284,15 +268,17 @@ function SlideLayer({ slide: s, visible, isPrev }: { slide: HeroSlide; visible: 
         }}
       >
         {/* Overline */}
+        {s.eyebrow ? (
         <div style={{ display: "inline-flex", alignItems: "center", gap: "10px", marginBottom: "1.25rem" }}>
           <span style={{ width: "32px", height: "2px", backgroundColor: "var(--color-lava)", display: "block", flexShrink: 0 }} />
           <span style={{
             fontFamily: "var(--font-sans)", fontSize: "11px", fontWeight: 800,
             letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-lava)",
           }}>
-            Dharma Series EP 01
+            {s.eyebrow}
           </span>
         </div>
+        ) : null}
 
         {/* Headline */}
         <h1 style={{
@@ -379,5 +365,88 @@ function SlideLayer({ slide: s, visible, isPrev }: { slide: HeroSlide; visible: 
         </div>
       )}
     </div>
+  );
+}
+
+// ─── Slide media (image / video with safe fallbacks) ─────────────────────────
+
+const MEDIA_STYLE = (objectPosition?: string): React.CSSProperties => ({
+  position: "absolute",
+  inset: 0,
+  width: "100%",
+  height: "100%",
+  objectFit: "cover",
+  objectPosition: objectPosition || "center center",
+  zIndex: 0,
+});
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 768px)");
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+  return isMobile;
+}
+
+function SlideMedia({ slide: s, index, visible }: { slide: HeroSlide; index: number; visible: boolean }) {
+  const isMobile = useIsMobile();
+  const [videoError, setVideoError] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const videoRef = React.useRef<HTMLVideoElement>(null);
+
+  const isVideo = s.type === "video" && !videoError && !!s.srcDesktop;
+  const videoSrc = isMobile && s.srcMobile ? s.srcMobile : s.srcDesktop;
+  const eager = index === 0;
+
+  // Only the visible slide plays — saves bandwidth/CPU for the rest.
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    if (visible) v.play().catch(() => setVideoError(true));
+    else v.pause();
+  }, [visible, videoSrc]);
+
+  if (isVideo) {
+    return (
+      <video
+        ref={videoRef}
+        key={videoSrc}
+        muted
+        loop
+        playsInline
+        autoPlay={eager}
+        preload={eager ? "auto" : "metadata"}
+        poster={s.posterSrc || undefined}
+        aria-label={s.altText || undefined}
+        onError={() => setVideoError(true)}
+        style={MEDIA_STYLE(s.objectPosition)}
+      >
+        <source src={videoSrc} type={videoSrc.toLowerCase().split("?")[0].endsWith(".webm") ? "video/webm" : "video/mp4"} />
+      </video>
+    );
+  }
+
+  // Image slide, or video fallback → poster (video slides) / desktop image (image slides)
+  const fallback = s.type === "video" ? s.posterSrc : s.srcDesktop;
+  if (!fallback || imageError) return null; // navy section background shows — layout never breaks
+
+  return (
+    <picture>
+      {s.type !== "video" && s.srcMobile ? <source media="(max-width: 768px)" srcSet={s.srcMobile} /> : null}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={fallback}
+        alt={s.altText || ""}
+        loading={eager ? "eager" : "lazy"}
+        decoding={eager ? "sync" : "async"}
+        fetchPriority={eager ? "high" : "auto"}
+        onError={() => setImageError(true)}
+        style={MEDIA_STYLE(s.objectPosition)}
+      />
+    </picture>
   );
 }

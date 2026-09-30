@@ -32,7 +32,7 @@ const organizationJsonLd = {
   name: "CULTRAVEN",
   alternateName: "Cultraven Clothing",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://cultraven.com",
-  logo: `${process.env.NEXT_PUBLIC_SITE_URL || "https://cultraven.com"}/images/logo.png`,
+  logo: `${process.env.NEXT_PUBLIC_SITE_URL || "https://cultraven.com"}/logo.png`,
   description:
     "CULTRAVEN is a Gen-Z Indian streetwear brand for those who don't dress to fit in — they create their own identity. Oversized heavyweights, acid washes, mythic graphics.",
   slogan: "Wear Your Difference.",

@@ -1,78 +1,81 @@
 import { NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
-import { existsSync } from "fs";
-
 import crypto from "crypto";
+import { isAdminRequest } from "@/lib/admin-auth";
 
-function verifyAdminToken(req: Request): boolean {
-  // @ts-ignore
-  const cookies = req.headers.get("cookie") || "";
-  const match = cookies.match(/cultraven_session=([^;]+)/);
-  if (!match) return false;
-  const session = match[1];
-  if (!session || !session.includes(".")) return false;
-  const [encodedPayload, signature] = session.split(".");
-  try {
-    const secret = process.env.SESSION_SECRET || "cultraven-dev-secret-change-in-prod";
-    const expectedSig = crypto.createHmac("sha256", secret).update(encodedPayload).digest("base64url");
-    if (signature !== expectedSig) return false;
-    const payload = JSON.parse(Buffer.from(encodedPayload, "base64url").toString("utf-8"));
-    if (payload.exp && payload.exp < Date.now()) return false;
-    return payload.role === "admin";
-  } catch {
-    return false;
+export const runtime = "nodejs";
+
+const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+const MAX_VIDEO_BYTES = 40 * 1024 * 1024;
+
+type Sniffed = { ext: string; kind: "image" | "video" };
+
+/** Detects the real file type from magic bytes. The filename and client MIME are never trusted. */
+function sniff(b: Buffer): Sniffed | null {
+  if (b.length < 12) return null;
+  if (b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return { ext: "jpg", kind: "image" };
+  if (b.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))) return { ext: "png", kind: "image" };
+  const head6 = b.subarray(0, 6).toString("ascii");
+  if (head6 === "GIF87a" || head6 === "GIF89a") return { ext: "gif", kind: "image" };
+  if (b.subarray(0, 4).toString("ascii") === "RIFF" && b.subarray(8, 12).toString("ascii") === "WEBP") return { ext: "webp", kind: "image" };
+  if (b.subarray(4, 8).toString("ascii") === "ftyp") {
+    const brand = b.subarray(8, 12).toString("ascii");
+    if (brand === "avif" || brand === "avis") return { ext: "avif", kind: "image" };
+    return { ext: "mp4", kind: "video" };
   }
+  if (b[0] === 0x1a && b[1] === 0x45 && b[2] === 0xdf && b[3] === 0xa3) return { ext: "webm", kind: "video" };
+  return null;
+}
+
+// Simple in-memory limiter (per server instance). Replace with Redis/Upstash in production.
+const hits = new Map<string, number[]>();
+function rateLimited(ip: string): boolean {
+  const now = Date.now();
+  const recent = (hits.get(ip) ?? []).filter((t) => now - t < 60_000);
+  recent.push(now);
+  hits.set(ip, recent);
+  return recent.length > 30;
 }
 
 export async function POST(req: Request) {
-  if (!verifyAdminToken(req)) {
+  if (!isAdminRequest(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "local";
+  if (rateLimited(ip)) {
+    return NextResponse.json({ error: "Too many uploads. Try again in a minute." }, { status: 429 });
   }
 
   try {
     const formData = await req.formData();
-    const file = formData.get("file") as File;
-
-    if (!file) {
+    const file = formData.get("file");
+    if (!(file instanceof File)) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
-
-    // 10 MB limit
-    if (file.size > 10 * 1024 * 1024) {
-      return NextResponse.json({ error: "File too large (max 10MB)" }, { status: 413 });
+    if (file.size === 0) {
+      return NextResponse.json({ error: "File is empty" }, { status: 400 });
+    }
+    if (file.size > MAX_VIDEO_BYTES) {
+      return NextResponse.json({ error: "File too large (max 40MB video / 10MB image)" }, { status: 413 });
     }
 
-    // Allowlist of safe image extensions
-    const ALLOWED_EXTS = new Set(["jpg", "jpeg", "png", "webp", "avif", "gif"]);
-    const rawExt = (file.name.split(".").pop() ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
-    const ext = ALLOWED_EXTS.has(rawExt) ? rawExt : null;
-    if (!ext) {
-      return NextResponse.json({ error: "File type not allowed" }, { status: 415 });
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const detected = sniff(buffer);
+    if (!detected) {
+      return NextResponse.json({ error: "Unsupported file. Use JPG, PNG, WebP, AVIF, GIF, MP4 or WebM." }, { status: 415 });
+    }
+    if (detected.kind === "image" && file.size > MAX_IMAGE_BYTES) {
+      return NextResponse.json({ error: "Image too large (max 10MB)" }, { status: 413 });
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    const filename = `${crypto.randomBytes(16).toString("hex")}.${detected.ext}`;
+    const uploadDir = path.join(process.cwd(), "public", "uploads");
+    await mkdir(uploadDir, { recursive: true });
+    await writeFile(path.join(uploadDir, filename), buffer);
 
-    // Secure random filename — no user input in the path
-    const uniqueSuffix = crypto.randomBytes(16).toString("hex");
-    const filename = `${uniqueSuffix}.${ext}`;
-    
-    // Ensure upload directory exists
-    const uploadDir = path.join(process.cwd(), "public/uploads");
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
-    }
-
-    const filepath = path.join(uploadDir, filename);
-
-    // Write file to /public/uploads
-    await writeFile(filepath, buffer);
-
-    // Return the public URL
-    const url = `/uploads/${filename}`;
-
-    return NextResponse.json({ success: true, url });
+    return NextResponse.json({ success: true, url: `/uploads/${filename}`, kind: detected.kind });
   } catch (error) {
     console.error("Upload error:", error);
     return NextResponse.json({ error: "Failed to upload file" }, { status: 500 });

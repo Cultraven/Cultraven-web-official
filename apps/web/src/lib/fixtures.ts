@@ -290,6 +290,7 @@ export const HOMEPAGE_CMS_FIXTURE: HomepageCms = {
     srcDesktop: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=1600&auto=format&fit=crop&q=80",
     srcMobile: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800&auto=format&fit=crop&q=80",
     altText: "CULTRAVEN DHARMA Collection — Gen-Z Streetwear India",
+    eyebrow: "Dharma Series EP 01",
     headline: "WEAR YOUR DIFFERENCE.",
     subheadline: "DHARMA EP01 — 260 GSM heavyweight cotton. Mythic screen-prints. Built for those who create their own identity.",
     ctaLabel: "SHOP THE DROP",
