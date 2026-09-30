@@ -312,6 +312,7 @@ export function BestsellersSection() {
             scrollSnapType: "x mandatory",
             msOverflowStyle: "none",
             scrollbarWidth: "none",
+            width: "100%",
           }}
           className="bs-scroll"
         >
@@ -323,6 +324,9 @@ export function BestsellersSection() {
 
       <style>{`
         .bs-scroll::-webkit-scrollbar { display: none; }
+        @media (max-width: 640px) {
+          .bs-card { width: calc(50vw - 2rem) !important; min-width: 140px !important; }
+        }
       `}</style>
     </section>
   );
@@ -339,9 +343,10 @@ function BestsellerCard({ product: p }: { product: BestProduct }) {
 
   return (
     <div
+      className="bs-card"
       style={{
         flexShrink: 0,
-        width: "clamp(220px, 25vw, 300px)",
+        width: "clamp(200px, 22vw, 290px)",
         scrollSnapAlign: "start",
         display: "flex",
         flexDirection: "column",

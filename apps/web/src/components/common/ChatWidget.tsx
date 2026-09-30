@@ -132,45 +132,51 @@ export function ChatWidget() {
       {/* ── Floating button ── */}
       <button
         id="chat-widget-toggle"
-        aria-label={open ? "Close chat" : "Open chat support"}
+        aria-label={open ? "Close support" : "Open chat support"}
         aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
         style={{
           position: "fixed",
-          bottom: "1.5rem",
-          right: "1.5rem",
-          zIndex: 9999,
-          width: "56px",
-          height: "56px",
-          borderRadius: "50%",
+          bottom: "calc(env(safe-area-inset-bottom) + 80px)",
+          right: "1.25rem",
+          zIndex: 9990,
+          height: "48px",
+          paddingInline: open ? "1rem" : "1.1rem",
+          borderRadius: "0px",
           backgroundColor: "var(--color-navy)",
           color: "var(--color-cream)",
-          border: "none",
+          border: "2px solid var(--color-navy)",
           cursor: "pointer",
           display: "flex",
           alignItems: "center",
-          justifyContent: "center",
-          boxShadow: "0 4px 20px rgba(23,37,69,0.35)",
-          transition: "transform 0.2s ease, background-color 0.2s ease",
+          gap: "0.5rem",
+          boxShadow: "4px 4px 0px 0px var(--color-lava)",
+          transition: "transform 0.2s ease, box-shadow 0.2s ease",
+          whiteSpace: "nowrap",
         }}
         onMouseEnter={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--color-crimson)";
-          (e.currentTarget as HTMLButtonElement).style.transform = "scale(1.08)";
+          (e.currentTarget as HTMLButtonElement).style.transform = "translate(-2px,-2px)";
+          (e.currentTarget as HTMLButtonElement).style.boxShadow = "6px 6px 0px 0px var(--color-lava)";
         }}
         onMouseLeave={(e) => {
-          (e.currentTarget as HTMLButtonElement).style.backgroundColor = "var(--color-navy)";
-          (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)";
+          (e.currentTarget as HTMLButtonElement).style.transform = "translate(0,0)";
+          (e.currentTarget as HTMLButtonElement).style.boxShadow = "4px 4px 0px 0px var(--color-lava)";
         }}
       >
         {open ? (
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
+          <>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+            <span style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase" }}>CLOSE</span>
+          </>
         ) : (
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-          </svg>
+          <>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+            <span style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase" }}>NEED HELP?</span>
+          </>
         )}
       </button>
 
@@ -182,14 +188,15 @@ export function ChatWidget() {
           aria-label="Chat support"
           style={{
             position: "fixed",
-            bottom: "5rem",
-            right: "1.5rem",
-            zIndex: 9998,
+            bottom: "calc(env(safe-area-inset-bottom) + 140px)",
+            right: "1.25rem",
+            zIndex: 9989,
             width: "360px",
             maxWidth: "calc(100vw - 2rem)",
-            backgroundColor: "var(--color-cream)",
-            boxShadow: "0 8px 40px rgba(23,37,69,0.22)",
-            borderRadius: "4px",
+            backgroundColor: "var(--color-bone)",
+            border: "2px solid var(--color-navy)",
+            boxShadow: "6px 6px 0px 0px var(--color-navy)",
+            borderRadius: "0px",
             overflow: "hidden",
             animation: "slideUpFade 0.22s ease",
           }}
@@ -245,7 +252,7 @@ export function ChatWidget() {
                     fontWeight: 800,
                     letterSpacing: "0.1em",
                     textTransform: "uppercase",
-                    backgroundColor: tab === t ? "var(--color-crimson)" : "rgba(245,241,232,0.15)",
+                    backgroundColor: tab === t ? "var(--color-lava)" : "rgba(245,241,232,0.15)",
                     color: "var(--color-cream)",
                     transition: "background-color 0.15s ease",
                   }}
@@ -263,7 +270,7 @@ export function ChatWidget() {
                 style={{
                   fontFamily: "var(--font-sans)",
                   fontSize: "0.75rem",
-                  color: "var(--color-gray)",
+                  color: "var(--color-smoke)",
                   marginBottom: "1rem",
                   lineHeight: 1.5,
                 }}
@@ -336,7 +343,7 @@ export function ChatWidget() {
                       style={{
                         fontFamily: "var(--font-sans)",
                         fontSize: "0.7rem",
-                        color: "var(--color-gray)",
+                        color: "var(--color-smoke)",
                       }}
                     >
                       @{INSTAGRAM_HANDLE}
@@ -409,7 +416,7 @@ export function ChatWidget() {
                       style={{
                         fontFamily: "var(--font-sans)",
                         fontSize: "0.7rem",
-                        color: "var(--color-gray)",
+                        color: "var(--color-smoke)",
                       }}
                     >
                       Typically replies within 1 hour
@@ -605,9 +612,9 @@ export function ChatWidget() {
                     }}
                     style={{
                       padding: "3px 10px",
-                      backgroundColor: "var(--color-mist)",
-                      border: "var(--border-thick)", boxShadow: "var(--shadow-md)",
-                      borderRadius: "20px",
+                      backgroundColor: "var(--color-stone)",
+                      border: "2px solid var(--color-navy)",
+                      borderRadius: "0px",
                       fontFamily: "var(--font-sans)",
                       fontSize: "0.65rem",
                       fontWeight: 600,

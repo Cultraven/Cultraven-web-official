@@ -1,9 +1,8 @@
 /**
- * NewDropSection — editorial product grid immediately after hero.
+ * NewDropSection — LP-editorial product grid immediately after hero.
  *
- * Heading: "NEW DROP" / "THE LATEST FROM CULTRAVEN."
- * 4-column desktop, 2-column mobile.
- * Full product card: hover swap, wishlist, quick-add, color dots, badges.
+ * 4-col desktop / 2-col mobile.
+ * Clean product cards: no borders on images, LP-style hover, color swatches.
  */
 "use client";
 
@@ -24,74 +23,50 @@ interface DropProduct {
   badge?: string;
 }
 
-const fallbackProducts = [
+const fallbackProducts: DropProduct[] = [
   {
     id: "nd-1",
-    title: "RAVEN OVERSIZED TEE — ACID BLACK",
+    title: "Raven Oversized Tee — Acid Black",
     href: "/products/raven-oversized-tee-acid-black",
-    image:
-      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&auto=format&fit=crop&q=80",
-    hoverImage:
-      "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=700&auto=format&fit=crop&q=85",
+    hoverImage: "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=700&auto=format&fit=crop&q=85",
     pricePaise: 199900,
     mrpPaise: 249900,
-    colors: [
-      { hex: "#0A0A0A", label: "Acid Black" },
-      { hex: "#2C2C2C", label: "Charcoal" },
-      { hex: "var(--color-crimson)", label: "Flame" },
-    ],
+    colors: [{ hex: "#0A0A0A", label: "Acid Black" }, { hex: "#2C2C2C", label: "Charcoal" }, { hex: "#DAB205", label: "Flame" }],
     isNew: true,
   },
   {
     id: "nd-2",
-    title: "DHARMA GRAPHIC HOODIE — STONE WASH",
+    title: "Dharma Graphic Hoodie — Stone Wash",
     href: "/products/dharma-graphic-hoodie-stone",
-    image:
-      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600&auto=format&fit=crop&q=80",
-    hoverImage:
-      "https://images.unsplash.com/photo-1512411933099-b1d5565538e1?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=700&auto=format&fit=crop&q=85",
+    hoverImage: "https://images.unsplash.com/photo-1512411933099-b1d5565538e1?w=700&auto=format&fit=crop&q=85",
     pricePaise: 299900,
     mrpPaise: 399900,
-    colors: [
-      { hex: "var(--color-mist)", label: "Stone" },
-      { hex: "var(--color-navy)", label: "Navy" },
-      { hex: "var(--color-gray)", label: "Ash" },
-    ],
+    colors: [{ hex: "#EDE3CF", label: "Stone" }, { hex: "#172554", label: "Navy" }, { hex: "#7A7468", label: "Ash" }],
     isNew: true,
   },
   {
     id: "nd-3",
-    title: "CARGO WIDE LEG — MILITARY OLIVE",
-    href: "/products/cargo-wide-leg-military-olive",
-    image:
-      "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=600&auto=format&fit=crop&q=80",
-    hoverImage:
-      "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=600&auto=format&fit=crop&q=80",
-    pricePaise: 349900,
-    mrpPaise: 499900,
-    colors: [
-      { hex: "#556B2F", label: "Olive" },
-      { hex: "var(--color-navy)", label: "Navy" },
-      { hex: "#0A0A0A", label: "Black" },
-    ],
+    title: "Raven Cargo — Military Olive",
+    href: "/products/raven-cargo-military-olive",
+    image: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=700&auto=format&fit=crop&q=85",
+    hoverImage: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=700&auto=format&fit=crop&q=85",
+    pricePaise: 249900,
+    mrpPaise: 299900,
+    colors: [{ hex: "#556B2F", label: "Olive" }, { hex: "#172554", label: "Navy" }, { hex: "#0A0A0A", label: "Black" }],
     isNew: true,
     badge: "LIMITED",
   },
   {
     id: "nd-4",
-    title: "ACID STATE SWEATSHIRT — WASHED GREY",
+    title: "Acid State Sweatshirt — Washed Grey",
     href: "/products/acid-state-sweatshirt-washed-grey",
-    image:
-      "https://images.unsplash.com/photo-1578681994506-b8f463449011?w=600&auto=format&fit=crop&q=80",
-    hoverImage:
-      "https://images.unsplash.com/photo-1503342394128-c104d54dba01?w=600&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1578681994506-b8f463449011?w=700&auto=format&fit=crop&q=85",
+    hoverImage: "https://images.unsplash.com/photo-1503342394128-c104d54dba01?w=700&auto=format&fit=crop&q=85",
     pricePaise: 249900,
     mrpPaise: 299900,
-    colors: [
-      { hex: "#9CA3AF", label: "Washed Grey" },
-      { hex: "#0A0A0A", label: "Black" },
-      { hex: "var(--color-mist)", label: "Cream" },
-    ],
+    colors: [{ hex: "#9CA3AF", label: "Washed Grey" }, { hex: "#0A0A0A", label: "Black" }, { hex: "#EDE3CF", label: "Cream" }],
     isNew: true,
   },
 ];
@@ -112,115 +87,104 @@ export function NewDropSection() {
             .filter((p: any) => p.pricePaise != null)
             .slice(0, 4)
             .map((p: any) => ({
-            id: p.id || p._id,
-            title: p.title,
-            href: `/products/${p.slug || p.id}`,
-            image: p.image || fallbackProducts[0].image,
-            hoverImage: p.hoverImage || p.image || fallbackProducts[0].hoverImage,
-            pricePaise: p.pricePaise,
-            mrpPaise: p.mrpPaise || p.pricePaise,
-            colors: Array.isArray(p.colors)
-              ? p.colors
-                  .filter((c: any) => c && typeof c.hex === "string" && typeof c.label === "string")
-                  .map((c: any) => ({ hex: String(c.hex), label: String(c.label) }))
-              : [{ hex: "#0A0A0A", label: "Black" }],
-            isNew: true,
-          }));
+              id: p.id || p._id,
+              title: p.title,
+              href: `/products/${p.slug || p.id}`,
+              image: p.image || fallbackProducts[0].image,
+              hoverImage: p.hoverImage || p.image || fallbackProducts[0].hoverImage,
+              pricePaise: p.pricePaise,
+              mrpPaise: p.mrpPaise || p.pricePaise,
+              colors: Array.isArray(p.colors)
+                ? p.colors.filter((c: any) => c && typeof c.hex === "string").map((c: any) => ({ hex: String(c.hex), label: String(c.label) }))
+                : [{ hex: "#0A0A0A", label: "Black" }],
+              isNew: true,
+            }));
           setProducts(mapped);
         }
       })
       .catch(console.error);
   }, []);
+
   return (
     <section
       aria-labelledby="new-drop-heading"
-      style={{ backgroundColor: "var(--color-cream)", padding: "clamp(4rem,8vw,8rem) 0" }}
+      style={{
+        backgroundColor: "var(--color-cream)",
+        padding: "clamp(4rem,7vw,7rem) 0",
+        borderBottom: "1px solid var(--color-line)",
+      }}
     >
-      <div style={{ paddingInline: "clamp(1.25rem,4vw,5rem)" }}>
-        {/* Header */}
-        <div style={{ marginBottom: "3rem" }}>
-          <span
-            style={{
-              display: "block",
-              fontFamily: "var(--font-sans)",
-              fontSize: "11px",
-              fontWeight: 800,
-              letterSpacing: "0.22em",
-              textTransform: "uppercase",
-              color: "var(--color-crimson)",
-              marginBottom: "0.75rem",
-            }}
-          >
-            Just Landed
-          </span>
+      <div style={{ paddingInline: "clamp(1rem,4vw,5rem)" }}>
 
-          <div
-            style={{
-              display: "flex",
-              alignItems: "flex-end",
-              justifyContent: "space-between",
-              flexWrap: "wrap",
-              gap: "1rem",
-            }}
-          >
+        {/* ── Editorial Header (LP style) ─────────────────────────────────── */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-end",
+            justifyContent: "space-between",
+            marginBottom: "2.5rem",
+            flexWrap: "wrap",
+            gap: "1rem",
+          }}
+        >
+          <div>
+            <span
+              style={{
+                display: "block",
+                fontFamily: "var(--font-sans)",
+                fontSize: "11px",
+                fontWeight: 800,
+                letterSpacing: "0.22em",
+                textTransform: "uppercase",
+                color: "var(--color-lava)",
+                marginBottom: "0.6rem",
+              }}
+            >
+              Just Landed
+            </span>
             <h2
               id="new-drop-heading"
               style={{
                 fontFamily: "var(--font-heading)",
-                
-                fontSize: "clamp(2.5rem,5.5vw,4.5rem)",
-                fontWeight: 600,
+                fontSize: "clamp(2.2rem,4.5vw,4rem)",
+                fontWeight: 400,
                 color: "var(--color-navy)",
                 lineHeight: 0.95,
-                letterSpacing: "-0.01em",
+                letterSpacing: "0.02em",
+                textTransform: "uppercase",
               }}
             >
               New Drop
             </h2>
-
-            <Link
-              href="/collections/new-in"
-              style={{
-                fontFamily: "var(--font-sans)",
-                fontSize: "0.7rem",
-                fontWeight: 800,
-                letterSpacing: "0.18em",
-                textTransform: "uppercase",
-                color: "var(--color-navy)",
-                borderBottom: "2px solid var(--color-navy)",
-                paddingBottom: "2px",
-                whiteSpace: "nowrap",
-              }}
-            >
-              VIEW ALL NEW IN
-            </Link>
           </div>
 
-          <p
+          <Link
+            href="/collections/new-in"
             style={{
               fontFamily: "var(--font-sans)",
-              fontSize: "0.8rem",
-              fontWeight: 600,
-              color: "var(--color-gray)",
-              marginTop: "0.75rem",
-              letterSpacing: "0.1em",
+              fontSize: "0.72rem",
+              fontWeight: 800,
+              letterSpacing: "0.14em",
               textTransform: "uppercase",
+              color: "var(--color-navy)",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              borderBottom: "1.5px solid var(--color-navy)",
+              paddingBottom: "2px",
+              whiteSpace: "nowrap",
+              transition: "color 0.2s ease, border-color 0.2s ease",
             }}
           >
-            THE LATEST FROM CULTRAVEN.
-          </p>
+            View All New In
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </Link>
         </div>
 
-        {/* Product Grid */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(4, 1fr)",
-            justifyContent: "center",
-            gap: "1.25rem",
-          }}
-          className="nd-grid"
-        >
+        {/* ── Product Grid ────────────────────────────────────────────────── */}
+        <div className="nd-grid">
           {products.map((p) => (
             <NewDropCard key={p.id} product={p} />
           ))}
@@ -228,29 +192,36 @@ export function NewDropSection() {
       </div>
 
       <style>{`
-        @media (max-width: 1024px) { .nd-grid { grid-template-columns: repeat(3, 1fr) !important; } }
-        @media (max-width: 768px)  { .nd-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 0.75rem !important; } }
+        .nd-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: clamp(1rem, 1.5vw, 1.5rem);
+        }
+        @media (max-width: 1024px) { .nd-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 680px)  { .nd-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; } }
       `}</style>
     </section>
   );
 }
 
-// ─── Product Card ──────────────────────────────────────────────────────────────
+// ─── LP-Editorial Product Card ────────────────────────────────────────────────
 
 function NewDropCard({ product: p }: { product: DropProduct }) {
   const [hovered, setHovered] = useState(false);
   const [wishlisted, setWishlisted] = useState(false);
   const [added, setAdded] = useState(false);
 
-  const disc = Math.round(((p.mrpPaise - p.pricePaise) / p.mrpPaise) * 100);
+  const disc = p.mrpPaise > p.pricePaise
+    ? Math.round(((p.mrpPaise - p.pricePaise) / p.mrpPaise) * 100)
+    : 0;
 
   return (
-    <div
+    <article
       style={{ display: "flex", flexDirection: "column" }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* ── Image container ── */}
+      {/* ── Image (LP-clean: no border, no harsh shadow) ─────────────────── */}
       <Link
         href={p.href}
         style={{
@@ -258,16 +229,18 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
           display: "block",
           aspectRatio: "3/4",
           overflow: "hidden",
-          backgroundColor: "var(--color-mist)",
-          marginBottom: "0.85rem",
+          backgroundColor: "var(--color-bone)",
+          marginBottom: "0.9rem",
         }}
+        tabIndex={0}
+        aria-label={p.title}
       >
-        {/* Badges */}
+        {/* Badges — top left */}
         <div
           style={{
             position: "absolute",
-            top: "12px",
-            left: "12px",
+            top: "10px",
+            left: "10px",
             zIndex: 10,
             display: "flex",
             flexDirection: "column",
@@ -278,14 +251,13 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
             <span
               style={{
                 backgroundColor: "var(--color-navy)",
-                color: "var(--color-cream)",
+                color: "#FFFFFF",
                 fontFamily: "var(--font-sans)",
                 fontSize: "9px",
                 fontWeight: 900,
-                letterSpacing: "0.15em",
+                letterSpacing: "0.12em",
                 textTransform: "uppercase",
-                padding: "4px 8px",
-                display: "block",
+                padding: "3px 8px",
               }}
             >
               NEW
@@ -294,32 +266,30 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
           {p.badge && (
             <span
               style={{
-                backgroundColor: "var(--color-crimson)",
-                color: "var(--color-cream)",
+                backgroundColor: "var(--color-lava)",
+                color: "var(--color-navy)",
                 fontFamily: "var(--font-sans)",
                 fontSize: "9px",
                 fontWeight: 900,
-                letterSpacing: "0.15em",
+                letterSpacing: "0.12em",
                 textTransform: "uppercase",
-                padding: "4px 8px",
-                display: "block",
+                padding: "3px 8px",
               }}
             >
               {p.badge}
             </span>
           )}
-          {disc > 0 && !p.badge && (
+          {disc >= 5 && !p.badge && (
             <span
               style={{
-                backgroundColor: "var(--color-crimson)",
-                color: "var(--color-cream)",
+                backgroundColor: "var(--color-navy)",
+                color: "#FFFFFF",
                 fontFamily: "var(--font-sans)",
                 fontSize: "9px",
                 fontWeight: 900,
-                letterSpacing: "0.15em",
+                letterSpacing: "0.12em",
                 textTransform: "uppercase",
-                padding: "4px 8px",
-                display: "block",
+                padding: "3px 8px",
               }}
             >
               {disc}% OFF
@@ -327,69 +297,64 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
           )}
         </div>
 
-        {/* Wishlist button */}
+        {/* Wishlist — top right */}
         <button
-          onClick={(e) => {
-            e.preventDefault();
-            setWishlisted((w) => !w);
-          }}
+          onClick={(e) => { e.preventDefault(); setWishlisted(w => !w); }}
           aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
           style={{
             position: "absolute",
-            top: "12px",
-            right: "12px",
+            top: "10px",
+            right: "10px",
             zIndex: 10,
-            background: "rgba(245,241,232,0.92)",
+            background: "rgba(249,248,246,0.92)",
             border: "none",
-            width: "34px",
-            height: "34px",
+            width: "32px",
+            height: "32px",
             borderRadius: "50%",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             cursor: "pointer",
-            transition: "opacity 0.2s ease, transform 0.2s ease",
             opacity: hovered || wishlisted ? 1 : 0,
-            transform: hovered ? "scale(1)" : "scale(0.85)",
+            transform: hovered || wishlisted ? "scale(1)" : "scale(0.8)",
+            transition: "opacity 0.2s ease, transform 0.2s ease",
           }}
         >
           <svg
-            width="15"
-            height="15"
+            width="14"
+            height="14"
             viewBox="0 0 24 24"
-            fill={wishlisted ? "var(--color-crimson)" : "none"}
-            stroke={wishlisted ? "var(--color-crimson)" : "var(--color-navy)"}
+            fill={wishlisted ? "var(--color-lava)" : "none"}
+            stroke={wishlisted ? "var(--color-lava)" : "var(--color-navy)"}
             strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
           >
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
           </svg>
         </button>
 
-        {/* Product image — swaps on hover */}
+        {/* Product image — LP hover zoom */}
         <Image
           src={hovered ? p.hoverImage : p.image}
           alt={p.title}
           fill
-          sizes="(max-width: 768px) 50vw, 25vw"
+          sizes="(max-width: 680px) 50vw, 25vw"
           style={{
             objectFit: "cover",
-            transition: "opacity 0.35s ease, transform 0.65s ease",
-            transform: hovered ? "scale(1.04)" : "scale(1)",
+            transform: hovered ? "scale(1.05)" : "scale(1)",
+            transition: "transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94)",
           }}
         />
 
-        {/* Quick Add — slides up on hover */}
+        {/* Quick Add — LP-style slides up on hover */}
         <div
           style={{
             position: "absolute",
             bottom: 0,
             left: 0,
             right: 0,
-            padding: "0.75rem",
+            padding: "0.625rem",
             transform: hovered ? "translateY(0)" : "translateY(100%)",
-            transition: "transform 0.28s ease",
+            transition: "transform 0.25s ease",
             zIndex: 10,
           }}
         >
@@ -402,8 +367,8 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
             style={{
               width: "100%",
               padding: "0.75rem",
-              backgroundColor: added ? "var(--color-crimson)" : "var(--color-navy)",
-              color: "var(--color-cream)",
+              backgroundColor: added ? "var(--color-lava)" : "rgba(249,248,246,0.97)",
+              color: added ? "var(--color-navy)" : "var(--color-navy)",
               fontFamily: "var(--font-sans)",
               fontWeight: 800,
               fontSize: "0.68rem",
@@ -414,70 +379,70 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
               transition: "background-color 0.2s ease",
             }}
           >
-            {added ? "ADDED \u2713" : "QUICK ADD"}
+            {added ? "ADDED ✓" : "QUICK ADD"}
           </button>
         </div>
       </Link>
 
-      {/* ── Product info ── */}
-      <div>
+      {/* ── Product Info (LP-clean) ──────────────────────────────────────── */}
+      <div style={{ paddingInline: "2px" }}>
         {/* Color swatches */}
-        <div
-          style={{ display: "flex", gap: "6px", marginBottom: "8px" }}
-          aria-label="Available colors"
-        >
-          {(p.colors ?? []).filter((c) => c?.hex).map((c) => (
+        <div style={{ display: "flex", gap: "5px", marginBottom: "7px" }} aria-label="Available colors">
+          {(p.colors ?? []).filter(c => c?.hex).map(c => (
             <div
               key={c.hex}
               title={c.label}
               style={{
-                width: "12px",
-                height: "12px",
+                width: "11px",
+                height: "11px",
                 borderRadius: "50%",
                 backgroundColor: c.hex,
-                border: "1.5px solid rgba(23,37,69,0.25)",
+                border: "1.5px solid rgba(23,37,84,0.2)",
                 flexShrink: 0,
               }}
             />
           ))}
         </div>
 
+        {/* Name */}
         <Link
           href={p.href}
           style={{
             display: "block",
             fontFamily: "var(--font-sans)",
-            fontWeight: 800,
-            fontSize: "0.72rem",
-            letterSpacing: "0.06em",
+            fontWeight: 700,
+            fontSize: "0.78rem",
+            letterSpacing: "0.04em",
             textTransform: "uppercase",
             color: "var(--color-navy)",
-            marginBottom: "6px",
-            lineHeight: 1.35,
+            marginBottom: "5px",
+            lineHeight: 1.4,
+            textDecoration: "none",
           }}
         >
           {p.title}
         </Link>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        {/* Price */}
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
           <span
             style={{
               fontFamily: "var(--font-sans)",
-              fontWeight: 700,
-              fontSize: "0.85rem",
+              fontWeight: 800,
+              fontSize: "0.88rem",
               color: "var(--color-navy)",
             }}
           >
             {fmt(p.pricePaise)}
           </span>
-          {disc > 0 && (
+          {disc >= 5 && (
             <>
               <span
                 style={{
                   fontFamily: "var(--font-sans)",
                   fontWeight: 500,
                   fontSize: "0.75rem",
-                  color: "var(--color-gray)",
+                  color: "var(--color-smoke)",
                   textDecoration: "line-through",
                 }}
               >
@@ -488,7 +453,7 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
                   fontFamily: "var(--font-sans)",
                   fontWeight: 700,
                   fontSize: "0.68rem",
-                  color: "var(--color-crimson)",
+                  color: "var(--color-lava)",
                   letterSpacing: "0.04em",
                 }}
               >
@@ -498,6 +463,6 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
           )}
         </div>
       </div>
-    </div>
+    </article>
   );
 }

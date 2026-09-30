@@ -1,28 +1,28 @@
 import type { ReactNode } from "react";
-import { Anton, Inter, Space_Mono } from "next/font/google";
+import { Archivo, Hanken_Grotesk, Noto_Sans_Devanagari } from "next/font/google";
 import "@/styles/globals.css";
 import { ChatWidget } from "@/components/common/ChatWidget";
 import { ToastProvider } from "@/components/common/Toast";
 
 // ─── Font loading (next/font — zero layout shift) ─────────────────────────────
-const inter = Inter({
+const archivo = Archivo({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-archivo",
+  display: "swap",
+  weight: ["800", "900"],
+});
+
+const hanken = Hanken_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-hanken",
   display: "swap",
 });
 
-const anton = Anton({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--font-anton",
+const notoDeva = Noto_Sans_Devanagari({
+  subsets: ["devanagari"],
+  variable: "--font-noto-deva",
   display: "swap",
-});
-
-const spaceMono = Space_Mono({
-  weight: ["400", "700"],
-  subsets: ["latin"],
-  variable: "--font-space-mono",
-  display: "swap",
+  weight: "600",
 });
 
 // ─── JSON-LD — Organization ───────────────────────────────────────────────────
@@ -104,10 +104,10 @@ export const metadata = {
   },
   icons: {
     icon: [
+      { url: "/logo.png", type: "image/png" },
       { url: "/favicon.ico", sizes: "any" },
-      { url: "/icon", type: "image/png", sizes: "32x32" },
     ],
-    apple: [{ url: "/icon", sizes: "32x32", type: "image/png" }],
+    apple: [{ url: "/logo.png", type: "image/png" }],
   },
 };
 
@@ -116,7 +116,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${anton.variable} ${spaceMono.variable}`}
+      className={`${archivo.variable} ${hanken.variable} ${notoDeva.variable}`}
     >
       <head>
         {/* JSON-LD — Organization */}

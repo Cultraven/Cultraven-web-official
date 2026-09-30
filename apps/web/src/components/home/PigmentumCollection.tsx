@@ -3,21 +3,21 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { PIGMENTUM_COLLECTION, type PigmentumProduct } from "@/lib/fixtures";
+import { DHARMA_COLLECTION, type DharmaProduct } from "@/lib/fixtures";
 import { useCartStore } from "@/store/cart";
 
 const fmt = (paise: number) =>
   `₹${(paise / 100).toLocaleString("en-IN")}`;
 
 export function PigmentumCollection({
-  products = PIGMENTUM_COLLECTION,
+  products = DHARMA_COLLECTION,
 }: {
-  products?: PigmentumProduct[];
+  products?: DharmaProduct[];
 }) {
   const addItem = useCartStore((s) => s.addItem);
   const [addedId, setAddedId] = useState<string | null>(null);
 
-  const handleQuickAdd = (p: PigmentumProduct) => {
+  const handleQuickAdd = (p: DharmaProduct) => {
     addItem({
       productId: p.id,
       slug: p.id,

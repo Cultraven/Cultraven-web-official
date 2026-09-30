@@ -70,7 +70,7 @@ export function ShopTheLookSection() {
         {/* Split layout */}
         <div style={{ display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: "3rem", alignItems: "stretch" }} className="stl-grid">
           {/* Left — editorial model image */}
-          <div style={{ position: "relative", aspectRatio: "3/4", maxHeight: "600px", overflow: "hidden", backgroundColor: "var(--color-mist)" }}>
+          <div style={{ position: "relative", aspectRatio: "3/4", overflow: "hidden", backgroundColor: "var(--color-mist)" }}>
             <Image
               src={look.modelImage || DEFAULT_LOOK.modelImage}
               alt="CULTRAVEN styled look — Shop The Look"

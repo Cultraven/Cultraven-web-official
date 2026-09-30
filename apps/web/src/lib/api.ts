@@ -32,13 +32,26 @@ export async function getHomepageCms(): Promise<HomepageCms> {
     const res = await fetch(`${baseUrl}/api/cms/hero`, { cache: 'no-store' });
     if (res.ok) {
       const data = await res.json();
-      const dbBanners = data.banners || [];
-      // If DB has banners, use them. Otherwise fallback to fixture.
+      const dbBanners = (data.banners || []).filter((b: any) => b.active !== false);
       if (dbBanners.length > 0) {
+        const mapped = dbBanners.map((b: any, idx: number) => ({
+          id: b.id || `cms-hero-${idx}`,
+          type: b.type || "image",
+          srcDesktop: b.srcDesktop || "",
+          srcMobile: b.imageMobile || b.srcDesktop || "",
+          altText: b.altText || "",
+          headline: b.headline || HOMEPAGE_CMS_FIXTURE.heroSlide.headline,
+          subheadline: b.subheadline || "",
+          ctaLabel: b.ctaLabel || HOMEPAGE_CMS_FIXTURE.heroSlide.ctaLabel,
+          ctaHref: b.ctaHref || HOMEPAGE_CMS_FIXTURE.heroSlide.ctaHref,
+          textColor: b.textColor || "#FFFFFF",
+          overlayOpacity: typeof b.overlayOpacity === "number" ? b.overlayOpacity : 0.45,
+        }));
         return {
           ...HOMEPAGE_CMS_FIXTURE,
-          heroSlide: dbBanners[0], // using first active banner
-        };
+          heroSlide: mapped[0],
+          heroSlides: mapped,
+        } as any;
       }
     }
     return HOMEPAGE_CMS_FIXTURE;

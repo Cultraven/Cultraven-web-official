@@ -317,7 +317,7 @@ export default function ProductDetailClient({ slug, productName }: { slug: strin
         
         <div style={{ position: "relative", width: "100%", maxWidth: "600px", margin: "0 auto" }}>
           <div style={{ position: "relative", aspectRatio: "3/4", border: "var(--border-thick)", boxShadow: "8px 8px 0px 0px #000" }}>
-            <Image src={product?.image || GALLERY_IMAGES[0]} alt="Shop the look" fill sizes="100vw" style={{ objectFit: "cover" }} />
+            <Image src={product?.image || GALLERY_IMAGES[0].src} alt="Shop the look" fill sizes="100vw" style={{ objectFit: "cover" }} />
             
             {/* Hotspot 1 */}
             <Link href="/products/raven-oversized-tee-acid-black" style={{ position: "absolute", top: "35%", left: "45%", width: "24px", height: "24px", backgroundColor: "var(--color-crimson)", borderRadius: "50%", border: "2px solid var(--color-cream)", display: "flex", alignItems: "center", justifyContent: "center", transform: "translate(-50%, -50%)", cursor: "pointer", zIndex: 10, animation: "pulse 2s infinite" }}>

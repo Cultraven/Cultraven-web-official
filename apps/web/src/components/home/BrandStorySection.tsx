@@ -25,18 +25,21 @@ export function BrandStorySection() {
       }}
     >
       {/* Background video */}
+      {/* Fallback background image shown while/if video doesn't load */}
+      <div style={{ position: "absolute", inset: 0, zIndex: 0, backgroundImage: "url('https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=1400&auto=format&fit=crop&q=80')", backgroundSize: "cover", backgroundPosition: "center" }} />
       <video
         autoPlay
         muted
         loop
         playsInline
+        poster="https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?w=1400&auto=format&fit=crop&q=80"
         style={{
           position: "absolute",
           inset: 0,
           width: "100%",
           height: "100%",
           objectFit: "cover",
-          zIndex: 0,
+          zIndex: 1,
         }}
       >
         <source src="https://assets.mixkit.co/videos/preview/mixkit-young-man-in-streetwear-standing-outdoors-42289-large.mp4" type="video/mp4" />
@@ -49,7 +52,8 @@ export function BrandStorySection() {
           position: "absolute",
           inset: 0,
           background:
-            "linear-gradient(105deg, rgba(23,37,69,0.92) 0%, rgba(23,37,69,0.70) 45%, rgba(23,37,69,0.30) 100%)",
+            "linear-gradient(105deg, rgba(23,37,69,0.88) 0%, rgba(23,37,69,0.65) 45%, rgba(23,37,69,0.20) 100%)",
+        zIndex: 2,
         }}
       />
 
