@@ -7,6 +7,7 @@ import React, { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useCartStore } from "@/store/cart";
+import { useBuyNowStore } from "@/store/buyNow";
 import Confetti from "react-confetti";
 
 interface OrderSuccessClientProps {
@@ -29,7 +30,9 @@ function OrderSuccessContent({ orderId }: OrderSuccessClientProps) {
   const fmt = (p: number) => `₹${(p / 100).toLocaleString("en-IN")}`;
 
   useEffect(() => {
-    clearCart();
+    // An express (COP IT NOW) order must not empty the shopper's bag.
+    const express = useBuyNowStore.getState();
+    if (express.item) express.clear(); else clearCart();
     setWindowSize({ width: window.innerWidth, height: window.innerHeight });
     setShowConfetti(true);
     const timer = setTimeout(() => setShowConfetti(false), 6000);

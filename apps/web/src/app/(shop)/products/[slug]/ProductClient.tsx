@@ -19,7 +19,9 @@
 import React, { useState } from "react";
 import Image from "@/components/common/CmsImage";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCartStore } from "@/store/cart";
+import { useBuyNowStore } from "@/store/buyNow";
 import { useWishlisted } from "@/store/wishlist";
 import { toast } from "@/components/common/Toast";
 
@@ -50,6 +52,7 @@ const POLICY_ACCORDIONS = [
 
 /** Product + related items are loaded from the database on the server (see page.tsx). */
 export default function ProductDetailClient({ product, related }: { product: PdpProduct; related: RelatedProduct[] }) {
+  const router = useRouter();
   const slug = product.slug;
   const GALLERY_IMAGES = product.images.map((src) => ({ type: "image" as const, src }));
   const COLORS = product.colors;
@@ -103,6 +106,28 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
     setAdded(true);
     toast.success("Added to bag ✓");
     setTimeout(() => setAdded(false), 2000);
+  };
+
+  /** COP IT NOW: one-item express checkout. The cart is left untouched. */
+  const handleCopItNow = () => {
+    if (!selectedSize) {
+      setSizeError(true);
+      setTimeout(() => setSizeError(false), 2000);
+      return;
+    }
+    useBuyNowStore.getState().set({
+      productId: product.id,
+      slug,
+      title: finalName,
+      image: product.image,
+      sku: `${slug}-${selectedSize}-${(COLORS[selectedColor]?.label ?? "default").toUpperCase().replace(/\s+/g, "-")}`,
+      size: selectedSize,
+      color: COLORS[selectedColor]?.label ?? "Default",
+      pricePaise,
+      mrpPaise,
+      quantity: qty,
+    });
+    router.push("/checkout?mode=buy-now");
   };
 
   const checkDelivery = () => {
@@ -247,7 +272,7 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
             <button className="btn-primary" onClick={handleAddToBag} style={{ width: "100%", padding: "16px", fontSize: "16px" }}>
               {added ? "BAG MEIN GAYA ✓" : "BAG IT"}
             </button>
-            <button style={{ width: "100%", padding: "16px", backgroundColor: "var(--color-mist)", color: "var(--color-navy)", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "16px", textTransform: "uppercase", border: "2px solid var(--color-navy)", cursor: "pointer", boxShadow: "4px 4px 0px 0px var(--color-navy)", transition: "transform 0.1s ease, box-shadow 0.1s ease" }}>
+            <button onClick={handleCopItNow} style={{ width: "100%", padding: "16px", backgroundColor: "var(--color-mist)", color: "var(--color-navy)", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "16px", textTransform: "uppercase", border: "2px solid var(--color-navy)", cursor: "pointer", boxShadow: "4px 4px 0px 0px var(--color-navy)", transition: "transform 0.1s ease, box-shadow 0.1s ease" }}>
               COP IT NOW
             </button>
             <button onClick={() => setWishlisted((w) => !w)} style={{ width: "100%", padding: "12px", backgroundColor: "transparent", color: wishlisted ? "var(--color-crimson)" : "var(--color-navy)", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", letterSpacing: "0.1em", textTransform: "uppercase", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>

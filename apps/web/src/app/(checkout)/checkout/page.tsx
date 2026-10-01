@@ -90,6 +90,7 @@ function loadRazorpayScript(): Promise<void> {
 }
 
 import { useCartStore } from "@/store/cart";
+import { useBuyNowStore } from "@/store/buyNow";
 import { validateCoupon } from "@/lib/promotion-service";
 import { FREE_SHIPPING_THRESHOLD, SHIPPING_FEE, COD_FEE } from "@/lib/constants";
 
@@ -112,15 +113,24 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [paymentError, setPaymentError] = useState("");
 
-  // ── Use Zustand cart items (localStorage-persisted) ────────────────────────
-  const { items: cartItems, couponCode } = useCartStore();
-
-  // Redirect to cart page if nothing in cart
+  // ── Items: the whole cart, or just the one COP IT NOW item (?mode=buy-now) ──
+  const { items: bagItems, couponCode: bagCoupon } = useCartStore();
+  const buyNowItem = useBuyNowStore((s) => s.item);
+  const [buyNow, setBuyNow] = useState<boolean | null>(null); // null until the URL has been read on the client
   useEffect(() => {
-    if (cartItems.length === 0) {
-      router.replace("/cart");
-    }
-  }, [cartItems, router]);
+    const isBuyNow = new URLSearchParams(window.location.search).get("mode") === "buy-now";
+    // A stale express item must never linger into a normal cart checkout (it would skip clearing the cart).
+    if (!isBuyNow) useBuyNowStore.getState().clear();
+    setBuyNow(isBuyNow);
+  }, []);
+  const cartItems = buyNow ? (buyNowItem ? [buyNowItem] : []) : bagItems;
+  const couponCode = buyNow ? null : bagCoupon;
+
+  // Nothing to check out → send the shopper back to where they came from
+  useEffect(() => {
+    if (buyNow === null) return;
+    if (cartItems.length === 0) router.replace(buyNow ? "/collections/all" : "/cart");
+  }, [buyNow, cartItems.length, router]);
 
   const subtotal = cartItems.reduce((s, i) => s + i.pricePaise * i.quantity, 0);
   const promo = validateCoupon(couponCode, subtotal);
@@ -266,7 +276,7 @@ export default function CheckoutPage() {
           CULTRAVEN
         </span>
         <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(245,241,232,0.5)" }}>
-          SECURE CHECKOUT
+          {buyNow ? "COP IT NOW · EXPRESS CHECKOUT" : "SECURE CHECKOUT"}
         </span>
       </header>
 

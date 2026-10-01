@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useCartStore } from "@/store/cart";
+import { useBuyNowStore } from "@/store/buyNow";
 import Confetti from "react-confetti";
 
 interface Props {
@@ -22,7 +23,9 @@ export default function OrderSuccessClient({ orderId, paymentId, isConfirmed, or
   const fmt = (p: number) => `₹${(p / 100).toLocaleString("en-IN")}`;
 
   useEffect(() => {
-    clearCart();
+    // An express (COP IT NOW) order must not empty the shopper's bag.
+    const express = useBuyNowStore.getState();
+    if (express.item) express.clear(); else clearCart();
     setWindowSize({ width: window.innerWidth, height: window.innerHeight });
     
     if (isConfirmed) {
