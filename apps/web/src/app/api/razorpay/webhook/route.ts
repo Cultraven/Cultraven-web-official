@@ -15,7 +15,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { notifyOrderPlaced } from "@/lib/order-notify";
-import { getWebhookSecret, verifyWebhookSignature } from "@/lib/razorpay";
+import { getWebhookSecretAsync, verifyWebhookSignature } from "@/lib/razorpay";
 import { connectToDatabase } from "@/lib/db";
 import { Order } from "@/lib/models/Order";
 import { Product } from "@/lib/models/Product";
@@ -48,25 +48,34 @@ interface RazorpayWebhookPayload {
 }
 
 // ── Signature verification ────────────────────────────────────────────────────
-function verifySignature(rawBody: string, signature: string): boolean {
-  const secret = getWebhookSecret();
+// The secret is the admin-saved one (Admin -> Settings -> Payments) or RAZORPAY_WEBHOOK_SECRET. Fails closed when neither exists.
+async function verifySignature(rawBody: string, signature: string): Promise<boolean> {
+  const secret = await getWebhookSecretAsync();
   if (!secret) {
-    console.error("[webhook] RAZORPAY_WEBHOOK_SECRET not set");
+    console.error("[webhook] no webhook secret configured (Admin -> Settings -> Payments, or RAZORPAY_WEBHOOK_SECRET)");
     return false;
   }
   return verifyWebhookSignature(rawBody, signature, secret);
 }
 
+// Razorpay events are a few KB; anything bigger is not from Razorpay.
+const MAX_WEBHOOK_BYTES = 256 * 1024;
+
+/** Mongo queries below only ever receive plain strings, even though the payload is signed. */
+const str = (v: unknown): string | null => (typeof v === "string" && v.length > 0 && v.length <= 128 ? v : null);
+
 // ── Event handlers ────────────────────────────────────────────────────────────
 async function handlePaymentCaptured(payload: RazorpayWebhookPayload) {
   const payment = payload.payload?.payment?.entity;
   if (!payment) return;
+  const rzpOrderId = str(payment.order_id);
+  if (!rzpOrderId) return;
 
   try {
     await connectToDatabase();
     
     // Fetch order first to check status and amount
-    const order = await Order.findOne({ razorpayOrderId: payment.order_id });
+    const order = await Order.findOne({ razorpayOrderId: rzpOrderId });
     if (!order) {
       console.warn(`[webhook] Order not found for razorpayOrderId: ${payment.order_id}`);
       return;
@@ -126,7 +135,9 @@ async function handlePaymentFailed(payload: RazorpayWebhookPayload) {
   // Mark order as failed in database
   try {
     await connectToDatabase();
-    const order = await Order.findOne({ razorpayOrderId: payment?.order_id });
+    const rzpOrderId = str(payment?.order_id);
+    if (!rzpOrderId) return;
+    const order = await Order.findOne({ razorpayOrderId: rzpOrderId });
     if (!order || order.paymentStatus === "paid") return; // never overwrite paid
 
     await Order.findByIdAndUpdate(
@@ -149,8 +160,13 @@ async function handlePaymentFailed(payload: RazorpayWebhookPayload) {
 
 // ── Main handler ──────────────────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
-  // 1. Read raw body as text
+  // 1. Read raw body as text (the signature covers the exact bytes, so it is NOT run through parseJsonBody)
+  const declared = Number(req.headers.get("content-length"));
+  if (Number.isFinite(declared) && declared > MAX_WEBHOOK_BYTES) {
+    return NextResponse.json({ error: "Payload too large" }, { status: 413 });
+  }
   const rawBody = await req.text();
+  if (rawBody.length > MAX_WEBHOOK_BYTES) return NextResponse.json({ error: "Payload too large" }, { status: 413 });
   const signature = req.headers.get("x-razorpay-signature") ?? "";
 
   if (!signature) {
@@ -158,7 +174,7 @@ export async function POST(req: NextRequest) {
   }
 
   // 2. Verify webhook signature
-  if (!verifySignature(rawBody, signature)) {
+  if (!(await verifySignature(rawBody, signature))) {
     console.warn("[webhook] Invalid Razorpay signature — request rejected");
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }

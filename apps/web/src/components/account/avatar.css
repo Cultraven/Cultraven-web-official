@@ -1,0 +1,21 @@
+/* Avatar images: account sidebar card + header account button. Initial-letter fallback keeps the existing look. */
+.acct-avatar { overflow: hidden; }
+.acct-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; max-width: none; }
+
+/* The sidebar profile card is a link to /account/profile — give it hover / focus / touch feedback. */
+a.acct-profile { text-decoration: none; color: var(--color-cream); transition: transform 0.15s ease, box-shadow 0.15s ease; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+a.acct-profile:focus-visible { outline: 3px solid var(--color-lava); outline-offset: 3px; }
+a.acct-profile:active { transform: translate(3px, 3px); box-shadow: 3px 3px 0 0 var(--color-lava); }
+@media (hover: hover) {
+  a.acct-profile:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 0 var(--color-lava); }
+  a.acct-profile:hover b { text-decoration: underline; text-decoration-color: var(--color-lava); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+}
+.acct-profile .acct-profile-edit { display: block; margin-top: 4px; font-size: 0.62rem; font-weight: 900; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-lava); }
+
+/* Header: small circular avatar / initial in the account button */
+.hdr-avatar {
+  display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
+  font: 900 0.8rem/1 var(--font-sans); letter-spacing: 0; text-transform: uppercase;
+  background: var(--color-lava); color: var(--color-navy); border: 2px solid currentColor;
+}
+.hdr-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; max-width: none; }

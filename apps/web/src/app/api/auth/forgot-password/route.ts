@@ -1,47 +1,38 @@
 /**
  * POST /api/auth/forgot-password
  * Triggers a password reset email via the auth-service.
- * Always returns 200 (prevents email enumeration).
+ * Always returns 200 for a well-formed request (prevents email enumeration); hostile / malformed bodies get 4xx.
+ *
+ * Rate limited per IP (3/hour) and per email (3/hour) so it can't be used to flood someone's inbox.
  */
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { clientIp, isSameOrigin, parseJsonBody, rateLimit } from "@/lib/sanitize";
 
 const BodySchema = z.object({
-  email: z.string().email("Invalid email"),
+  email: z.string().trim().max(254).email("Invalid email").toLowerCase(),
 });
 
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(ip);
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + 60 * 60 * 1000 });
-    return false;
-  }
-  if (entry.count >= 3) return true;
-  entry.count++;
-  return false;
-}
+const HOUR = 60 * 60 * 1000;
 
 export async function POST(req: NextRequest) {
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-  if (isRateLimited(ip)) {
-    // Still return 200 to prevent enumeration
-    return NextResponse.json({ ok: true }, { status: 200 });
-  }
+  if (!isSameOrigin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-  let body: unknown;
-  try { body = await req.json(); }
-  catch { return NextResponse.json({ ok: true }, { status: 200 }); }
+  const ip = clientIp(req);
+  // Rate-limited requests still answer 200: the response must not depend on anything an attacker can probe.
+  const ipOk = rateLimit(`forgot-ip:${ip}`, 3, HOUR).ok;
 
-  const result = BodySchema.safeParse(body);
-  if (!result.success) {
-    return NextResponse.json({ ok: true }, { status: 200 });
-  }
+  const body = await parseJsonBody(req, 2 * 1024);
+  if (!body.ok) return NextResponse.json({ error: body.error }, { status: body.status });
+
+  const result = BodySchema.safeParse(body.data);
+  if (!result.success) return NextResponse.json({ ok: true }, { status: 200 });
 
   const { email } = result.data;
+  const emailOk = rateLimit(`forgot-email:${email}`, 3, HOUR).ok;
+  if (!ipOk || !emailOk) return NextResponse.json({ ok: true }, { status: 200 });
 
-  // Fire-and-forget — don't await (prevents timing attacks)
+  // Fire-and-forget — don't await (prevents timing differences)
   Promise.resolve().then(async () => {
     try {
       const authServiceUrl = process.env.AUTH_SERVICE_URL ?? "http://localhost:4001/api/v1";
@@ -52,7 +43,7 @@ export async function POST(req: NextRequest) {
         signal: AbortSignal.timeout(5000),
       });
     } catch (err) {
-      console.error("[forgot-password] service error:", err);
+      console.error("[forgot-password] service error:", err instanceof Error ? err.message : err);
     }
   });
 

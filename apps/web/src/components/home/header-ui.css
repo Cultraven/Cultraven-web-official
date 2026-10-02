@@ -1,0 +1,108 @@
+/* ═══════════════════════════════════════════════════════════════════════════════
+   Header / nav / side-menu / bottom-bar interaction states.
+   Every interactive thing in the header gets: a hover state (real pointers only), a :focus-visible ring, and an
+   :active "pressed" state that shows on touch. No tap-highlight flash, no 300 ms double-tap delay, >= 44px hit areas.
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* Tone tokens: "light" = transparent header over the hero photo (white text); "dark" = solid cream header (navy text). */
+.site-header { --hdr-hover: rgba(218, 178, 5, 0.3); --hdr-press: rgba(218, 178, 5, 0.58); --hdr-ul: var(--color-navy); }
+.site-header[data-tone="light"] { --hdr-hover: rgba(255, 255, 255, 0.22); --hdr-press: rgba(255, 255, 255, 0.4); --hdr-ul: var(--color-lava); }
+
+.site-header a, .site-header button,
+.mobile-bottom-nav a, .mobile-bottom-nav button,
+.mm-drawer a, .mm-drawer button {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation; /* removes the 300 ms tap delay */
+}
+
+/* ── Icon buttons (search, wishlist, orders, account, bag, hamburger) ── */
+.hdr-icon {
+  position: relative; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+  width: 44px; height: 44px; padding: 0; margin: 0;
+  background: transparent; border: 0; border-radius: 50%; box-shadow: none; color: inherit; text-decoration: none; cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.12s ease, color 0.3s ease;
+}
+/* beats `.action-icon:hover { opacity: .6 }` from components.css (higher specificity) */
+.site-header .hdr-icon:hover, .site-header .hdr-icon:active, .site-header .hdr-icon:focus-visible { opacity: 1; }
+.site-header .hdr-icon:focus-visible, .mm-drawer .hdr-icon:focus-visible { outline: 3px solid var(--color-lava); outline-offset: 1px; background: var(--hdr-hover); }
+.site-header .hdr-icon:active { background: var(--hdr-press); transform: scale(0.9); }
+@media (hover: hover) {
+  .site-header .hdr-icon:hover { background: var(--hdr-hover); }
+  .site-header .hdr-icon:hover svg { transform: scale(1.08); }
+  .site-header .hdr-icon:active:hover { background: var(--hdr-press); }
+}
+.hdr-icon svg { transition: transform 0.15s ease; }
+
+/* Logo link */
+.hdr-logo { border-radius: 2px; transition: opacity 0.15s ease; }
+.hdr-logo:focus-visible { outline: 3px solid var(--color-lava); outline-offset: 2px; }
+.hdr-logo:active { opacity: 0.7; }
+
+/* ── Desktop nav links + dropdown triggers ── */
+.nav-link {
+  position: relative; display: inline-flex; align-items: center; gap: 0.25rem; min-height: 44px; padding: 0 0.45rem;
+  background: none; border: 0; border-radius: 0; text-decoration: none; cursor: pointer; color: inherit;
+  transition: background-color 0.15s ease, transform 0.1s ease, color 0.3s ease;
+}
+.nav-link::after {
+  content: ""; position: absolute; left: 0.45rem; right: 0.45rem; bottom: 7px; height: 3px; background: var(--nav-ul, var(--hdr-ul, var(--color-navy)));
+  transform: scaleX(0); transform-origin: left center; transition: transform 0.2s ease;
+}
+.nav-link:focus-visible { outline: 3px solid var(--color-lava); outline-offset: -2px; }
+.nav-link:focus-visible::after, .nav-link[aria-expanded="true"]::after, .nav-link[aria-current="page"]::after { transform: scaleX(1); }
+.nav-link:active { background: var(--hdr-press, rgba(218, 178, 5, 0.58)); transform: translateY(1px); }
+.nav-link:active::after { transform: scaleX(1); }
+@media (hover: hover) {
+  .nav-link:hover::after { transform: scaleX(1); }
+  .nav-link:hover { background: var(--hdr-hover, rgba(218, 178, 5, 0.3)); }
+}
+.nav-link svg { flex-shrink: 0; }
+
+/* Mega-menu dropdown links + featured card */
+.mm-link { border-radius: 0; margin: -0.35rem -0.5rem; padding: 0.35rem 0.5rem; min-height: 32px; transition: background-color 0.15s ease, transform 0.12s ease; }
+.mm-link:focus-visible { outline: 3px solid var(--color-lava); outline-offset: 0; background: rgba(218, 178, 5, 0.28); }
+.mm-link:active { background: rgba(218, 178, 5, 0.55); transform: translateX(3px); }
+@media (hover: hover) { .mm-link:hover { background: rgba(218, 178, 5, 0.28); transform: translateX(3px); } }
+.mm-feature:focus-visible { outline: 3px solid var(--color-lava); outline-offset: 4px; }
+.mm-feature:active { transform: translate(3px, 3px) !important; box-shadow: 1px 1px 0 0 var(--color-lava) !important; }
+
+/* ── Mobile side menu ── */
+.mm-drawer { height: 100vh; height: 100dvh; max-height: 100dvh; overflow: hidden; }
+.mm-nav { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+.mm-item { min-height: 52px; transition: background-color 0.12s ease; }
+.mm-item:focus-visible { outline: 3px solid var(--color-lava); outline-offset: -3px; background: rgba(218, 178, 5, 0.22); }
+.mm-item:active { background: rgba(218, 178, 5, 0.5); }
+.mm-item[aria-current="page"] { box-shadow: inset 5px 0 0 0 var(--color-lava); background: rgba(218, 178, 5, 0.16); }
+@media (hover: hover) { .mm-item:hover { background: rgba(218, 178, 5, 0.22); } }
+.mm-sub { min-height: 44px; transition: background-color 0.12s ease, color 0.12s ease; }
+.mm-sub:focus-visible { outline: 3px solid var(--color-lava); outline-offset: 0; background: rgba(218, 178, 5, 0.22); }
+.mm-sub:active { background: rgba(218, 178, 5, 0.5); }
+@media (hover: hover) { .mm-sub:hover { background: rgba(218, 178, 5, 0.22); } }
+
+/* The pinned footer of the drawer (My account / My orders / Search): always on screen, safe-area aware, 48px rows */
+.mm-foot { flex: 0 0 auto; padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom)) !important; gap: 0 !important; background: var(--color-bone); }
+.mm-foot-link { min-height: 48px; padding: 0 0.5rem; border-radius: 0; transition: background-color 0.12s ease; }
+.mm-foot-link:focus-visible { outline: 3px solid var(--color-lava); outline-offset: -3px; background: rgba(218, 178, 5, 0.22); }
+.mm-foot-link:active { background: rgba(218, 178, 5, 0.5); }
+@media (hover: hover) { .mm-foot-link:hover { background: rgba(218, 178, 5, 0.22); } }
+.mm-close { border-radius: 50%; }
+.mm-close:active { background: rgba(218, 178, 5, 0.5); transform: scale(0.92); }
+.mm-close:focus-visible { outline: 3px solid var(--color-lava); outline-offset: 1px; }
+@media (hover: hover) { .mm-close:hover { background: rgba(218, 178, 5, 0.28); } }
+
+/* ── Mobile bottom bar ── */
+.mobile-bottom-nav .bottom-nav-item { background: transparent; border: 0; padding: 0; font-family: var(--font-sans); cursor: pointer; transition: background-color 0.12s ease, transform 0.1s ease; min-height: 44px; }
+.mobile-bottom-nav .bottom-nav-item:active { background: rgba(218, 178, 5, 0.45); transform: translateY(1px); }
+.mobile-bottom-nav .bottom-nav-item:focus-visible { outline: 3px solid var(--color-lava); outline-offset: -3px; background: rgba(218, 178, 5, 0.22); }
+@media (hover: hover) { .mobile-bottom-nav .bottom-nav-item:hover { background: rgba(218, 178, 5, 0.22); } }
+
+/* Touch devices at >= 1024px (tablets in landscape): same 44px minimum (icons are already 44px) */
+@media (pointer: coarse) { .nav-link { min-height: 48px; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .hdr-icon, .hdr-icon svg, .nav-link, .nav-link::after, .mm-link, .mm-item, .mm-sub, .mm-foot-link, .hdr-logo { transition: none; }
+}
+
+/* Featured card in the mega menu: hover lift (real pointers only; the :active press is above) */
+.mm-feature { transition: box-shadow 0.2s ease, transform 0.2s ease; }
+@media (hover: hover) { .mm-feature:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 0 var(--color-lava) !important; } }

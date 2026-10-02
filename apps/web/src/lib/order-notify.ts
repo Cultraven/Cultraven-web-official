@@ -6,7 +6,8 @@
 import { connectToDatabase } from "@/lib/db";
 import { Order } from "@/lib/models/Order";
 import { getSmtpSettings, sendMail } from "@/lib/mailer";
-import { customerOrderEmail, adminOrderEmail, type MailOrder } from "@/lib/email-templates";
+import { customerOrderEmail, adminOrderEmail, orderStatusEmail, adminCustomerActionEmail, orderNumber, type MailOrder, type StatusEmailInput } from "@/lib/email-templates";
+import { buildInvoicePdf } from "@/lib/invoice-pdf";
 
 const siteUrl = () => (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
 
@@ -26,8 +27,12 @@ export async function notifyOrderPlaced(orderId: string): Promise<void> {
     const jobs: Promise<unknown>[] = [];
 
     if (mo.deliveryAddress.email) {
-      const m = customerOrderEmail(mo, siteUrl());
-      jobs.push(sendMail({ to: mo.deliveryAddress.email, ...m, kind: "order-customer", orderId: mo.id, replyTo: settings?.fromEmail }));
+      // Attach the PDF receipt; if it can't be built the confirmation still goes out without it.
+      let attachments: { filename: string; content: Uint8Array; contentType: string }[] | undefined;
+      try { attachments = [{ filename: `CULTRAVEN-receipt-${orderNumber(mo.id)}.pdf`, content: await buildInvoicePdf({ ...mo, razorpayPaymentId: o.razorpayPaymentId }), contentType: "application/pdf" }]; }
+      catch (e) { console.error("[order-notify] receipt PDF failed:", e instanceof Error ? e.message : e); }
+      const m = customerOrderEmail(mo, siteUrl(), { receiptAttached: !!attachments });
+      jobs.push(sendMail({ to: mo.deliveryAddress.email, ...m, kind: "order-customer", orderId: mo.id, replyTo: settings?.fromEmail, attachments }));
     }
     for (const to of settings?.adminEmails ?? []) {
       const m = adminOrderEmail(mo, siteUrl());
@@ -36,5 +41,42 @@ export async function notifyOrderPlaced(orderId: string): Promise<void> {
     await Promise.allSettled(jobs);
   } catch (e) {
     console.error("[order-notify] failed:", e instanceof Error ? e.message : e);
+  }
+}
+
+function toMailOrder(o: any): MailOrder {
+  return {
+    id: String(o._id), createdAt: o.createdAt, paymentMethod: o.paymentMethod, paymentStatus: o.paymentStatus,
+    items: o.items, subtotalPaise: o.subtotalPaise, discountPaise: o.discountPaise ?? 0, shippingPaise: o.shippingPaise ?? 0,
+    codFeePaise: o.codFeePaise ?? 0, totalPaise: o.totalPaise, deliveryAddress: o.deliveryAddress,
+  };
+}
+
+/** Tell the customer their order moved to a new status (admin change, or their own cancel / return request). Never throws. */
+export async function notifyStatusChange(orderId: string, info: StatusEmailInput): Promise<void> {
+  try {
+    await connectToDatabase();
+    const o = (await Order.findById(orderId).lean()) as any;
+    if (!o?.deliveryAddress?.email) return;
+    const settings = await getSmtpSettings();
+    const mo = toMailOrder(o);
+    const m = orderStatusEmail(mo, siteUrl(), { ...info, courier: info.courier ?? o.courierName, trackingNumber: info.trackingNumber ?? o.trackingNumber, trackingUrl: info.trackingUrl ?? o.trackingUrl });
+    await sendMail({ to: mo.deliveryAddress.email!, ...m, kind: `order-status-${info.status}`, orderId: mo.id, replyTo: settings?.fromEmail });
+  } catch (e) {
+    console.error("[order-notify] status email failed:", e instanceof Error ? e.message : e);
+  }
+}
+
+/** Alert the admin(s) that a customer cancelled or asked for a return. Never throws. */
+export async function notifyAdminCustomerAction(orderId: string, kind: "cancelled" | "return_requested", reason: string): Promise<void> {
+  try {
+    await connectToDatabase();
+    const o = (await Order.findById(orderId).lean()) as any;
+    if (!o) return;
+    const settings = await getSmtpSettings();
+    const m = adminCustomerActionEmail(toMailOrder(o), siteUrl(), kind, reason);
+    await Promise.allSettled((settings?.adminEmails ?? []).map((to) => sendMail({ to, ...m, kind: `admin-${kind}`, orderId })));
+  } catch (e) {
+    console.error("[order-notify] admin alert failed:", e instanceof Error ? e.message : e);
   }
 }

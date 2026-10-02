@@ -3,13 +3,27 @@ import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 import crypto from "crypto";
 import { isAdminRequest } from "@/lib/admin-auth";
+import { clientIp, isSameOrigin, rateLimit, retryHeaders } from "@/lib/sanitize";
 
 export const runtime = "nodejs";
 
+/**
+ * POST /api/upload (admin only, multipart "file").
+ *  - the real type comes from magic bytes; the client filename and MIME type are never used
+ *  - the stored name is 128 random bits + an extension WE choose (no traversal, no overwrite, no guessing)
+ *  - SVG / HTML / anything not in the allow-list is rejected (415), so nothing scriptable is ever served from /uploads
+ *  - size caps are enforced before and after reading the body
+ */
+
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 const MAX_VIDEO_BYTES = 40 * 1024 * 1024;
+/** multipart framing overhead allowed on top of the largest file */
+const MULTIPART_SLACK = 512 * 1024;
 
 type Sniffed = { ext: string; kind: "image" | "video" };
+
+/** ISO base-media brands that are really video. Others under "ftyp" (heic, mif1, ...) are not accepted. */
+const MP4_BRANDS = new Set(["isom", "iso2", "iso4", "iso5", "iso6", "mp41", "mp42", "avc1", "dash", "msnv", "M4V ", "mmp4"]);
 
 /** Detects the real file type from magic bytes. The filename and client MIME are never trusted. */
 function sniff(b: Buffer): Sniffed | null {
@@ -22,30 +36,31 @@ function sniff(b: Buffer): Sniffed | null {
   if (b.subarray(4, 8).toString("ascii") === "ftyp") {
     const brand = b.subarray(8, 12).toString("ascii");
     if (brand === "avif" || brand === "avis") return { ext: "avif", kind: "image" };
-    return { ext: "mp4", kind: "video" };
+    if (MP4_BRANDS.has(brand)) return { ext: "mp4", kind: "video" };
+    return null;
   }
   if (b[0] === 0x1a && b[1] === 0x45 && b[2] === 0xdf && b[3] === 0xa3) return { ext: "webm", kind: "video" };
   return null;
-}
-
-// Simple in-memory limiter (per server instance). Replace with Redis/Upstash in production.
-const hits = new Map<string, number[]>();
-function rateLimited(ip: string): boolean {
-  const now = Date.now();
-  const recent = (hits.get(ip) ?? []).filter((t) => now - t < 60_000);
-  recent.push(now);
-  hits.set(ip, recent);
-  return recent.length > 30;
 }
 
 export async function POST(req: Request) {
   if (!isAdminRequest(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  if (!isSameOrigin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "local";
-  if (rateLimited(ip)) {
-    return NextResponse.json({ error: "Too many uploads. Try again in a minute." }, { status: 429 });
+  const rl = rateLimit(`upload:${clientIp(req)}`, 30, 60_000);
+  if (!rl.ok) {
+    return NextResponse.json({ error: "Too many uploads. Try again in a minute." }, { status: 429, headers: retryHeaders(rl) });
+  }
+
+  // Refuse an oversized request before buffering any of it.
+  const declared = Number(req.headers.get("content-length"));
+  if (Number.isFinite(declared) && declared > MAX_VIDEO_BYTES + MULTIPART_SLACK) {
+    return NextResponse.json({ error: "File too large (max 40MB video / 10MB image)" }, { status: 413 });
+  }
+  if (!(req.headers.get("content-type") ?? "").toLowerCase().startsWith("multipart/form-data")) {
+    return NextResponse.json({ error: "No file provided" }, { status: 415 });
   }
 
   try {
@@ -70,14 +85,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Image too large (max 10MB)" }, { status: 413 });
     }
 
+    // Name and extension are ours alone: nothing from the request reaches the path.
     const filename = `${crypto.randomBytes(16).toString("hex")}.${detected.ext}`;
     const uploadDir = path.join(process.cwd(), "public", "uploads");
     await mkdir(uploadDir, { recursive: true });
-    await writeFile(path.join(uploadDir, filename), buffer);
+    await writeFile(path.join(uploadDir, filename), buffer, { flag: "wx" });
 
     return NextResponse.json({ success: true, url: `/uploads/${filename}`, kind: detected.kind });
   } catch (error) {
-    console.error("Upload error:", error);
+    console.error("Upload error:", error instanceof Error ? error.message : error);
     return NextResponse.json({ error: "Failed to upload file" }, { status: 500 });
   }
 }

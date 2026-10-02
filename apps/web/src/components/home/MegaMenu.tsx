@@ -8,7 +8,9 @@ import React, {
   type KeyboardEvent,
 } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import type { NavMenu, NavItem } from "@shop/types";
+import "./header-ui.css";
 
 interface MegaMenuProps {
   navMenu: NavMenu;
@@ -39,6 +41,16 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
   const [openId, setOpenId] = useState<string | null>(null);
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
   const menuRef = useRef<HTMLElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const pathname = usePathname() ?? "";
+
+  // HOME is always the first nav item (unless the CMS menu already has one).
+  const hasHome = navMenu.items.some((i) => i.href === "/" || /^home$/i.test(i.label.trim()));
+
+  // Move focus into the side menu when it opens (keyboard / screen-reader users).
+  useEffect(() => {
+    if (mobileOpen) closeRef.current?.focus({ preventScroll: true });
+  }, [mobileOpen]);
 
   useEffect(() => {
     const handler = (e: globalThis.KeyboardEvent) => {
@@ -95,11 +107,29 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
   return (
     <>
       {/* ──────── Desktop Nav ──────────────────────────────────────────── */}
-      <nav ref={menuRef} aria-label="Main navigation" className="hide-mobile">
+      <nav
+        ref={menuRef}
+        aria-label="Main navigation"
+        className="hide-mobile"
+        style={{ "--nav-ul": isScrolled ? "var(--color-navy)" : "var(--color-lava)" } as React.CSSProperties}
+      >
         <ul
-          style={{ display: "flex", alignItems: "center", gap: "1.5rem", listStyle: "none", margin: 0, padding: 0 }}
+          style={{ display: "flex", alignItems: "center", gap: "0.75rem", listStyle: "none", margin: 0, padding: 0 }}
           role="menubar"
         >
+          {!hasHome && (
+            <li role="none">
+              <Link
+                href="/"
+                role="menuitem"
+                className="nav-link"
+                aria-current={pathname === "/" ? "page" : undefined}
+                style={{ ...NAV_FONT, color: navFg, textDecoration: "none", transition: "color 0.4s ease" }}
+              >
+                Home
+              </Link>
+            </li>
+          )}
           {navMenu.items.map((item) => (
             <li
               key={item.id}
@@ -117,23 +147,8 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
                   onFocus={() => handleMouseEnter(item.id)}
                   onClick={() => toggle(item.id)}
                   onKeyDown={(e) => handleTriggerKey(e, item.id)}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.25rem",
-                    fontFamily: "var(--font-sans)",
-                    fontSize: "13px",
-                    fontWeight: 900,
-                    letterSpacing: "0.05em",
-                    textTransform: "uppercase",
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    color: navFg,
-                    transition: "opacity 0.2s, color 0.4s ease",
-                  }}
-                  onMouseOver={(e) => (e.currentTarget.style.opacity = "0.6")}
-                  onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
+                  className="nav-link"
+                  style={{ ...NAV_FONT, color: navFg, transition: "color 0.4s ease" }}
                 >
                   {item.label}
                   <ChevronDown
@@ -147,19 +162,9 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
                 <Link
                   href={item.href ?? "#"}
                   role="menuitem"
-                  style={{
-                    display: "block",
-                    fontFamily: "var(--font-sans)",
-                    fontSize: "13px",
-                    fontWeight: 900,
-                    letterSpacing: "0.05em",
-                    textTransform: "uppercase",
-                    color: navFg,
-                    textDecoration: "none",
-                    transition: "opacity 0.2s, color 0.4s ease",
-                  }}
-                  onMouseOver={(e) => (e.currentTarget.style.opacity = "0.6")}
-                  onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
+                  className="nav-link"
+                  aria-current={isCurrent(pathname, item.href) ? "page" : undefined}
+                  style={{ ...NAV_FONT, color: navFg, textDecoration: "none", transition: "color 0.4s ease" }}
                 >
                   {item.label}
                 </Link>
@@ -220,23 +225,24 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
         role="dialog"
         aria-modal="true"
         aria-label="Navigation menu"
+        aria-hidden={mobileOpen ? undefined : true}
         style={{
           position: "fixed",
           top: 0,
           left: 0,
-          height: "100%",
           width: "min(340px, 85vw)",
           zIndex: 80,
           backgroundColor: "var(--color-bone)",
           color: "var(--color-navy)",
-          overflowY: "auto",
           display: "flex",
           flexDirection: "column",
           boxShadow: "4px 0 24px rgba(23,37,69,0.2)",
           transform: mobileOpen ? "translateX(0)" : "translateX(-100%)",
-          transition: "transform 350ms ease",
+          // hidden (not just off-screen) once closed so its links can't be tabbed to
+          visibility: mobileOpen ? "visible" : "hidden",
+          transition: `transform 350ms ease, visibility 0s linear ${mobileOpen ? "0s" : "350ms"}`,
         }}
-        className="lg:hidden"
+        className="lg:hidden mm-drawer"
       >
         {/* Drawer header */}
         <div
@@ -244,8 +250,9 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            padding: "1.5rem 1.5rem",
+            padding: "1rem 1.5rem",
             borderBottom: "2px solid var(--color-navy)",
+            flex: "0 0 auto",
           }}
         >
           <span
@@ -261,32 +268,35 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
             CULTRAVEN
           </span>
           <button
+            ref={closeRef}
+            type="button"
             onClick={onMobileClose}
             aria-label="Close navigation menu"
-            style={{
-              background: "none",
-              border: "none",
-              padding: "8px",
-              cursor: "pointer",
-              color: "var(--color-navy)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              transition: "opacity 0.2s",
-            }}
-            onMouseOver={(e) => (e.currentTarget.style.opacity = "0.6")}
-            onMouseOut={(e) => (e.currentTarget.style.opacity = "1")}
+            className="hdr-icon mm-close"
+            style={{ color: "var(--color-navy)" }}
           >
             <CloseIcon />
           </button>
         </div>
 
-        {/* Nav items */}
-        <nav aria-label="Mobile navigation" style={{ flex: 1, paddingTop: "1.5rem", paddingBottom: "2rem" }}>
+        {/* Nav items (scrolls on short screens; the footer below stays pinned and visible) */}
+        <nav aria-label="Mobile navigation" className="mm-nav" style={{ paddingTop: "0.75rem", paddingBottom: "1rem" }}>
+          {!hasHome && (
+            <Link
+              href="/"
+              onClick={onMobileClose}
+              className="mm-item"
+              aria-current={pathname === "/" ? "page" : undefined}
+              style={MOBILE_TOP_LINK}
+            >
+              Home
+            </Link>
+          )}
           {navMenu.items.map((item) => (
             <MobileNavItem
               key={item.id}
               item={item}
+              pathname={pathname}
               isExpanded={mobileExpanded === item.id}
               onToggle={() => setMobileExpanded((p) => (p === item.id ? null : item.id))}
               onClose={onMobileClose}
@@ -295,81 +305,73 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
         </nav>
 
         {/* Quick links footer */}
-        <div
-          style={{
-            borderTop: "2px solid var(--color-navy)",
-            padding: "1.5rem",
-            display: "flex",
-            flexDirection: "column",
-            gap: "0.75rem",
-          }}
-        >
-          <Link
-            href="/account"
-            onClick={onMobileClose}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.75rem",
-              fontFamily: "var(--font-sans)",
-              fontWeight: 800,
-              fontSize: "13px",
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-              color: "var(--color-navy)",
-              textDecoration: "none",
-            }}
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
-            </svg>
-            My Account
-          </Link>
-          <Link
-            href="/account/orders"
-            onClick={onMobileClose}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.75rem",
-              fontFamily: "var(--font-sans)",
-              fontWeight: 800,
-              fontSize: "13px",
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-              color: "var(--color-navy)",
-              textDecoration: "none",
-            }}
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square">
-              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 01-8 0" />
-            </svg>
-            My Orders
-          </Link>
-          <Link
-            href="/search"
-            onClick={onMobileClose}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "0.75rem",
-              fontFamily: "var(--font-sans)",
-              fontWeight: 800,
-              fontSize: "13px",
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-              color: "var(--color-navy)",
-              textDecoration: "none",
-            }}
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square">
-              <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-            Search
-          </Link>
+        <div className="mm-foot" style={{ borderTop: "2px solid var(--color-navy)", display: "flex", flexDirection: "column" }}>
+          <FooterLink href="/account" label="My Account" onClose={onMobileClose} icon={<><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></>} />
+          <FooterLink href="/account/orders" label="My Orders" onClose={onMobileClose} icon={<><path d="M21 8l-9-5-9 5v8l9 5 9-5z" /><path d="M3 8l9 5 9-5M12 13v8" /></>} />
+          <FooterLink href="/search" label="Search" onClose={onMobileClose} icon={<><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></>} />
         </div>
       </div>
     </>
+  );
+}
+
+const NAV_FONT: React.CSSProperties = {
+  fontFamily: "var(--font-sans)",
+  fontSize: "13px",
+  fontWeight: 900,
+  letterSpacing: "0.05em",
+  textTransform: "uppercase",
+};
+
+const MOBILE_TOP_LINK: React.CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  width: "100%",
+  padding: "0.9rem 1.5rem",
+  fontFamily: "var(--font-heading)",
+  fontSize: "1.1rem",
+  fontWeight: 900,
+  letterSpacing: "0.06em",
+  textTransform: "uppercase",
+  color: "var(--color-navy)",
+  textDecoration: "none",
+  background: "none",
+  border: "none",
+  cursor: "pointer",
+  textAlign: "left",
+};
+
+/** Current-page test for nav links ("/" only matches exactly). */
+function isCurrent(pathname: string, href?: string): boolean {
+  if (!href || href === "#") return false;
+  if (href === "/") return pathname === "/";
+  const clean = href.split(/[?#]/)[0];
+  return pathname === clean || pathname.startsWith(clean + "/");
+}
+
+function FooterLink({ href, label, icon, onClose }: { href: string; label: string; icon: React.ReactNode; onClose: () => void }) {
+  return (
+    <Link
+      href={href}
+      onClick={onClose}
+      className="mm-foot-link"
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "0.75rem",
+        fontFamily: "var(--font-sans)",
+        fontWeight: 800,
+        fontSize: "13px",
+        letterSpacing: "0.08em",
+        textTransform: "uppercase",
+        color: "var(--color-navy)",
+        textDecoration: "none",
+      }}
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square" aria-hidden="true">{icon}</svg>
+      {label}
+    </Link>
   );
 }
 
@@ -423,6 +425,7 @@ function MegaPanel({ item, onClose }: { item: NavItem; onClose: () => void }) {
                 <Link
                   href={sub.href}
                   onClick={onClose}
+                  className="mm-link"
                   style={{
                     fontFamily: "var(--font-sans)",
                     fontSize: "13px",
@@ -434,10 +437,7 @@ function MegaPanel({ item, onClose }: { item: NavItem; onClose: () => void }) {
                     display: "flex",
                     alignItems: "center",
                     gap: "0.5rem",
-                    transition: "color 0.2s",
                   }}
-                  onMouseOver={(e) => (e.currentTarget.style.color = "var(--color-lava)")}
-                  onMouseOut={(e) => (e.currentTarget.style.color = "var(--color-navy)")}
                 >
                   {sub.label}
                   {sub.isNew && (
@@ -446,7 +446,7 @@ function MegaPanel({ item, onClose }: { item: NavItem; onClose: () => void }) {
                         fontSize: "8px",
                         fontWeight: 900,
                         textTransform: "uppercase",
-                        color: "var(--color-bone)",
+                        color: "var(--color-navy)",
                         backgroundColor: "var(--color-lava)",
                         padding: "2px 5px",
                         letterSpacing: "0.1em",
@@ -468,6 +468,7 @@ function MegaPanel({ item, onClose }: { item: NavItem; onClose: () => void }) {
         <Link
           href={feat.href}
           onClick={onClose}
+          className="mm-feature"
           style={{
             display: "flex",
             flexDirection: "column",
@@ -481,14 +482,6 @@ function MegaPanel({ item, onClose }: { item: NavItem; onClose: () => void }) {
             border: "2px solid var(--color-navy)",
             boxShadow: "4px 4px 0px 0px var(--color-lava)",
             transition: "box-shadow 0.2s ease, transform 0.2s ease",
-          }}
-          onMouseOver={(e) => {
-            (e.currentTarget as HTMLElement).style.transform = "translate(-2px,-2px)";
-            (e.currentTarget as HTMLElement).style.boxShadow = "6px 6px 0px 0px var(--color-lava)";
-          }}
-          onMouseOut={(e) => {
-            (e.currentTarget as HTMLElement).style.transform = "translate(0,0)";
-            (e.currentTarget as HTMLElement).style.boxShadow = "4px 4px 0px 0px var(--color-lava)";
           }}
         >
           {/* Decorative corner accent */}
@@ -564,45 +557,28 @@ function MegaPanel({ item, onClose }: { item: NavItem; onClose: () => void }) {
 
 function MobileNavItem({
   item,
+  pathname,
   isExpanded,
   onToggle,
   onClose,
 }: {
   item: NavItem;
+  pathname: string;
   isExpanded: boolean;
   onToggle: () => void;
   onClose: () => void;
 }) {
   const hasChildren = Boolean(item.columns?.length);
-
-  const topLinkStyle: React.CSSProperties = {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    width: "100%",
-    padding: "1rem 1.5rem",
-    fontFamily: "var(--font-heading)",
-    fontSize: "1.1rem",
-    fontWeight: 900,
-    letterSpacing: "0.06em",
-    textTransform: "uppercase",
-    color: "var(--color-navy)",
-    textDecoration: "none",
-    background: "none",
-    border: "none",
-    cursor: "pointer",
-    transition: "background-color 0.15s ease",
-    textAlign: "left",
-  };
+  const panelId = `mm-sub-${item.id}`;
 
   if (!hasChildren) {
     return (
       <Link
         href={item.href ?? "#"}
         onClick={onClose}
-        style={topLinkStyle}
-        onMouseOver={(e) => ((e.currentTarget as HTMLElement).style.backgroundColor = "var(--color-cream)")}
-        onMouseOut={(e) => ((e.currentTarget as HTMLElement).style.backgroundColor = "transparent")}
+        className="mm-item"
+        aria-current={isCurrent(pathname, item.href) ? "page" : undefined}
+        style={MOBILE_TOP_LINK}
       >
         {item.label}
       </Link>
@@ -612,11 +588,12 @@ function MobileNavItem({
   return (
     <div>
       <button
+        type="button"
         aria-expanded={isExpanded}
+        aria-controls={panelId}
         onClick={onToggle}
-        style={topLinkStyle}
-        onMouseOver={(e) => ((e.currentTarget as HTMLElement).style.backgroundColor = "var(--color-cream)")}
-        onMouseOut={(e) => ((e.currentTarget as HTMLElement).style.backgroundColor = "transparent")}
+        className="mm-item"
+        style={MOBILE_TOP_LINK}
       >
         {item.label}
         <ChevronDown
@@ -628,11 +605,13 @@ function MobileNavItem({
         />
       </button>
 
-      {/* Accordion sub-items */}
+      {/* Accordion sub-items (visibility:hidden when collapsed so they are not tabbable) */}
       <div
+        id={panelId}
         style={{
           maxHeight: isExpanded ? "800px" : "0",
-          transition: "max-height 400ms ease",
+          visibility: isExpanded ? "visible" : "hidden",
+          transition: `max-height 400ms ease, visibility 0s linear ${isExpanded ? "0s" : "400ms"}`,
           overflow: "hidden",
           backgroundColor: "rgba(23,37,69,0.04)",
         }}
@@ -647,18 +626,19 @@ function MobileNavItem({
                   fontWeight: 900,
                   textTransform: "uppercase",
                   letterSpacing: "0.16em",
-                  color: "var(--color-lava)",
-                  marginBottom: "0.75rem",
+                  color: "var(--color-smoke)",
+                  marginBottom: "0.5rem",
                 }}
               >
                 {col.heading}
               </p>
-              <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+              <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column" }}>
                 {col.items.map((sub) => (
                   <li key={sub.href}>
                     <Link
                       href={sub.href}
                       onClick={onClose}
+                      className="mm-sub"
                       style={{
                         fontFamily: "var(--font-sans)",
                         fontSize: "13px",
@@ -670,10 +650,9 @@ function MobileNavItem({
                         display: "flex",
                         alignItems: "center",
                         gap: "0.5rem",
-                        padding: "0.25rem 0",
+                        padding: "0 0.5rem",
+                        margin: "0 -0.5rem",
                       }}
-                      onMouseOver={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--color-lava)")}
-                      onMouseOut={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--color-navy)")}
                     >
                       {sub.label}
                       {sub.isNew && (
@@ -681,7 +660,7 @@ function MobileNavItem({
                           style={{
                             fontSize: "8px",
                             fontWeight: 900,
-                            color: "var(--color-bone)",
+                            color: "var(--color-navy)",
                             backgroundColor: "var(--color-lava)",
                             padding: "2px 5px",
                             letterSpacing: "0.1em",

@@ -4,6 +4,7 @@ import { connectToDatabase } from "@/lib/db";
 import { HeroBanner, HeroConfig } from "@/lib/models/HeroBanner";
 import { isAdminRequest } from "@/lib/admin-auth";
 import { normalizeMode, validateSlides } from "@/lib/hero";
+import { isObjectIdString, isSameOrigin, parseJsonBody } from "@/lib/sanitize";
 
 export const dynamic = "force-dynamic";
 
@@ -51,13 +52,12 @@ export async function PUT(req: Request) {
   if (!isAdminRequest(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  if (!isSameOrigin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-  let body: any;
-  try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
-  }
+  // Size cap, JSON only, no $-operator / prototype keys anywhere in the payload
+  const parsedBody = await parseJsonBody(req, 512 * 1024);
+  if (!parsedBody.ok) return NextResponse.json({ error: parsedBody.error }, { status: parsedBody.status });
+  const body: any = parsedBody.data;
 
   const { slides, errors } = validateSlides(body?.banners);
   if (errors.length > 0) {
@@ -71,7 +71,7 @@ export async function PUT(req: Request) {
     // Every slide gets a known _id up front (existing id, or a fresh one), so the final cleanup is exact.
     const ids = slides.map((_, i) => {
       const rawId = body.banners[i]?.id;
-      return typeof rawId === "string" && mongoose.isValidObjectId(rawId)
+      return isObjectIdString(rawId)
         ? new mongoose.Types.ObjectId(rawId)
         : new mongoose.Types.ObjectId();
     });

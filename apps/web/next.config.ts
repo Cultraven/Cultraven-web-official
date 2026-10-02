@@ -56,7 +56,8 @@ const config: NextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           {
             key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=()",
+            // geolocation=(self): the site's own pages may use the browser location API; third-party frames may not.
+            value: "camera=(), microphone=(), geolocation=(self)",
           },
           {
             key: "Strict-Transport-Security",
@@ -73,8 +74,9 @@ const config: NextConfig = {
               "img-src 'self' data: blob: https: http:",
               "media-src 'self' blob: https:",
               "frame-src https://api.razorpay.com https://checkout.razorpay.com",
-              "connect-src 'self' https://api.razorpay.com https://www.google-analytics.com https://analytics.google.com https://graph.facebook.com",
+              "connect-src 'self' https://api.razorpay.com https://lumberjack.razorpay.com https://www.google-analytics.com https://analytics.google.com https://graph.facebook.com",
               "object-src 'none'",
+              "frame-ancestors 'none'",
               "base-uri 'self'",
               "form-action 'self'",
             ].join("; "),

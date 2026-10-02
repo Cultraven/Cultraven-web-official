@@ -11,24 +11,28 @@
 
 import { NextRequest, NextResponse, after } from "next/server";
 import { notifyOrderPlaced } from "@/lib/order-notify";
-import { getRazorpayConfig, verifyPaymentSignature } from "@/lib/razorpay";
+import { getRazorpayConfigAsync, verifyPaymentSignature } from "@/lib/razorpay";
+import { clientIp, isSameOrigin, parseJsonBody, rateLimit, retryHeaders } from "@/lib/sanitize";
 import { z } from "zod";
 import { connectToDatabase } from "@/lib/db";
 import { Order } from "@/lib/models/Order";
 
+// Razorpay ids look like order_Abc123 / pay_Abc123; the signature is a hex HMAC. Anything else is junk.
 const VerifySchema = z.object({
-  razorpay_order_id: z.string().min(1),
-  razorpay_payment_id: z.string().min(1),
-  razorpay_signature: z.string().min(1),
+  razorpay_order_id: z.string().min(1).max(64).regex(/^[A-Za-z0-9_]+$/),
+  razorpay_payment_id: z.string().min(1).max(64).regex(/^[A-Za-z0-9_]+$/),
+  razorpay_signature: z.string().min(1).max(256).regex(/^[A-Fa-f0-9]+$/),
 });
 
 export async function POST(req: NextRequest) {
-  let body: unknown;
-  try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
-  }
+  if (!isSameOrigin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  // Guessing a signature is pointless (HMAC), but cap the attempts anyway.
+  const rl = rateLimit(`verify:${clientIp(req)}`, 30, 60_000);
+  if (!rl.ok) return NextResponse.json({ error: "Too many requests" }, { status: 429, headers: retryHeaders(rl) });
+
+  const parsedBody = await parseJsonBody(req, 4 * 1024);
+  if (!parsedBody.ok) return NextResponse.json({ error: parsedBody.error }, { status: parsedBody.status });
+  const body = parsedBody.data;
 
   const result = VerifySchema.safeParse(body);
   if (!result.success) {
@@ -40,7 +44,8 @@ export async function POST(req: NextRequest) {
 
   const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = result.data;
 
-  const cfg = getRazorpayConfig();
+  // ignoreSwitch: a payment that already started must still be verifiable after the admin turns online payments off.
+  const cfg = await getRazorpayConfigAsync({ ignoreSwitch: true });
   if (!cfg) {
     return NextResponse.json({ error: "Online payments are not configured", code: "PAYMENTS_NOT_CONFIGURED" }, { status: 503 });
   }
@@ -55,8 +60,9 @@ export async function POST(req: NextRequest) {
   // Signature valid — mark order paid in DB
   try {
     await connectToDatabase();
+    // Only a not-yet-paid order is updated: a replayed callback can't append duplicate history or re-trigger emails.
     const paid = await Order.findOneAndUpdate(
-      { razorpayOrderId: razorpay_order_id },
+      { razorpayOrderId: razorpay_order_id, paymentStatus: { $ne: "paid" } },
       {
         $set: {
           paymentStatus: "paid",

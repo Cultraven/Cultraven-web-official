@@ -2,67 +2,57 @@
  * POST /api/contact
  * Handles contact form submissions.
  * Validates all fields server-side (Rule 4 — never trust frontend only).
- * Rate-limited by IP (Rule 16).
+ * Rate-limited by IP (Rule 16): 3 / hour, plus 3 / minute so a burst is cut off sooner.
  * No secrets in response (Rule 5).
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { clientIp, isSameOrigin, parseJsonBody, rateLimit, retryHeaders, stripControlChars } from "@/lib/sanitize";
 
 // ── Zod schema for server-side validation ─────────────────────────────────────
+// Single-line fields lose control characters (CR/LF) so they can never forge log lines or mail headers later.
+const oneLine = (max: number, min: number, tooShort: string, tooLong: string) =>
+  z.string().max(max * 2, tooLong).transform((v) => stripControlChars(v)).pipe(z.string().min(min, tooShort).max(max, tooLong));
+
 const ContactSchema = z.object({
-  name: z.string().trim().min(2, "Name too short").max(100, "Name too long"),
-  email: z.string().trim().email("Invalid email").toLowerCase(),
+  name: oneLine(100, 2, "Name too short", "Name too long"),
+  email: z.string().trim().max(254).email("Invalid email").toLowerCase(),
   phone: z
     .string()
     .trim()
+    .max(20)
     .optional()
     .refine(
       (v) => !v || /^\d{10}$/.test(v.replace(/\s/g, "")),
       "Invalid phone number"
     ),
-  subject: z.string().trim().min(1, "Subject required").max(100, "Subject too long"),
+  subject: oneLine(100, 1, "Subject required", "Subject too long"),
   message: z.string().trim().min(20, "Message too short").max(2000, "Message too long"),
 });
 
-// Simple in-memory rate limiting (production: use Redis)
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 const RATE_LIMIT = 3; // max 3 submissions per IP per hour
 const WINDOW_MS = 60 * 60 * 1000; // 1 hour
 
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(ip);
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + WINDOW_MS });
-    return false;
-  }
-  if (entry.count >= RATE_LIMIT) return true;
-  entry.count++;
-  return false;
-}
-
 export async function POST(req: NextRequest) {
-  // Get client IP for rate limiting
-  const ip =
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  if (!isSameOrigin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-  if (isRateLimited(ip)) {
+  // Get client IP for rate limiting
+  const ip = clientIp(req);
+  const burst = rateLimit(`contact-1m:${ip}`, 3, 60_000);
+  const hourly = burst.ok ? rateLimit(`contact-1h:${ip}`, RATE_LIMIT, WINDOW_MS) : burst;
+  if (!burst.ok || !hourly.ok) {
     return NextResponse.json(
       { error: "Too many requests. Please try again later." },
-      { status: 429 }
+      { status: 429, headers: retryHeaders(!burst.ok ? burst : hourly) }
     );
   }
 
-  let body: unknown;
-  try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
-  }
+  const body = await parseJsonBody(req, 8 * 1024);
+  if (!body.ok) return NextResponse.json({ error: body.error }, { status: body.status });
 
   // Validate
-  const result = ContactSchema.safeParse(body);
+  const result = ContactSchema.safeParse(body.data);
   if (!result.success) {
     return NextResponse.json(
       { error: "Validation failed", issues: result.error.flatten().fieldErrors },

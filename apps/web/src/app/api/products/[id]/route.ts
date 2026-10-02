@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import mongoose from "mongoose";
 import { connectToDatabase } from "@/lib/db";
 import { Product } from "@/lib/models/Product";
 import { isAdminRequest } from "@/lib/admin-auth";
 import { normalizeProduct } from "@/lib/products";
 import { ProductWriteSchema } from "@/lib/product-schema";
+import { isObjectIdString, isSameOrigin, parseJsonBody } from "@/lib/sanitize";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +12,7 @@ type Ctx = { params: Promise<{ id: string }> };
 
 async function parseId(ctx: Ctx) {
   const { id } = await ctx.params;
-  return mongoose.isValidObjectId(id) ? id : null;
+  return isObjectIdString(id) ? id : null;
 }
 
 export async function GET(_req: NextRequest, ctx: Ctx) {
@@ -32,13 +32,15 @@ export async function GET(_req: NextRequest, ctx: Ctx) {
 
 export async function PUT(req: NextRequest, ctx: Ctx) {
   if (!isAdminRequest(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!isSameOrigin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   const id = await parseId(ctx);
   if (!id) return NextResponse.json({ error: "Invalid product id" }, { status: 400 });
 
-  let body: unknown;
-  try { body = await req.json(); } catch { return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 }); }
+  const body = await parseJsonBody(req, 64 * 1024);
+  if (!body.ok) return NextResponse.json({ error: body.error }, { status: body.status });
 
-  const result = ProductWriteSchema.partial().safeParse(body);
+  // Only the keys zod knows survive parsing, so the $set below can never carry stray fields (mass assignment).
+  const result = ProductWriteSchema.partial().safeParse(body.data);
   if (!result.success) {
     return NextResponse.json({ error: "Validation failed", issues: result.error.flatten().fieldErrors }, { status: 422 });
   }
@@ -65,6 +67,7 @@ export async function PUT(req: NextRequest, ctx: Ctx) {
 
 export async function DELETE(req: NextRequest, ctx: Ctx) {
   if (!isAdminRequest(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!isSameOrigin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   const id = await parseId(ctx);
   if (!id) return NextResponse.json({ error: "Invalid product id" }, { status: 400 });
   try {

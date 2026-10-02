@@ -93,7 +93,7 @@ export function buildTransport(s: SmtpSettings) {
   });
 }
 
-export interface MailInput { to: string; subject: string; html: string; text: string; kind: string; orderId?: string; replyTo?: string }
+export interface MailInput { to: string; subject: string; html: string; text: string; kind: string; orderId?: string; replyTo?: string; attachments?: { filename: string; content: Buffer | Uint8Array; contentType: string }[] }
 
 async function log(entry: { kind: string; to: string; subject: string; status: "sent" | "failed" | "skipped"; error?: string; orderId?: string }) {
   try { await EmailLog.create({ ...entry, error: (entry.error ?? "").slice(0, 300) }); } catch { /* logging must never break sending */ }
@@ -110,7 +110,7 @@ export async function sendMail(m: MailInput): Promise<{ ok: boolean; error?: str
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
       const transport = buildTransport(s);
-      await transport.sendMail({ from: `"${s.fromName.replace(/"/g, "")}" <${s.fromEmail}>`, to: m.to, replyTo: m.replyTo, subject: m.subject, html: m.html, text: m.text });
+      await transport.sendMail({ from: `"${s.fromName.replace(/"/g, "")}" <${s.fromEmail}>`, to: m.to, replyTo: m.replyTo, subject: m.subject, html: m.html, text: m.text, attachments: m.attachments?.map((a) => ({ filename: a.filename, content: Buffer.from(a.content), contentType: a.contentType })) });
       await log({ kind: m.kind, to: m.to, subject: m.subject, status: "sent", orderId: m.orderId });
       return { ok: true };
     } catch (e: any) {

@@ -1,0 +1,81 @@
+import { describe, it, expect } from "vitest";
+import { canAdminTransition, cancelEligibility, returnEligibility, buildTimeline, ADMIN_TRANSITIONS, ORDER_STATUSES } from "./order-lifecycle";
+
+const DAY = 86_400_000;
+const now = Date.UTC(2026, 9, 10, 12);
+const ago = (d: number) => new Date(now - d * DAY);
+
+describe("admin transitions", () => {
+  it("allows the normal forward path", () => {
+    expect(canAdminTransition("processing", "confirmed")).toBe(true);
+    expect(canAdminTransition("confirmed", "shipped")).toBe(true);
+    expect(canAdminTransition("shipped", "out_for_delivery")).toBe(true);
+    expect(canAdminTransition("out_for_delivery", "delivered")).toBe(true);
+    expect(canAdminTransition("return_requested", "returned")).toBe(true);
+    expect(canAdminTransition("return_requested", "delivered")).toBe(true);
+  });
+  it("blocks going backwards, skipping out of terminal states, and junk", () => {
+    expect(canAdminTransition("delivered", "processing")).toBe(false);
+    expect(canAdminTransition("shipped", "cancelled")).toBe(false);
+    expect(canAdminTransition("cancelled", "processing")).toBe(false);
+    expect(canAdminTransition("returned", "delivered")).toBe(false);
+    expect(canAdminTransition("processing", "return_requested")).toBe(false);
+    expect(canAdminTransition("processing", "nonsense")).toBe(false);
+    expect(canAdminTransition({ $ne: 1 } as any, "shipped")).toBe(false);
+  });
+  it("covers every status", () => expect(Object.keys(ADMIN_TRANSITIONS).sort()).toEqual([...ORDER_STATUSES].sort()));
+});
+
+describe("customer cancel (7 days, before shipping)", () => {
+  it("ok on day 0 and day 6, with days left", () => {
+    expect(cancelEligibility({ fulfillmentStatus: "processing", createdAt: ago(0) }, now)).toMatchObject({ ok: true, daysLeft: 7 });
+    expect(cancelEligibility({ fulfillmentStatus: "confirmed", createdAt: ago(6) }, now)).toMatchObject({ ok: true, daysLeft: 1 });
+  });
+  it("blocked after 7 days", () => expect(cancelEligibility({ fulfillmentStatus: "processing", createdAt: ago(7.01) }, now).ok).toBe(false));
+  it("blocked once shipped / delivered / already cancelled, with a helpful reason", () => {
+    expect(cancelEligibility({ fulfillmentStatus: "shipped", createdAt: ago(1) }, now).reason).toMatch(/shipped/i);
+    expect(cancelEligibility({ fulfillmentStatus: "delivered", createdAt: ago(1) }, now).reason).toMatch(/return/i);
+    expect(cancelEligibility({ fulfillmentStatus: "cancelled", createdAt: ago(1) }, now).ok).toBe(false);
+  });
+  it("blocked for a bad date", () => expect(cancelEligibility({ fulfillmentStatus: "processing", createdAt: "nope" }, now).ok).toBe(false));
+});
+
+describe("customer return (7 days from delivery)", () => {
+  it("ok within the window", () => expect(returnEligibility({ fulfillmentStatus: "delivered", deliveredAt: ago(3) }, now)).toMatchObject({ ok: true, daysLeft: 4 }));
+  it("blocked after the window, before delivery, or without a delivery date", () => {
+    expect(returnEligibility({ fulfillmentStatus: "delivered", deliveredAt: ago(8) }, now).ok).toBe(false);
+    expect(returnEligibility({ fulfillmentStatus: "shipped" }, now).ok).toBe(false);
+    expect(returnEligibility({ fulfillmentStatus: "delivered" }, now).ok).toBe(false);
+  });
+  it("blocked when already requested or returned", () => {
+    expect(returnEligibility({ fulfillmentStatus: "return_requested", deliveredAt: ago(1) }, now).ok).toBe(false);
+    expect(returnEligibility({ fulfillmentStatus: "returned", deliveredAt: ago(1) }, now).ok).toBe(false);
+  });
+});
+
+describe("timeline", () => {
+  const created = ago(5);
+  it("marks progress for a shipped order", () => {
+    const t = buildTimeline({ fulfillmentStatus: "shipped", createdAt: created, statusHistory: [{ status: "confirmed", at: ago(4) }, { status: "shipped", at: ago(2) }] });
+    expect(t.map((s) => s.state)).toEqual(["done", "done", "current", "todo", "todo"]);
+    expect(t[2].at).toBeTruthy();
+    expect(t[3].at).toBeUndefined();
+  });
+  it("delivered shows everything done", () => {
+    const t = buildTimeline({ fulfillmentStatus: "delivered", createdAt: created, statusHistory: [{ status: "delivered", at: ago(1) }] });
+    expect(t.every((s) => s.state === "done")).toBe(true);
+  });
+  it("cancelled keeps earlier steps and adds a red step with the reason", () => {
+    const t = buildTimeline({ fulfillmentStatus: "cancelled", createdAt: created, statusHistory: [{ status: "cancelled", at: ago(1), note: "Ordered by mistake" }] });
+    expect(t[t.length - 1]).toMatchObject({ key: "cancelled", state: "bad", note: "Ordered by mistake" });
+    expect(t[0].state).toBe("done");
+    expect(t[2].state).toBe("todo");
+  });
+  it("return flow appends return steps", () => {
+    const t = buildTimeline({ fulfillmentStatus: "return_requested", createdAt: created, statusHistory: [{ status: "return_requested", at: ago(0), note: "Size" }] });
+    expect(t.at(-1)).toMatchObject({ key: "return_requested", state: "current" });
+    const t2 = buildTimeline({ fulfillmentStatus: "returned", createdAt: created, statusHistory: [] });
+    expect(t2.at(-1)).toMatchObject({ key: "returned" });
+  });
+  it("tolerates unknown status", () => expect(buildTimeline({ fulfillmentStatus: "weird", createdAt: created })[0].state).toBe("current"));
+});

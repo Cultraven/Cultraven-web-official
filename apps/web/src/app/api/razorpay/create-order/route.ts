@@ -16,7 +16,10 @@
 import { NextRequest, NextResponse, after } from "next/server";
 import { notifyOrderPlaced } from "@/lib/order-notify";
 import { z } from "zod";
-import { getRazorpayConfig } from "@/lib/razorpay";
+import { NameField, MobileField, CheckoutAddress } from "@/lib/address-schema";
+import { summarizeZodError } from "@/lib/address-api";
+import { getRazorpayConfigAsync, type RazorpayConfig } from "@/lib/razorpay";
+import { clientIp, isSameOrigin, parseJsonBody, rateLimit, retryHeaders } from "@/lib/sanitize";
 import Razorpay from "razorpay";
 import { connectToDatabase } from "@/lib/db";
 import { Order } from "@/lib/models/Order";
@@ -34,68 +37,45 @@ const BodySchema = z.object({
     color: z.string().max(60).optional(),
   })).min(1, "Cart is empty").max(50),
   receipt: z.string().trim().max(40).optional(),
-  name: z.string().trim().max(100),
+  name: NameField, // India address rules shared with the checkout form: lib/address-validation (+ lib/address-schema)
   email: z.string().email().max(200),
-  phone: z.string().regex(/^\d{10}$/, "Invalid phone"),
-  address: z.object({
-    line1: z.string().trim().min(1).max(200),
-    line2: z.string().max(200).optional(),
-    city: z.string().trim().min(1).max(100),
-    state: z.string().trim().min(1).max(100),
-    pincode: z.string().regex(/^\d{6}$/, "Invalid pincode"),
-  }),
+  phone: MobileField, // 10-digit Indian mobile, not a fake pattern; +91 / 0 prefixes normalised
+  address: CheckoutAddress, // line1/line2/city/state/pincode; pincode prefix must belong to the chosen state (else 422)
   paymentMethod: z.enum(["razorpay", "cod"]).default("razorpay"),
   couponCode: z.string().max(40).optional(),
   idempotencyKey: z.string().min(8).max(80).regex(/^[A-Za-z0-9_-]+$/).optional(),
 });
 
-// ── Rate limiting (production: use Upstash Redis) ─────────────────────────────
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+// ── Rate limiting (in-memory sliding window; production on several instances: use Upstash Redis) ──
 const RATE_LIMIT = 10; // 10 order attempts per IP per hour
 const WINDOW_MS = 60 * 60 * 1000;
 
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(ip);
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + WINDOW_MS });
-    return false;
-  }
-  if (entry.count >= RATE_LIMIT) return true;
-  entry.count++;
-  return false;
-}
-
 // ── Razorpay client (server-only) ─────────────────────────────────────────────
-function getRazorpayClient(): Razorpay {
-  const cfg = getRazorpayConfig();
-  if (!cfg) throw new Error("Razorpay keys not configured");
+function getRazorpayClient(cfg: RazorpayConfig): Razorpay {
   return new Razorpay({ key_id: cfg.keyId, key_secret: cfg.keySecret });
 }
 
 export async function POST(req: NextRequest) {
+  // CSRF defence in depth (the session cookie is also SameSite=Lax)
+  if (!isSameOrigin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
   // Rate limiting
-  const ip =
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-  if (isRateLimited(ip)) {
-    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  const ip = clientIp(req);
+  const rl = rateLimit(`create-order:${ip}`, RATE_LIMIT, WINDOW_MS);
+  if (!rl.ok) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429, headers: retryHeaders(rl) });
   }
 
-  // Parse body
-  let body: unknown;
-  try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
-  }
+  // Parse body safely: size cap, JSON only, no $-operator / prototype keys
+  const parsedBody = await parseJsonBody(req, 32 * 1024);
+  if (!parsedBody.ok) return NextResponse.json({ error: parsedBody.error }, { status: parsedBody.status });
+  const body = parsedBody.data;
 
   // Validate
   const result = BodySchema.safeParse(body);
   if (!result.success) {
-    return NextResponse.json(
-      { error: "Validation failed", issues: result.error.flatten().fieldErrors },
-      { status: 422 }
-    );
+    // `error` is a plain-English reason (e.g. "Pincode 452002 belongs to Madhya Pradesh, not Karnataka"); `issues` is keyed by field path.
+    return NextResponse.json(summarizeZodError(result.error), { status: 422 });
   }
 
   const { receipt, name, email, phone, items, address, paymentMethod, couponCode, idempotencyKey } = result.data;
@@ -103,8 +83,14 @@ export async function POST(req: NextRequest) {
   const userId = customerFromRequest(req)?.userId ?? "guest";
   const currency = "INR";
 
-  // Online payment needs the Razorpay keys (placeholders in .env count as missing). COD never does.
-  const razorpayConfig = getRazorpayConfig();
+  // The confirmation email goes to this address: stop one address being flooded with orders (email bombing).
+  if (!rateLimit(`create-order-email:${email.toLowerCase()}`, 10, WINDOW_MS).ok) {
+    return NextResponse.json({ error: "Too many orders for this email address. Please try again later." }, { status: 429 });
+  }
+
+  // Online payment needs the Razorpay keys (admin-saved or .env; placeholders count as missing) AND the admin
+  // "Enable online payments" switch ON. COD never does.
+  const razorpayConfig = paymentMethod === "cod" ? null : await getRazorpayConfigAsync();
   if (paymentMethod !== "cod" && !razorpayConfig) {
     return NextResponse.json(
       { error: "Online payments are not available right now. Please choose Cash on Delivery.", code: "PAYMENTS_NOT_CONFIGURED" },
@@ -180,7 +166,7 @@ export async function POST(req: NextRequest) {
     let razorpayOrderId = null;
 
     if (paymentMethod === "razorpay") {
-      const razorpay = getRazorpayClient();
+      const razorpay = getRazorpayClient(razorpayConfig!);
       const order = await razorpay.orders.create({
         amount: amountPaise,
         currency,

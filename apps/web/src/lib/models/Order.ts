@@ -35,6 +35,8 @@ interface StatusEvent {
   status: string;
   note?: string;
   at: Date;
+  /** Who made the change: the customer, an admin, or the system (payments). */
+  by?: "customer" | "admin" | "system";
 }
 
 export interface IOrder extends Document {
@@ -50,8 +52,13 @@ export interface IOrder extends Document {
   razorpayOrderId?: string;
   razorpayPaymentId?: string;
   paymentMethod: "razorpay" | "cod";
-  paymentStatus: "pending" | "paid" | "failed" | "refunded";
-  fulfillmentStatus: "processing" | "confirmed" | "shipped" | "delivered" | "cancelled" | "returned";
+  paymentStatus: "pending" | "paid" | "failed" | "refund_pending" | "refunded";
+  fulfillmentStatus: "processing" | "confirmed" | "shipped" | "out_for_delivery" | "delivered" | "cancelled" | "return_requested" | "returned";
+  deliveredAt?: Date | null;
+  cancelledAt?: Date | null;
+  cancelReason?: string;
+  returnReason?: string;
+  returnRequestedAt?: Date | null;
   trackingNumber?: string;
   trackingUrl?: string;
   courierName?: string;
@@ -91,6 +98,7 @@ const StatusEventSchema = new Schema<StatusEvent>({
   status: { type: String, required: true },
   note: { type: String },
   at: { type: Date, default: Date.now },
+  by: { type: String, enum: ["customer", "admin", "system"] },
 }, { _id: false });
 
 const OrderSchema = new Schema<IOrder>(
@@ -109,12 +117,12 @@ const OrderSchema = new Schema<IOrder>(
     paymentMethod: { type: String, enum: ["razorpay", "cod"], default: "razorpay" },
     paymentStatus: {
       type: String,
-      enum: ["pending", "paid", "failed", "refunded"],
+      enum: ["pending", "paid", "failed", "refund_pending", "refunded"],
       default: "pending",
     },
     fulfillmentStatus: {
       type: String,
-      enum: ["processing", "confirmed", "shipped", "delivered", "cancelled", "returned"],
+      enum: ["processing", "confirmed", "shipped", "out_for_delivery", "delivered", "cancelled", "return_requested", "returned"],
       default: "processing",
     },
     trackingNumber: { type: String },
@@ -122,6 +130,11 @@ const OrderSchema = new Schema<IOrder>(
     courierName: { type: String },
     statusHistory: { type: [StatusEventSchema], default: [] },
     notes: { type: String, maxlength: 500 },
+    deliveredAt: { type: Date, default: null },
+    cancelledAt: { type: Date, default: null },
+    cancelReason: { type: String, maxlength: 300 },
+    returnReason: { type: String, maxlength: 300 },
+    returnRequestedAt: { type: Date, default: null },
     emailNotifiedAt: { type: Date, default: null },
     idempotencyKey: { type: String, maxlength: 80 },
   },

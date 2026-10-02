@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCartStore } from "@/store/cart";
 import { useBuyNowStore } from "@/store/buyNow";
 import Confetti from "react-confetti";
+import "@/styles/orders.css";
 
 export interface OrderSummary {
   number: string;
@@ -72,29 +73,17 @@ export default function OrderSuccessClient({ orderId, paymentId, isConfirmed, or
             </p>
 
             {(paymentId || amountPaise > 0) && (
-              <div style={{ backgroundColor: "var(--color-mist)", padding: "1.25rem 1.5rem", marginBottom: "2rem", textAlign: "left", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                {orderId && (
-                  <div style={{ display: "flex", justifyContent: "space-between" }}>
-                    <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-gray)" }}>Order ID</span>
-                    <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", color: "var(--color-navy)", wordBreak: "break-all", textAlign: "right", marginLeft: "1rem" }}>{orderId}</span>
-                  </div>
-                )}
-                {paymentId && (
-                  <div style={{ display: "flex", justifyContent: "space-between" }}>
-                    <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-gray)" }}>Payment ID</span>
-                    <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", color: "var(--color-navy)", wordBreak: "break-all", textAlign: "right", marginLeft: "1rem" }}>{paymentId}</span>
-                  </div>
-                )}
+              <div style={{ backgroundColor: "var(--color-bone)", border: "2px solid var(--color-navy)", padding: "1.1rem 1.25rem", marginBottom: "1.5rem", textAlign: "left", display: "flex", flexDirection: "column", gap: "0.55rem" }}>
+                {summary ? (
+                  <div className="os-meta"><span>Order number</span><b>{summary.number}</b></div>
+                ) : orderId ? (
+                  <div className="os-meta"><span>Order number</span><b>CR-{orderId.slice(-6).toUpperCase()}</b></div>
+                ) : null}
+                {paymentId && <div className="os-meta"><span>Payment ID</span><b style={{ wordBreak: "break-all" }}>{paymentId}</b></div>}
                 {amountPaise > 0 && (
-                  <div style={{ display: "flex", justifyContent: "space-between" }}>
-                    <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-gray)" }}>Amount Paid</span>
-                    <span style={{ fontFamily: "var(--font-heading)", fontSize: "1.1rem", fontWeight: 600, color: "var(--color-navy)" }}>{fmt(amountPaise)}</span>
-                  </div>
+                  <div className="os-meta"><span>{summary?.paymentMethod === "cod" ? "To pay on delivery" : "Amount paid"}</span><b style={{ fontSize: "1.1rem" }}>{fmt(amountPaise)}</b></div>
                 )}
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-gray)" }}>Est. Delivery</span>
-                  <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", fontWeight: 600, color: "var(--color-navy)" }}>3–5 Business Days</span>
-                </div>
+                <div className="os-meta"><span>Est. delivery</span><b>3–5 business days</b></div>
               </div>
             )}
           </>
@@ -142,6 +131,12 @@ export default function OrderSuccessClient({ orderId, paymentId, isConfirmed, or
         </p>
 
         <div style={{ display: "flex", gap: "0.75rem", flexDirection: "column" }}>
+          {orderId && summary ? (
+            <>
+              <Link href={`/account/orders/${orderId}`} className="cv-btn cv-btn-navy" style={{ justifyContent: "center" }}>TRACK MY ORDER</Link>
+              <a href={`/api/orders/${orderId}/invoice`} className="cv-btn cv-btn-outline" style={{ justifyContent: "center" }}>DOWNLOAD RECEIPT (PDF)</a>
+            </>
+          ) : null}
           <Link href="/collections/all" style={{ display: "block", width: "100%", padding: "1.1rem", backgroundColor: "var(--color-navy)", color: "var(--color-cream)", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.82rem", letterSpacing: "0.14em", textTransform: "uppercase", textDecoration: "none" }}>CONTINUE SHOPPING</Link>
           <Link href="/account/orders" style={{ display: "block", width: "100%", padding: "1rem", backgroundColor: "transparent", color: "var(--color-navy)", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.78rem", letterSpacing: "0.14em", textTransform: "uppercase", textDecoration: "none", border: "1.5px solid var(--color-navy)" }}>VIEW ORDERS</Link>
         </div>

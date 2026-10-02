@@ -1,29 +1,27 @@
 "use client";
-import React, { useState } from "react";
-import { Alert, Badge, Button, Card, EmptyState, LinkButton, PageHeader, Skeleton, inr, useApi, useToast } from "./ui";
+/**
+ * Admin · Order details. Move the order along its workflow (only valid next steps are offered), add courier + tracking,
+ * record payment/refund, approve or reject a customer's return, and see the full history. Every status change emails the customer.
+ */
+import React, { useEffect, useState } from "react";
+import { Alert, Badge, Button, Card, EmptyState, Field, LinkButton, PageHeader, Skeleton, inr, useApi, useToast } from "./ui";
+import { STATUS_LABEL, isOrderStatus, type OrderStatus } from "@/lib/order-lifecycle";
 
 type Item = { productId?: string; title: string; image?: string; size?: string; color?: string; quantity: number; pricePaise: number };
-type Address = { line1?: string; line2?: string; name?: string; email?: string; phone?: string; addressLine1?: string; addressLine2?: string; city?: string; state?: string; pincode?: string };
+type Address = { line1?: string; line2?: string; name?: string; email?: string; phone?: string; city?: string; state?: string; pincode?: string };
+type Event = { status: string; note?: string; at: string; by?: string };
 type Order = {
-  _id: string;
-  orderNumber?: string;
-  razorpayOrderId?: string;
-  items?: Item[];
-  subtotalPaise?: number;
-  discountPaise?: number;
-  shippingPaise?: number;
-  codFeePaise?: number;
-  totalPaise?: number;
-  deliveryAddress?: Address;
-  paymentMethod?: string;
-  paymentStatus?: string;
-  fulfillmentStatus?: string;
-  createdAt?: string;
+  _id: string; razorpayOrderId?: string; razorpayPaymentId?: string; items?: Item[];
+  subtotalPaise?: number; discountPaise?: number; shippingPaise?: number; codFeePaise?: number; totalPaise?: number;
+  deliveryAddress?: Address; paymentMethod?: string; paymentStatus?: string; fulfillmentStatus?: string; createdAt?: string;
+  deliveredAt?: string | null; courierName?: string; trackingNumber?: string; trackingUrl?: string;
+  cancelReason?: string; returnReason?: string; statusHistory?: Event[]; allowedNext?: OrderStatus[];
 };
 
-const STATUSES = ["processing", "shipped", "delivered", "cancelled"] as const;
-const TONES: Record<string, "warn" | "info" | "success" | "danger"> = { processing: "warn", shipped: "info", delivered: "success", cancelled: "danger" };
-const cap = (s?: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "—");
+const TONES: Record<string, "warn" | "info" | "success" | "danger" | "neutral"> = { processing: "warn", confirmed: "info", shipped: "info", out_for_delivery: "info", delivered: "success", cancelled: "danger", return_requested: "warn", returned: "danger" };
+const label = (s?: string) => (s && isOrderStatus(s) ? STATUS_LABEL[s] : s ? s.replace(/_/g, " ") : "—");
+const cap = (s?: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1).replace(/_/g, " ") : "—");
+const fmt = (d?: string) => (d ? new Date(d).toLocaleString("en-IN") : "");
 
 function Line({ k, v, strong }: { k: string; v: React.ReactNode; strong?: boolean }) {
   return (
@@ -34,31 +32,35 @@ function Line({ k, v, strong }: { k: string; v: React.ReactNode; strong?: boolea
   );
 }
 
+/** Button text for each next status. */
+const ACTION: Record<string, string> = { confirmed: "Confirm order", shipped: "Mark shipped", out_for_delivery: "Out for delivery", delivered: "Mark delivered", cancelled: "Cancel order", returned: "Approve return / refund" };
+
 export default function OrderDetailsClient({ id }: { id: string }) {
   const { data, error, loading, reload, setData } = useApi<{ order: Order }>(`/api/orders/${id}`);
   const { toast } = useToast();
   const [saving, setSaving] = useState(false);
+  const [note, setNote] = useState("");
+  const [courier, setCourier] = useState("");
+  const [tno, setTno] = useState("");
+  const [turl, setTurl] = useState("");
   const order = data?.order;
 
-  async function changeStatus(next: string) {
-    if (!order) return;
-    const prev = order.fulfillmentStatus;
-    setData({ order: { ...order, fulfillmentStatus: next } });
+  useEffect(() => {
+    if (order) { setCourier(order.courierName ?? ""); setTno(order.trackingNumber ?? ""); setTurl(order.trackingUrl ?? ""); }
+  }, [order?._id, order?.courierName, order?.trackingNumber, order?.trackingUrl]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  async function send(body: Record<string, unknown>, okMsg: string) {
     setSaving(true);
     try {
-      const r = await fetch(`/api/orders/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fulfillmentStatus: next }),
-      });
-      if (!r.ok) {
-        const j = await r.json().catch(() => ({}));
-        throw new Error(j.error || `HTTP ${r.status}`);
-      }
-      toast(`Order marked ${next}`);
+      const r = await fetch(`/api/orders/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(j.error || `HTTP ${r.status}`);
+      setData({ order: j.order });
+      setNote("");
+      toast(okMsg);
     } catch (e) {
-      setData({ order: { ...order, fulfillmentStatus: prev } });
-      toast(e instanceof Error ? e.message : "Failed to update status", "error");
+      toast(e instanceof Error ? e.message : "Failed to update", "error");
+      reload();
     } finally {
       setSaving(false);
     }
@@ -70,24 +72,16 @@ export default function OrderDetailsClient({ id }: { id: string }) {
     return (
       <>
         <PageHeader title="Loading order…">{back}</PageHeader>
-        <div className="adm-grid adm-grid-main">
-          <Card><Skeleton h={180} /></Card>
-          <Card><Skeleton h={180} /></Card>
-        </div>
+        <div className="adm-grid adm-grid-main"><Card><Skeleton h={180} /></Card><Card><Skeleton h={180} /></Card></div>
       </>
     );
   }
-
   if (error || !order) {
     const notFound = error === "Order not found";
     return (
       <>
         <PageHeader title={notFound ? "Order not found" : "Order"}>{back}</PageHeader>
-        {notFound || !error ? (
-          <Card><EmptyState title="Order not found" description="It may have been removed or the link is incorrect." /></Card>
-        ) : (
-          <Alert><span>{error} </span><Button size="sm" onClick={reload}>Retry</Button></Alert>
-        )}
+        {notFound || !error ? <Card><EmptyState title="Order not found" description="It may have been removed or the link is incorrect." /></Card> : <Alert><span>{error} </span><Button size="sm" onClick={reload}>Retry</Button></Alert>}
       </>
     );
   }
@@ -96,58 +90,99 @@ export default function OrderDetailsClient({ id }: { id: string }) {
   const a = order.deliveryAddress ?? {};
   const items = order.items ?? [];
   const subtotal = order.subtotalPaise ?? items.reduce((s, i) => s + i.pricePaise * i.quantity, 0);
-  const title = order.razorpayOrderId || order.orderNumber || order._id;
-  const addr = [a.line1 ?? a.addressLine1, a.line2 ?? a.addressLine2, [a.city, a.state].filter(Boolean).join(", "), a.pincode].filter(Boolean);
+  const title = `CR-${order._id.slice(-6).toUpperCase()}`;
+  const addr = [a.line1, a.line2, [a.city, a.state].filter(Boolean).join(", "), a.pincode].filter(Boolean);
+  const next = order.allowedNext ?? [];
+  const needsNote = (to: string) => to === "cancelled" || (status === "return_requested" && to === "delivered");
+  const finished = next.length === 0;
+  const trackingDirty = courier !== (order.courierName ?? "") || tno !== (order.trackingNumber ?? "") || turl !== (order.trackingUrl ?? "");
+  const refundDue = order.paymentStatus === "refund_pending";
 
   return (
     <>
-      <PageHeader title={`Order ${title}`} description={order.createdAt ? `Placed ${new Date(order.createdAt).toLocaleString("en-IN")}` : undefined}>
+      <PageHeader title={`Order ${title}`} description={order.createdAt ? `Placed ${new Date(order.createdAt).toLocaleString("en-IN")}${order.razorpayOrderId ? ` · ${order.razorpayOrderId}` : ""}` : undefined}>
         {back}
-        <Badge tone={TONES[status] ?? "neutral"}>{cap(status)}</Badge>
-        <select
-          className="adm-select"
-          style={{ width: 160 }}
-          aria-label="Fulfilment status"
-          value={STATUSES.includes(status as (typeof STATUSES)[number]) ? status : ""}
-          disabled={saving}
-          onChange={(e) => changeStatus(e.target.value)}
-        >
-          {!STATUSES.includes(status as (typeof STATUSES)[number]) ? <option value="" disabled>{cap(status)}</option> : null}
-          {STATUSES.map((s) => <option key={s} value={s}>{cap(s)}</option>)}
-        </select>
+        <Badge tone={TONES[status] ?? "neutral"}>{label(status)}</Badge>
+        <LinkButton href={`/api/orders/${id}/invoice`} external>Receipt PDF</LinkButton>
       </PageHeader>
 
+      {status === "return_requested" ? <div style={{ marginBottom: 14 }}><Alert kind="info"><b>Return requested</b> — {order.returnReason || "no reason given"}. Approve to refund, or reject with a note.</Alert></div> : null}
+      {refundDue ? <div style={{ marginBottom: 14 }}><Alert kind="info"><b>Refund due</b> — {inr(order.totalPaise ?? 0)} paid online. Refund it in your Razorpay dashboard, then mark payment as refunded below.</Alert></div> : null}
+
       <div className="adm-grid adm-grid-main">
-        <Card title={`Items (${items.length})`} pad={false}>
-          {items.length === 0 ? (
-            <EmptyState title="No items" />
-          ) : (
-            <div className="adm-table-wrap">
-              <table className="adm-table">
-                <thead>
-                  <tr><th scope="col">Product</th><th scope="col">Qty</th><th scope="col" className="num">Price</th></tr>
-                </thead>
-                <tbody>
-                  {items.map((it, i) => (
-                    <tr key={`${it.productId ?? it.title}-${i}`}>
-                      <td>
-                        <div className="adm-cell-media">
-                          {it.image ? <img className="adm-thumb" src={it.image} alt="" loading="lazy" /> : <div className="adm-thumb" />}
-                          <div>
-                            <div className="adm-cell-title">{it.title}</div>
-                            <div className="adm-cell-sub">{[it.size && `Size ${it.size}`, it.color].filter(Boolean).join(" · ")}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td>× {it.quantity}</td>
-                      <td className="num">{inr(it.pricePaise * it.quantity)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+        <div className="adm-list">
+          <Card title="Update order">
+            {finished ? (
+              <p className="adm-cell-sub">This order is {label(status).toLowerCase()} — no further status changes.</p>
+            ) : (
+              <>
+                <Field label={`Note to customer ${next.some(needsNote) ? "(required to cancel / reject a return)" : "(optional)"}`}>
+                  <input className="adm-input" value={note} maxLength={300} onChange={(e) => setNote(e.target.value)} placeholder="Shown in their email and order page" />
+                </Field>
+                <div className="adm-actions" style={{ marginTop: 12 }}>
+                  {next.map((to) => {
+                    const reject = status === "return_requested" && to === "delivered";
+                    const danger = to === "cancelled" || reject;
+                    return (
+                      <Button key={to} variant={danger ? "danger" : to === "delivered" || to === "returned" ? "primary" : "default"} disabled={saving || (needsNote(to) && !note.trim())} loading={saving} onClick={() => send({ fulfillmentStatus: to, note: note.trim() || undefined }, `Order ${reject ? "return rejected" : label(to).toLowerCase()} · customer notified`)}>
+                        {reject ? "Reject return" : ACTION[to] ?? cap(to)}
+                      </Button>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+          </Card>
+
+          <Card title="Courier & tracking">
+            <div className="adm-grid adm-grid-2">
+              <Field label="Courier"><input className="adm-input" value={courier} maxLength={60} onChange={(e) => setCourier(e.target.value)} placeholder="Delhivery, Blue Dart…" /></Field>
+              <Field label="Tracking number"><input className="adm-input" value={tno} maxLength={60} onChange={(e) => setTno(e.target.value)} /></Field>
+              <Field label="Tracking link" span><input className="adm-input" value={turl} maxLength={300} onChange={(e) => setTurl(e.target.value)} placeholder="https://…" /></Field>
             </div>
-          )}
-        </Card>
+            <div className="adm-actions" style={{ marginTop: 12 }}>
+              <Button variant="primary" disabled={saving || !trackingDirty} loading={saving} onClick={() => send({ courierName: courier.trim(), trackingNumber: tno.trim(), trackingUrl: turl.trim() }, "Tracking saved · customer notified")}>Save tracking</Button>
+            </div>
+          </Card>
+
+          <Card title={`Items (${items.length})`} pad={false}>
+            {items.length === 0 ? <EmptyState title="No items" /> : (
+              <div className="adm-table-wrap">
+                <table className="adm-table">
+                  <thead><tr><th scope="col">Product</th><th scope="col">Qty</th><th scope="col" className="num">Price</th></tr></thead>
+                  <tbody>
+                    {items.map((it, i) => (
+                      <tr key={`${it.productId ?? it.title}-${i}`}>
+                        <td>
+                          <div className="adm-cell-media">
+                            {it.image ? <img className="adm-thumb" src={it.image} alt="" loading="lazy" /> : <div className="adm-thumb" />}
+                            <div><div className="adm-cell-title">{it.title}</div><div className="adm-cell-sub">{[it.size && `Size ${it.size}`, it.color].filter(Boolean).join(" · ")}</div></div>
+                          </div>
+                        </td>
+                        <td>× {it.quantity}</td>
+                        <td className="num">{inr(it.pricePaise * it.quantity)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </Card>
+
+          <Card title="History">
+            {(order.statusHistory ?? []).length === 0 ? <p className="adm-cell-sub">No updates yet.</p> : (
+              <div className="adm-list">
+                {[...(order.statusHistory ?? [])].reverse().map((h, i) => (
+                  <div key={i} style={{ borderLeft: "3px solid var(--a-border)", paddingLeft: 10 }}>
+                    <div style={{ fontWeight: 600 }}>{label(h.status)} <span className="adm-cell-sub">· {h.by ?? "system"}</span></div>
+                    {h.note ? <div>{h.note}</div> : null}
+                    <div className="adm-cell-sub">{fmt(h.at)}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </Card>
+        </div>
 
         <div className="adm-list">
           <Card title="Customer">
@@ -160,12 +195,17 @@ export default function OrderDetailsClient({ id }: { id: string }) {
           </Card>
           <Card title="Payment">
             <Line k="Method" v={(order.paymentMethod || "—").toUpperCase()} />
-            <Line k="Status" v={cap(order.paymentStatus)} />
+            <Line k="Status" v={<Badge tone={order.paymentStatus === "paid" ? "success" : refundDue ? "warn" : order.paymentStatus === "refunded" ? "neutral" : "warn"}>{cap(order.paymentStatus)}</Badge>} />
+            {order.razorpayPaymentId ? <Line k="Payment ID" v={<span style={{ fontSize: 12 }}>{order.razorpayPaymentId}</span>} /> : null}
             <Line k="Subtotal" v={inr(subtotal)} />
             {order.discountPaise ? <Line k="Discount" v={`− ${inr(order.discountPaise)}`} /> : null}
             <Line k="Shipping" v={order.shippingPaise ? inr(order.shippingPaise) : "Free"} />
             {order.codFeePaise ? <Line k="COD fee" v={inr(order.codFeePaise)} /> : null}
             <Line k="Total" v={inr(order.totalPaise ?? 0)} strong />
+            <div className="adm-actions" style={{ marginTop: 12 }}>
+              {order.paymentStatus === "pending" && order.paymentMethod === "cod" ? <Button size="sm" disabled={saving} onClick={() => send({ paymentStatus: "paid" }, "Marked paid")}>Mark COD cash received</Button> : null}
+              {refundDue ? <Button size="sm" variant="primary" disabled={saving} onClick={() => send({ paymentStatus: "refunded", note: "Refund issued" }, "Marked refunded")}>Mark refunded</Button> : null}
+            </div>
           </Card>
         </div>
       </div>

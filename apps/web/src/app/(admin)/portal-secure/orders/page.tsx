@@ -15,17 +15,14 @@ type OrderRow = {
   date: string;
 };
 
-const FILTERS = ["all", "processing", "shipped", "delivered", "cancelled"] as const;
+const FILTERS = ["all", "processing", "confirmed", "shipped", "out_for_delivery", "delivered", "return_requested", "returned", "cancelled"] as const;
 type Filter = (typeof FILTERS)[number];
 
 const TONES: Record<string, "warn" | "info" | "success" | "danger"> = {
-  processing: "warn",
-  shipped: "info",
-  delivered: "success",
-  cancelled: "danger",
+  processing: "warn", confirmed: "info", shipped: "info", out_for_delivery: "info", delivered: "success", cancelled: "danger", return_requested: "warn", returned: "danger",
 };
 const norm = (s: string) => (s || "").toLowerCase();
-const label = (s: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "—");
+const label = (s: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase().replace(/_/g, " ") : "—");
 
 const Row = React.memo(function Row({ o }: { o: OrderRow }) {
   const href = `/portal-secure/orders/${o.id}`;

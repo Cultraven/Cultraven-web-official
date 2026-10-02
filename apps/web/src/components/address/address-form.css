@@ -1,0 +1,63 @@
+/* Shared address form (checkout + /account/addresses): fields, inline errors, current-location button, saved-address cards.
+   Neo-brutalist to match .co-* / .acct-*: 2px navy borders, hard offset shadows, gold focus. Own `af-` namespace. */
+
+.af { display: grid; gap: 1rem; min-width: 0; }
+
+/* ── Use my current location ── */
+.af-loc { display: grid; gap: 0.6rem; min-width: 0; }
+.af-loc-btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem; width: 100%; min-height: 48px; text-align: center; }
+.af-loc-btn svg { flex-shrink: 0; }
+.af-loc-btn.is-busy { cursor: progress; }
+.af-spin { width: 16px; height: 16px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: af-spin 0.8s linear infinite; flex-shrink: 0; }
+@keyframes af-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .af-spin { animation-duration: 2.4s; } }
+@media (min-width: 640px) { .af-loc-btn { width: auto; justify-self: start; } }
+.af-note { margin: 0; padding: 0.65rem 0.85rem; border: 2px solid var(--color-navy); background: var(--color-bone); color: var(--color-navy); font: 700 0.8rem/1.45 var(--font-sans); overflow-wrap: anywhere; }
+.af-note.ok { background: #e6f6ec; border-color: #15803d; color: #14532d; }
+.af-note.err { background: #FEF2F2; border-color: #b42318; color: #7a1a12; }
+.af-note small { display: block; margin-top: 4px; font-weight: 600; opacity: 0.8; }
+
+/* ── Fields ── */
+.af-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.9rem; }
+@media (max-width: 560px) { .af-grid { grid-template-columns: minmax(0, 1fr); } }
+.af-f { display: grid; gap: 4px; align-content: start; min-width: 0; }
+.af-f.full { grid-column: 1 / -1; }
+.af-f label { font: 800 0.68rem var(--font-sans); letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-navy); }
+.af-f label small { font-weight: 600; text-transform: none; letter-spacing: 0; color: var(--color-smoke); }
+.af-f input, .af-f select { width: 100%; min-width: 0; min-height: 46px; padding: 0.7rem 0.85rem; border: 2px solid var(--color-navy); background: #fff; font: 600 1rem var(--font-sans); color: var(--color-navy); border-radius: 0; }
+.af-f input:focus, .af-f select:focus { outline: none; box-shadow: 3px 3px 0 0 var(--color-lava); }
+.af-f input[aria-invalid="true"], .af-f select[aria-invalid="true"] { border-color: #b42318; background: #FFFBFA; }
+.af-f input[aria-invalid="true"]:focus, .af-f select[aria-invalid="true"]:focus { box-shadow: 3px 3px 0 0 #b42318; }
+.af-err { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.6rem; font: 700 0.76rem/1.4 var(--font-sans); color: #b42318; font-style: normal; overflow-wrap: anywhere; }
+.af-hint { font: 600 0.74rem/1.4 var(--font-sans); color: var(--color-smoke); font-style: normal; overflow-wrap: anywhere; }
+.af-hint.ok { color: #15803d; }
+.af-hint.warn { color: #92400e; }
+.af-fix { min-height: 44px; padding: 0.4rem 0.8rem; border: 2px solid var(--color-navy); background: var(--color-lava); color: var(--color-navy); font: 800 0.7rem var(--font-sans); letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; box-shadow: 2px 2px 0 0 var(--color-navy); }
+.af-fix:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 0 var(--color-navy); }
+.af-fix:focus-visible { outline: 3px solid var(--color-navy); outline-offset: 2px; }
+
+/* ── Form-level summary ── */
+.af-summary { margin: 0; padding: 0.7rem 0.9rem; border: 2px solid #b42318; background: #FEF2F2; color: #7a1a12; font: 700 0.85rem/1.5 var(--font-sans); }
+
+/* ── Saved-address cards in checkout (radio + Edit button side by side) ── */
+.af-addr-pick { display: flex; gap: 0.8rem; align-items: flex-start; flex: 1 1 auto; min-width: 0; cursor: pointer; }
+.af-addr-pick > div { min-width: 0; overflow-wrap: anywhere; }
+.co-addr.af-bad { border-color: #b42318; background: #FEF2F2; box-shadow: none; }
+.co-addr.af-bad .af-addr-pick { cursor: default; }
+.af-bad-msg { color: #b42318 !important; font-weight: 800 !important; }
+.af-edit { flex: 0 0 auto; min-width: 64px; align-self: center; }
+.af-edit.is-fix { color: #b42318; }
+.co-addr.af-editing { box-shadow: 4px 4px 0 var(--color-lava); background: var(--color-bone); }
+
+.af-form-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+.af-form-actions .cv-btn { min-height: 48px; justify-content: center; }
+
+.af-checkbox { display: flex; gap: 0.6rem; align-items: center; min-height: 44px; font: 700 0.85rem var(--font-sans); color: var(--color-navy); cursor: pointer; }
+.af-checkbox input { width: 20px; height: 20px; accent-color: var(--color-navy); flex-shrink: 0; }
+
+/* ── /account/addresses extras ── */
+.acct-addr.is-invalid { box-shadow: 4px 4px 0 0 #b42318; }
+.acct-bad { margin: 0; color: #b42318; font: 800 0.78rem/1.45 var(--font-sans); overflow-wrap: anywhere; }
+.acct-bad-chip { background: #FEF2F2; color: #b42318; border-color: #b42318; }
+.af-count { margin: 0 0 1rem; font: 700 0.78rem var(--font-sans); color: var(--color-smoke); }
+.af-acct-actions .cv-btn-sm { min-height: 44px; }

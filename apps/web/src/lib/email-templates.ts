@@ -65,13 +65,13 @@ function addressBlock(o: MailOrder): string {
 <p style="margin:16px 0 4px;font-size:12px;font-weight:900;letter-spacing:2px">ESTIMATED DELIVERY</p><p style="margin:0;font-size:14px">3–5 business days</p>`;
 }
 
-export function customerOrderEmail(o: MailOrder, siteUrl: string) {
+export function customerOrderEmail(o: MailOrder, siteUrl: string, opts: { receiptAttached?: boolean } = {}) {
   const no = orderNumber(o.id);
   const subject = `Order confirmed — ${no}`;
   const html = shell(
     "Order confirmed",
     `Hi ${escapeHtml(o.deliveryAddress.name.split(" ")[0])}, thanks for your order <b>${no}</b>. We're getting it ready.`,
-    itemsTable(o) + addressBlock(o) + `<p style="margin:24px 0 0"><a href="${escapeHtml(siteUrl)}/account/orders" style="display:inline-block;background:${NAVY};color:${CREAM};padding:12px 20px;text-decoration:none;font-weight:900;font-size:13px;letter-spacing:2px;border-bottom:4px solid ${GOLD}">VIEW MY ORDERS</a></p>`,
+    itemsTable(o) + addressBlock(o) + (opts.receiptAttached ? `<p style="margin:16px 0 0;font-size:13px">Your receipt is attached to this email (PDF). You can also download it any time from your order page.</p>` : "") + `<p style="margin:24px 0 0"><a href="${escapeHtml(siteUrl)}/account/orders/${escapeHtml(o.id)}" style="display:inline-block;background:${NAVY};color:${CREAM};padding:12px 20px;text-decoration:none;font-weight:900;font-size:13px;letter-spacing:2px;border-bottom:4px solid ${GOLD}">TRACK MY ORDER</a></p>`,
     siteUrl
   );
   const text = [`Order confirmed — ${no}`, "", ...o.items.map((i) => `${i.title} (${[i.size, i.color].filter(Boolean).join(", ")}) x${i.quantity} — ${inr(i.pricePaise * i.quantity)}`), "", ...totalsRows(o).map(([k, v]) => `${k}: ${v}`), `TOTAL: ${inr(o.totalPaise)}`, "", "Delivering to:", ...addressLines(o.deliveryAddress), "", `Payment: ${payLine(o)}`, "Estimated delivery: 3–5 business days", "", `Your orders: ${siteUrl}/account/orders`].join("\n");
@@ -98,4 +98,57 @@ export function testEmail(siteUrl: string) {
     html: shell("Email is working", "This is a test message from your CULTRAVEN admin panel. Order emails will be delivered the same way.", "", siteUrl),
     text: "CULTRAVEN test email — your SMTP settings work.",
   };
+}
+
+// ── Status updates & cancellations ──────────────────────────────────────────────
+
+import { STATUS_LABEL, isOrderStatus } from "@/lib/order-lifecycle";
+
+const STATUS_COPY: Record<string, string> = {
+  confirmed: "We've confirmed your order and are packing it.",
+  shipped: "Your order is on its way.",
+  out_for_delivery: "Your order is out for delivery today — please keep your phone handy.",
+  delivered: "Your order has been delivered. We hope you love it! You can return it within 7 days if something isn't right.",
+  cancelled: "Your order has been cancelled.",
+  return_requested: "We've received your return request and will update you shortly.",
+  returned: "Your return is complete. Any refund is processed to your original payment method within 5–7 business days.",
+};
+
+export interface StatusEmailInput { status: string; note?: string; courier?: string; trackingNumber?: string; trackingUrl?: string }
+
+/** Sent to the customer whenever the status of their order changes (admin action or their own cancel/return). */
+export function orderStatusEmail(o: MailOrder, siteUrl: string, s: StatusEmailInput) {
+  const no = orderNumber(o.id);
+  const label = isOrderStatus(s.status) ? STATUS_LABEL[s.status] : s.status;
+  const subject = `${no}: ${label}`;
+  const copy = STATUS_COPY[s.status] ?? "There's an update on your order.";
+  const trackBits = [s.courier && `Courier: <b>${escapeHtml(s.courier)}</b>`, s.trackingNumber && `Tracking no.: <b>${escapeHtml(s.trackingNumber)}</b>`].filter(Boolean).join("<br>");
+  const body =
+    `<p style="margin:0 0 6px;font-size:12px;font-weight:900;letter-spacing:2px">STATUS</p><p style="margin:0 0 14px;font-size:18px;font-weight:900;text-transform:uppercase">${escapeHtml(label)}</p>` +
+    (s.note ? `<p style="margin:0 0 14px;font-size:14px;line-height:1.6;background:${BONE};padding:10px 12px;border-left:4px solid ${GOLD}">${escapeHtml(s.note)}</p>` : "") +
+    (trackBits ? `<p style="margin:0 0 14px;font-size:14px;line-height:1.7">${trackBits}</p>` : "") +
+    (s.trackingUrl && /^https?:\/\//i.test(s.trackingUrl) ? `<p style="margin:0 0 14px"><a href="${escapeHtml(s.trackingUrl)}" style="color:${NAVY};font-weight:900">Track with the courier →</a></p>` : "") +
+    itemsTable(o) +
+    `<p style="margin:24px 0 0"><a href="${escapeHtml(siteUrl)}/account/orders/${escapeHtml(o.id)}" style="display:inline-block;background:${NAVY};color:${CREAM};padding:12px 20px;text-decoration:none;font-weight:900;font-size:13px;letter-spacing:2px;border-bottom:4px solid ${GOLD}">TRACK MY ORDER</a></p>`;
+  const html = shell(`Order ${no}`, escapeHtml(copy), body, siteUrl);
+  const text = [`${no}: ${label}`, copy, s.note ? `Note: ${s.note}` : "", s.courier ? `Courier: ${s.courier}` : "", s.trackingNumber ? `Tracking no.: ${s.trackingNumber}` : "", s.trackingUrl ?? "", "", `Track your order: ${siteUrl}/account/orders/${o.id}`].filter((l) => l !== "").join("\n");
+  return { subject, html, text };
+}
+
+/** Admin alert when a customer cancels an order or asks for a return. */
+export function adminCustomerActionEmail(o: MailOrder, siteUrl: string, kind: "cancelled" | "return_requested", reason: string) {
+  const no = orderNumber(o.id);
+  const what = kind === "cancelled" ? "cancelled" : "requested a return for";
+  const subject = `${kind === "cancelled" ? "Order cancelled" : "Return requested"} — ${no}`;
+  const html = shell(
+    subject,
+    `${escapeHtml(o.deliveryAddress.name)} ${what} order <b>${no}</b> (${inr(o.totalPaise)}, ${o.paymentMethod === "cod" ? "COD" : "online"}).`,
+    `<p style="margin:0 0 14px;font-size:14px;background:${BONE};padding:10px 12px;border-left:4px solid ${GOLD}"><b>Reason:</b> ${escapeHtml(reason)}</p>` +
+      (kind === "cancelled" && o.paymentMethod === "razorpay" && o.paymentStatus === "paid" ? `<p style="font-size:14px"><b>Paid online — a refund is due.</b></p>` : "") +
+      itemsTable(o) +
+      `<p style="margin:24px 0 0"><a href="${escapeHtml(siteUrl)}/portal-secure/orders/${escapeHtml(o.id)}" style="display:inline-block;background:${NAVY};color:${CREAM};padding:12px 20px;text-decoration:none;font-weight:900;font-size:13px;letter-spacing:2px;border-bottom:4px solid ${GOLD}">OPEN IN ADMIN</a></p>`,
+    siteUrl
+  );
+  const text = `${subject}\nCustomer: ${o.deliveryAddress.name}\nReason: ${reason}\n${siteUrl}/portal-secure/orders/${o.id}`;
+  return { subject, html, text };
 }

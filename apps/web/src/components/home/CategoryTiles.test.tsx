@@ -37,6 +37,28 @@ describe("CategoryTiles (database-driven props)", () => {
     expect(container.querySelectorAll(".cat-tile").length).toBe(3);
   });
 
+  it("has no gradient / blue shade over the tile photos", () => {
+    const { container } = render(<CategoryTiles strip={strip} tiles={tiles} />);
+    const html = container.innerHTML;
+    expect(html).not.toContain("linear-gradient");
+    expect(html).not.toContain("rgba(23,37,84"); // the old navy overlay
+    expect(html).not.toMatch(/rgba\(23, ?37, ?84/);
+  });
+
+  it("shows each title + sub-line in a label chip (readable without an overlay)", () => {
+    const { container } = render(<CategoryTiles strip={strip} tiles={tiles} />);
+    const chips = container.querySelectorAll(".cat-tile .cat-label");
+    expect(chips.length).toBe(3);
+    expect(chips[0].querySelector(".cat-label-title")?.textContent).toBe("Oversized Tees");
+    expect(chips[0].querySelector(".cat-label-sub")?.textContent).toBe("From ₹1,499");
+  });
+
+  it("omits the sub-line instead of rendering an empty one", () => {
+    const { container } = render(<CategoryTiles strip={[]} tiles={[{ id: "x", title: "Only Title", href: "/c", image: "https://images.unsplash.com/z" }]} />);
+    expect(container.querySelector(".cat-label-sub")).toBeNull();
+    expect(container.querySelector(".cat-label-title")?.textContent).toBe("Only Title");
+  });
+
   it("does not invent content when given no tiles", () => {
     const { container } = render(<CategoryTiles strip={[]} tiles={[]} />);
     expect(container.querySelectorAll(".cat-tile").length).toBe(0);

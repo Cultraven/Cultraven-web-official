@@ -236,7 +236,7 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
             top: "10px",
             right: "10px",
             zIndex: 10,
-            background: "rgba(249,248,246,0.92)",
+            background: "rgba(246,241,231,0.92)",
             border: "none",
             width: "32px",
             height: "32px",
@@ -313,7 +313,7 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
             style={{
               width: "100%",
               padding: "0.75rem",
-              backgroundColor: added ? "var(--color-lava)" : "rgba(249,248,246,0.97)",
+              backgroundColor: added ? "var(--color-lava)" : "rgba(246,241,231,0.97)",
               color: added ? "var(--color-navy)" : "var(--color-navy)",
               fontFamily: "var(--font-sans)",
               fontWeight: 800,

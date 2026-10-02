@@ -3,7 +3,8 @@ import { connectToDatabase } from "@/lib/db";
 import { Product } from "@/lib/models/Product";
 import { isAdminRequest } from "@/lib/admin-auth";
 import { ProductWriteSchema } from "@/lib/product-schema";
-import { escapeRegex, normalizeProduct } from "@/lib/products";
+import { normalizeProduct } from "@/lib/products";
+import { escapeRegex, isSameOrigin, parseJsonBody } from "@/lib/sanitize";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +14,7 @@ export const dynamic = "force-dynamic";
  */
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
+  // Query values are always strings; the text is regex-escaped below so it can never inject a pattern (ReDoS / operator).
   const categoryParam = (searchParams.get("category")?.toLowerCase().trim() ?? "").slice(0, 64);
   const limit = Math.min(Math.max(parseInt(searchParams.get("limit") ?? "50", 10) || 50, 1), 100);
 
@@ -36,11 +38,13 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   if (!isAdminRequest(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!isSameOrigin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-  let body: unknown;
-  try { body = await req.json(); } catch { return NextResponse.json({ error: "Invalid request body" }, { status: 400 }); }
+  // Size cap, JSON only, no $-operator / prototype keys; zod then whitelists and bounds every field.
+  const body = await parseJsonBody(req, 64 * 1024);
+  if (!body.ok) return NextResponse.json({ error: body.error }, { status: body.status });
 
-  const parsed = ProductWriteSchema.safeParse(body);
+  const parsed = ProductWriteSchema.safeParse(body.data);
   if (!parsed.success) {
     return NextResponse.json({ error: "Validation failed", issues: parsed.error.flatten().fieldErrors }, { status: 422 });
   }

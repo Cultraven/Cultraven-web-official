@@ -1,15 +1,19 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import "@/styles/orders.css";
+import { STATUS_LABEL, isOrderStatus } from "@/lib/order-lifecycle";
 
 const inr = (paise: number) => `₹${(paise / 100).toLocaleString("en-IN")}`;
-const tone = (s: string) => (s === "delivered" ? "is-ok" : s === "cancelled" || s === "returned" ? "is-bad" : s === "shipped" ? "is-info" : "is-warn");
-/** Orders store sku as `${slug}-${size}`; recover the slug for the product link. */
-const slugOf = (i: { sku?: string; size?: string }) => { const sku = i.sku ?? ""; const tail = `-${i.size ?? ""}`; return i.size && sku.endsWith(tail) ? sku.slice(0, -tail.length) : sku; };
+const tone = (s: string) => (s === "delivered" ? "is-ok" : s === "cancelled" || s === "returned" ? "is-bad" : s === "shipped" || s === "out_for_delivery" ? "is-info" : "is-warn");
 const date = (d: string) => new Date(d).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+const label = (s: string) => (isOrderStatus(s) ? STATUS_LABEL[s] : s);
+
+interface Item { title: string; image: string; size: string; color: string; quantity: number; pricePaise: number }
+interface Order { id: string; number: string; createdAt: string; status: string; totalPaise: number; paymentMethod: string; items: Item[]; tracking: { courier: string; number: string }; canCancel: { ok: boolean }; canReturn: { ok: boolean }; timeline: { key: string; state: string; label: string }[] }
 
 export default function OrdersPage() {
-  const [orders, setOrders] = useState<any[] | null>(null);
+  const [orders, setOrders] = useState<Order[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -29,13 +33,13 @@ export default function OrdersPage() {
       <header className="acct-head">
         <span className="acct-eyebrow">My account</span>
         <h1 className="acct-title">Order history</h1>
-        <p className="acct-sub">Every order you&apos;ve placed, with live status.</p>
+        <p className="acct-sub">Track every order, download receipts, cancel within 7 days or request a return.</p>
       </header>
 
       {error ? <p role="alert" style={{ color: "#b42318", fontWeight: 700, marginBottom: "1rem" }}>Couldn&apos;t load your orders ({error}). Please refresh.</p> : null}
 
       {orders === null && !error ? (
-        <div className="acct-card"><div className="acct-card-b" style={{ display: "grid", gap: 14 }}>{[0, 1].map((i) => <div key={i} className="skel" style={{ height: 88 }} />)}</div></div>
+        <div className="acct-card"><div className="acct-card-b" style={{ display: "grid", gap: 14 }}>{[0, 1].map((i) => <div key={i} className="skel" style={{ height: 120 }} />)}</div></div>
       ) : orders && orders.length === 0 ? (
         <div className="acct-card">
           <div className="acct-empty">
@@ -44,53 +48,51 @@ export default function OrdersPage() {
             </div>
             <h3>No orders yet</h3>
             <p>You haven&apos;t placed any orders. Your first drop is waiting.</p>
-            <Link href="/collections/all" className="cv-btn cv-btn-navy">
-              Start shopping
-              <svg className="cv-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="square" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-            </Link>
+            <Link href="/collections/all" className="cv-btn cv-btn-navy">Start shopping</Link>
           </div>
         </div>
       ) : (
-        <div style={{ display: "grid", gap: "1.5rem" }}>
-          {orders?.map((order) => (
-            <article key={order._id} className="acct-card">
-              <div className="acct-card-h">
-                <div>
-                  <h3>Order {order.razorpayOrderId ?? String(order._id).slice(-6).toUpperCase()}</h3>
-                  <small style={{ color: "var(--color-smoke)", fontSize: "0.74rem" }}>Placed {date(order.createdAt)}</small>
-                </div>
-                <div style={{ textAlign: "right" }}>
-                  <b style={{ color: "var(--color-navy)", fontSize: "1rem", display: "block", marginBottom: 6 }}>{inr(order.totalPaise)}</b>
-                  <span className={`acct-chip ${tone(order.fulfillmentStatus)}`}>{order.fulfillmentStatus}</span>
-                </div>
-              </div>
-              <div className="acct-card-b" style={{ display: "grid", gap: "1rem" }}>
-                {order.items?.map((item: any, i: number) => (
-                  <div key={i} style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={item.image} alt="" loading="lazy" style={{ width: 64, height: 80, objectFit: "cover", border: "2px solid var(--color-navy)", background: "var(--color-bone)" }} />
-                    <div style={{ minWidth: 0, flex: 1 }}>
-                      <b style={{ display: "block", fontSize: "0.8rem", textTransform: "uppercase", color: "var(--color-navy)", letterSpacing: "0.03em" }}>{item.title}</b>
-                      <small style={{ color: "var(--color-smoke)", fontSize: "0.76rem" }}>
-                        {[item.size, item.color].filter(Boolean).join(" · ")}{item.size || item.color ? " · " : ""}Qty {item.quantity}
-                      </small>
-                    </div>
-                    <div style={{ textAlign: "right", display: "grid", gap: 6, justifyItems: "end" }}>
-                      <b style={{ color: "var(--color-navy)", fontSize: "0.85rem" }}>{inr(item.pricePaise)}</b>
-                      {order.fulfillmentStatus !== "cancelled" && order.fulfillmentStatus !== "returned" ? (
-                        <Link href={`/products/${slugOf(item)}#reviews`} className="cv-btn cv-btn-outline cv-btn-sm">Review</Link>
-                      ) : null}
-                    </div>
+        <div className="ord-list">
+          {orders?.map((o) => {
+            const current = o.timeline.find((s) => s.state === "current") ?? [...o.timeline].reverse().find((s) => s.state === "done" || s.state === "bad");
+            return (
+              <article key={o.id} className="ord-card">
+                <div className="ord-head">
+                  <div>
+                    <h3>Order {o.number}</h3>
+                    <small>Placed {date(o.createdAt)} · {o.paymentMethod === "cod" ? "Cash on Delivery" : "Paid online"}</small>
                   </div>
-                ))}
-              </div>
-              {order.trackingLink ? (
-                <div style={{ padding: "0 1.35rem 1.35rem" }}>
-                  <a href={order.trackingLink} target="_blank" rel="noopener noreferrer" className="cv-btn cv-btn-outline cv-btn-sm">Track shipment</a>
+                  <div style={{ textAlign: "right" }}>
+                    <b style={{ display: "block", marginBottom: 6 }}>{inr(o.totalPaise)}</b>
+                    <span className={`acct-chip ${tone(o.status)}`}>{label(o.status)}</span>
+                  </div>
                 </div>
-              ) : null}
-            </article>
-          ))}
+                <div className="ord-body">
+                  <div className="ord-items">
+                    {o.items.slice(0, 3).map((item, i) => (
+                      <div key={i} className="ord-item">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={item.image} alt="" loading="lazy" />
+                        <div style={{ minWidth: 0 }}>
+                          <b>{item.title}</b>
+                          <small>{[item.size, item.color].filter(Boolean).join(" · ")} · Qty {item.quantity}</small>
+                        </div>
+                        <span className="ord-price">{inr(item.pricePaise * item.quantity)}</span>
+                      </div>
+                    ))}
+                    {o.items.length > 3 ? <small style={{ color: "var(--color-smoke)", fontWeight: 700 }}>+ {o.items.length - 3} more item{o.items.length - 3 > 1 ? "s" : ""}</small> : null}
+                  </div>
+                  {current ? <div className={`ord-mini ${current.state === "bad" ? "bad" : ""}`}><i />{current.label}{o.tracking.courier ? ` · ${o.tracking.courier}` : ""}</div> : null}
+                </div>
+                <div className="ord-actions">
+                  <Link href={`/account/orders/${o.id}`} className="cv-btn cv-btn-navy cv-btn-sm">Track &amp; details</Link>
+                  <a href={`/api/orders/${o.id}/invoice`} className="cv-btn cv-btn-outline cv-btn-sm">Receipt (PDF)</a>
+                  {o.canCancel.ok ? <Link href={`/account/orders/${o.id}?action=cancel`} className="cv-btn cv-btn-outline cv-btn-sm">Cancel order</Link> : null}
+                  {o.canReturn.ok ? <Link href={`/account/orders/${o.id}?action=return`} className="cv-btn cv-btn-outline cv-btn-sm">Return</Link> : null}
+                </div>
+              </article>
+            );
+          })}
         </div>
       )}
     </>

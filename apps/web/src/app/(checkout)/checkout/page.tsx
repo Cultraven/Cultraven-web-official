@@ -3,9 +3,12 @@
  * Checkout — /checkout (whole bag) and /checkout?mode=buy-now (COP IT NOW: one item, bag untouched).
  *
  * Signed-in only (middleware sends visitors to login/register and brings them back here).
- *   1. Address   — pick a saved address or add a new one (optionally saved to the address book)
+ *   1. Address   — pick a saved address (or fix/edit it) or add a new one (optionally saved to the address book)
  *   2. Review    — choose payment (Cash on Delivery now; online when Razorpay keys are added) and confirm
- * The server re-prices everything from the catalogue and refuses sold-out items; this page only displays estimates.
+ *
+ * Validation is layered: this page runs the same rules as the server (lib/address-validation) inline and blocks Continue /
+ * Place Order; the server (create-order zod schema) re-validates everything, re-prices from the catalogue and refuses sold-out
+ * items, and answers 503 to online payment until Razorpay is configured. This page only ever displays estimates.
  */
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
@@ -15,25 +18,15 @@ import { useCartStore } from "@/store/cart";
 import { useBuyNowStore } from "@/store/buyNow";
 import { validateCoupon } from "@/lib/promotion-service";
 import { FREE_SHIPPING_THRESHOLD, SHIPPING_FEE, COD_FEE, COD_MAX_LIMIT } from "@/lib/constants";
+import { canonicalState, firstAddressError, validateAddress, type AddressValues } from "@/lib/address-validation";
+import { AddressFields } from "@/components/address/AddressFields";
+import { useAddressDraft, type AddressDraft, type AddressLabel } from "@/components/address/useAddressDraft";
 
 const fmt = (p: number) => `₹${(p / 100).toLocaleString("en-IN")}`;
-
-const STATES = ["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal","Andaman & Nicobar","Chandigarh","Dadra & Nagar Haveli","Daman & Diu","Delhi","Jammu & Kashmir","Ladakh","Lakshadweep","Puducherry"];
+const MAX_SAVED = 10;
 
 interface Addr { id: string; label: string; name: string; line1: string; line2: string; city: string; state: string; pincode: string; phone: string; isDefault: boolean }
-interface Draft { label: "Home" | "Work" | "Other"; name: string; phone: string; pincode: string; line1: string; line2: string; city: string; state: string; save: boolean }
-const EMPTY: Draft = { label: "Home", name: "", phone: "", pincode: "", line1: "", line2: "", city: "", state: "", save: true };
-
-function validate(d: Draft): Record<string, string> {
-  const e: Record<string, string> = {};
-  if (d.name.trim().length < 2) e.name = "Enter the receiver's name";
-  if (!/^[6-9]\d{9}$/.test(d.phone)) e.phone = "Enter a valid 10-digit mobile number";
-  if (!/^[1-9]\d{5}$/.test(d.pincode)) e.pincode = "Enter a 6-digit pincode";
-  if (d.line1.trim().length < 5) e.line1 = "Enter house no., building and street";
-  if (d.city.trim().length < 2) e.city = "Required";
-  if (!d.state) e.state = "Select a state";
-  return e;
-}
+const asLabel = (l: string): AddressLabel => (l === "Work" || l === "Other" ? l : "Home");
 
 function loadRazorpayScript(): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -81,23 +74,53 @@ export default function CheckoutPage() {
 
   const [step, setStep] = useState<1 | 2>(1);
   const [selectedId, setSelectedId] = useState<string | "new">("new");
-  const [draft, setDraft] = useState<Draft>(EMPTY);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [saveToBook, setSaveToBook] = useState(true);
+  const [summary, setSummary] = useState("");
+  const [savingEdit, setSavingEdit] = useState(false);
   const [method, setMethod] = useState<"cod" | "razorpay">("cod");
   const [placing, setPlacing] = useState(false);
   const [error, setError] = useState("");
   const idemKey = useRef<string>("");
   const placed = useRef(false);
+  const inflight = useRef(false); // synchronous guard: two clicks in one tick can't both pass `placing`
+  const savedKey = useRef("");
+  const stash = useRef<AddressDraft | null>(null); // a half-typed new address survives a detour to "Edit"
 
-  // Preselect the default saved address; prefill the new-address form with the account name.
+  const form = useAddressDraft();
+  const fullName = me ? [me.firstName, me.lastName].filter(Boolean).join(" ") : "";
+
+  /** Every saved address is re-checked against today's rules: old data that fails is flagged and can't be shipped to until fixed. */
+  const savedCheck = useMemo(() => {
+    const m = new Map<string, ReturnType<typeof validateAddress>>();
+    for (const a of addresses ?? []) m.set(a.id, validateAddress(a));
+    return m;
+  }, [addresses]);
+
+  // Preselect the default saved address (first one that is valid); prefill the new-address form with the account name.
+  const prefilled = useRef(false);
   useEffect(() => {
-    if (addresses === null || me === null) return;
-    const def = addresses.find((a) => a.isDefault) ?? addresses[0];
-    setSelectedId((cur) => (cur === "new" && def ? def.id : cur));
-    setDraft((d) => (d.name ? d : { ...d, name: [me.firstName, me.lastName].filter(Boolean).join(" ") }));
-  }, [addresses, me]);
+    if (addresses === null || me === null || prefilled.current) return;
+    prefilled.current = true;
+    const ordered = [...addresses.filter((a) => a.isDefault), ...addresses.filter((a) => !a.isDefault)];
+    const firstValid = ordered.find((a) => validateAddress(a).ok);
+    if (firstValid) setSelectedId(firstValid.id);
+    if (fullName) form.setField("name", fullName);
+  }, [addresses, me]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const chosen: Addr | null = selectedId === "new" ? null : addresses?.find((a) => a.id === selectedId) ?? null;
+  const showForm = selectedId === "new" || editingId !== null;
+
+  /** The validated, normalised address that will be shipped to — null until it passes every rule. */
+  const newCheck = useMemo(() => validateAddress(form.draft), [form.draft]);
+  const shipTo: AddressValues | null = useMemo(() => {
+    if (selectedId === "new") return newCheck.ok ? newCheck.value : null;
+    if (editingId) return null;
+    const c = chosen ? savedCheck.get(chosen.id) : null;
+    return c?.ok ? c.value : null;
+  }, [selectedId, editingId, newCheck, chosen, savedCheck]);
+
+  useEffect(() => { if (step === 2 && !shipTo) setStep(1); }, [step, shipTo]);
 
   // ── Totals (display only — the server recomputes) ──
   const t = useMemo(() => {
@@ -110,44 +133,104 @@ export default function CheckoutPage() {
   }, [items, couponCode, method]);
   const codAllowed = t.subtotal - t.discount + t.shipping + COD_FEE <= COD_MAX_LIMIT;
   useEffect(() => { if (!codAllowed && method === "cod" && online) setMethod("razorpay"); }, [codAllowed, method, online]);
+  useEffect(() => { if (!online && method === "razorpay") setMethod("cod"); }, [online, method]); // online can't be chosen while Razorpay isn't configured
 
-  const setD = <K extends keyof Draft>(k: K, v: Draft[K]) => { setDraft((d) => ({ ...d, [k]: v })); setErrors((e) => ({ ...e, [k]: "" })); };
-  const onPincode = async (v: string) => {
-    const pin = v.replace(/\D/g, "").slice(0, 6);
-    setD("pincode", pin);
-    if (/^[1-9]\d{5}$/.test(pin)) {
-      try {
-        const r = await fetch(`/api/pincode/${pin}`);
-        const j = await r.json();
-        if (j.city && j.state) setDraft((d) => (d.pincode === pin ? { ...d, city: d.city || j.city, state: d.state || (STATES.find((s) => s.toLowerCase() === String(j.state).toLowerCase()) ?? d.state) } : d));
-      } catch { /* the shopper can type them */ }
+  // ── Address step ──
+  const pickSaved = (id: string) => {
+    if (editingId) { setEditingId(null); form.reset(stash.current ?? { name: fullName }); }
+    setSelectedId(id); setSummary("");
+  };
+  const pickNew = () => {
+    if (editingId) { setEditingId(null); form.reset(stash.current ?? { name: fullName }); }
+    setSelectedId("new"); setSummary("");
+  };
+  const openEdit = (a: Addr) => {
+    if (selectedId === "new" && !editingId) stash.current = { ...form.draft };
+    setEditingId(a.id); setSelectedId(a.id); setSummary("");
+    form.reset({ label: asLabel(a.label), name: a.name, phone: a.phone, pincode: a.pincode, city: a.city, state: canonicalState(a.state, a.pincode) ?? "", line1: a.line1, line2: a.line2 });
+    form.showAllErrors();
+    requestAnimationFrame(() => document.getElementById("co-name")?.scrollIntoView({ block: "center", behavior: "smooth" }));
+  };
+  const cancelEdit = () => {
+    setEditingId(null); setSummary("");
+    form.reset(stash.current ?? { name: fullName });
+    const ordered = [...(addresses ?? []).filter((a) => a.isDefault), ...(addresses ?? []).filter((a) => !a.isDefault)];
+    const firstValid = ordered.find((a) => validateAddress(a).ok);
+    setSelectedId(firstValid?.id ?? "new");
+  };
+
+  const saveEdit = async () => {
+    const a = addresses?.find((x) => x.id === editingId);
+    if (!a || savingEdit) return;
+    const r = form.validateAll();
+    if (!r.ok) { setSummary(`Please fix ${Object.keys(r.errors).length === 1 ? "the highlighted field" : "the highlighted fields"} to continue.`); return; }
+    setSavingEdit(true);
+    try {
+      const res = await fetch(`/api/account/addresses/${a.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ label: form.draft.label, name: r.value.name, phone: r.value.phone, pincode: r.value.pincode, city: r.value.city, state: r.value.state, line1: r.value.line1, line2: r.value.line2, isDefault: a.isDefault }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        form.setServerErrors(data.issues);
+        setSummary(typeof data.error === "string" ? data.error : "Could not save the address. Please try again.");
+        return;
+      }
+      const updated = data.address as Addr;
+      setAddresses((list) => (list ?? []).map((x) => (x.id === updated.id ? updated : x)));
+      setEditingId(null); setSelectedId(updated.id); setSummary("");
+      setStep(2);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch {
+      setSummary("Network error — your changes were not saved. Please try again.");
+    } finally {
+      setSavingEdit(false);
     }
   };
 
   const continueToReview = (e: React.FormEvent) => {
     e.preventDefault();
+    setSummary("");
+    if (editingId) { void saveEdit(); return; }
     if (selectedId === "new") {
-      const errs = validate(draft);
-      if (Object.keys(errs).length) { setErrors(errs); return; }
-    } else if (!chosen) return;
+      const r = form.validateAll();
+      if (!r.ok) { setSummary(`Please fix ${Object.keys(r.errors).length === 1 ? "the highlighted field" : "the highlighted fields"} to continue.`); return; }
+    } else {
+      if (!chosen) { setSummary("Choose a delivery address or add a new one."); return; }
+      const c = savedCheck.get(chosen.id);
+      if (!c || !c.ok) { setSummary(`This saved address needs fixing${c && !c.ok ? ` (${firstAddressError(c.errors)})` : ""}. Tap Edit to correct it.`); return; }
+    }
     setStep(2);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  /** The address that will be shipped to (saved one, or the validated draft). */
-  const shipTo = chosen
-    ? { name: chosen.name, phone: chosen.phone, line1: chosen.line1, line2: chosen.line2, city: chosen.city, state: chosen.state, pincode: chosen.pincode }
-    : { name: draft.name.trim(), phone: draft.phone, line1: draft.line1.trim(), line2: draft.line2.trim(), city: draft.city.trim(), state: draft.state, pincode: draft.pincode };
+  // ── Place order ──
+  const ready = buyNow !== null && items.length > 0 && me !== null && addresses !== null;
+  const blocker = useMemo(() => {
+    if (!ready) return "Still loading — one moment.";
+    if (items.length === 0 || items.some((i) => !Number.isInteger(i.quantity) || i.quantity < 1)) return "Your bag is empty — add something before checking out.";
+    if (!shipTo) return "Add a valid delivery address first.";
+    if (!me?.email) return "We couldn't load your account details. Please refresh the page.";
+    if (method === "razorpay" && !online) return "Online payment isn't available yet — please choose Cash on Delivery.";
+    if (method === "cod" && !codAllowed) return online ? "Cash on Delivery isn't available for this order value — please pay online." : `Cash on Delivery isn't available above ${fmt(COD_MAX_LIMIT)}, and online payment isn't available yet.`;
+    return "";
+  }, [ready, items, shipTo, me, method, online, codAllowed]);
 
   const placeOrder = async () => {
-    if (placing || placed.current) return;
+    if (inflight.current || placed.current) return;
+    if (blocker || !shipTo) { setError(blocker || "Add a valid delivery address first."); return; }
+    inflight.current = true;
     setPlacing(true);
     setError("");
     if (!idemKey.current) idemKey.current = crypto.randomUUID();
+    const done = () => { inflight.current = false; setPlacing(false); };
     try {
-      // Save a new address to the book first (best-effort — never blocks the order).
-      if (selectedId === "new" && draft.save) {
-        fetch("/api/account/addresses", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ label: draft.label, name: shipTo.name, line1: shipTo.line1, line2: shipTo.line2, city: shipTo.city, state: shipTo.state, pincode: shipTo.pincode, phone: shipTo.phone, isDefault: (addresses?.length ?? 0) === 0 }) }).catch(() => {});
+      // Save a new address to the book first (best-effort — never blocks the order; never duplicated on retry).
+      const key = JSON.stringify(shipTo);
+      if (selectedId === "new" && saveToBook && savedKey.current !== key && (addresses?.length ?? 0) < MAX_SAVED) {
+        savedKey.current = key;
+        fetch("/api/account/addresses", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ label: form.draft.label, name: shipTo.name, line1: shipTo.line1, line2: shipTo.line2, city: shipTo.city, state: shipTo.state, pincode: shipTo.pincode, phone: shipTo.phone, isDefault: (addresses?.length ?? 0) === 0 }) }).catch(() => {});
       }
       const res = await fetch("/api/razorpay/create-order", {
         method: "POST",
@@ -164,10 +247,21 @@ export default function CheckoutPage() {
         }),
       });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(typeof data.error === "string" ? data.error : "Could not place your order. Please try again.");
+      if (!res.ok) {
+        const msg = typeof data.error === "string" ? data.error : "Could not place your order. Please try again.";
+        // The server's address/contact rules rejected it: go back to the form with the reason (it's authoritative).
+        if (res.status === 422 && data.issues && Object.keys(data.issues).some((k) => /^(name|phone|address)/.test(k))) {
+          done();
+          setStep(1);
+          if (selectedId === "new" || editingId) form.setServerErrors(data.issues);
+          setSummary(selectedId === "new" ? msg : `${msg} Tap Edit on the address to fix it.`);
+          return;
+        }
+        throw new Error(msg);
+      }
 
       if (method === "cod") {
-        placed.current = true;
+        placed.current = true; // stay "in flight" — the page navigates away
         router.replace(`/order-success?orderId=${data.orderId}`);
         return;
       }
@@ -183,18 +277,16 @@ export default function CheckoutPage() {
             if (!v.ok) throw new Error("We couldn't verify your payment. If money was deducted it will be refunded or the order confirmed shortly.");
             placed.current = true;
             router.replace(`/order-success?orderId=${data.dbOrderId}`);
-          } catch (e: any) { setError(e.message); setPlacing(false); }
+          } catch (e: any) { setError(e.message); done(); }
         },
-        modal: { ondismiss: () => { setPlacing(false); setError("Payment cancelled. You can try again."); } },
+        modal: { ondismiss: () => { done(); setError("Payment cancelled. You can try again."); } },
       });
       rz.open();
     } catch (e: any) {
       setError(e.message || "Something went wrong. Please try again.");
-      setPlacing(false);
+      done();
     }
   };
-
-  const ready = buyNow !== null && items.length > 0 && me !== null && addresses !== null;
 
   return (
     <div className="co">
@@ -219,74 +311,81 @@ export default function CheckoutPage() {
 
               {addresses!.length > 0 ? (
                 <div className="co-addrs" role="radiogroup" aria-label="Saved addresses">
-                  {addresses!.map((a) => (
-                    <label key={a.id} className={`co-addr ${selectedId === a.id ? "on" : ""}`}>
-                      <input type="radio" name="addr" checked={selectedId === a.id} onChange={() => setSelectedId(a.id)} />
-                      <div>
-                        <b>{a.name} <em>{a.label}</em>{a.isDefault ? <em className="def">Default</em> : null}</b>
-                        <p>{a.line1}{a.line2 ? `, ${a.line2}` : ""}, {a.city}, {a.state} {a.pincode}</p>
-                        <small>Phone: {a.phone}</small>
+                  {addresses!.map((a) => {
+                    const chk = savedCheck.get(a.id);
+                    const bad = !!chk && !chk.ok;
+                    return (
+                      <div key={a.id} className={`co-addr ${selectedId === a.id && !editingId ? "on" : ""} ${bad ? "af-bad" : ""} ${editingId === a.id ? "af-editing" : ""}`}>
+                        <label className="af-addr-pick">
+                          <input type="radio" name="addr" checked={selectedId === a.id} disabled={bad} onChange={() => pickSaved(a.id)} />
+                          <div>
+                            <b>{a.name} <em>{a.label}</em>{a.isDefault ? <em className="def">Default</em> : null}</b>
+                            <p>{a.line1}{a.line2 ? `, ${a.line2}` : ""}, {a.city}, {a.state} {a.pincode}</p>
+                            <small>Phone: {a.phone}</small>
+                            {bad && chk && !chk.ok ? <small className="af-bad-msg">Needs fixing: {firstAddressError(chk.errors)}</small> : null}
+                          </div>
+                        </label>
+                        <button type="button" className={`co-link af-edit ${bad ? "is-fix" : ""}`} onClick={() => openEdit(a)} aria-label={`${bad ? "Fix" : "Edit"} address for ${a.name}`}>{bad ? "Fix" : "Edit"}</button>
                       </div>
-                    </label>
-                  ))}
+                    );
+                  })}
                   <label className={`co-addr ${selectedId === "new" ? "on" : ""}`}>
-                    <input type="radio" name="addr" checked={selectedId === "new"} onChange={() => setSelectedId("new")} />
+                    <input type="radio" name="addr" checked={selectedId === "new"} onChange={pickNew} />
                     <div><b>+ Add a new address</b></div>
                   </label>
                 </div>
               ) : null}
 
-              {selectedId === "new" ? (
+              {showForm ? (
                 <div className="co-card">
-                  <div className="co-grid">
-                    <div className="co-f"><label htmlFor="co-name">Full name</label><input id="co-name" autoComplete="name" value={draft.name} onChange={(e) => setD("name", e.target.value)} aria-invalid={!!errors.name} />{errors.name ? <em>{errors.name}</em> : null}</div>
-                    <div className="co-f"><label htmlFor="co-phone">Mobile number</label><input id="co-phone" inputMode="numeric" autoComplete="tel-national" placeholder="10-digit number" value={draft.phone} onChange={(e) => setD("phone", e.target.value.replace(/\D/g, "").slice(0, 10))} aria-invalid={!!errors.phone} />{errors.phone ? <em>{errors.phone}</em> : null}</div>
-                    <div className="co-f"><label htmlFor="co-pin">Pincode</label><input id="co-pin" inputMode="numeric" autoComplete="postal-code" placeholder="6 digits" value={draft.pincode} onChange={(e) => onPincode(e.target.value)} aria-invalid={!!errors.pincode} />{errors.pincode ? <em>{errors.pincode}</em> : null}</div>
-                    <div className="co-f"><label htmlFor="co-city">City / District</label><input id="co-city" autoComplete="address-level2" value={draft.city} onChange={(e) => setD("city", e.target.value)} aria-invalid={!!errors.city} />{errors.city ? <em>{errors.city}</em> : null}</div>
-                    <div className="co-f"><label htmlFor="co-state">State</label>
-                      <select id="co-state" autoComplete="address-level1" value={draft.state} onChange={(e) => setD("state", e.target.value)} aria-invalid={!!errors.state}>
-                        <option value="">Select state</option>{STATES.map((s) => <option key={s} value={s}>{s}</option>)}
-                      </select>{errors.state ? <em>{errors.state}</em> : null}
-                    </div>
-                    <div className="co-f"><label htmlFor="co-type">Address type</label>
-                      <select id="co-type" value={draft.label} onChange={(e) => setD("label", e.target.value as Draft["label"])}><option>Home</option><option>Work</option><option>Other</option></select>
-                    </div>
-                    <div className="co-f full"><label htmlFor="co-l1">House no., building, street</label><input id="co-l1" autoComplete="address-line1" value={draft.line1} onChange={(e) => setD("line1", e.target.value)} aria-invalid={!!errors.line1} />{errors.line1 ? <em>{errors.line1}</em> : null}</div>
-                    <div className="co-f full"><label htmlFor="co-l2">Landmark / area <small>(optional)</small></label><input id="co-l2" autoComplete="address-line2" value={draft.line2} onChange={(e) => setD("line2", e.target.value)} /></div>
-                  </div>
-                  <label className="co-check"><input type="checkbox" checked={draft.save} onChange={(e) => setD("save", e.target.checked)} /> Save this address to my account</label>
+                  {editingId ? <div className="co-row"><h2>Edit address</h2><button type="button" className="co-link" onClick={cancelEdit}>Cancel</button></div> : null}
+                  <AddressFields f={form} idPrefix="co" disabled={savingEdit} />
+                  {selectedId === "new" && !editingId ? (
+                    (addresses?.length ?? 0) >= MAX_SAVED ? (
+                      <p className="co-fine">Your address book is full ({MAX_SAVED} saved) — this address will be used for this order only.</p>
+                    ) : (
+                      <label className="co-check"><input type="checkbox" checked={saveToBook} onChange={(e) => setSaveToBook(e.target.checked)} /> Save this address to my account</label>
+                    )
+                  ) : null}
                 </div>
               ) : null}
 
-              <button type="submit" className="cv-btn cv-btn-navy co-cta">Deliver to this address</button>
+              {summary ? <p role="alert" className="af-summary" style={{ marginBottom: "1rem" }}>{summary}</p> : null}
+
+              <button type="submit" className="cv-btn cv-btn-navy co-cta" disabled={savingEdit}>
+                {editingId ? (savingEdit ? "SAVING…" : "Save & deliver to this address") : "Deliver to this address"}
+              </button>
             </form>
           ) : (
             <div>
               <h1 className="co-h">Review &amp; place your order</h1>
 
-              <section className="co-card">
-                <div className="co-row"><h2>Delivering to</h2><button type="button" className="co-link" onClick={() => setStep(1)}>Change</button></div>
-                <p className="co-addr-txt"><b>{shipTo.name}</b><br />{shipTo.line1}{shipTo.line2 ? `, ${shipTo.line2}` : ""}<br />{shipTo.city}, {shipTo.state} {shipTo.pincode}<br />Phone: {shipTo.phone}</p>
-                <p className="co-sub" style={{ margin: 0 }}>Order updates go to <b>{me?.email}</b></p>
-              </section>
+              {shipTo ? (
+                <section className="co-card">
+                  <div className="co-row"><h2>Delivering to</h2><button type="button" className="co-link" onClick={() => setStep(1)} disabled={placing}>Change</button></div>
+                  <p className="co-addr-txt"><b>{shipTo.name}</b><br />{shipTo.line1}{shipTo.line2 ? `, ${shipTo.line2}` : ""}<br />{shipTo.city}, {shipTo.state} {shipTo.pincode}<br />Phone: {shipTo.phone}</p>
+                  <p className="co-sub" style={{ margin: 0 }}>Order updates go to <b>{me?.email}</b></p>
+                </section>
+              ) : null}
 
               <section className="co-card">
                 <h2>Payment</h2>
                 <div className="co-pay" role="radiogroup" aria-label="Payment method">
                   <label className={`co-addr ${method === "cod" ? "on" : ""} ${!codAllowed ? "off" : ""}`}>
-                    <input type="radio" name="pay" checked={method === "cod"} disabled={!codAllowed} onChange={() => setMethod("cod")} />
+                    <input type="radio" name="pay" checked={method === "cod"} disabled={!codAllowed || placing} onChange={() => setMethod("cod")} />
                     <div><b>Cash on Delivery</b><p>{codAllowed ? `Pay in cash when your order arrives. ${fmt(COD_FEE)} handling fee.` : `Not available above ${fmt(COD_MAX_LIMIT)}.`}</p></div>
                   </label>
                   <label className={`co-addr ${method === "razorpay" ? "on" : ""} ${!online ? "off" : ""}`}>
-                    <input type="radio" name="pay" checked={method === "razorpay"} disabled={!online} onChange={() => setMethod("razorpay")} />
+                    <input type="radio" name="pay" checked={method === "razorpay"} disabled={!online || placing} onChange={() => setMethod("razorpay")} />
                     <div><b>UPI / Cards / Netbanking {!online ? <em>Coming soon</em> : null}</b><p>Secure online payment via Razorpay.</p></div>
                   </label>
                 </div>
               </section>
 
               {error ? <p role="alert" className="co-error">{error}</p> : null}
+              {blocker && !placing ? <p role="status" className="co-fine" style={{ marginBottom: "0.5rem" }}>{blocker}</p> : null}
 
-              <button type="button" onClick={placeOrder} disabled={placing} className="cv-btn cv-btn-navy co-cta" id="checkout-place-order-btn">
+              <button type="button" onClick={placeOrder} disabled={placing || !!blocker} className="cv-btn cv-btn-navy co-cta" id="checkout-place-order-btn">
                 {placing ? "PLACING YOUR ORDER…" : method === "cod" ? `PLACE ORDER · PAY ${fmt(t.total)} ON DELIVERY` : `PAY ${fmt(t.total)}`}
               </button>
               <p className="co-fine">By placing your order you agree to our <Link href="/pages/terms">Terms</Link> and <Link href="/pages/returns">7-day return policy</Link>.</p>

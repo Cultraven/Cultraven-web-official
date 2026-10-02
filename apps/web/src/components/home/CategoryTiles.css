@@ -1,0 +1,38 @@
+/* "The Collection" tiles: the label is a cream chip with a navy border (readable on any photo, no blue gradient over the image). */
+.cat-label {
+  position: absolute;
+  left: clamp(0.75rem, 1.6vw, 1.1rem);
+  bottom: clamp(0.75rem, 1.6vw, 1.1rem);
+  max-width: calc(100% - 2 * clamp(0.75rem, 1.6vw, 1.1rem));
+  padding: 0.55rem 0.8rem 0.6rem;
+  background: var(--color-cream);
+  border: 2px solid var(--color-navy);
+  box-shadow: 3px 3px 0 0 var(--color-lava);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.cat-label-title {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: clamp(1rem, 2vw, 1.35rem);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-navy);
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+.cat-label-sub {
+  margin-top: 3px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(23, 37, 84, 0.78);
+}
+.cat-tile { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+.cat-tile:focus-visible { outline: 3px solid var(--color-lava); outline-offset: 3px; }
+.cat-tile:active .cat-label { transform: translate(2px, 2px); box-shadow: 1px 1px 0 0 var(--color-lava); }
+@media (hover: hover) {
+  .cat-tile:hover .cat-label { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 0 var(--color-lava); }
+}
+@media (prefers-reduced-motion: reduce) { .cat-label { transition: none; } }

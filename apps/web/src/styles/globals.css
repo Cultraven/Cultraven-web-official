@@ -11,7 +11,7 @@
        30% Deep Navy        — authority, trust, premium quality
        10% Gold Yellow      — energy, Gen-Z optimism, urgency
   ─────────────────────────────────────────────────────────────────────── */
-  --color-stone: #FAF9F6; /* page background — off-white (60%) */
+  --color-stone: #F6F1E7; /* page background — warm cream (60%); softer than the old #FAF9F6, still clearly lighter than bone (#EDE3CF) */
   --color-bone:  #EDE3CF; /* cards, panels, surfaces — warm cream (60%) */
   --color-raven: #172554; /* primary text, borders, headers — deep navy (30%) */
   --color-lava:  #DAB205; /* primary CTA, accent highlights — gold yellow (10%) */

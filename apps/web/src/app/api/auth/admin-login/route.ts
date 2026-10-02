@@ -1,29 +1,25 @@
-﻿/**
+/**
  * POST /api/auth/admin-login
- * Issues a JWT with role=admin for /portal-secure routes.
+ * Issues a signed session with role=admin for /portal-secure and the admin APIs.
  * Env: ADMIN_EMAIL, ADMIN_PASSWORD, SESSION_SECRET
+ *
+ * Security: safe body parsing, one generic error for bad email / bad password, constant-time comparison of
+ * digests (no length leak), 5 attempts per IP per 15 minutes, HttpOnly + SameSite=Lax (+ Secure in production)
+ * cookie that expires after 8 hours.
  */
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import crypto from "crypto";
+import { clientIp, isSameOrigin, parseJsonBody, rateLimit, retryHeaders } from "@/lib/sanitize";
 
 const BodySchema = z.object({
-  email: z.string().email().min(1),
+  email: z.string().trim().max(254).email(),
   password: z.string().min(1).max(128),
 });
 
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(ip);
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + 15 * 60 * 1000 });
-    return false;
-  }
-  if (entry.count >= 5) return true;
-  entry.count++;
-  return false;
-}
+const sha256 = (s: string) => crypto.createHash("sha256").update(s).digest();
+/** Constant-time equality that does not leak the length of either value. */
+const safeEqual = (a: string, b: string) => crypto.timingSafeEqual(sha256(a), sha256(b));
 
 function createAdminToken(email: string): string {
   const secret = process.env.SESSION_SECRET;
@@ -35,13 +31,16 @@ function createAdminToken(email: string): string {
 }
 
 export async function POST(req: NextRequest) {
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-  if (isRateLimited(ip)) return NextResponse.json({ error: "Too many attempts. Try in 15 minutes." }, { status: 429 });
+  if (!isSameOrigin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-  let body: unknown;
-  try { body = await req.json(); } catch { return NextResponse.json({ error: "Invalid request" }, { status: 400 }); }
+  const ip = clientIp(req);
+  const rl = rateLimit(`admin-login:${ip}`, 5, 15 * 60 * 1000);
+  if (!rl.ok) return NextResponse.json({ error: "Too many attempts. Try in 15 minutes." }, { status: 429, headers: retryHeaders(rl) });
 
-  const result = BodySchema.safeParse(body);
+  const body = await parseJsonBody(req, 2 * 1024);
+  if (!body.ok) return NextResponse.json({ error: body.error }, { status: body.status });
+
+  const result = BodySchema.safeParse(body.data);
   if (!result.success) return NextResponse.json({ error: "Email and password required." }, { status: 400 });
 
   const { email, password } = result.data;
@@ -53,27 +52,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Admin not configured." }, { status: 500 });
   }
 
-  if (email.toLowerCase() !== adminEmail.toLowerCase()) {
-    console.warn(`[admin-login] Bad email from ${ip}`);
-    return NextResponse.json({ error: "Invalid credentials." }, { status: 401 });
-  }
-
-  const pwBuf = Buffer.from(password);
-  const expectedBuf = Buffer.from(adminPassword);
-  let ok = false;
-  if (pwBuf.length === expectedBuf.length) {
-    try { ok = crypto.timingSafeEqual(pwBuf, expectedBuf); } catch { ok = false; }
-  }
-  if (!ok) {
-    console.warn(`[admin-login] Bad password from ${ip}`);
+  // Evaluate both checks every time so a wrong email and a wrong password take the same path.
+  const emailOk = safeEqual(email.toLowerCase(), adminEmail.toLowerCase());
+  const passwordOk = safeEqual(password, adminPassword);
+  if (!emailOk || !passwordOk) {
+    console.warn(`[admin-login] Failed attempt from ${ip}`);
     return NextResponse.json({ error: "Invalid credentials." }, { status: 401 });
   }
 
   let token: string;
   try { token = createAdminToken(email); } catch { return NextResponse.json({ error: "Admin not configured." }, { status: 500 }); }
   const res = NextResponse.json({ ok: true }, { status: 200 });
-  const cookieOpts = { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax" as const, maxAge: 60 * 60 * 8, path: "/" };
-  res.cookies.set("cultraven_admin_session", token, cookieOpts);
+  res.cookies.set("cultraven_admin_session", token, { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", maxAge: 60 * 60 * 8, path: "/" });
+  res.headers.set("Cache-Control", "no-store");
   return res;
 }
 

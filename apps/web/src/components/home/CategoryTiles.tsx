@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "@/components/common/CmsImage";
 import Link from "next/link";
+import "./CategoryTiles.css";
 
 export interface StripItem { id: string; label: string; href: string; accent?: boolean }
 export interface Tile { id: string; title: string; sub?: string; href: string; image: string; size?: "normal" | "tall" | "wide" }
@@ -110,53 +111,10 @@ function TileCard({ tile }: { tile: Tile }) {
         style={{ objectFit: "cover" }}
       />
 
-      {/* Gradient — subtle bottom fade (LP style) */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: "absolute",
-          inset: 0,
-          background: "linear-gradient(to top, rgba(23,37,84,0.72) 0%, rgba(23,37,84,0.12) 50%, transparent 100%)",
-          transition: "opacity 0.4s ease",
-        }}
-      />
-
-      {/* Text */}
-      <div
-        style={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          padding: "clamp(1rem,2vw,1.5rem)",
-        }}
-      >
-        <p
-          style={{
-            fontFamily: "var(--font-heading)",
-            fontWeight: 400,
-            fontSize: "clamp(1.1rem,2.2vw,1.6rem)",
-            textTransform: "uppercase",
-            letterSpacing: "0.04em",
-            color: "#FFFFFF",
-            lineHeight: 1.1,
-            marginBottom: "4px",
-          }}
-        >
-          {tile.title}
-        </p>
-        <p
-          style={{
-            fontFamily: "var(--font-sans)",
-            fontWeight: 700,
-            fontSize: "11px",
-            letterSpacing: "0.12em",
-            textTransform: "uppercase",
-            color: "rgba(255,255,255,0.72)",
-          }}
-        >
-          {tile.sub}
-        </p>
+      {/* Label chip: cream plate with a navy border sits on the photo — no gradient or colour wash over the image. */}
+      <div className="cat-label">
+        <p className="cat-label-title">{tile.title}</p>
+        {tile.sub ? <p className="cat-label-sub">{tile.sub}</p> : null}
       </div>
 
       {/* LP-style "SHOP NOW" pill on hover */}
@@ -166,7 +124,8 @@ function TileCard({ tile }: { tile: Tile }) {
           position: "absolute",
           top: "1rem",
           right: "1rem",
-          backgroundColor: "rgba(249,248,246,0.95)",
+          backgroundColor: "var(--color-cream)",
+          border: "2px solid var(--color-navy)",
           color: "var(--color-navy)",
           fontFamily: "var(--font-sans)",
           fontWeight: 800,

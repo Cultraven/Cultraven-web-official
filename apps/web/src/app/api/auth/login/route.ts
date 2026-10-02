@@ -1,137 +1,94 @@
 /**
  * POST /api/auth/login
  *
- * Self-contained auth — reads directly from MongoDB.
- * Validates email + password (bcryptjs), issues a proper HMAC-signed JWT,
- * sets a secure HttpOnly cookie. No external microservice dependency.
+ * Self-contained auth: reads directly from MongoDB, verifies the password with bcrypt and issues an
+ * HMAC-signed session in an HttpOnly cookie.
  *
  * Security:
- * - Zod validation
- * - Constant-time bcrypt comparison (prevents timing attacks)
- * - HMAC-SHA256 signed token (HS256 style)
- * - Rate limited: 10 attempts / 15 min per IP
- * - HttpOnly + Secure + SameSite=Lax cookie
+ * - Body is parsed safely (size cap, JSON only, no $-operator / prototype keys) BEFORE zod
+ * - Zod validation with max lengths; email/password are always plain strings in the query
+ * - One generic error for "no such account" and "wrong password" (no account enumeration), and bcrypt always
+ *   runs (against a real dummy hash when the user doesn't exist) so response time doesn't reveal it either
+ * - Rate limited: 10/min and 50/15min per IP, and 5 FAILED attempts per email per 15 min
+ * - No fallback signing secret; HttpOnly + SameSite=Lax (+ Secure in production) cookie
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
-import crypto from "crypto";
 import { connectToDatabase } from "@/lib/db";
 import { User } from "@/lib/models/User";
+import { isUserActive } from "@/lib/account-delete";
+import { CUSTOMER_SESSION_COOKIE, CUSTOMER_SESSION_MAX_AGE_S, createCustomerSessionToken, sessionCookieOptions } from "@/lib/session-token";
+import { clientIp, isSameOrigin, parseJsonBody, rateLimit, rateLimitPeek, recordHit, resetRateLimit, retryHeaders } from "@/lib/sanitize";
 
-// ── Zod schema ────────────────────────────────────────────────────────────────
 const BodySchema = z.object({
-  email: z.string().trim().email("Invalid email").toLowerCase(),
-  password: z.string().min(1, "Password required").max(128),
+  email: z.string().trim().max(254).email().toLowerCase(),
+  password: z.string().min(1).max(128),
 });
 
-// ── Rate limiting ─────────────────────────────────────────────────────────────
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-const RATE_LIMIT = 10;
-const WINDOW_MS = 15 * 60 * 1000;
+const GENERIC_FAIL = "Invalid email or password.";
+const FAIL_WINDOW_MS = 15 * 60 * 1000;
+const MAX_FAILS_PER_EMAIL = 5;
 
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(ip);
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + WINDOW_MS });
-    return false;
-  }
-  if (entry.count >= RATE_LIMIT) return true;
-  entry.count++;
-  return false;
-}
+// A genuine bcrypt hash at the same cost as real accounts (12): comparing against it takes as long as a real check.
+let dummyHash: Promise<string> | null = null;
+const getDummyHash = () => (dummyHash ??= bcrypt.hash("cultraven-timing-pad-not-a-real-password", 12));
 
-// ── Session token (HMAC-SHA256, base64url encoded) ────────────────────────────
-function createSessionToken(userId: string, email: string, role: string): string {
-  const secret = process.env.SESSION_SECRET || "cultraven-dev-secret-change-in-prod";
-  const payload = JSON.stringify({ userId, email, role, iat: Date.now(), exp: Date.now() + 7 * 24 * 60 * 60 * 1000 });
-  const encoded = Buffer.from(payload).toString("base64url");
-  const sig = crypto.createHmac("sha256", secret).update(encoded).digest("base64url");
-  return `${encoded}.${sig}`;
-}
-
-// ── Handler ───────────────────────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
-  const ip =
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  if (!isSameOrigin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-  if (isRateLimited(ip)) {
-    return NextResponse.json(
-      { error: "Too many login attempts. Try again in 15 minutes." },
-      { status: 429 }
-    );
+  const ip = clientIp(req);
+  const burst = rateLimit(`login-ip-1m:${ip}`, 10, 60_000);
+  const sustained = burst.ok ? rateLimit(`login-ip-15m:${ip}`, 50, FAIL_WINDOW_MS) : burst;
+  if (!burst.ok || !sustained.ok) {
+    const r = !burst.ok ? burst : sustained;
+    return NextResponse.json({ error: "Too many login attempts. Please try again shortly." }, { status: 429, headers: retryHeaders(r) });
   }
 
-  let body: unknown;
-  try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
-  }
+  const body = await parseJsonBody(req, 2 * 1024);
+  if (!body.ok) return NextResponse.json({ error: body.error }, { status: body.status });
 
-  const result = BodySchema.safeParse(body);
-  if (!result.success) {
-    return NextResponse.json(
-      { error: result.error.flatten().fieldErrors },
-      { status: 422 }
-    );
-  }
-
+  const result = BodySchema.safeParse(body.data);
+  if (!result.success) return NextResponse.json({ error: "Enter a valid email and password." }, { status: 422 });
   const { email, password } = result.data;
+
+  // Lock an email after repeated failures (applies to any string, so it reveals nothing about which accounts exist).
+  const failKey = `login-fail:${email}`;
+  const locked = rateLimitPeek(failKey, MAX_FAILS_PER_EMAIL, FAIL_WINDOW_MS);
+  if (!locked.ok) {
+    return NextResponse.json({ error: "Too many failed attempts. Please try again later or reset your password." }, { status: 429, headers: retryHeaders(locked) });
+  }
 
   try {
     await connectToDatabase();
 
-    // Retrieve user including passwordHash (select: false by default)
+    // passwordHash is select:false by default
     const user = await User.findOne({ email }).select("+passwordHash");
 
-    // Always run bcrypt — prevents timing attacks even when user not found
-    const DUMMY_HASH = "$2a$10$abcdefghijklmnopqrstuuABCDEFGHIJKLMNOPQRSTUVWXYZ01234";
-    const hashToCompare = user?.passwordHash || DUMMY_HASH;
-    const isValid = await bcrypt.compare(password, hashToCompare);
+    // A soft-deleted account (deletedAt / status "deleted") is treated exactly like an unknown email.
+    const active = !!user && isUserActive(user);
 
-    if (!user) {
-      return NextResponse.json(
-        { error: "Account not found." },
-        { status: 401 }
-      );
+    // Always run bcrypt: same work whether or not the account exists
+    const hashToCompare = (active && user?.passwordHash) || (await getDummyHash());
+    let isValid = false;
+    try { isValid = await bcrypt.compare(password, hashToCompare); } catch { isValid = false; }
+
+    if (!user || !active || !isValid) {
+      recordHit(failKey, FAIL_WINDOW_MS);
+      return NextResponse.json({ error: GENERIC_FAIL }, { status: 401 });
     }
 
-    if (!isValid) {
-      return NextResponse.json(
-        { error: "Invalid password." },
-        { status: 401 }
-      );
-    }
+    resetRateLimit(failKey);
+    const token = createCustomerSessionToken(user._id.toString(), user.email, user.role || "customer");
 
-    const token = createSessionToken(
-      user._id.toString(),
-      user.email,
-      user.role || "customer"
-    );
-
-    const response = NextResponse.json(
-      { ok: true, email: user.email, firstName: user.firstName },
-      { status: 200 }
-    );
-
-    response.cookies.set("cultraven_session", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-      path: "/",
-    });
-
+    const response = NextResponse.json({ ok: true, email: user.email, firstName: user.firstName }, { status: 200 });
+    response.cookies.set(CUSTOMER_SESSION_COOKIE, token, sessionCookieOptions(CUSTOMER_SESSION_MAX_AGE_S));
+    response.headers.set("Cache-Control", "no-store");
     return response;
   } catch (err) {
-    console.error("[auth/login] error:", err);
-    return NextResponse.json(
-      { error: "An error occurred. Please try again later." },
-      { status: 500 }
-    );
+    console.error("[auth/login] error:", err instanceof Error ? err.message : err);
+    return NextResponse.json({ error: "An error occurred. Please try again later." }, { status: 500 });
   }
 }
 

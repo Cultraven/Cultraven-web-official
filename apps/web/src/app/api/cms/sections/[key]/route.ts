@@ -3,6 +3,7 @@ import { connectToDatabase } from "@/lib/db";
 import { CmsSection } from "@/lib/models/CmsSection";
 import { isAdminRequest } from "@/lib/admin-auth";
 import { SECTION_MAP, validateFields } from "@/lib/cms/registry";
+import { hasOwn, isSameOrigin, parseJsonBody } from "@/lib/sanitize";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +16,8 @@ type Ctx = { params: Promise<{ key: string }> };
 export async function GET(req: Request, { params }: Ctx) {
   if (!isAdminRequest(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { key } = await params;
-  if (!SECTION_MAP[key]) return NextResponse.json({ error: "Unknown section" }, { status: 404 });
+  // hasOwn: SECTION_MAP["constructor"] / ["__proto__"] must not count as a section
+  if (!hasOwn(SECTION_MAP, key)) return NextResponse.json({ error: "Unknown section" }, { status: 404 });
 
   try {
     await connectToDatabase();
@@ -33,12 +35,15 @@ export async function GET(req: Request, { params }: Ctx) {
 /** Admin save: validate → write to MongoDB → revalidate → return the record as stored. */
 export async function PUT(req: Request, { params }: Ctx) {
   if (!isAdminRequest(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!isSameOrigin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   const { key } = await params;
-  const def = SECTION_MAP[key];
+  const def = hasOwn(SECTION_MAP, key) ? SECTION_MAP[key] : undefined;
   if (!def) return NextResponse.json({ error: "Unknown section" }, { status: 404 });
 
-  let body: any;
-  try { body = await req.json(); } catch { return NextResponse.json({ error: "Invalid JSON" }, { status: 400 }); }
+  // Size cap, JSON only, no $-operator / prototype keys; validateFields then whitelists keys and bounds every value
+  const parsedBody = await parseJsonBody(req, 512 * 1024);
+  if (!parsedBody.ok) return NextResponse.json({ error: parsedBody.error }, { status: parsedBody.status });
+  const body: any = parsedBody.data;
 
   const { value, errors } = validateFields(def.fields, body?.data);
   if (errors.length) return NextResponse.json({ error: errors[0], errors }, { status: 400 });
