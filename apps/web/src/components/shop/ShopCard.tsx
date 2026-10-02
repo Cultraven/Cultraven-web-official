@@ -23,10 +23,12 @@ export function ShopCard({ product: p, priority = false }: { product: CardProduc
   const addItem = useCartStore((s) => s.addItem);
   const [wishlisted, toggleWishlist] = useWishlisted({ id: p.id, title: p.title, href: p.href, image: p.image, pricePaise: v.pricePaise, mrpPaise: v.mrpPaise });
   const [added, setAdded] = useState<string | null>(null);
+  const [selectedColor, setSelectedColor] = useState<{ hex: string; label: string } | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
 
   const colors = (p.colors ?? []).filter((c) => c && c.hex && c.label);
+  const activeColor = selectedColor ?? colors[0] ?? null;
   const hover = p.hoverImage && p.hoverImage !== p.image ? p.hoverImage : "";
   const single = isFreeSizeOnly(v.sizes);
 
@@ -86,13 +88,31 @@ export function ShopCard({ product: p, priority = false }: { product: CardProduc
           {v.varies ? <em>onwards</em> : null}
         </span>
         {v.fewLeft ? <span className="sc-few">Only few left</span> : null}
-        {colors.length ? (
-          <span className="sc-colors" aria-label={`Colours: ${colors.map((c) => c.label).join(", ")}`}>
-            {colors.slice(0, 5).map((c) => <i key={c.hex + c.label} title={c.label} style={{ background: c.hex }} />)}
-            {colors.length > 5 ? <em>+{colors.length - 5}</em> : null}
-          </span>
-        ) : null}
       </Link>
+
+      {/* ── Color swatches — clickable, always visible when admin sets colors ── */}
+      {colors.length > 0 ? (
+        <div className="sc-color-row" aria-label={`Colour options for ${p.title}`}>
+          <span className="sc-color-label">
+            Color: <strong>{activeColor?.label}</strong>
+          </span>
+          <div className="sc-color-swatches">
+            {colors.slice(0, 6).map((c) => (
+              <button
+                key={c.hex + c.label}
+                type="button"
+                className="sc-color-swatch"
+                title={c.label}
+                style={{ background: c.hex }}
+                data-selected={activeColor?.hex === c.hex && activeColor?.label === c.label ? "true" : undefined}
+                aria-label={`Colour: ${c.label}`}
+                aria-pressed={activeColor?.hex === c.hex && activeColor?.label === c.label}
+                onClick={(e) => { e.preventDefault(); setSelectedColor(c); }}
+              />
+            ))}
+          </div>
+        </div>
+      ) : null}
 
       {/* ── Quick-add panel — two options: size chips (bag it) + cop it now ── */}
       {!v.soldOut ? (

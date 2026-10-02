@@ -102,9 +102,30 @@
 .sc-price em { font: 600 11px/1.1 var(--font-sans); font-style: normal; color: var(--color-gray); }
 .sc-few { font: 700 12px/1.2 var(--font-sans); color: #be123c; }
 .sc-sizes-sold { font: 700 11px/1 var(--font-sans); color: var(--color-gray); }
-.sc-colors { display: flex; align-items: center; gap: 5px; margin-top: 2px; }
-.sc-colors i { width: 13px; height: 13px; border-radius: 50%; border: 1.5px solid var(--color-navy); }
-.sc-colors em { font: 700 10px/1 var(--font-sans); font-style: normal; color: var(--color-gray); }
+/* ── color swatch row — always visible when admin sets colors ── */
+.sc-color-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 6px 12px 7px; border-top: 1.5px solid var(--color-border);
+  background: var(--color-bone);
+}
+.sc-color-label {
+  font: 700 9px/1 var(--font-sans); letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--color-gray); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.sc-color-label strong { color: var(--color-lava); font-weight: 800; letter-spacing: 0.08em; }
+.sc-color-swatches { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+.sc-color-swatch {
+  width: 19px; height: 19px; padding: 0; cursor: pointer; flex-shrink: 0;
+  border: 2px solid var(--color-navy); box-shadow: 1px 1px 0 var(--color-navy);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+}
+.sc-color-swatch[data-selected="true"] {
+  border-color: var(--color-lava); box-shadow: 2px 2px 0 var(--color-lava); transform: scale(1.2);
+}
+@media (hover: hover) and (pointer: fine) {
+  .sc-color-swatch:not([data-selected="true"]):hover { transform: scale(1.12); box-shadow: 2px 2px 0 var(--color-navy); }
+}
+.sc-color-swatch:active { transform: translate(1px, 1px) scale(1) !important; box-shadow: none !important; }
 
 /* ── small screens: a touch tighter ── */
 @media (max-width: 480px) {
@@ -122,6 +143,6 @@
 .sc-line { display: block; height: 11px; background: var(--color-bone); }
 
 @media (prefers-reduced-motion: reduce) {
-  .sc, .sc .sc-img, .sc-quick, .sc-chip, .sc-heart { transition: none; }
+  .sc, .sc .sc-img, .sc-quick, .sc-chip, .sc-heart, .sc-color-swatch { transition: none; }
   .sc-skel .sc-media { animation: none; }
 }
