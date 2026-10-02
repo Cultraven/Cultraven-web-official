@@ -13,7 +13,7 @@ import { CANCEL_REASONS, RETURN_REASONS, STATUS_LABEL, isOrderStatus, type Timel
 const inr = (p: number) => `₹${(p / 100).toLocaleString("en-IN")}`;
 const when = (d?: string | null) => (d ? new Date(d).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }) : "");
 const day = (d?: string | null) => (d ? new Date(d).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "");
-const tone = (s: string) => (s === "delivered" ? "is-ok" : s === "cancelled" || s === "returned" ? "is-bad" : s === "shipped" || s === "out_for_delivery" ? "is-info" : "is-warn");
+const tone = (s: string) => (s === "delivered" ? "is-ok" : s === "cancelled" || s === "returned" || s === "rto" ? "is-bad" : s === "shipped" || s === "out_for_delivery" || s === "packed" ? "is-info" : "is-warn");
 
 interface Order {
   id: string; number: string; createdAt: string; status: string; paymentMethod: "cod" | "razorpay"; paymentStatus: string;
@@ -28,6 +28,9 @@ interface Order {
 
 /** Product slug from sku (`<slug>-<size>`), for the review link. */
 const slugOf = (i: { sku?: string; size?: string }) => { const sku = i.sku ?? ""; const tail = `-${i.size ?? ""}`; return i.size && sku.endsWith(tail) ? sku.slice(0, -tail.length) : sku; };
+
+/** The details box is mandatory so we always know why an order was cancelled / returned. */
+const MIN_NOTE = 10;
 
 function ReasonDialog({ kind, onClose, onDone, orderId, request }: { kind: "cancel" | "return"; onClose: () => void; onDone: (msg: string) => void; orderId: string; request?: boolean }) {
   const reasons = kind === "cancel" ? CANCEL_REASONS : RETURN_REASONS;
@@ -45,9 +48,10 @@ function ReasonDialog({ kind, onClose, onDone, orderId, request }: { kind: "canc
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!reason) { setErr("Please choose a reason."); return; }
+    if (note.trim().length < MIN_NOTE) { setErr(`Please add a few details (at least ${MIN_NOTE} characters).`); document.getElementById("om-note")?.focus(); return; }
     setBusy(true); setErr("");
     try {
-      const r = await fetch(`/api/orders/${orderId}/${kind}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ reason, note: note.trim() || undefined }) });
+      const r = await fetch(`/api/orders/${orderId}/${kind}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ reason, note: note.trim() }) });
       const d = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(d.error || `HTTP ${r.status}`);
       onDone(kind === "cancel" ? (d.requested ? "Cancellation requested. Your order has already shipped, so we're checking with the courier — we'll email you as soon as it's confirmed." : `Order cancelled.${d.refund ? " " + d.refund : ""}`) : "Return requested. We'll email you once it's reviewed.");
@@ -64,12 +68,13 @@ function ReasonDialog({ kind, onClose, onDone, orderId, request }: { kind: "canc
           <option value="">Select a reason</option>
           {reasons.map((r) => <option key={r} value={r}>{r}</option>)}
         </select>
-        <label htmlFor="om-note">More details <small style={{ textTransform: "none", letterSpacing: 0, fontWeight: 600 }}>(optional)</small></label>
-        <textarea id="om-note" rows={3} maxLength={kind === "cancel" ? 200 : 300} value={note} onChange={(e) => setNote(e.target.value)} />
+        <label htmlFor="om-note">More details <span aria-hidden="true" style={{ color: "#b42318" }}>*</span></label>
+        <textarea id="om-note" rows={3} required minLength={MIN_NOTE} maxLength={kind === "cancel" ? 200 : 300} value={note} onChange={(e) => { setNote(e.target.value); setErr(""); }} aria-invalid={!!err && note.trim().length < MIN_NOTE} aria-describedby="om-note-hint" placeholder={kind === "cancel" ? "Tell us a little more — what made you cancel?" : "Describe the problem (e.g. what is wrong with the item)"} />
+        <small id="om-note-hint" style={{ display: "flex", justifyContent: "space-between", font: "600 0.72rem var(--font-sans)", color: note.trim().length >= MIN_NOTE ? "var(--color-smoke)" : "#b42318", marginTop: 4 }}><span>Required — at least {MIN_NOTE} characters</span><span>{note.trim().length}/{kind === "cancel" ? 200 : 300}</span></small>
         {err ? <p role="alert" className="om-err">{err}</p> : null}
         <div className="om-actions">
           <button type="button" className="cv-btn cv-btn-outline" onClick={onClose} disabled={busy}>{request ? "Never mind" : "Keep order"}</button>
-          <button type="submit" className="cv-btn cv-btn-navy" disabled={busy}>{busy ? "Please wait…" : kind === "cancel" ? (request ? "Send request" : "Cancel order") : "Request return"}</button>
+          <button type="submit" className="cv-btn cv-btn-navy" disabled={busy || !reason || note.trim().length < MIN_NOTE}>{busy ? "Please wait…" : kind === "cancel" ? (request ? "Send request" : "Cancel order") : "Request return"}</button>
         </div>
       </form>
     </div>
@@ -118,7 +123,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
   const t = order.tracking;
   const delivered = st === "delivered";
   /** Statuses where the Cancel option is relevant (shown disabled with the reason when it can't be used). */
-  const canCancelStatus = ["processing", "confirmed", "shipped", "out_for_delivery"].includes(st);
+  const canCancelStatus = ["processing", "confirmed", "packed", "on_hold", "shipped", "out_for_delivery", "delivery_failed"].includes(st);
 
   return (
     <>
@@ -129,6 +134,9 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
       </header>
 
       {notice ? <div role="status" className="od-banner warn">{notice}</div> : null}
+      {st === "on_hold" ? <div className="od-banner warn">Your order is on hold while we check a detail — we'll email you as soon as it moves again.</div> : null}
+      {st === "delivery_failed" ? <div className="od-banner warn">The courier couldn't deliver your order. They will usually try again — please keep your phone reachable, or contact us to arrange a better time.</div> : null}
+      {st === "rto" ? <div className="od-banner bad">This order couldn't be delivered and is returning to us.{order.paymentStatus === "refund_pending" ? " Your refund is being processed (5–7 business days)." : ""}</div> : null}
       {st === "cancelled" ? <div className="od-banner bad">This order was cancelled{order.cancelReason ? ` — ${order.cancelReason}` : ""}.{order.paymentStatus === "refund_pending" ? " Your refund is being processed (5–7 business days)." : order.paymentStatus === "refunded" ? " Your refund has been issued." : ""}</div> : null}
       {order.cancelRequested && st !== "cancelled" ? <div className="od-banner warn">Cancellation requested — we're checking with the courier and will email you once it's confirmed.{order.cancelRequestReason ? ` (${order.cancelRequestReason})` : ""}</div> : null}
       {st === "return_requested" ? <div className="od-banner warn">Return requested — we&apos;ll email you once it&apos;s reviewed.{order.returnReason ? ` (${order.returnReason})` : ""}</div> : null}
@@ -197,7 +205,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
               {order.canCancel.ok ? <small style={{ font: "600 0.74rem var(--font-sans)", color: "var(--color-smoke)" }}>{order.canCancel.mode === "request" ? "Already shipped — send a cancellation request (" : "You can cancel for "}{order.canCancel.daysLeft} more day{order.canCancel.daysLeft === 1 ? "" : "s"}{order.canCancel.mode === "request" ? " left)." : ", until it ships."}</small> : null}
               {order.canReturn.ok ? <small style={{ font: "600 0.74rem var(--font-sans)", color: "var(--color-smoke)" }}>Returns open for {order.canReturn.daysLeft} more day{order.canReturn.daysLeft === 1 ? "" : "s"}.</small> : null}
               {!order.canCancel.ok && order.canCancel.reason && canCancelStatus ? <small style={{ font: "600 0.74rem var(--font-sans)", color: "var(--color-smoke)" }}>{order.canCancel.reason}</small> : null}
-              <a href="mailto:support@cultraven.com?subject=Order%20help" className="cv-btn cv-btn-ghost" style={{ justifyContent: "center" }}>Need help?</a>
+              <Link href={`/help?order=${order.id}`} className="cv-btn cv-btn-ghost" style={{ justifyContent: "center" }}>Need help?</Link>
             </div>
           </section>
 

@@ -222,7 +222,8 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
                       </Link>
                       <p style={{ fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 700, color: "var(--color-smoke)", marginBottom: "0.15rem", textTransform: "uppercase" }}>{item.size && `SIZE: ${item.size}`}{item.color && ` · ${item.color}`}</p>
                       <p style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "16px", color: "var(--color-raven)", marginBottom: "0.25rem" }}>
-                        {fmt(item.pricePaise)}
+                        {fmt(item.pricePaise * item.quantity)}
+                        {item.quantity > 1 ? <span style={{ fontSize: "10px", fontWeight: 700, color: "var(--color-smoke)", marginLeft: "0.4rem" }}>({fmt(item.pricePaise)} ea)</span> : null}
                       </p>
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "0.75rem" }}>
                         <div style={{ display: "flex", alignItems: "center", border: "2px solid var(--color-raven)", boxShadow: "2px 2px 0px 0px var(--color-raven)", backgroundColor: "var(--color-bone)" }}>

@@ -4,14 +4,13 @@
  * Full predictive search with trending queries, category/product results.
  */
 import React, { useState, useEffect, useDeferredValue, useMemo, useRef } from "react";
-import Image from "@/components/common/CmsImage";
 import Link from "next/link";
-
-const fmt = (p: number) => `₹${(p / 100).toLocaleString("en-IN")}`;
+import { ShopCard } from "@/components/shop/ShopCard";
+import type { CardProduct } from "@/lib/card-info";
 
 const TRENDING = ["Oversized T-Shirts", "Cargos", "Hoodies", "New Drop", "Black", "Streetwear"];
 
-interface SearchProduct { id: string; title: string; pricePaise: number; category: string; image: string; href: string }
+interface SearchProduct extends CardProduct { category: string }
 
 export default function SearchPage() {
   const [query, setQuery] = useState("");
@@ -29,7 +28,11 @@ export default function SearchPage() {
   useEffect(() => {
     fetch("/api/products?limit=100")
       .then((r) => (r.ok ? r.json() : { products: [] }))
-      .then((d) => setProducts((d.products ?? []).map((p: any) => ({ id: p.id, title: p.title, pricePaise: p.pricePaise, category: p.category, image: p.image, href: p.href }))))
+      .then((d) => setProducts((d.products ?? []).map((p: any): SearchProduct => ({
+        id: p.id, title: p.title, href: p.href, image: p.image, hoverImage: p.hoverImage, pricePaise: p.pricePaise, mrpPaise: p.mrpPaise,
+        rating: p.rating, reviewCount: p.reviewCount, colors: p.colors, sizes: p.sizes, sizeOptions: p.sizeOptions, inStock: p.inStock !== false,
+        badge: p.badge, isNewArrival: p.isNewArrival === true, category: p.category ?? "",
+      }))))
       .catch(() => setProducts([]));
   }, []);
 
@@ -85,16 +88,7 @@ export default function SearchPage() {
           <>
             <p style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.78rem", color: "var(--color-gray)", marginBottom: "2rem" }}>{results.length} result{results.length !== 1 ? "s" : ""} for "{query}"</p>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "1.25rem" }} className="search-results">
-              {results.map((p) => (
-                <Link key={p.id} href={p.href} style={{ display: "block", textDecoration: "none" }}>
-                  <div style={{ position: "relative", aspectRatio: "3/4", overflow: "hidden", backgroundColor: "var(--color-mist)", marginBottom: "0.75rem" }}>
-                    <Image src={p.image} alt={p.title} fill sizes="25vw" style={{ objectFit: "cover" }} />
-                  </div>
-                  <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-crimson)", marginBottom: "3px" }}>{p.category}</p>
-                  <p style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.72rem", letterSpacing: "0.04em", textTransform: "uppercase", color: "var(--color-navy)", marginBottom: "4px", lineHeight: 1.35 }}>{p.title}</p>
-                  <p style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.85rem", color: "var(--color-navy)" }}>{fmt(p.pricePaise)}</p>
-                </Link>
-              ))}
+              {results.map((p, i) => <ShopCard key={p.id} product={p} priority={i < 4} />)}
             </div>
           </>
         )}

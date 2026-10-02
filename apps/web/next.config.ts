@@ -88,6 +88,12 @@ const config: NextConfig = {
   // Permanent redirects for canonical URL aliases
   async redirects() {
     return [
+      // Old FAQ / contact URLs → the Help Center (the old FAQ page had outdated policy text)
+      { source: "/pages/faq", destination: "/help", permanent: true },
+      { source: "/faq", destination: "/help", permanent: true },
+      { source: "/support", destination: "/help", permanent: true },
+      { source: "/contact", destination: "/pages/contact", permanent: true },
+      { source: "/help/contact", destination: "/pages/contact", permanent: true },
       // /size-guide → /pages/size-guide (links in Footer, ProductClient, CMS use /size-guide)
       {
         source: "/size-guide",

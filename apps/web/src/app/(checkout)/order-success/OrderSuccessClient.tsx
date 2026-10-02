@@ -5,6 +5,7 @@ import { useCartStore } from "@/store/cart";
 import { useBuyNowStore } from "@/store/buyNow";
 import Confetti from "react-confetti";
 import "@/styles/orders.css";
+import { mailtoLink, whatsappLink } from "@/lib/support";
 
 export interface OrderSummary {
   number: string;
@@ -126,8 +127,8 @@ export default function OrderSuccessClient({ orderId, paymentId, isConfirmed, or
 
         <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", color: "var(--color-gray)", marginBottom: "2rem", lineHeight: 1.6 }}>
           🚀 Shipping & tracking updates will be sent via WhatsApp. For queries:{" "}
-          <a href="https://wa.me/919876543210" style={{ color: "var(--color-navy)", fontWeight: 700, display: "inline-flex", alignItems: "center", minHeight: "44px", padding: "0 0.25rem" }}>WhatsApp</a>{" "}or{" "}
-          <a href="mailto:support@cultraven.com" style={{ color: "var(--color-navy)", fontWeight: 700, display: "inline-flex", alignItems: "center", minHeight: "44px", padding: "0 0.25rem" }}>support@cultraven.com</a>
+          <a href={whatsappLink(`Hi CULTRAVEN, I need help with my order${summary ? ` ${summary.number}` : ""}.`)} style={{ color: "var(--color-navy)", fontWeight: 700, display: "inline-flex", alignItems: "center", minHeight: "44px", padding: "0 0.25rem" }}>WhatsApp</a>{" "}or{" "}
+          <a href={mailtoLink(`Help with my order${summary ? ` ${summary.number}` : ""}`)} style={{ color: "var(--color-navy)", fontWeight: 700, display: "inline-flex", alignItems: "center", minHeight: "44px", padding: "0 0.25rem" }}>support@cultraven.com</a>
         </p>
 
         <div style={{ display: "flex", gap: "0.75rem", flexDirection: "column" }}>

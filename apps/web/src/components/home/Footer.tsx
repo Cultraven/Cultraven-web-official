@@ -15,6 +15,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import type { FooterConfig } from "@shop/types";
+import { whatsappLink } from "@/lib/support";
 
 interface FooterProps {
   config: FooterConfig;
@@ -181,7 +182,7 @@ export function Footer({ config }: FooterProps) {
             </div>
 
             <a
-              href="https://wa.me/919999999999"
+              href={whatsappLink("Hi CULTRAVEN, I need help.")}
               target="_blank"
               rel="noopener noreferrer"
               style={{

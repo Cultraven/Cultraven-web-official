@@ -73,9 +73,9 @@ describe("timeline", () => {
   const created = ago(5);
   it("marks progress for a shipped order", () => {
     const t = buildTimeline({ fulfillmentStatus: "shipped", createdAt: created, statusHistory: [{ status: "confirmed", at: ago(4) }, { status: "shipped", at: ago(2) }] });
-    expect(t.map((s) => s.state)).toEqual(["done", "done", "current", "todo", "todo"]);
-    expect(t[2].at).toBeTruthy();
-    expect(t[3].at).toBeUndefined();
+    expect(t.map((s) => s.state)).toEqual(["done", "done", "done", "current", "todo", "todo"]);
+    expect(t[3].at).toBeTruthy();
+    expect(t[4].at).toBeUndefined();
   });
   it("delivered shows everything done", () => {
     const t = buildTimeline({ fulfillmentStatus: "delivered", createdAt: created, statusHistory: [{ status: "delivered", at: ago(1) }] });
@@ -85,7 +85,7 @@ describe("timeline", () => {
     const t = buildTimeline({ fulfillmentStatus: "cancelled", createdAt: created, statusHistory: [{ status: "cancelled", at: ago(1), note: "Ordered by mistake" }] });
     expect(t[t.length - 1]).toMatchObject({ key: "cancelled", state: "bad", note: "Ordered by mistake" });
     expect(t[0].state).toBe("done");
-    expect(t[2].state).toBe("todo");
+    expect(t[3].state).toBe("todo");
   });
   it("return flow appends return steps", () => {
     const t = buildTimeline({ fulfillmentStatus: "return_requested", createdAt: created, statusHistory: [{ status: "return_requested", at: ago(0), note: "Size" }] });
@@ -94,4 +94,46 @@ describe("timeline", () => {
     expect(t2.at(-1)).toMatchObject({ key: "returned" });
   });
   it("tolerates unknown status", () => expect(buildTimeline({ fulfillmentStatus: "weird", createdAt: created })[0].state).toBe("current"));
+
+describe("extra statuses: packed, on hold, delivery failed, returned to origin", () => {
+  it("packed sits between confirmed and shipped and is skippable", () => {
+    expect(canAdminTransition("confirmed", "packed")).toBe(true);
+    expect(canAdminTransition("packed", "shipped")).toBe(true);
+    expect(canAdminTransition("processing", "shipped")).toBe(true);
+    expect(canAdminTransition("shipped", "packed")).toBe(true);
+    expect(isBackward("shipped", "packed")).toBe(true);
+  });
+  it("on hold can be entered before shipping and resumed or cancelled", () => {
+    for (const from of ["processing", "confirmed", "packed"]) expect(canAdminTransition(from, "on_hold")).toBe(true);
+    expect(canAdminTransition("shipped", "on_hold")).toBe(false);
+    for (const to of ["processing", "confirmed", "packed", "cancelled"]) expect(canAdminTransition("on_hold", to)).toBe(true);
+    expect(canAdminTransition("on_hold", "shipped")).toBe(false);
+  });
+  it("failed delivery can retry, deliver, go back to origin or cancel; RTO is final", () => {
+    for (const from of ["shipped", "out_for_delivery"]) expect(canAdminTransition(from, "delivery_failed")).toBe(true);
+    for (const to of ["out_for_delivery", "delivered", "rto", "cancelled"]) expect(canAdminTransition("delivery_failed", to)).toBe(true);
+    expect(ADMIN_TRANSITIONS.rto).toEqual([]);
+    expect(canAdminTransition("processing", "rto")).toBe(false);
+  });
+  it("customer cancel: on hold / packed are instant, failed delivery is a request", () => {
+    expect(cancelEligibility({ fulfillmentStatus: "packed", createdAt: ago(1) }, now).mode).toBe("direct");
+    expect(cancelEligibility({ fulfillmentStatus: "on_hold", createdAt: ago(1) }, now).mode).toBe("direct");
+    expect(cancelEligibility({ fulfillmentStatus: "delivery_failed", createdAt: ago(1) }, now).mode).toBe("request");
+    expect(cancelEligibility({ fulfillmentStatus: "rto", createdAt: ago(1) }, now).ok).toBe(false);
+  });
+  it("timeline: packed is a normal step; on hold / failed / RTO append a side step", () => {
+    const created = ago(5);
+    const packed = buildTimeline({ fulfillmentStatus: "packed", createdAt: created, statusHistory: [{ status: "packed", at: ago(1) }] });
+    expect(packed.map((s) => s.key)).toEqual(["processing", "confirmed", "packed", "shipped", "out_for_delivery", "delivered"]);
+    expect(packed[2].state).toBe("current");
+    const hold = buildTimeline({ fulfillmentStatus: "on_hold", createdAt: created, statusHistory: [{ status: "confirmed", at: ago(4) }, { status: "on_hold", at: ago(1), note: "Verifying address" }] });
+    expect(hold.at(-1)).toMatchObject({ key: "on_hold", state: "current", note: "Verifying address" });
+    expect(hold[1].state).toBe("done");
+    const failed = buildTimeline({ fulfillmentStatus: "delivery_failed", createdAt: created, statusHistory: [{ status: "shipped", at: ago(2) }, { status: "delivery_failed", at: ago(0) }] });
+    expect(failed.at(-1)).toMatchObject({ key: "delivery_failed", state: "current" });
+    expect(failed[3].state).toBe("done"); // shipped
+    const rto = buildTimeline({ fulfillmentStatus: "rto", createdAt: created, statusHistory: [{ status: "shipped", at: ago(3) }] });
+    expect(rto.at(-1)).toMatchObject({ key: "rto", state: "bad" });
+  });
+});
 });

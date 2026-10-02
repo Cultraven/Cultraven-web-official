@@ -1,0 +1,33 @@
+/* "How was it?" review card shown after delivery */
+.rp { position: fixed; z-index: 260; left: clamp(12px, 2vw, 28px); bottom: clamp(12px, 2vw, 28px); width: min(400px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); overflow: auto;
+  background: var(--color-cream); color: var(--color-navy); border: 3px solid var(--color-navy); box-shadow: 6px 6px 0 var(--color-lava); padding: 1.1rem 1.15rem 1rem; animation: rpIn 0.28s ease; }
+@keyframes rpIn { from { transform: translateY(18px); opacity: 0; } to { transform: none; opacity: 1; } }
+.rp-x { position: absolute; top: 4px; right: 4px; width: 44px; height: 44px; border: 0; background: none; font: 900 1.6rem/1 var(--font-sans); color: var(--color-navy); cursor: pointer; }
+.rp-x:focus-visible, .rp-stars button:focus-visible, .rp-link:focus-visible { outline: 3px solid var(--color-lava); outline-offset: 2px; }
+.rp-eyebrow { font: 800 0.66rem var(--font-sans); letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-smoke); margin: 0 2rem 0.55rem 0; }
+.rp-prod { display: flex; gap: 0.8rem; align-items: center; margin-bottom: 0.7rem; }
+.rp-prod img { width: 56px; height: 70px; object-fit: cover; border: 2px solid var(--color-navy); background: var(--color-bone); flex-shrink: 0; }
+.rp-prod h2 { font: 900 1.05rem/1.25 var(--font-sans); margin: 0; overflow-wrap: anywhere; }
+.rp-stars { display: flex; align-items: center; gap: 2px; margin: 0.2rem 0 0.7rem; }
+.rp-stars button { width: 44px; height: 44px; display: grid; place-items: center; background: none; border: 0; cursor: pointer; padding: 0; -webkit-tap-highlight-color: transparent; transition: transform 0.12s ease; }
+@media (hover: hover) and (pointer: fine) { .rp-stars button:hover { transform: scale(1.15); } }
+.rp-stars button:active { transform: scale(0.9); }
+.rp-label { margin-left: 0.4rem; font: 800 0.74rem var(--font-sans); letter-spacing: 0.04em; color: var(--color-navy); min-width: 6.5rem; }
+.rp-in { display: block; width: 100%; margin: 0 0 0.6rem; padding: 0.7rem 0.8rem; border: 2px solid var(--color-navy); background: #fff; font: 600 0.95rem var(--font-sans); color: var(--color-navy); border-radius: 0; min-height: 46px; }
+textarea.rp-in { resize: vertical; }
+.rp-err { color: #b42318; font: 700 0.8rem/1.4 var(--font-sans); margin: 0 0 0.6rem; }
+.rp-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 1rem; }
+.rp-link { background: none; border: 0; min-height: 44px; padding: 0; font: 800 0.74rem var(--font-sans); letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-navy); text-decoration: underline; cursor: pointer; }
+.rp-foot { margin: 0.35rem 0 0; font: 600 0.7rem/1.5 var(--font-sans); color: var(--color-smoke); }
+.rp-foot a { color: var(--color-navy); text-decoration: underline; font-weight: 800; }
+.rp-done { display: grid; gap: 0.35rem; padding: 0.4rem 1.6rem 0.4rem 0; font: 600 0.9rem/1.5 var(--font-sans); }
+.rp-done b { font: 900 1.2rem var(--font-sans); }
+
+/* Phones: a bottom sheet that sits above the bottom bar and the PDP's sticky buttons */
+@media (max-width: 1023px) {
+  .rp { left: 8px; right: 8px; width: auto; bottom: calc(72px + env(safe-area-inset-bottom)); box-shadow: 4px 4px 0 var(--color-lava); max-height: calc(100dvh - 96px - env(safe-area-inset-bottom)); }
+  /* the floating "Need help?" button would sit on top of the card's footer text — tuck it away while the card is open */
+  body:has(.rp) .chat-fab { display: none; }
+}
+html[data-menu-open] .rp { display: none; }
+@media (prefers-reduced-motion: reduce) { .rp { animation: none; } }

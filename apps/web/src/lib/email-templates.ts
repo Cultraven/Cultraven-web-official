@@ -106,6 +106,10 @@ import { STATUS_LABEL, isOrderStatus } from "@/lib/order-lifecycle";
 
 const STATUS_COPY: Record<string, string> = {
   confirmed: "We've confirmed your order and are packing it.",
+  packed: "Your order is packed and ready — it will be handed to the courier shortly.",
+  on_hold: "Your order is on hold for a moment while we check a detail. We'll update you as soon as it moves again — nothing is needed from you unless we reach out.",
+  delivery_failed: "The courier couldn't deliver your order today. They will usually try again — please keep your phone reachable, or reply to this email to arrange a better time.",
+  rto: "Your order couldn't be delivered and is on its way back to us. If you paid online, your refund goes to your original payment method within 5–7 business days.",
   shipped: "Your order is on its way.",
   out_for_delivery: "Your order is out for delivery today — please keep your phone handy.",
   delivered: "Your order has been delivered. We hope you love it! You can return it within 7 days if something isn't right.",
@@ -169,5 +173,39 @@ export function adminCustomerActionEmail(o: MailOrder, siteUrl: string, kind: "c
     siteUrl
   );
   const text = `${subject}\nCustomer: ${o.deliveryAddress.name}\nReason: ${reason}\n${siteUrl}/portal-secure/orders/${o.id}`;
+  return { subject, html, text };
+}
+
+// ── Support (contact form) ──────────────────────────────────────────────────────
+
+export interface SupportMail { ref: string; name: string; email: string; phone?: string; subject: string; message: string; orderRef?: string }
+
+/** Alert to the support team: the full message, and a one-click reply. */
+export function supportAdminEmail(m: SupportMail, siteUrl: string) {
+  const subject = `[${m.ref}] ${m.subject}${m.orderRef ? ` — ${m.orderRef}` : ""}`;
+  const html = shell(
+    `New message ${m.ref}`,
+    `${escapeHtml(m.name)} wrote in via the Contact us form.`,
+    `<p style="margin:0 0 6px;font-size:12px;font-weight:900;letter-spacing:2px">SUBJECT</p><p style="margin:0 0 14px;font-size:15px;font-weight:700">${escapeHtml(m.subject)}</p>` +
+      `<p style="margin:0 0 6px;font-size:12px;font-weight:900;letter-spacing:2px">MESSAGE</p><p style="margin:0 0 14px;font-size:14px;line-height:1.7;background:${BONE};padding:12px 14px;border-left:4px solid ${GOLD};white-space:pre-wrap">${escapeHtml(m.message)}</p>` +
+      `<p style="margin:0;font-size:13px;line-height:1.8">From: <b>${escapeHtml(m.name)}</b> &lt;${escapeHtml(m.email)}&gt;<br>Phone: ${escapeHtml(m.phone || "—")}<br>Order: ${escapeHtml(m.orderRef || "—")}</p>` +
+      `<p style="margin:20px 0 0"><a href="mailto:${escapeHtml(m.email)}?subject=${encodeURIComponent(`Re: [${m.ref}] ${m.subject}`)}" style="display:inline-block;background:${NAVY};color:${CREAM};padding:12px 20px;text-decoration:none;font-weight:900;font-size:13px;letter-spacing:2px;border-bottom:4px solid ${GOLD}">REPLY</a> <a href="${escapeHtml(siteUrl)}/portal-secure/support" style="display:inline-block;padding:12px 8px;color:${NAVY};font-weight:900;font-size:13px">Open support inbox →</a></p>`,
+    siteUrl
+  );
+  const text = `${subject}\n\nFrom: ${m.name} <${m.email}> ${m.phone || ""}\nOrder: ${m.orderRef || "-"}\n\n${m.message}\n\n${siteUrl}/portal-secure/support`;
+  return { subject, html, text };
+}
+
+/** Acknowledgement to the customer with their reference number. */
+export function supportAckEmail(m: SupportMail, siteUrl: string, hours: string) {
+  const subject = `We got your message — ${m.ref}`;
+  const html = shell(
+    "We got your message",
+    `Hi ${escapeHtml(m.name.split(" ")[0])}, thanks for contacting CULTRAVEN. Your reference is <b>${escapeHtml(m.ref)}</b>. We usually reply within 24 hours (${escapeHtml(hours)}).`,
+    `<p style="margin:0 0 6px;font-size:12px;font-weight:900;letter-spacing:2px">YOUR MESSAGE</p><p style="margin:0 0 14px;font-size:14px;line-height:1.7;background:${BONE};padding:12px 14px;border-left:4px solid ${GOLD};white-space:pre-wrap">${escapeHtml(m.message)}</p>` +
+      `<p style="margin:0;font-size:13px;line-height:1.7">In a hurry? Many answers are in our <a href="${escapeHtml(siteUrl)}/help" style="color:${NAVY};font-weight:900">Help Center</a>, and you can track, cancel or return an order from <a href="${escapeHtml(siteUrl)}/account/orders" style="color:${NAVY};font-weight:900">your orders</a>.</p>`,
+    siteUrl
+  );
+  const text = `We got your message — ${m.ref}\n\nThanks ${m.name.split(" ")[0]}. We usually reply within 24 hours (${hours}).\n\nYour message:\n${m.message}\n\nHelp Center: ${siteUrl}/help`;
   return { subject, html, text };
 }

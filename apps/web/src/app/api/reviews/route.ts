@@ -86,7 +86,8 @@ export async function POST(req: NextRequest) {
     const bought = await purchase(me.userId, productId);
     if (!bought) return NextResponse.json({ error: "Only customers who bought this product can review it" }, { status: 403 });
 
-    const user = (await User.findById(me.userId).select("firstName lastName email").lean()) as any;
+    let user: any = null;
+    try { user = await User.findById(me.userId).select("firstName lastName email").lean(); } catch { user = null; } // a stale / malformed session id just falls back to the email for the display name
     try {
       await Review.create({ productId, slug, userId: me.userId, orderId: bought.orderId, name: publicName(user?.firstName, user?.lastName, user?.email ?? me.email), rating, title, comment, size: bought.size });
     } catch (e: any) {

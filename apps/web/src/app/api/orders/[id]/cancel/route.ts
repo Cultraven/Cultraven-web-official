@@ -3,13 +3,14 @@ import { z } from "zod";
 import { connectToDatabase } from "@/lib/db";
 import { Order } from "@/lib/models/Order";
 import { customerFromRequest } from "@/lib/customer-auth";
-import { cancelEligibility, CANCEL_WINDOW_DAYS } from "@/lib/order-lifecycle";
+import { cancelEligibility, CANCEL_WINDOW_DAYS, DIRECT_CANCEL, REQUEST_CANCEL } from "@/lib/order-lifecycle";
 import { validId } from "@/lib/order-view";
+import { releaseOrderStock } from "@/lib/inventory";
 import { notifyStatusChange, notifyAdminCustomerAction } from "@/lib/order-notify";
 
 export const dynamic = "force-dynamic";
 
-const Body = z.object({ reason: z.string().trim().min(3, "Please choose a reason").max(120), note: z.string().trim().max(200).optional() });
+const Body = z.object({ reason: z.string().trim().min(3, "Please choose a reason").max(120), note: z.string().trim().min(10, "Please add a few details (at least 10 characters)").max(200, "Details are too long (max 200 characters)") });
 
 /** POST — the customer cancels their own order (before it ships, within 7 days). */
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -21,7 +22,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   try { raw = await req.json(); } catch { return NextResponse.json({ error: "Invalid request" }, { status: 400 }); }
   const p = Body.safeParse(raw);
   if (!p.success) return NextResponse.json({ error: p.error.issues[0]?.message ?? "Invalid request" }, { status: 422 });
-  const reason = p.data.note ? `${p.data.reason} — ${p.data.note}` : p.data.reason;
+  const reason = `${p.data.reason} — ${p.data.note}`;
 
   try {
     await connectToDatabase();
@@ -36,7 +37,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     // Already shipped: the customer sends a cancellation REQUEST; the admin approves it (the courier must be stopped).
     if (el.mode === "request") {
       const reqd = (await Order.findOneAndUpdate(
-        { _id: id, userId: me.userId, fulfillmentStatus: { $in: ["shipped", "out_for_delivery"] }, cancelRequestedAt: null, createdAt: { $gte: cutoff } },
+        { _id: id, userId: me.userId, fulfillmentStatus: { $in: REQUEST_CANCEL }, cancelRequestedAt: null, createdAt: { $gte: cutoff } },
         { $set: { cancelRequestedAt: now, cancelRequestReason: reason }, $push: { statusHistory: { status: cur.fulfillmentStatus, note: `Cancellation requested: ${reason}`, at: now, by: "customer" } } },
         { new: true }
       ).lean()) as any;
@@ -50,7 +51,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
     // Atomic: only succeeds if the order is still unshipped and inside the window at this very moment.
     const upd = (await Order.findOneAndUpdate(
-      { _id: id, userId: me.userId, fulfillmentStatus: { $in: ["processing", "confirmed"] }, createdAt: { $gte: cutoff } },
+      { _id: id, userId: me.userId, fulfillmentStatus: { $in: DIRECT_CANCEL }, createdAt: { $gte: cutoff } },
       {
         $set: { fulfillmentStatus: "cancelled", cancelledAt: now, cancelReason: reason, ...(cur.paymentStatus === "paid" ? { paymentStatus: "refund_pending" } : {}) },
         $push: { statusHistory: { status: "cancelled", note: reason, at: now, by: "customer" } },
@@ -60,6 +61,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     if (!upd) return NextResponse.json({ error: "This order can no longer be cancelled (it may have just shipped)." }, { status: 409 });
 
     after(async () => {
+      await releaseOrderStock(id);
       await notifyStatusChange(id, { status: "cancelled", note: reason });
       await notifyAdminCustomerAction(id, "cancelled", reason);
     });

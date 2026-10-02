@@ -82,7 +82,6 @@
 .adm-crumbs { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--a-muted); min-width: 0; }
 .adm-crumbs b { color: var(--a-text); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .adm-top-spacer { flex: 1; }
-.adm-burger { display: none; }
 .adm-page { padding: 28px; max-width: 1280px; width: 100%; margin: 0 auto; }
 
 /* ── Page header ─────────────────────────────────────────────────────────── */
@@ -249,16 +248,17 @@
   .adm-grid-main { grid-template-columns: 1fr; }
 }
 @media (max-width: 900px) {
-  .adm-shell { grid-template-columns: 1fr; }
-  .adm-side { position: fixed; inset: 0 auto 0 0; width: 280px; z-index: 120; transform: translateX(-100%); transition: transform 0.2s ease; box-shadow: var(--a-shadow-lg); }
-  .adm-side[data-open="true"] { transform: none; }
-  .adm-scrim { position: fixed; inset: 0; z-index: 110; background: rgba(15, 23, 42, 0.5); }
-  .adm-burger { display: inline-flex; }
+  .adm-shell { grid-template-columns: 220px minmax(0, 1fr); } /* sidebar stays docked — no hamburger/drawer */
   .adm-top { padding: 0 14px; }
   .adm-page { padding: 18px 14px; }
   .adm-form-grid, .adm-grid-2, .adm-grid-3, .adm-modes { grid-template-columns: 1fr; }
   .adm-login { grid-template-columns: 1fr; }
   .adm-login-art { display: none; }
+}
+@media (max-width: 640px) {
+  .adm-shell { grid-template-columns: minmax(0, 1fr); }
+  .adm-side { position: static; height: auto; border-right: 0; }
+  .adm-nav { max-height: 40dvh; }
 }
 @media (prefers-reduced-motion: reduce) {
   .adm *, .adm *::before, .adm *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }

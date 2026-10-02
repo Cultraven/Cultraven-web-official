@@ -53,10 +53,12 @@ export interface IOrder extends Document {
   razorpayPaymentId?: string;
   paymentMethod: "razorpay" | "cod";
   paymentStatus: "pending" | "paid" | "failed" | "refund_pending" | "refunded";
-  fulfillmentStatus: "processing" | "confirmed" | "shipped" | "out_for_delivery" | "delivered" | "cancelled" | "return_requested" | "returned";
+  fulfillmentStatus: "processing" | "confirmed" | "packed" | "on_hold" | "shipped" | "out_for_delivery" | "delivery_failed" | "delivered" | "cancelled" | "rto" | "return_requested" | "returned";
   deliveredAt?: Date | null;
   cancelledAt?: Date | null;
   cancelReason?: string;
+  /** Private notes for the team - never shown to the customer. */
+  adminNotes?: { text: string; at: Date }[];
   /** Set when a customer asks to cancel an order that has already shipped; the admin approves or ignores it. */
   cancelRequestedAt?: Date | null;
   cancelRequestReason?: string;
@@ -69,6 +71,9 @@ export interface IOrder extends Document {
   notes?: string;
   /** Set once the "order placed" emails have been sent (prevents duplicates). */
   emailNotifiedAt?: Date | null;
+  /** Per-size stock was reserved for this order, and when it was given back (cancel / return / RTO). */
+  stockReserved?: boolean;
+  stockReleasedAt?: Date | null;
   /** Client-generated key so a double-click / retry can't create two orders. */
   idempotencyKey?: string;
   createdAt: Date;
@@ -125,7 +130,7 @@ const OrderSchema = new Schema<IOrder>(
     },
     fulfillmentStatus: {
       type: String,
-      enum: ["processing", "confirmed", "shipped", "out_for_delivery", "delivered", "cancelled", "return_requested", "returned"],
+      enum: ["processing", "confirmed", "packed", "on_hold", "shipped", "out_for_delivery", "delivery_failed", "delivered", "cancelled", "rto", "return_requested", "returned"],
       default: "processing",
     },
     trackingNumber: { type: String },
@@ -136,11 +141,14 @@ const OrderSchema = new Schema<IOrder>(
     deliveredAt: { type: Date, default: null },
     cancelledAt: { type: Date, default: null },
     cancelReason: { type: String, maxlength: 300 },
+    adminNotes: { type: [new Schema({ text: { type: String, maxlength: 500, required: true }, at: { type: Date, default: Date.now } }, { _id: false })], default: [] },
     cancelRequestedAt: { type: Date, default: null },
     cancelRequestReason: { type: String, maxlength: 300 },
     returnReason: { type: String, maxlength: 300 },
     returnRequestedAt: { type: Date, default: null },
     emailNotifiedAt: { type: Date, default: null },
+    stockReserved: { type: Boolean, default: false },
+    stockReleasedAt: { type: Date, default: null },
     idempotencyKey: { type: String, maxlength: 80 },
   },
   {

@@ -129,31 +129,35 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
             />
           </div>
 
-          {/* Right actions: Search, Wishlist, Orders, Account, Bag */}
+          {/* Right actions: Search, Wishlist, Orders, Bag, then the account (Login / Register or profile) */}
           <div style={{ display: "flex", alignItems: "center", gap: "0.25rem", flexShrink: 0 }}>
             <Link href="/search" aria-label="Search" title="Search" className="hdr-icon action-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square" aria-hidden="true">
                 <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
               </svg>
+              <span className="hdr-label" aria-hidden="true">Search</span>
             </Link>
 
             <Link href="/account/wishlist" aria-label="Wishlist" title="Wishlist" className="hide-mobile hdr-icon action-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square" strokeLinejoin="miter" aria-hidden="true">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
               </svg>
+              <span className="hdr-label" aria-hidden="true">Wishlist</span>
             </Link>
 
             <Link href="/account/orders" aria-label="My orders" title="My orders" className="hide-mobile hdr-icon action-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square" strokeLinejoin="miter" aria-hidden="true">
                 <path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/>
               </svg>
+              <span className="hdr-label" aria-hidden="true">Orders</span>
             </Link>
-
-            <HeaderAccountIcon className="hide-mobile hdr-icon action-icon" />
 
             <div className="hide-mobile">
               <CartBadge isScrolled={!transparent} />
             </div>
+
+            {/* Last: Login / Register for visitors, the profile photo once signed in */}
+            <HeaderAccountIcon className="hide-mobile hdr-icon action-icon" />
           </div>
         </div>
       </header>

@@ -12,9 +12,9 @@
  * - Loads real products from /api/products filtered by category
  */
 import React, { useState, useMemo, useEffect, Component } from "react";
-import Image from "next/image";
 import Link from "next/link";
-import { useCartStore } from "@/store/cart";
+import { ShopCard } from "@/components/shop/ShopCard";
+import type { PublicSizeOption } from "@/lib/size-pricing";
 
 interface Product {
   id: string;
@@ -32,6 +32,8 @@ interface Product {
   category: string;
   badge?: string;
   inStock: boolean;
+  sizeOptions: PublicSizeOption[];
+  isNewArrival: boolean;
 }
 
 // ── Error Boundary ────────────────────────────────────────────────────────────
@@ -72,33 +74,14 @@ const SORT_OPTIONS = [
 
 const fmt = (p: number) => `₹${(p / 100).toLocaleString("en-IN")}`;
 
-function StarRating({ rating }: { rating: number }) {
-  return (
-    <div style={{ display: "flex", gap: "1px" }}>
-      {[1, 2, 3, 4, 5].map((s) => (
-        <svg key={s} width="10" height="10" viewBox="0 0 24 24"
-          fill={s <= rating ? "var(--color-yellow)" : "none"}
-          stroke={s <= rating ? "var(--color-yellow)" : "var(--color-border)"}
-          strokeWidth="2">
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-        </svg>
-      ))}
-    </div>
-  );
-}
-
 interface CategoryClientProps {
   slug: string;
   categoryName: string;
 }
 
 function CategoryClientInner({ slug, categoryName }: CategoryClientProps) {
-  const addItem = useCartStore((s) => s.addItem);
-
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const [addedId, setAddedId] = useState<string | null>(null);
 
   // ── Filters ──────────────────────────────────────────────────────────────────
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
@@ -140,6 +123,8 @@ function CategoryClientInner({ slug, categoryName }: CategoryClientProps) {
               category: p.category || "",
               badge: p.badge,
               inStock: p.inStock !== false,
+              sizeOptions: Array.isArray(p.sizeOptions) ? p.sizeOptions : [],
+              isNewArrival: p.isNewArrival === true,
             }));
             setProducts(normalized);
             setLoading(false);
@@ -200,23 +185,6 @@ function CategoryClientInner({ slug, categoryName }: CategoryClientProps) {
 
   const clearAllFilters = () => {
     setSelectedSizes([]); setSelectedColors([]); setPriceMax(100000); setInStockOnly(false);
-  };
-
-  const handleQuickAdd = (p: Product) => {
-    const pSizes = safeSizes(p);
-    const pColors = safeColors(p);
-    addItem({
-      productId: p.id,
-      slug: p.slug,
-      title: p.title,
-      image: p.image,
-      sku: `${p.id}-${pSizes[0] || "M"}-default`,
-      size: pSizes[0] || "M",
-      color: pColors[0]?.label || "",
-      pricePaise: p.pricePaise,
-    });
-    setAddedId(p.id);
-    setTimeout(() => setAddedId(null), 1500);
   };
 
   const toggleSize = (s: string) =>
@@ -361,83 +329,7 @@ function CategoryClientInner({ slug, categoryName }: CategoryClientProps) {
               </div>
             ) : (
               <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1.5rem", paddingTop: "1.5rem" }} className="prod-grid">
-                {filtered.map((p) => (
-                  <div key={p.id} style={{ position: "relative" }}
-                    onMouseEnter={() => setHoveredId(p.id)}
-                    onMouseLeave={() => setHoveredId(null)}
-                  >
-                    {/* Badge */}
-                    {p.badge && (
-                      <div style={{ position: "absolute", top: "12px", left: "12px", zIndex: 2, backgroundColor: "var(--color-crimson)", color: "var(--color-cream)", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.6rem", letterSpacing: "0.1em", padding: "0.25rem 0.6rem" }}>
-                        {p.badge}
-                      </div>
-                    )}
-
-                    {/* Image */}
-                    <Link href={p.href} style={{ display: "block", position: "relative", aspectRatio: "3/4", overflow: "hidden", backgroundColor: "var(--color-mist)" }}>
-                      <Image
-                        src={hoveredId === p.id && p.hoverImage ? p.hoverImage : p.image}
-                        alt={p.title}
-                        fill
-                        sizes="(max-width: 768px) 50vw, 25vw"
-                        style={{ objectFit: "cover", transition: "opacity 0.3s ease" }}
-                      />
-                      {/* Quick add */}
-                      {hoveredId === p.id && (
-                        <button
-                          onClick={(e) => { e.preventDefault(); handleQuickAdd(p); }}
-                          style={{
-                            position: "absolute",
-                            bottom: "0.75rem",
-                            left: "0.75rem",
-                            right: "0.75rem",
-                            padding: "0.75rem",
-                            backgroundColor: addedId === p.id ? "var(--color-navy)" : "var(--color-cream)",
-                            color: addedId === p.id ? "var(--color-cream)" : "var(--color-navy)",
-                            fontFamily: "var(--font-sans)",
-                            fontWeight: 800,
-                            fontSize: "0.65rem",
-                            letterSpacing: "0.12em",
-                            textTransform: "uppercase",
-                            border: "none",
-                            cursor: "pointer",
-                            transition: "all 0.2s",
-                          }}
-                        >
-                          {addedId === p.id ? "✓ ADDED" : "+ QUICK ADD"}
-                        </button>
-                      )}
-                    </Link>
-
-                    {/* Info */}
-                    <div style={{ paddingTop: "0.75rem" }}>
-                      <Link href={p.href} style={{ textDecoration: "none" }}>
-                        <p style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.72rem", letterSpacing: "0.04em", textTransform: "uppercase", color: "var(--color-navy)", lineHeight: 1.3, marginBottom: "0.35rem" }}>
-                          {p.title}
-                        </p>
-                      </Link>
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.4rem" }}>
-                        <StarRating rating={p.rating} />
-                        <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.6rem", color: "var(--color-gray)" }}>({p.reviewCount})</span>
-                      </div>
-                      <div style={{ display: "flex", alignItems: "baseline", gap: "0.5rem" }}>
-                        <span style={{ fontFamily: "var(--font-heading)", fontWeight: 600, fontSize: "1rem", color: "var(--color-navy)" }}>{fmt(p.pricePaise)}</span>
-                        {p.mrpPaise > p.pricePaise && (
-                          <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.7rem", color: "#9CA3AF", textDecoration: "line-through" }}>{fmt(p.mrpPaise)}</span>
-                        )}
-                      </div>
-                      {/* Color swatches */}
-                      {safeColors(p).length > 0 && (
-                        <div style={{ display: "flex", gap: "4px", marginTop: "0.4rem" }}>
-                          {safeColors(p).slice(0, 4).map((c) => (
-                            <span key={c.label} title={c.label} style={{ width: "14px", height: "14px", borderRadius: "50%", backgroundColor: c.hex, border: "var(--border-thick)", boxShadow: "var(--shadow-md)" }} />
-                          ))}
-                          {safeColors(p).length > 4 && <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.6rem", color: "var(--color-gray)", alignSelf: "center" }}>+{safeColors(p).length - 4}</span>}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
+                {filtered.map((p, i) => <ShopCard key={p.id} product={p} priority={i < 4} />)}
               </div>
             )}
           </div>

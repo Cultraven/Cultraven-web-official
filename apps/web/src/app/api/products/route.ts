@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
     const admin = isAdminRequest(req);
     return NextResponse.json({
       products: docs.map((d: any) => ({
-        ...normalizeProduct(d),
+        ...normalizeProduct(d, { admin }),
         ...(admin ? { stockCount: Number(d.stockCount) || 0, updatedAt: d.updatedAt ?? null } : {}),
       })),
     });

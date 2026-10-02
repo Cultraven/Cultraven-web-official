@@ -12,6 +12,27 @@ import { buildInvoicePdf } from "@/lib/invoice-pdf";
 
 const siteUrl = () => (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
 
+/** Admin action: send the order confirmation (with receipt) to the customer again. Returns whether an email was attempted. */
+export async function resendOrderConfirmation(orderId: string): Promise<{ ok: boolean; reason?: string }> {
+  try {
+    await connectToDatabase();
+    const o = (await Order.findById(orderId).lean()) as any;
+    if (!o) return { ok: false, reason: "Order not found" };
+    if (!o.deliveryAddress?.email) return { ok: false, reason: "This order has no customer email" };
+    const settings = await getSmtpSettings();
+    if (!settings || !settings.enabled) return { ok: false, reason: "Email isn't set up yet — add your SMTP settings first" };
+    const mo = toMailOrder(o);
+    let attachments: { filename: string; content: Uint8Array; contentType: string }[] | undefined;
+    try { attachments = [{ filename: `CULTRAVEN-receipt-${orderNumber(mo.id)}.pdf`, content: await buildInvoicePdf({ ...mo, razorpayPaymentId: o.razorpayPaymentId }), contentType: "application/pdf" }]; } catch { /* send without it */ }
+    const m = customerOrderEmail(mo, siteUrl(), { receiptAttached: !!attachments });
+    const r = await sendMail({ to: mo.deliveryAddress.email!, ...m, kind: "order-customer-resend", orderId: mo.id, replyTo: settings.fromEmail, attachments });
+    return r.ok ? { ok: true } : { ok: false, reason: "The mail server refused it — see Settings → Email for details" };
+  } catch (e) {
+    console.error("[order-notify] resend failed:", e instanceof Error ? e.message : e);
+    return { ok: false, reason: "Could not send" };
+  }
+}
+
 export async function notifyOrderPlaced(orderId: string): Promise<void> {
   try {
     await connectToDatabase();

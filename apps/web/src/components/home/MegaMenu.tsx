@@ -10,6 +10,7 @@ import React, {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { NavMenu, NavItem } from "@shop/types";
+import { MenuAuthButtons } from "@/components/account/HeaderAccountIcon";
 import "./header-ui.css";
 
 interface MegaMenuProps {
@@ -278,6 +279,8 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
             <CloseIcon />
           </button>
         </div>
+
+        <MenuAuthButtons onClose={onMobileClose} />
 
         {/* Nav items (scrolls on short screens; the footer below stays pinned and visible) */}
         <nav aria-label="Mobile navigation" className="mm-nav" style={{ paddingTop: "0.75rem", paddingBottom: "1rem" }}>

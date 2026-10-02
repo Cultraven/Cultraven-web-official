@@ -15,11 +15,12 @@ type OrderRow = {
   date: string;
 };
 
-const FILTERS = ["all", "processing", "confirmed", "shipped", "out_for_delivery", "delivered", "return_requested", "returned", "cancelled"] as const;
+const FILTERS = ["all", "processing", "confirmed", "packed", "on_hold", "shipped", "out_for_delivery", "delivery_failed", "delivered", "return_requested", "returned", "rto", "cancelled"] as const;
 type Filter = (typeof FILTERS)[number];
 
 const TONES: Record<string, "warn" | "info" | "success" | "danger"> = {
-  processing: "warn", confirmed: "info", shipped: "info", out_for_delivery: "info", delivered: "success", cancelled: "danger", return_requested: "warn", returned: "danger",
+  processing: "warn", confirmed: "info", packed: "info", on_hold: "warn", shipped: "info", out_for_delivery: "info", delivery_failed: "warn",
+  delivered: "success", cancelled: "danger", rto: "danger", return_requested: "warn", returned: "danger",
 };
 const norm = (s: string) => (s || "").toLowerCase();
 const label = (s: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase().replace(/_/g, " ") : "—");

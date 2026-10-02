@@ -376,7 +376,7 @@ const J = { "content-type": "application/json" };
   ok(r.json?.online === true, "online payments available again");
   r = await call("POST", "/api/razorpay/create-order", { body: order({ paymentMethod: "razorpay" }), headers: customer(buyerId), ip: nextIp() });
   ok(r.status === 500 && r.json?.error === "Failed to create order. Please try again." && !r.text.includes(SECRET), "switch on + admin keys => create-order uses them and reaches Razorpay (fake keys are rejected there; the error is generic and leaks no secret)", `${r.status} ${r.text.slice(0, 80)}`);
-  ok(!(await db.collection("orders").findOne({ userId: buyerId, paymentMethod: "razorpay" })), "...and no half-created order is left behind");
+  ok(!(await db.collection("orders").findOne({ userId: buyerId, paymentMethod: "razorpay", razorpayOrderId: { $not: /^order_Smoke/ } })), "...and no half-created order is left behind (orders this test seeded itself are ignored)");
   if (!envOnline) {
     await db.collection("settings").deleteMany({ key: "razorpay" });
     r = await call("GET", "/api/payments/config");

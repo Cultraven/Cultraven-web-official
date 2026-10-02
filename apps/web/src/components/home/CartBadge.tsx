@@ -85,6 +85,7 @@ export function CartBadge({ isScrolled = false, bare = false }: { isScrolled?: b
       style={{ color }}
     >
       {content}
+      <span className="hdr-label" aria-hidden="true">Bag</span>
     </button>
   );
 }

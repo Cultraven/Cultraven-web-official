@@ -7,6 +7,7 @@ import { customerFromRequest } from "@/lib/customer-auth";
 import { canAdminTransition, isOrderStatus, isBackward, ORDER_STATUSES, ADMIN_TRANSITIONS } from "@/lib/order-lifecycle";
 import { customerOrderView, validId } from "@/lib/order-view";
 import { notifyStatusChange } from "@/lib/order-notify";
+import { releaseOrderStock } from "@/lib/inventory";
 
 export const dynamic = "force-dynamic";
 const NO_STORE = { "Cache-Control": "no-store" };
@@ -44,6 +45,8 @@ const UpdateSchema = z.object({
   trackingUrl: Text(300).refine((v) => v === "" || /^https?:\/\/[^\s]+$/i.test(v), "Tracking link must start with http(s)://").optional(),
   paymentStatus: z.enum(["pending", "paid", "failed", "refund_pending", "refunded"]).optional(),
   notify: z.boolean().optional(),
+  /** Private team note (never shown to the customer, never emailed). */
+  internalNote: Text(500).optional(),
 });
 
 /** PUT — admin: move the order along its workflow, add courier/tracking, record payment/refund. The customer is emailed. */
@@ -57,7 +60,7 @@ export async function PUT(req: NextRequest, { params }: Ctx) {
   const p = UpdateSchema.safeParse(raw);
   if (!p.success) return NextResponse.json({ error: p.error.issues[0]?.message ?? "Invalid update", issues: p.error.flatten().fieldErrors }, { status: 422 });
   const d = p.data;
-  if (d.fulfillmentStatus === undefined && d.courierName === undefined && d.trackingNumber === undefined && d.trackingUrl === undefined && d.paymentStatus === undefined) {
+  if (d.fulfillmentStatus === undefined && d.courierName === undefined && d.trackingNumber === undefined && d.trackingUrl === undefined && d.paymentStatus === undefined && !d.internalNote) {
     return NextResponse.json({ error: "Nothing to update" }, { status: 422 });
   }
 
@@ -97,7 +100,7 @@ export async function PUT(req: NextRequest, { params }: Ctx) {
         $set.cancelReason = d.note;
         if (cur.paymentStatus === "paid") $set.paymentStatus = "refund_pending";
       }
-      if (to === "returned" && cur.paymentStatus === "paid") $set.paymentStatus = "refund_pending";
+      if ((to === "returned" || to === "rto") && cur.paymentStatus === "paid") $set.paymentStatus = "refund_pending";
     }
     if (d.courierName !== undefined) $set.courierName = d.courierName;
     if (d.trackingNumber !== undefined) $set.trackingNumber = d.trackingNumber;
@@ -118,11 +121,18 @@ export async function PUT(req: NextRequest, { params }: Ctx) {
     ].filter(Boolean);
 
     const update: Record<string, unknown> = { $set };
-    if (changedStatus || trackingChanged || noteBits.length) update.$push = { statusHistory: { status, note: noteBits.join(" · ") || undefined, at: now, by: "admin" } };
+    const push: Record<string, unknown> = {};
+    if (changedStatus || trackingChanged || noteBits.length) push.statusHistory = { status, note: noteBits.join(" · ") || undefined, at: now, by: "admin" };
+    if (d.internalNote) push.adminNotes = { text: d.internalNote, at: now };
+    if (Object.keys(push).length) update.$push = push;
+    if (Object.keys($set).length === 0) delete update.$set; // an internal note alone sets nothing
 
     // Compare-and-set on the status we validated against, so two admins can't both apply conflicting moves.
     const updated = (await Order.findOneAndUpdate({ _id: id, fulfillmentStatus: from }, update, { new: true }).lean()) as any;
     if (!updated) return NextResponse.json({ error: "The order changed while you were editing — refresh and try again." }, { status: 409 });
+
+    // Cancelled / undelivered / returned: the reserved units go back on sale
+    if (changedStatus && ["cancelled", "rto", "returned"].includes(d.fulfillmentStatus as string)) after(() => releaseOrderStock(id));
 
     // A correction of a mis-click isn't news to the customer unless the admin explicitly asks to notify.
     const shouldNotify = d.notify === true || (d.notify !== false && !backward);

@@ -9,7 +9,7 @@ import { notifyStatusChange, notifyAdminCustomerAction } from "@/lib/order-notif
 
 export const dynamic = "force-dynamic";
 
-const Body = z.object({ reason: z.string().trim().min(3, "Please choose a reason").max(120), note: z.string().trim().max(300).optional() });
+const Body = z.object({ reason: z.string().trim().min(3, "Please choose a reason").max(120), note: z.string().trim().min(10, "Please add a few details (at least 10 characters)").max(300, "Details are too long (max 300 characters)") });
 
 /** POST — the customer asks to return a delivered order (within 7 days of delivery). The admin approves or rejects. */
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -21,7 +21,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   try { raw = await req.json(); } catch { return NextResponse.json({ error: "Invalid request" }, { status: 400 }); }
   const p = Body.safeParse(raw);
   if (!p.success) return NextResponse.json({ error: p.error.issues[0]?.message ?? "Invalid request" }, { status: 422 });
-  const reason = p.data.note ? `${p.data.reason} — ${p.data.note}` : p.data.reason;
+  const reason = `${p.data.reason} — ${p.data.note}`;
 
   try {
     await connectToDatabase();

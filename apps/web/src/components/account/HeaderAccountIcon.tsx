@@ -5,21 +5,26 @@ import { useAccountSession } from "./useAccountSession";
 import "./avatar.css";
 
 /**
- * Header account button. Visitors see the person icon (-> /account, which sends them to login);
- * signed-in customers see their photo in a small circle (or their initial) linking to /account/profile.
+ * Header account area (always the LAST thing in the header's right-hand cluster).
+ *  - Visitors see LOGIN and REGISTER buttons.
+ *  - Signed-in customers see their photo in a small circle (or their initial) linking to /account/profile.
+ * Until the session answers we reserve the visitor-sized slot (an empty placeholder) so the header doesn't jump.
  */
 export function HeaderAccountIcon({ className = "", style }: { className?: string; style?: React.CSSProperties }) {
   const s = useAccountSession();
   const [imgFailed, setImgFailed] = React.useState(false);
   React.useEffect(() => { setImgFailed(false); }, [s.avatar]);
 
+  if (!s.loaded) {
+    return <span className="hide-mobile hdr-auth hdr-auth-ph" aria-hidden="true" />;
+  }
+
   if (!s.signedIn) {
     return (
-      <Link href="/account" aria-label="Account" title="Account" style={style} className={className}>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square" aria-hidden="true">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
-        </svg>
-      </Link>
+      <div className="hide-mobile hdr-auth" role="group" aria-label="Account">
+        <Link href="/login" className="hdr-auth-btn hdr-auth-login" data-testid="hdr-login">Login</Link>
+        <Link href="/register" className="hdr-auth-btn hdr-auth-register" data-testid="hdr-register">Register</Link>
+      </div>
     );
   }
 
@@ -33,6 +38,19 @@ export function HeaderAccountIcon({ className = "", style }: { className?: strin
           s.initial
         )}
       </span>
+      <span className="hdr-label" aria-hidden="true">Profile</span>
     </Link>
+  );
+}
+
+/** Login / Register for the top of the phone side menu (visitors only). */
+export function MenuAuthButtons({ onClose }: { onClose: () => void }) {
+  const s = useAccountSession();
+  if (!s.loaded || s.signedIn) return null;
+  return (
+    <div className="mm-auth" role="group" aria-label="Account">
+      <Link href="/login" onClick={onClose} className="hdr-auth-btn hdr-auth-login" data-testid="mm-login">Login</Link>
+      <Link href="/register" onClick={onClose} className="hdr-auth-btn hdr-auth-register" data-testid="mm-register">Register</Link>
+    </div>
   );
 }

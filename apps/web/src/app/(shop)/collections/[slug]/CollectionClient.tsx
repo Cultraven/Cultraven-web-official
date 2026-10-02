@@ -11,7 +11,8 @@
  */
 "use client";
 
-import { useWishlisted } from "@/store/wishlist";
+import { ShopCard, ShopCardSkeleton } from "@/components/shop/ShopCard";
+import type { PublicSizeOption } from "@/lib/size-pricing";
 import React, { useState, useMemo, Component } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -61,6 +62,8 @@ interface Product {
   fit: string;
   badge?: string;
   inStock: boolean;
+  sizeOptions: PublicSizeOption[];
+  isNewArrival: boolean;
 }
 
 
@@ -116,6 +119,8 @@ function CollectionPageClientInner({
             fit: p.fit || "Regular",
             badge: p.badge,
             inStock: p.inStock ?? true,
+            sizeOptions: Array.isArray(p.sizeOptions) ? p.sizeOptions : [],
+            isNewArrival: p.isNewArrival === true,
           }));
           setProducts(mapped);
         }
@@ -240,7 +245,11 @@ function CollectionPageClientInner({
 
           {/* ── Product Grid ── */}
           <div>
-            {filtered.length === 0 ? (
+            {loading ? (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "1.25rem" }} className="plp-grid" aria-busy="true">
+                {Array.from({ length: 8 }, (_, i) => <ShopCardSkeleton key={i} />)}
+              </div>
+            ) : filtered.length === 0 ? (
               <div style={{ textAlign: "center", padding: "6rem 2rem" }}>
                 <p style={{ fontFamily: "var(--font-heading)", fontSize: "2rem", fontWeight: 400, color: "var(--color-navy)", marginBottom: "1rem" }}>NO PRODUCTS FOUND.</p>
                 <button onClick={clearAll} style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-cream)", backgroundColor: "var(--color-navy)", border: "2px solid var(--color-navy)", padding: "1rem 2rem", cursor: "pointer", boxShadow: "4px 4px 0px var(--color-navy)" }}>CLEAR FILTERS</button>
@@ -248,7 +257,7 @@ function CollectionPageClientInner({
             ) : (
               <>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "1.25rem" }} className="plp-grid">
-                  {filtered.map((p) => <PLPCard key={p.id} product={p} />)}
+                  {filtered.map((p, i) => <ShopCard key={p.id} product={p} priority={i < 4} />)}
                 </div>
                 {/* Load More */}
                 <div style={{ display: "flex", justifyContent: "center", marginTop: "4rem" }}>
@@ -299,261 +308,5 @@ function FilterBlock({ title, options, selected, onToggle, pills = false }: {
         </div>
       )}
     </div>
-  );
-}
-
-// ─── PLP Product Card ──────────────────────────────────────────────────────────
-
-function PLPCard({ product: p }: { product: Product }) {
-  const [hovered, setHovered] = useState(false);
-  const [wishlisted, toggleWishlist] = useWishlisted({ id: p.id, title: p.title, href: p.href, image: p.image, pricePaise: p.pricePaise, mrpPaise: p.mrpPaise });
-  const setWishlisted = (_next?: (w: boolean) => boolean) => toggleWishlist();
-  const [added, setAdded] = useState(false);
-  const disc = Math.round(((p.mrpPaise - p.pricePaise) / p.mrpPaise) * 100);
-  
-  const ratingText = p.rating ? String(p.rating) : "";
-
-  return (
-    <article
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        backgroundColor: "var(--color-cream)",
-        border: "var(--border-thick)",
-        boxShadow: "var(--shadow-sm)",
-        transition: "box-shadow 0.2s ease, transform 0.2s ease",
-        position: "relative",
-        opacity: p.inStock ? 1 : 0.65
-      }}
-      className="product-card"
-      onMouseEnter={() => setHovered(true)} 
-      onMouseLeave={() => setHovered(false)}
-    >
-      {/* Wishlist Heart */}
-      <button 
-        aria-label="Toggle wishlist"
-        onClick={(e) => { e.preventDefault(); setWishlisted((w) => !w); }}
-        style={{
-          position: "absolute",
-          top: "12px",
-          right: "12px",
-          zIndex: 20,
-          background: wishlisted ? "var(--color-crimson)" : "var(--color-cream)",
-          border: "2px solid var(--color-navy)",
-          borderRadius: "50%",
-          width: "32px",
-          height: "32px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          cursor: "pointer",
-          boxShadow: "2px 2px 0px 0px var(--color-navy)",
-          transition: "transform 0.1s ease",
-        }}
-        className="wishlist-btn"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill={wishlisted ? "var(--color-crimson)" : "none"} stroke={wishlisted ? "var(--color-cream)" : "var(--color-navy)"} strokeWidth="2.5" strokeLinecap="square" strokeLinejoin="miter">
-          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-        </svg>
-      </button>
-
-      {/* Image block */}
-      <Link
-        href={p.href}
-        style={{
-          position: "relative",
-          display: "block",
-          aspectRatio: "3/4",
-          overflow: "hidden",
-          backgroundColor: "var(--color-mist)",
-          borderBottom: "var(--border-thick)",
-        }}
-        tabIndex={-1}
-        className="pc-link"
-      >
-        <Image
-          src={p.image}
-          alt={p.title}
-          fill
-          sizes="(max-width: 768px) 50vw, 25vw"
-          style={{ objectFit: "cover", opacity: hovered && p.inStock ? 0 : 1, transition: "opacity 0.4s ease" }}
-        />
-        {p.inStock && (
-          <Image
-            src={p.hoverImage}
-            alt={`${p.title} alt`}
-            fill
-            sizes="(max-width: 768px) 50vw, 25vw"
-            style={{ objectFit: "cover", position: "absolute", inset: 0, opacity: hovered ? 1 : 0, transition: "opacity 0.4s ease, transform 0.4s ease", transform: hovered ? "scale(1.05)" : "scale(1)" }}
-          />
-        )}
-
-        {/* ONE Badge Max */}
-        <div style={{ position: "absolute", top: "12px", left: "12px", zIndex: 10 }}>
-          {p.badge && p.inStock && (
-            <span style={{ 
-              backgroundColor: p.badge === "LIMITED" || p.badge === "SALE" ? "var(--color-crimson)" : "var(--color-navy)", 
-              color: "var(--color-cream)", 
-              fontFamily: "var(--font-mono)", 
-              fontWeight: 700, 
-              fontSize: "10px", 
-              letterSpacing: "0.1em", 
-              textTransform: "uppercase", 
-              padding: "4px 8px",
-              border: "2px solid var(--color-navy)",
-              boxShadow: "2px 2px 0px 0px var(--color-navy)",
-              display: "inline-block",
-              transform: "rotate(-3deg)",
-              marginBottom: "4px"
-            }}>
-              {p.badge}
-            </span>
-          )}
-          {!p.inStock && (
-             <span style={{ 
-              backgroundColor: "var(--color-gray)", 
-              color: "var(--color-cream)", 
-              fontFamily: "var(--font-mono)", 
-              fontWeight: 700, 
-              fontSize: "10px", 
-              letterSpacing: "0.1em", 
-              textTransform: "uppercase", 
-              padding: "4px 8px",
-              border: "2px solid var(--color-navy)",
-              boxShadow: "2px 2px 0px 0px var(--color-navy)",
-              display: "inline-block",
-              transform: "rotate(-3deg)"
-            }}>
-              SOLD OUT
-            </span>
-          )}
-        </div>
-
-        {/* Quick Add Overlay */}
-        {p.inStock && (
-          <div 
-            className="quick-add-overlay"
-            style={{
-              position: "absolute",
-              bottom: "0",
-              left: "0",
-              right: "0",
-              padding: "12px",
-              background: "linear-gradient(to top, rgba(23,37,69,0.8) 0%, transparent 100%)",
-              transform: hovered ? "translateY(0)" : "translateY(100%)",
-              transition: "transform 0.3s ease",
-              display: "flex",
-              justifyContent: "center"
-            }}
-          >
-            <button 
-              onClick={(e) => { e.preventDefault(); setAdded(true); setTimeout(() => setAdded(false), 1800); }}
-              style={{
-                width: "100%",
-                backgroundColor: added ? "var(--color-crimson)" : "var(--color-cream)",
-                color: added ? "var(--color-cream)" : "var(--color-navy)",
-                border: "2px solid var(--color-navy)",
-                boxShadow: "2px 2px 0px 0px var(--color-navy)",
-                padding: "8px",
-                fontFamily: "var(--font-sans)",
-                fontWeight: 900,
-                fontSize: "11px",
-                textTransform: "uppercase",
-                letterSpacing: "0.05em",
-                cursor: "pointer",
-                transition: "background-color 0.2s"
-            }}>
-              {added ? "ADDED ✓" : "JALDI ADD KAR"}
-            </button>
-          </div>
-        )}
-      </Link>
-
-      {/* Info */}
-      <div style={{ padding: "12px", display: "flex", flexDirection: "column", gap: "8px", flex: 1 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "8px" }}>
-          <h3 style={{ margin: 0 }}>
-            <Link
-              href={p.href}
-              style={{
-                fontFamily: "var(--font-heading)",
-                fontWeight: 400,
-                fontSize: "16px",
-                lineHeight: "1",
-                letterSpacing: "0.02em",
-                textTransform: "uppercase",
-                color: "var(--color-navy)",
-                display: "-webkit-box",
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: "vertical",
-                overflow: "hidden",
-                textDecoration: "none"
-              }}
-            >
-              {p.title}
-            </Link>
-          </h3>
-          
-          {ratingText ? (
-          <div style={{ 
-            display: "flex", 
-            alignItems: "center", 
-            gap: "2px", 
-            backgroundColor: "var(--color-navy)", 
-            color: "var(--color-cream)", 
-            padding: "2px 6px", 
-            border: "1.5px solid var(--color-navy)",
-            fontFamily: "var(--font-mono)",
-            fontSize: "10px",
-            fontWeight: 700,
-            flexShrink: 0
-          }}>
-            <span style={{ color: "var(--color-yellow)", fontSize: "10px" }}>★</span>
-            <span>{ratingText}</span>
-          </div>
-          ) : null}
-        </div>
-
-        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-          <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "14px", color: "var(--color-navy)" }}>
-            {fmt(p.pricePaise)}
-          </span>
-          {disc > 0 && (
-            <>
-              <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "11px", color: "var(--color-gray)", textDecoration: "line-through" }}>
-                {fmt(p.mrpPaise)}
-              </span>
-              <span style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "10px", color: "var(--color-crimson)" }}>
-                {disc}% off
-              </span>
-            </>
-          )}
-        </div>
-
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "auto", paddingTop: "4px" }}>
-          {/* Color Swatches */}
-          <div style={{ display: "flex", gap: "4px" }}>
-            {safeColors(p).map((c) => (
-              <div key={c.hex} title={c.label} style={{ width: "12px", height: "12px", borderRadius: "50%", backgroundColor: c.hex, border: "1px solid var(--color-navy)" }} />
-            ))}
-          </div>
-
-          {/* Size Chips */}
-          <div style={{ display: "flex", gap: "4px" }}>
-            {safeSizes(p).slice(0,4).map((sz) => (
-              <span key={sz} style={{
-                fontSize: "9px",
-                fontWeight: 700,
-                color: "var(--color-navy)",
-                fontFamily: "var(--font-mono)",
-              }}>
-                {sz}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-      
-    </article>
   );
 }

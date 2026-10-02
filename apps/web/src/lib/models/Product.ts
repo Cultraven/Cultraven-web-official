@@ -22,6 +22,11 @@ const ProductSchema = new mongoose.Schema(
       }
     ],
     sizes: [{ type: String, required: true }],
+    /** Optional per-size price / MRP override and per-size stock (see lib/size-pricing.ts). */
+    sizeOptions: {
+      type: [new mongoose.Schema({ size: { type: String, required: true }, pricePaise: { type: Number }, mrpPaise: { type: Number }, stockCount: { type: Number, min: 0 } }, { _id: false })],
+      default: [],
+    },
     category: { type: String, required: true },
     fit: { type: String, required: true },
     badge: { type: String },

@@ -103,7 +103,7 @@ const loadProducts = cache(async (flag: string, limit: number): Promise<PublicPr
   await connectToDatabase();
   const query = flag === "all" ? {} : { [flag]: true };
   const docs = await Product.find(query).select("-description").sort({ createdAt: -1 }).limit(limit).lean();
-  return jsonSafe(docs.map(normalizeProduct));
+  return jsonSafe(docs.map((d: any) => normalizeProduct(d)));
 });
 
 export async function getProducts(flag: "isNewArrival" | "isBestseller" | "all", limit = 12): Promise<CmsResult<PublicProduct[]>> {

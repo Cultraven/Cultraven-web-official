@@ -9,6 +9,7 @@ import { Header } from "@/components/home/Header";
 import { Footer } from "@/components/home/Footer";
 import { CookieConsentBanner } from "@/components/common/CookieConsentBanner";
 import { PageBackBar } from "@/components/common/PageBackBar";
+import { ReviewPrompt } from "@/components/reviews/ReviewPrompt";
 import { getCmsSection } from "@/lib/cms/server";
 import { liveItems } from "@/lib/cms/registry";
 
@@ -49,6 +50,7 @@ export async function SiteChrome({ children }: { children: ReactNode }) {
         {children}
       </main>
       <Footer config={footerData as any} />
+      <ReviewPrompt />
       <CookieConsentBanner />
     </>
   );

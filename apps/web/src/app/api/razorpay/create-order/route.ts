@@ -18,6 +18,8 @@ import { notifyOrderPlaced } from "@/lib/order-notify";
 import { z } from "zod";
 import { NameField, MobileField, CheckoutAddress } from "@/lib/address-schema";
 import { summarizeZodError } from "@/lib/address-api";
+import { FREE_SIZE, effectiveSizes, normalizeSizeOptions, priceForSize, sizeAvailability, lineTotal } from "@/lib/size-pricing";
+import { releaseSizeStock, reserveSizeStock, type StockLine } from "@/lib/inventory";
 import { getRazorpayConfigAsync, type RazorpayConfig } from "@/lib/razorpay";
 import { clientIp, isSameOrigin, parseJsonBody, rateLimit, retryHeaders } from "@/lib/sanitize";
 import Razorpay from "razorpay";
@@ -123,24 +125,41 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: `Sold out: ${soldOut.join(", ")}. Please remove it from your bag.`, code: "OUT_OF_STOCK" }, { status: 409 });
     }
 
-    // 2. Compute subtotal from catalogue prices (never from the client); snapshot what the Order schema requires
+    // 2. Compute subtotal from catalogue prices — per SIZE, never from the client — and check size + per-size stock
     let subtotalPaise = 0;
-    const finalItems = items.map((item) => {
-      const p = productMap.get(item.slug)!;
-      const price = p.pricePaise || 0;
-      subtotalPaise += price * item.quantity;
-      const size = item.size || "Free Size";
-      return {
-        productId: String(p._id),
-        sku: `${p.slug}-${size}`.slice(0, 120),
-        title: p.title,
-        image: p.image || (p.images && p.images[0]) || "",
+    const stockLines: StockLine[] = [];
+    const bySlug = new Map<string, any>(dbProducts.map((p) => [p.slug, p.toObject()]));
+    const finalItems: any[] = [];
+    for (const item of items) {
+      const doc = bySlug.get(item.slug)!;
+      const size = (item.size || FREE_SIZE).trim();
+      if (!effectiveSizes(doc.sizes).includes(size)) {
+        return NextResponse.json({ error: `Size "${size}" isn't available for ${doc.title}. Please pick another size.`, code: "INVALID_SIZE" }, { status: 400 });
+      }
+      const opts = normalizeSizeOptions(doc.sizeOptions, doc.sizes);
+      const av = sizeAvailability(opts, size, doc.inStock !== false);
+      if (!av.available) {
+        return NextResponse.json({ error: `${doc.title} (size ${size}) is sold out. Please remove it from your bag.`, code: "OUT_OF_STOCK" }, { status: 409 });
+      }
+      // Not enough left in this size? Say how many remain (before any pricing / payment-method rules).
+      const wanted = items.filter((x) => x.slug === item.slug && (x.size || FREE_SIZE).trim() === size).reduce((n, x) => n + x.quantity, 0);
+      if (av.remaining !== undefined && wanted > av.remaining) {
+        return NextResponse.json({ error: `Only ${av.remaining} left in size ${size} of ${doc.title}. Please reduce the quantity.`, code: "OUT_OF_STOCK" }, { status: 409 });
+      }
+      const { pricePaise: price } = priceForSize(doc, opts, size);
+      subtotalPaise += lineTotal(price, item.quantity);
+      stockLines.push({ productId: String(doc._id), size, qty: item.quantity });
+      finalItems.push({
+        productId: String(doc._id),
+        sku: `${doc.slug}-${size}`.slice(0, 120),
+        title: doc.title,
+        image: doc.image || (doc.images && doc.images[0]) || "",
         size,
         color: item.color || "",
         quantity: item.quantity,
         pricePaise: price,
-      };
-    });
+      });
+    }
 
     // 3. Validate coupon and apply discount
     const promo = validateCoupon(couponCode, subtotalPaise);
@@ -180,9 +199,24 @@ export async function POST(req: NextRequest) {
       razorpayOrderId = order.id;
     }
 
+    // Reserve per-size stock atomically (only sizes with a stock count set in the admin are tracked)
+    const byId = new Map<string, any>([...bySlug.values()].map((d) => [String(d._id), d]));
+    const isTracked = (l: StockLine) => {
+      const d = byId.get(l.productId);
+      return normalizeSizeOptions(d?.sizeOptions, d?.sizes).find((x) => x.size === l.size)?.stockCount !== undefined;
+    };
+    const reserved = await reserveSizeStock(stockLines, isTracked);
+    if (!reserved.ok) {
+      const t = byId.get(reserved.productId)?.title ?? "This item";
+      return NextResponse.json({ error: reserved.remaining > 0 ? `Only ${reserved.remaining} left in size ${reserved.size} of ${t}. Please reduce the quantity.` : `${t} (size ${reserved.size}) just sold out.`, code: "OUT_OF_STOCK" }, { status: 409 });
+    }
+
     // Create DB order
-    const newOrder = await Order.create({
+    let newOrder: any;
+    try {
+    newOrder = await Order.create({
       userId,
+      stockReserved: reserved.reserved.length > 0,
       ...(idempotencyKey && userId !== "guest" ? { idempotencyKey } : {}),
       items: finalItems,
       subtotalPaise,
@@ -207,6 +241,10 @@ export async function POST(req: NextRequest) {
       paymentStatus: paymentMethod === "cod" ? "pending" : "pending",
       fulfillmentStatus: "processing",
     });
+    } catch (err) {
+      await releaseSizeStock(reserved.reserved); // the order was not saved: give the units back
+      throw err;
+    }
 
     if (paymentMethod === "cod") {
       // Emails go out after the response is sent; a mail failure can never fail or delay the order.

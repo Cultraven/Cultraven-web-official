@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { SECTIONS, SECTION_MAP } from "@/lib/cms/registry";
@@ -21,6 +21,7 @@ function useNav(): NavGroup[] {
           { label: "Products", href: "/portal-secure/products", icon: "box" },
           { label: "Categories", href: "/portal-secure/products/categories", icon: "tag" },
           { label: "Orders", href: "/portal-secure/orders", icon: "cart" },
+          { label: "Support inbox", href: "/portal-secure/support", icon: "mail" },
         ],
       },
       {
@@ -74,16 +75,8 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname() ?? "";
   const router = useRouter();
   const nav = useNav();
-  const [open, setOpen] = useState(false);
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
   const crumbs = crumbsFor(pathname);
-
-  // close the mobile drawer on navigation
-  useEffect(() => setOpen(false), [pathname]);
-  useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
-  }, [open]);
 
   const activeContentGroup = SECTIONS.find((s) => pathname === `/portal-secure/cms/${s.key}`)?.group;
 
@@ -97,8 +90,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     <ToastProvider>
       <ConfirmProvider>
         <div className="adm adm-shell">
-          {open ? <div className="adm-scrim" onClick={() => setOpen(false)} aria-hidden /> : null}
-          <aside className="adm-side" data-open={open} aria-label="Admin navigation">
+          <aside className="adm-side" aria-label="Admin navigation">
             <div className="adm-brand">
               <div className="adm-brand-mark">C</div>
               <div>
@@ -147,7 +139,6 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
 
           <div className="adm-main">
             <header className="adm-top">
-              <button type="button" className="adm-btn adm-btn-ghost adm-btn-icon adm-burger" onClick={() => setOpen(true)} aria-label="Open menu"><Icon name="menu" /></button>
               <nav className="adm-crumbs" aria-label="Breadcrumb">
                 <span>Admin</span>
                 {crumbs.map((c, i) => (

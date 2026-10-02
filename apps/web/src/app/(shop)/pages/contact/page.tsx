@@ -3,7 +3,10 @@
  * Contact Page — /pages/contact
  * Contact form with full validation + WhatsApp/Instagram CTA.
  */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { CONTACT_SUBJECTS, cleanOrderNumber, matchSubject, supportConfig, whatsappLink } from "@/lib/support";
+import { useAccountSession } from "@/components/account/useAccountSession";
 
 interface FormState {
   name: string;
@@ -15,15 +18,7 @@ interface FormState {
 
 type Status = "idle" | "loading" | "success" | "error";
 
-const SUBJECTS = [
-  "Order Inquiry",
-  "Return / Exchange",
-  "Shipping Issue",
-  "Product Question",
-  "Payment Issue",
-  "Feedback",
-  "Other",
-];
+const SUBJECTS = CONTACT_SUBJECTS;
 
 function validate(form: FormState): Partial<Record<keyof FormState, string>> {
   const errors: Partial<Record<keyof FormState, string>> = {};
@@ -45,6 +40,29 @@ export default function ContactPage() {
   });
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [status, setStatus] = useState<Status>("idle");
+  const [ref, setRef] = useState("");
+  const [orderRef, setOrderRef] = useState("");
+  const [honeypot, setHoneypot] = useState("");
+  const cfg = supportConfig();
+
+  // Arrive from the Help Center with the subject / order already filled in; prefill name + email for signed-in customers.
+  useEffect(() => {
+    const sp = new URLSearchParams(window.location.search);
+    const subject = matchSubject(sp.get("subject"));
+    const order = cleanOrderNumber(sp.get("order"));
+    if (order) setOrderRef(order);
+    setForm((f) => ({ ...f, subject: f.subject || subject, message: f.message || (order ? `Hi, I need help with order ${order}.\n\n` : "") }));
+  }, []);
+
+  // Signed-in customers get their name + email filled in (looked up only when we know they're signed in).
+  const account = useAccountSession();
+  useEffect(() => {
+    if (!account.signedIn) return;
+    fetch("/api/account/me", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { const m = d?.me; if (m) setForm((f) => ({ ...f, name: f.name || [m.firstName, m.lastName].filter(Boolean).join(" "), email: f.email || m.email || "" })); })
+      .catch(() => {});
+  }, [account.signedIn]);
 
   const update = (key: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setForm((prev) => ({ ...prev, [key]: e.target.value }));
@@ -66,8 +84,11 @@ export default function ContactPage() {
           phone: form.phone.trim() || undefined,
           subject: form.subject,
           message: form.message.trim(),
+          orderRef: orderRef || undefined,
+          website: honeypot || undefined,
         }),
       });
+      if (res.ok) { const d = await res.json().catch(() => ({})); setRef(typeof d.ref === "string" ? d.ref : ""); }
       setStatus(res.ok ? "success" : "error");
     } catch {
       setStatus("error");
@@ -195,8 +216,12 @@ export default function ContactPage() {
                   lineHeight: 1.7,
                 }}
               >
-                Our team will get back to you within 24 hours during business days (Mon–Sat).
+                {ref ? <>Your reference number is <b style={{ color: "var(--color-cream)" }}>{ref}</b>. </> : null}We&apos;ve emailed you a copy. Our team will get back to you within 24 hours during business days ({cfg.hours}).
               </p>
+              <div style={{ display: "flex", gap: "0.6rem", justifyContent: "center", flexWrap: "wrap", marginTop: "1.5rem" }}>
+                <Link href="/help" className="cv-btn cv-btn-ghost-light cv-btn-sm">Browse the Help Center</Link>
+                <Link href="/account/orders" className="cv-btn cv-btn-ghost-light cv-btn-sm">My orders</Link>
+              </div>
             </div>
           ) : (
             <form onSubmit={handleSubmit} noValidate>
@@ -287,6 +312,14 @@ export default function ContactPage() {
                   {errors.subject && <p id="contact-subject-error" role="alert" style={ERR_STYLE}>{errors.subject}</p>}
                 </div>
 
+                {orderRef ? (
+                  <p style={{ font: "700 0.8rem var(--font-sans)", margin: 0 }}>About order <b>{orderRef}</b> <button type="button" onClick={() => setOrderRef("")} style={{ marginLeft: 8, background: "none", border: 0, textDecoration: "underline", cursor: "pointer", font: "700 0.8rem var(--font-sans)", minHeight: 44 }}>Remove</button></p>
+                ) : null}
+                {/* Hidden from people; bots fill it in */}
+                <div aria-hidden="true" style={{ position: "absolute", left: "-9999px", width: 1, height: 1, overflow: "hidden" }}>
+                  <label>Website<input type="text" tabIndex={-1} autoComplete="off" value={honeypot} onChange={(e) => setHoneypot(e.target.value)} /></label>
+                </div>
+
                 {/* Message */}
                 <div>
                   <label htmlFor="contact-message" style={LABEL_STYLE}>Message *</label>
@@ -294,6 +327,7 @@ export default function ContactPage() {
                     id="contact-message"
                     required
                     rows={5}
+                    maxLength={2000}
                     value={form.message}
                     onChange={update("message")}
                     placeholder="Tell us how we can help..."
@@ -306,7 +340,7 @@ export default function ContactPage() {
                       ? <p id="contact-message-error" role="alert" style={ERR_STYLE}>{errors.message}</p>
                       : <span />}
                     <p style={{ ...ERR_STYLE, color: form.message.length >= 20 ? "var(--color-gray)" : "#9CA3AF" }}>
-                      {form.message.length}/500
+                      {form.message.length}/2000
                     </p>
                   </div>
                 </div>
@@ -359,7 +393,7 @@ export default function ContactPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", marginBottom: "2.5rem" }}>
             {/* WhatsApp */}
             <a
-              href="https://wa.me/919999999999"
+              href={whatsappLink(`Hi CULTRAVEN, I need help${orderRef ? ` with order ${orderRef}` : ""}.`, cfg)}
               target="_blank"
               rel="noopener noreferrer"
               id="contact-whatsapp-cta"

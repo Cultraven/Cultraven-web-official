@@ -4,6 +4,9 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { MediaUploadButton } from "./MediaUploadButton";
 import { Alert, Button, Card, Field, Icon, LinkButton, PageHeader, Switch, useToast } from "./ui";
+import { FREE_SIZE, discountPercent, effectiveSizes, type SizeOption } from "@/lib/size-pricing";
+import { MAX_DISCOUNT_PERCENT, parseDiscountInput, priceFromDiscount } from "@/lib/discount";
+import { formatPriceINR } from "@shop/types";
 
 const colorsToText = (colors: { hex: string; label: string }[] | undefined) => (colors ?? []).map((c) => `${c.label}:${c.hex}`).join(", ");
 const textToColors = (text: string) =>
@@ -13,6 +16,7 @@ const textToColors = (text: string) =>
   });
 const slugify = (s: string) => s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80);
 const toRupees = (paise: number | undefined) => (paise ? String(paise / 100) : "");
+const paiseOf = (rupees: string) => { const v = parseFloat(rupees); return Number.isFinite(v) && v > 0 ? Math.round(v * 100) : 0; };
 
 export default function ProductForm({ initialData }: { initialData?: any }) {
   const router = useRouter();
@@ -42,6 +46,55 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
   });
   const set = <K extends keyof typeof f>(k: K, v: (typeof f)[K]) => setF((p) => ({ ...p, [k]: v }));
 
+  // Discount offer: the admin gives a % off the MRP and the selling price is worked out (whole rupees). Typing a price
+  // instead shows the % it works out to. What's saved is just price + MRP, so every page and the server charge the same.
+  const [discount, setDiscount] = useState(() => {
+    const d = discountPercent(initialData?.pricePaise ?? 0, initialData?.mrpPaise ?? 0);
+    return d > 0 ? String(d) : "";
+  });
+
+  // Per-size price / MRP / stock overrides (blank = use the product's base price, stock not tracked per size)
+  type Row = { price: string; mrp: string; stock: string };
+  const [sizeOpt, setSizeOpt] = useState<Record<string, Row>>(() => {
+    const m: Record<string, Row> = {};
+    for (const o of (initialData?.sizeOptionsAdmin ?? initialData?.sizeOptions ?? []) as SizeOption[]) {
+      m[o.size] = { price: o.pricePaise ? String(o.pricePaise / 100) : "", mrp: o.mrpPaise ? String(o.mrpPaise / 100) : "", stock: o.stockCount !== undefined ? String(o.stockCount) : "" };
+    }
+    return m;
+  });
+  const sizeList = effectiveSizes(f.sizes.split(",").map((x: string) => x.trim()).filter(Boolean));
+  const setOpt = (size: string, k: keyof Row, v: string) =>
+    setSizeOpt((m) => {
+      const row = { ...(m[size] ?? { price: "", mrp: "", stock: "" }), [k]: v };
+      // a size with its own MRP follows the discount offer
+      const d = parseDiscountInput(discount);
+      if (k === "mrp" && d && paiseOf(v)) row.price = String(priceFromDiscount(paiseOf(v), d) / 100);
+      return { ...m, [size]: row };
+    });
+
+  const onMrp = (v: string) => {
+    const d = parseDiscountInput(discount);
+    setF((p) => ({ ...p, mrp: v, ...(d && paiseOf(v) ? { price: String(priceFromDiscount(paiseOf(v), d) / 100) } : {}) }));
+  };
+  const onPrice = (v: string) => {
+    setF((p) => ({ ...p, price: v }));
+    const mrp = paiseOf(f.mrp), price = paiseOf(v);
+    setDiscount(mrp && price ? (price < mrp ? String(discountPercent(price, mrp)) : "") : "");
+  };
+  const onDiscount = (v: string) => {
+    setDiscount(v);
+    const d = parseDiscountInput(v);
+    const mrp = paiseOf(f.mrp);
+    if (d === null || !mrp) return;
+    const clean = (rupees: string) => (paiseOf(rupees) ? String(priceFromDiscount(paiseOf(rupees), d) / 100) : rupees);
+    setF((p) => ({ ...p, price: String(priceFromDiscount(mrp, d) / 100) }));
+    setSizeOpt((m) => Object.fromEntries(Object.entries(m).map(([size, r]) => [size, r.mrp.trim() && paiseOf(r.mrp) ? { ...r, price: clean(r.mrp) } : r])));
+  };
+  const discountTyped = parseDiscountInput(discount);
+  const discountBad = discount.trim() !== "" && (discountTyped === null || Number(discount) > MAX_DISCOUNT_PERCENT || Number(discount) < 0);
+  const livePrice = paiseOf(f.price), liveMrp = paiseOf(f.mrp) || livePrice;
+  const liveOff = discountPercent(livePrice, liveMrp);
+
   const moveGallery = (i: number, d: -1 | 1) =>
     setGallery((g) => { const j = i + d; if (j < 0 || j >= g.length) return g; const c = [...g]; [c[i], c[j]] = [c[j], c[i]]; return c; });
 
@@ -52,7 +105,21 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
     const local: string[] = [];
     if (!(price > 0)) local.push("Enter a selling price greater than 0.");
     if (mrp < price) local.push("MRP cannot be lower than the selling price.");
+    if (discountBad) local.push(`Discount must be a number from 0 to ${MAX_DISCOUNT_PERCENT}.`);
+    if (parseDiscountInput(discount) && !f.mrp.trim()) local.push("Enter the MRP to apply a discount.");
     if (!f.image) local.push("A main image is required.");
+    const sizeOptions: { size: string; pricePaise?: number; mrpPaise?: number; stockCount?: number }[] = [];
+    for (const size of sizeList) {
+      const r = sizeOpt[size];
+      if (!r || (!r.price.trim() && !r.mrp.trim() && !r.stock.trim())) continue;
+      const o: { size: string; pricePaise?: number; mrpPaise?: number; stockCount?: number } = { size };
+      if (r.price.trim()) { const v = Math.round(parseFloat(r.price) * 100); if (!(v > 0)) local.push(`Size ${size}: price must be greater than 0 (or leave it blank to use the base price).`); else o.pricePaise = v; }
+      if (r.mrp.trim()) { const v = Math.round(parseFloat(r.mrp) * 100); if (!(v > 0)) local.push(`Size ${size}: MRP must be greater than 0 (or leave it blank).`); else o.mrpPaise = v; }
+      if (r.stock.trim()) { const v = Number(r.stock); if (!Number.isInteger(v) || v < 0) local.push(`Size ${size}: stock must be a whole number, 0 or more (or leave it blank).`); else o.stockCount = v; }
+      const effPrice = o.pricePaise ?? price;
+      if (o.mrpPaise !== undefined && o.mrpPaise < effPrice) local.push(`Size ${size}: MRP can't be lower than its price.`);
+      sizeOptions.push(o);
+    }
     if (local.length) { setErrors(local); return; }
 
     setSaving(true);
@@ -62,6 +129,7 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
       image: f.image, hoverImage: f.hoverImage || (editing ? "" : undefined), images: gallery.filter(Boolean),
       pricePaise: price, mrpPaise: mrp,
       sizes: f.sizes.split(",").map((s: string) => s.trim()).filter(Boolean),
+      sizeOptions,
       colors: textToColors(f.colors), badge: f.badge || null,
       inStock: f.inStock, stockCount: Math.max(0, parseInt(f.stockCount, 10) || 0),
       isNewArrival: f.isNewArrival, isBestseller: f.isBestseller,
@@ -154,7 +222,7 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
 
           <Card title="Variants">
             <div className="adm-form-grid">
-              <Field label="Sizes" hint="Comma separated"><input className="adm-input" required value={f.sizes} onChange={(e) => set("sizes", e.target.value)} /></Field>
+              <Field label="Sizes" hint={f.sizes.trim() ? "Comma separated, e.g. S, M, L, XL" : "Empty = sold as Free Size"}><input className="adm-input" value={f.sizes} onChange={(e) => set("sizes", e.target.value)} placeholder="S, M, L, XL" /></Field>
               <Field label="Fit">
                 <select className="adm-select" value={f.fit} onChange={(e) => set("fit", e.target.value)}>
                   {["oversized", "relaxed", "boxy", "baggy", "regular"].map((x) => <option key={x} value={x}>{x}</option>)}
@@ -165,14 +233,50 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
               </Field>
             </div>
           </Card>
+
+          <Card title="Size price & stock">
+            <p className="adm-hint" style={{ marginBottom: 10 }}>
+              Optional. Give a size its own price (for example XL costs more) or its own stock count. Leave a box empty to use the base price / not track stock for that size.
+              The product page and the bag update their price live when a customer picks the size, and the server charges the same price.
+              {sizeList.length === 1 && sizeList[0] === FREE_SIZE ? " This product has no sizes, so customers see one “Free Size”." : ""}
+            </p>
+            <div className="adm-table-wrap">
+              <table className="adm-table">
+                <thead><tr><th scope="col">Size</th><th scope="col">Price (₹)</th><th scope="col">MRP (₹)</th><th scope="col">Off</th><th scope="col">Stock (units)</th></tr></thead>
+                <tbody>
+                  {sizeList.map((size) => {
+                    const r = sizeOpt[size] ?? { price: "", mrp: "", stock: "" };
+                    return (
+                      <tr key={size}>
+                        <td style={{ fontWeight: 700 }}>{size}</td>
+                        <td><input className="adm-input" style={{ minWidth: 96 }} type="number" min="0" step="0.01" inputMode="decimal" value={r.price} onChange={(e) => setOpt(size, "price", e.target.value)} placeholder={f.price || "base"} aria-label={`Price for size ${size}`} /></td>
+                        <td><input className="adm-input" style={{ minWidth: 96 }} type="number" min="0" step="0.01" inputMode="decimal" value={r.mrp} onChange={(e) => setOpt(size, "mrp", e.target.value)} placeholder={f.mrp || f.price || "base"} aria-label={`MRP for size ${size}`} /></td>
+                        <td data-testid={`off-${size}`} style={{ fontWeight: 700, whiteSpace: "nowrap", color: "#15803d" }}>{(() => { const pr = paiseOf(r.price) || livePrice, mr = paiseOf(r.mrp) || liveMrp; const o = discountPercent(pr, mr); return o > 0 ? `${o}%` : "—"; })()}</td>
+                        <td><input className="adm-input" style={{ minWidth: 96 }} type="number" min="0" step="1" inputMode="numeric" value={r.stock} onChange={(e) => setOpt(size, "stock", e.target.value)} placeholder="not tracked" aria-label={`Stock for size ${size}`} /></td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <p className="adm-hint" style={{ marginTop: 8 }}>Stock 0 marks that size “sold out” on the product page. When a size has a stock count, each order reserves units and cancellations give them back.</p>
+          </Card>
         </div>
 
         <div className="adm-grid">
-          <Card title="Pricing">
+          <Card title="Pricing & discount">
             <div className="adm-form-grid">
-              <Field label="Selling price (₹)" required><input className="adm-input" required type="number" min="0" step="0.01" value={f.price} onChange={(e) => set("price", e.target.value)} /></Field>
-              <Field label="MRP (₹)" hint="Shows a discount badge"><input className="adm-input" type="number" min="0" step="0.01" value={f.mrp} onChange={(e) => set("mrp", e.target.value)} /></Field>
+              <Field label="MRP (₹)" hint="The original price (shown struck through)"><input className="adm-input" type="number" min="0" step="0.01" value={f.mrp} onChange={(e) => onMrp(e.target.value)} aria-label="MRP" /></Field>
+              <Field label="Discount (%)" hint={`0–${MAX_DISCOUNT_PERCENT}. Works out the selling price`}>
+                <input className="adm-input" type="number" min="0" max={MAX_DISCOUNT_PERCENT} step="1" inputMode="decimal" value={discount} onChange={(e) => onDiscount(e.target.value)} placeholder="e.g. 20" aria-label="Discount percent" aria-invalid={discountBad || undefined} disabled={!f.mrp.trim()} />
+              </Field>
+              <Field label="Selling price (₹)" required hint="What the customer pays" span><input className="adm-input" required type="number" min="0" step="0.01" value={f.price} onChange={(e) => onPrice(e.target.value)} aria-label="Selling price" /></Field>
             </div>
+            <p className="adm-hint" style={{ marginTop: 10 }} data-testid="price-preview">
+              {livePrice > 0
+                ? <>Shoppers see <b>{formatPriceINR(livePrice)}</b>{liveOff > 0 ? <> <s>{formatPriceINR(liveMrp)}</s> <b style={{ color: "#15803d" }}>{liveOff}% OFF</b></> : " (no discount)"} on the shop, the product page and the bag.</>
+                : "Enter the MRP and a discount, or type the selling price."}
+            </p>
           </Card>
 
           <Card title="Inventory">

@@ -1,3 +1,4 @@
+import { normalizeSizeOptions, toPublicSizeOptions, type PublicSizeOption, type SizeOption } from "@/lib/size-pricing";
 /** Shared product shaping — used by the /api/products routes and server-side page data. */
 
 export function escapeRegex(s: string) {
@@ -23,12 +24,16 @@ export interface PublicProduct {
   fit: string;
   badge?: string;
   inStock: boolean;
+  /** Per-size price overrides + sold-out flags (no raw stock counts). */
+  sizeOptions: PublicSizeOption[];
+  /** Admin only: the raw per-size options including stock counts. */
+  sizeOptionsAdmin?: SizeOption[];
   isNewArrival: boolean;
   isBestseller: boolean;
 }
 
 /** Normalise a raw DB product so colors / sizes / images are always clean arrays. */
-export function normalizeProduct(doc: any): PublicProduct {
+export function normalizeProduct(doc: any, opts: { admin?: boolean } = {}): PublicProduct {
   const colors = Array.isArray(doc.colors)
     ? doc.colors
         .filter((c: any) => c && typeof c.hex === "string" && typeof c.label === "string")
@@ -59,6 +64,8 @@ export function normalizeProduct(doc: any): PublicProduct {
     fit: doc.fit ?? "",
     badge: doc.badge ?? undefined,
     inStock: doc.inStock !== false,
+    sizeOptions: toPublicSizeOptions(normalizeSizeOptions(doc.sizeOptions, sizes), sizes),
+    ...(opts.admin ? { sizeOptionsAdmin: normalizeSizeOptions(doc.sizeOptions, sizes) } : {}),
     isNewArrival: doc.isNewArrival === true,
     isBestseller: doc.isBestseller === true,
   };

@@ -23,6 +23,8 @@ import { useRouter } from "next/navigation";
 import { useCartStore } from "@/store/cart";
 import { useBuyNowStore } from "@/store/buyNow";
 import { ProductReviews } from "@/components/product/ProductReviews";
+import "@/styles/pdp-cta.css";
+import { effectiveSizes, priceForSize, priceRange, discountPercent, lineTotal, type PublicSizeOption } from "@/lib/size-pricing";
 import { useWishlisted } from "@/store/wishlist";
 import { toast } from "@/components/common/Toast";
 
@@ -43,6 +45,8 @@ export interface PdpProduct {
   sizes: string[];
   fit?: string;
   inStock?: boolean;
+  /** Per-size price overrides + sold-out / low-stock flags. */
+  sizeOptions?: PublicSizeOption[];
 }
 export interface RelatedProduct { id: string; title: string; price: number; image: string; href: string }
 
@@ -52,14 +56,16 @@ const POLICY_ACCORDIONS = [
   { id: "returns", title: "Returns & Exchanges", body: "Easy 7-day returns. Items must be unworn, unwashed with original tags. Initiate a return from your account dashboard. Exchange for a different size available within 15 days." },
 ];
 
+const MAX_QTY = 10;
+
 /** Product + related items are loaded from the database on the server (see page.tsx). */
 export default function ProductDetailClient({ product, related }: { product: PdpProduct; related: RelatedProduct[] }) {
   const router = useRouter();
   const slug = product.slug;
   const GALLERY_IMAGES = product.images.map((src) => ({ type: "image" as const, src }));
   const COLORS = product.colors;
-  const SIZES = product.sizes;
-  const SOLD_OUT_SIZES: string[] = [];
+  const SIZES = effectiveSizes(product.sizes);
+  const SIZE_OPTS = product.sizeOptions ?? [];
   const ALSO_LIKE = related;
   const ACCORDIONS = [
     ...(product.description ? [{ id: "description", title: "Description", body: product.description }] : []),
@@ -68,34 +74,47 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
 
   const [activeImage, setActiveImage] = useState(0);
   const [selectedColor, setSelectedColor] = useState(0);
-  const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [selectedSize, setSelectedSize] = useState<string | null>(SIZES.length === 1 ? SIZES[0] : null);
   const [qty, setQty] = useState(1);
   const [wishlisted, toggleWishlist] = useWishlisted({ id: product.id, title: product.title, href: `/products/${product.slug}`, image: product.image, pricePaise: product.pricePaise, mrpPaise: product.mrpPaise });
   const setWishlisted = (_next?: (w: boolean) => boolean) => toggleWishlist();
   const [added, setAdded] = useState(false);
+  const [wishPop, setWishPop] = useState(false);
   const [pincode, setPincode] = useState("");
   const [deliveryMsg, setDeliveryMsg] = useState<string | null>(null);
-  const [openAccordion, setOpenAccordion] = useState<string | null>("description");
   const [sizeError, setSizeError] = useState(false);
 
   const soldOut = product.inStock === false;
   const [live, setLive] = useState<{ rating: number; count: number } | null>(null);
   const onSummary = React.useCallback((r: number, c: number) => setLive({ rating: r, count: c }), []);
   const finalName = product.title;
-  const pricePaise = product.pricePaise;
-  const mrpPaise = product.mrpPaise;
-  const disc = mrpPaise && pricePaise ? Math.round(((mrpPaise - pricePaise) / mrpPaise) * 100) : 0;
+  const basePrice = { pricePaise: product.pricePaise, mrpPaise: product.mrpPaise };
+  const unit = priceForSize(basePrice, SIZE_OPTS, selectedSize);   // the price of the chosen size (the base price until one is chosen)
+  const range = priceRange(basePrice, SIZE_OPTS, SIZES);
+  const showFrom = !selectedSize && range.varies;                    // sizes differ and none chosen yet -> "From ₹X"
+  const pricePaise = unit.pricePaise;
+  const mrpPaise = unit.mrpPaise;
+  const displayPrice = showFrom ? range.min : pricePaise;
+  const disc = discountPercent(displayPrice, mrpPaise);
+  const total = lineTotal(pricePaise, qty);                          // updates live as the quantity changes
+  const selectedOpt = SIZE_OPTS.find((o) => o.size === selectedSize);
   const rating = live ? live.rating : product.rating || 0;
   const reviewCount = live ? live.count : product.reviewCount || 0;
 
+  // One timer for the "please select a size" message: a second tap restarts it instead of the first timer hiding it early.
+  const sizeTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  React.useEffect(() => () => { if (sizeTimer.current) clearTimeout(sizeTimer.current); }, []);
+  const needSize = () => {
+    setSizeError(true);
+    if (sizeTimer.current) clearTimeout(sizeTimer.current);
+    sizeTimer.current = setTimeout(() => setSizeError(false), 2500);
+    document.getElementById("pdp-size")?.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
+
   const handleAddToBag = () => {
     if (soldOut) return;
-    if (!selectedSize) { 
-      setSizeError(true); 
-      setTimeout(() => setSizeError(false), 2000); 
-      return; 
-    }
-    
+    if (!selectedSize) { needSize(); return; }
+
     // Add to cart store
     useCartStore.getState().addItem({
       productId: product.id,
@@ -117,11 +136,7 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
   /** COP IT NOW: one-item express checkout. The cart is left untouched. */
   const handleCopItNow = () => {
     if (soldOut) return;
-    if (!selectedSize) {
-      setSizeError(true);
-      setTimeout(() => setSizeError(false), 2000);
-      return;
-    }
+    if (!selectedSize) { needSize(); return; }
     useBuyNowStore.getState().set({
       productId: product.id,
       slug,
@@ -162,7 +177,7 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
       {/* Main PDP grid */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4rem", alignItems: "start", paddingInline: "clamp(1rem,4vw,5rem)", paddingBottom: "6rem" }} className="pdp-grid">
         {/* ── LEFT: Gallery ── */}
-        <div className="gallery-container">
+        <div className="gallery-container pdp-gallery-sticky">
           {/* Thumbnails (Desktop) */}
           <div className="gallery-thumbs">
             {GALLERY_IMAGES.map((media, i) => (
@@ -194,7 +209,7 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
         </div>
 
         {/* ── RIGHT: Product Info (sticky) ── */}
-        <div style={{ position: "sticky", top: "100px", alignSelf: "start", paddingTop: "1rem" }}>
+        <div style={{ alignSelf: "start", paddingTop: "1rem", minWidth: 0 }}>
           {/* Brand */}
           <p style={{ fontFamily: "var(--font-sans)", fontSize: "14px", fontWeight: 900, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-crimson)", marginBottom: "0.5rem" }}>CULTRAVEN</p>
 
@@ -211,13 +226,15 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
             <Link href="#reviews" style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", fontWeight: 600, color: "var(--color-gray)", textDecoration: "underline", padding: "12px 0" }}>{reviewCount} Reviews</Link>
           </div>
 
-          {/* Price */}
-          <div style={{ display: "flex", alignItems: "baseline", gap: "0.75rem", marginBottom: "0.5rem", paddingBottom: "0.5rem" }}>
-            <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "2rem", color: "var(--color-navy)" }}>{fmt(pricePaise)}</span>
-            <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "1.2rem", color: "var(--color-gray)", textDecoration: "line-through" }}>{fmt(mrpPaise)}</span>
+          {/* Price: follows the chosen size, and the total follows the quantity */}
+          <div style={{ display: "flex", alignItems: "baseline", flexWrap: "wrap", gap: "0.5rem 0.75rem", marginBottom: "0.5rem", paddingBottom: "0.5rem" }} aria-live="polite">
+            {showFrom ? <span style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "0.72rem", letterSpacing: "0.14em", color: "var(--color-smoke)" }}>FROM</span> : null}
+            <span data-testid="pdp-price" style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "2rem", color: "var(--color-navy)" }}>{fmt(displayPrice)}</span>
+            {mrpPaise > displayPrice ? <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "1.2rem", color: "var(--color-gray)", textDecoration: "line-through" }}>{fmt(mrpPaise)}</span> : null}
+            {disc > 0 ? <span style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "0.72rem", letterSpacing: "0.08em", background: "var(--color-lava)", color: "var(--color-navy)", padding: "3px 7px", border: "2px solid var(--color-navy)" }}>{disc}% OFF</span> : null}
           </div>
           <div style={{ marginBottom: "1.5rem", paddingBottom: "1.5rem", borderBottom: "var(--border-thick)", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", color: "var(--color-gray)" }}>Inclusive of all taxes</span>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", color: "var(--color-gray)" }}>Inclusive of all taxes{selectedSize && range.varies ? ` · price for size ${selectedSize}` : ""}</span>
           </div>
 
           {/* Color */}
@@ -235,7 +252,7 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
           )}
 
           {/* Size selector */}
-          <div style={{ marginBottom: "1.5rem" }}>
+          <div id="pdp-size" style={{ marginBottom: "1.5rem", scrollMarginTop: "120px" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>
               <p style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", letterSpacing: "0.12em", textTransform: "uppercase", color: sizeError ? "var(--color-crimson)" : "var(--color-navy)" }}>{sizeError ? "PLEASE SELECT A SIZE" : "SIZE"}</p>
               <div style={{ textAlign: "right" }}>
@@ -245,41 +262,51 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
             </div>
             <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
               {SIZES.map((sz) => {
-                const isOut = SOLD_OUT_SIZES.includes(sz);
+                const o = SIZE_OPTS.find((x) => x.size === sz);
+                const isOut = !!o?.soldOut || soldOut;
+                const sel = selectedSize === sz;
+                const szPrice = priceForSize(basePrice, SIZE_OPTS, sz).pricePaise;
+                const wide = sz.length > 3;
                 return (
-                  <button key={sz} onClick={() => !isOut && setSelectedSize(sz)} disabled={isOut} aria-pressed={selectedSize === sz} style={{ width: "52px", height: "48px", border: "2px solid var(--color-navy)", backgroundColor: selectedSize === sz ? "var(--color-navy)" : "transparent", color: selectedSize === sz ? "var(--color-cream)" : isOut ? "#C4BBAA" : "var(--color-navy)", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "14px", cursor: isOut ? "not-allowed" : "pointer", position: "relative", textDecoration: isOut ? "line-through" : "none", boxShadow: selectedSize === sz ? "0px 0px 0px" : "2px 2px 0px 0px var(--color-navy)", opacity: isOut ? 0.5 : 1 }}>
-                    {sz}
+                  <button key={sz} type="button" onClick={() => !isOut && setSelectedSize(sz)} disabled={isOut} aria-pressed={sel} title={isOut ? `${sz} is sold out` : o?.low ? `Only a few left in ${sz}` : undefined}
+                    style={{ minWidth: wide ? "auto" : "52px", padding: wide ? "0 16px" : 0, height: range.varies ? "58px" : "48px", border: "2px solid var(--color-navy)", backgroundColor: sel ? "var(--color-navy)" : "transparent", color: sel ? "var(--color-cream)" : isOut ? "#9aa0ad" : "var(--color-navy)", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "14px", cursor: isOut ? "not-allowed" : "pointer", position: "relative", textDecoration: isOut ? "line-through" : "none", boxShadow: sel ? "0 0 0 0" : "2px 2px 0 0 var(--color-navy)", opacity: isOut ? 0.55 : 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "2px", transition: "transform 0.1s ease, box-shadow 0.1s ease, background-color 0.15s ease" }}>
+                    <span>{wide ? sz.toUpperCase() : sz}</span>
+                    {range.varies ? <span style={{ fontSize: "9px", fontWeight: 800, letterSpacing: "0.03em", opacity: 0.85 }}>{fmt(szPrice)}</span> : null}
                   </button>
                 );
               })}
             </div>
+            {selectedOpt?.low ? <p role="status" style={{ marginTop: "0.6rem", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "12px", color: "var(--color-crimson)" }}>Only a few left in size {selectedSize}</p> : null}
           </div>
 
-          {/* Quantity */}
-          <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.5rem" }}>
+          {/* Quantity — the total beside it updates live */}
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.5rem", flexWrap: "wrap" }}>
             <p style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-navy)" }}>QTY</p>
             <div style={{ display: "flex", alignItems: "center", border: "2px solid var(--color-navy)", boxShadow: "2px 2px 0px 0px var(--color-navy)", backgroundColor: "var(--color-cream)" }}>
-              <button aria-label="Decrease quantity" onClick={() => setQty(Math.max(1, qty - 1))} style={{ width: "40px", height: "40px", background: "none", border: "none", cursor: "pointer", fontSize: "1.2rem", color: "var(--color-navy)", fontWeight: 900 }}>−</button>
-              <span style={{ width: "40px", textAlign: "center", fontFamily: "var(--font-sans)", fontWeight: 900, color: "var(--color-navy)" }}>{qty}</span>
-              <button aria-label="Increase quantity" onClick={() => setQty(qty + 1)} style={{ width: "40px", height: "40px", background: "none", border: "none", cursor: "pointer", fontSize: "1.2rem", color: "var(--color-navy)", fontWeight: 900 }}>+</button>
+              <button type="button" aria-label="Decrease quantity" disabled={qty <= 1} onClick={() => setQty(Math.max(1, qty - 1))} style={{ width: "44px", height: "44px", background: "none", border: "none", cursor: qty <= 1 ? "not-allowed" : "pointer", fontSize: "1.2rem", color: "var(--color-navy)", fontWeight: 900, opacity: qty <= 1 ? 0.35 : 1 }}>−</button>
+              <span aria-live="polite" style={{ width: "40px", textAlign: "center", fontFamily: "var(--font-sans)", fontWeight: 900, color: "var(--color-navy)" }}>{qty}</span>
+              <button type="button" aria-label="Increase quantity" disabled={qty >= MAX_QTY} onClick={() => setQty(Math.min(MAX_QTY, qty + 1))} style={{ width: "44px", height: "44px", background: "none", border: "none", cursor: qty >= MAX_QTY ? "not-allowed" : "pointer", fontSize: "1.2rem", color: "var(--color-navy)", fontWeight: 900, opacity: qty >= MAX_QTY ? 0.35 : 1 }}>+</button>
+            </div>
+            <div data-testid="pdp-total" style={{ marginLeft: "auto", textAlign: "right", fontFamily: "var(--font-sans)", fontWeight: 900, color: "var(--color-navy)" }} aria-live="polite">
+              <span style={{ fontSize: "10px", letterSpacing: "0.14em", color: "var(--color-smoke)" }}>{qty > 1 ? `TOTAL FOR ${qty}` : "TOTAL"}</span>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: "1.25rem" }}>{fmt(showFrom ? lineTotal(range.min, qty) : total)}</div>
             </div>
           </div>
 
-          {/* CTAs */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginBottom: "1.5rem" }}>
-            {soldOut ? <p role="status" className="pdp-sold">SOLD OUT — this piece is currently unavailable</p> : null}
-            <button className="btn-primary" onClick={handleAddToBag} disabled={soldOut} style={{ width: "100%", padding: "16px", fontSize: "16px" }}>
+          {/* CTAs — class-based so they respond to hover / press / touch and reflow per screen size (styles/pdp-cta.css) */}
+          {soldOut ? <p role="status" className="pdp-sold">SOLD OUT — this piece is currently unavailable</p> : null}
+          <div className="pdp-cta">
+            <button type="button" className={`pdp-btn pdp-bag${added ? " is-done" : ""}`} onClick={handleAddToBag} disabled={soldOut}>
               {soldOut ? "SOLD OUT" : added ? "BAG MEIN GAYA ✓" : "BAG IT"}
             </button>
-            <button onClick={handleCopItNow} disabled={soldOut} style={{ opacity: soldOut ? 0.5 : 1, width: "100%", padding: "16px", backgroundColor: "var(--color-mist)", color: "var(--color-navy)", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "16px", textTransform: "uppercase", border: "2px solid var(--color-navy)", cursor: "pointer", boxShadow: "4px 4px 0px 0px var(--color-navy)", transition: "transform 0.1s ease, box-shadow 0.1s ease" }}>
+            <button type="button" className="pdp-btn pdp-cop" onClick={handleCopItNow} disabled={soldOut}>
               COP IT NOW
             </button>
-            <button onClick={() => setWishlisted((w) => !w)} style={{ width: "100%", padding: "12px", backgroundColor: "transparent", color: wishlisted ? "var(--color-crimson)" : "var(--color-navy)", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", letterSpacing: "0.1em", textTransform: "uppercase", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill={wishlisted ? "var(--color-crimson)" : "none"} stroke={wishlisted ? "var(--color-crimson)" : "var(--color-navy)"} strokeWidth="2.5" strokeLinecap="square" strokeLinejoin="miter"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <button type="button" className={`pdp-wish${wishPop ? " pop" : ""}`} aria-pressed={wishlisted} onClick={() => { setWishlisted((w) => !w); setWishPop(true); setTimeout(() => setWishPop(false), 400); }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill={wishlisted ? "var(--color-crimson)" : "none"} stroke={wishlisted ? "var(--color-crimson)" : "currentColor"} strokeWidth="2.5" strokeLinecap="square" strokeLinejoin="miter" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
               {wishlisted ? "WISHLISTED ✓" : "WISHLIST KAR"}
             </button>
           </div>
-
 
           {/* Delivery checker */}
           <div style={{ backgroundColor: "var(--color-cream)", padding: "1.25rem", marginBottom: "1.5rem", border: "2px solid var(--color-navy)", boxShadow: "4px 4px 0px 0px var(--color-navy)" }}>
@@ -300,23 +327,18 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
               </div>
             ))}
           </div>
-
-          {/* Accordions */}
-          <div style={{ borderTop: "var(--border-thick)" }}>
-            {ACCORDIONS.map((acc) => (
-              <div key={acc.id} style={{ borderBottom: "var(--border-thick)" }}>
-                <button aria-expanded={openAccordion === acc.id} onClick={() => setOpenAccordion(openAccordion === acc.id ? null : acc.id)} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", padding: "1rem 0", background: "none", border: "none", cursor: "pointer", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "14px", textTransform: "uppercase", color: "var(--color-navy)" }}>
-                  {acc.title}
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-navy)" strokeWidth="2.5" style={{ transform: openAccordion === acc.id ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}><polyline points="6 9 12 15 18 9"/></svg>
-                </button>
-                {openAccordion === acc.id && (
-                  <p style={{ fontFamily: "var(--font-sans)", fontSize: "14px", lineHeight: 1.5, color: "var(--color-navy)", paddingBottom: "1rem", fontWeight: 600 }}>{acc.body}</p>
-                )}
-              </div>
-            ))}
-          </div>
         </div>
       </div>
+
+      {/* ── Product details: full-width cards (description / shipping / returns), so the page never has an empty left side ── */}
+      <section className="pdp-details" aria-label="Product details">
+        {ACCORDIONS.map((acc) => (
+          <article key={acc.id} className="pdp-detail">
+            <h2>{acc.title}</h2>
+            <p>{acc.body}</p>
+          </article>
+        ))}
+      </section>
 
       {/* ── Shop the Look ── */}
       {ALSO_LIKE.length > 0 && (
@@ -361,9 +383,12 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
       
       {/* ── Sticky Mobile CTA ── */}
       <div className="mobile-sticky-cta">
-        <button className="btn-primary" onClick={handleAddToBag} disabled={soldOut} style={{ width: "100%", padding: "16px", fontSize: "14px" }}>
-          {soldOut ? "SOLD OUT" : added ? "BAG MEIN GAYA ✓" : "BAG IT"}
-        </button>
+        <div className={`pdp-sticky${soldOut ? " single" : ""}`}>
+          <button type="button" className={`pdp-btn pdp-bag${added ? " is-done" : ""}`} onClick={handleAddToBag} disabled={soldOut}>
+            {soldOut ? "SOLD OUT" : added ? "ADDED ✓" : "BAG IT"}
+          </button>
+          {!soldOut ? <button type="button" className="pdp-btn pdp-cop" onClick={handleCopItNow}>COP IT NOW</button> : null}
+        </div>
       </div>
 
     </div>

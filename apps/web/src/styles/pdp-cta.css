@@ -1,0 +1,78 @@
+/* Product page buy buttons: BAG IT, COP IT NOW, WISHLIST KAR — responsive layout + hover / press / touch / focus states */
+.pdp-cta { display: grid; gap: 0.9rem; margin-bottom: 1.5rem; grid-template-columns: minmax(0, 1fr); }
+.pdp-cta .pdp-wish { grid-column: 1 / -1; }
+
+.pdp-btn {
+  position: relative; display: flex; align-items: center; justify-content: center; gap: 0.6rem; width: 100%; min-height: 56px;
+  padding: 0.95rem 1.1rem; border: 2px solid var(--color-navy); border-radius: 0; cursor: pointer; user-select: none;
+  font: 900 clamp(0.82rem, 0.7rem + 0.5vw, 1rem)/1.1 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; text-align: center;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.18s ease, color 0.18s ease;
+}
+.pdp-btn:focus-visible, .pdp-wish:focus-visible { outline: 3px solid var(--color-lava); outline-offset: 3px; }
+.pdp-btn[disabled] { opacity: 0.5; cursor: not-allowed; box-shadow: none; transform: none; }
+
+/* BAG IT — navy, lava shadow */
+.pdp-bag { background: var(--color-navy); color: var(--color-cream); box-shadow: 5px 5px 0 0 var(--color-lava); }
+/* COP IT NOW — warm bone, navy shadow */
+.pdp-cop { background: var(--color-bone); color: var(--color-navy); box-shadow: 5px 5px 0 0 var(--color-navy); }
+
+/* Real pointers get a lift on hover; touch screens skip it (no sticky "hover" after a tap) */
+@media (hover: hover) and (pointer: fine) {
+  .pdp-bag:not([disabled]):hover { background: #1d3270; transform: translate(-2px, -2px); box-shadow: 7px 7px 0 0 var(--color-lava); }
+  .pdp-cop:not([disabled]):hover { background: var(--color-navy); color: var(--color-cream); transform: translate(-2px, -2px); box-shadow: 7px 7px 0 0 var(--color-lava); }
+}
+/* Pressed state works everywhere, including touch */
+.pdp-btn:not([disabled]):active { transform: translate(4px, 4px); box-shadow: 0 0 0 0 transparent; }
+.pdp-bag:not([disabled]):active { background: var(--color-lava); color: var(--color-navy); }
+.pdp-cop:not([disabled]):active { background: var(--color-lava); }
+.pdp-bag.is-done { background: var(--color-lava); color: var(--color-navy); }
+
+/* WISHLIST KAR — text button with a heart, full-width tap target */
+.pdp-wish {
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; min-height: 48px; padding: 0.6rem 1rem;
+  background: transparent; border: 2px solid transparent; color: var(--color-navy); cursor: pointer;
+  font: 900 0.8rem/1 var(--font-sans); letter-spacing: 0.1em; text-transform: uppercase; -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+.pdp-wish svg { transition: transform 0.18s ease, fill 0.18s ease; flex-shrink: 0; }
+.pdp-wish[aria-pressed="true"] { color: var(--color-crimson); }
+@media (hover: hover) and (pointer: fine) {
+  .pdp-wish:hover { background: rgba(218, 178, 5, 0.22); border-color: var(--color-navy); }
+  .pdp-wish:hover svg { transform: scale(1.18); }
+}
+.pdp-wish:active { background: rgba(218, 178, 5, 0.5); transform: scale(0.98); }
+.pdp-wish:active svg { transform: scale(0.85); }
+.pdp-wish.pop svg { animation: pdpHeart 0.35s ease; }
+@keyframes pdpHeart { 0% { transform: scale(1); } 40% { transform: scale(1.45); } 100% { transform: scale(1); } }
+
+/* Tablets (single-column product page): BAG IT and COP IT NOW share a row */
+@media (min-width: 600px) and (max-width: 1023px) {
+  .pdp-cta { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.1rem; }
+}
+/* Small phones: slightly tighter, never clip the shadow off-screen */
+@media (max-width: 400px) {
+  .pdp-cta { gap: 0.8rem; padding-right: 5px; }
+  .pdp-btn { padding-inline: 0.7rem; letter-spacing: 0.05em; }
+}
+
+/* Sticky bottom CTA on phones: BAG IT + COP IT NOW side by side */
+.mobile-sticky-cta .pdp-sticky { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+.mobile-sticky-cta .pdp-btn { min-height: 50px; padding: 0.7rem 0.5rem; font-size: 0.8rem; box-shadow: 3px 3px 0 0 var(--color-lava); }
+.mobile-sticky-cta .pdp-cop { box-shadow: 3px 3px 0 0 var(--color-navy); }
+.mobile-sticky-cta .pdp-btn:not([disabled]):active { transform: translate(3px, 3px); }
+.mobile-sticky-cta .pdp-sticky.single { grid-template-columns: minmax(0, 1fr); }
+@media (prefers-reduced-motion: reduce) { .pdp-btn, .pdp-wish, .pdp-wish svg { transition: none; } .pdp-wish.pop svg { animation: none; } }
+.pdp-sold { margin-bottom: 0.9rem; }
+
+/* ── Product page layout: the gallery stays in view while the buy box scrolls (no empty left side), details run full width ── */
+@media (min-width: 769px) {
+  .pdp-gallery-sticky { position: sticky; top: 96px; align-self: start; }
+  .pdp-gallery-sticky .gallery-main img { max-height: calc(100vh - 130px); object-fit: contain; background: var(--color-mist); }
+}
+.pdp-details { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; padding: 0 clamp(1rem, 4vw, 5rem) clamp(2.5rem, 5vw, 4.5rem); }
+.pdp-detail { background: var(--color-cream); border: 2px solid var(--color-navy); box-shadow: 5px 5px 0 0 var(--color-navy); padding: 1.35rem 1.4rem; min-width: 0; }
+.pdp-detail h2 { font: 900 0.78rem var(--font-sans); letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-navy); margin: 0 0 0.8rem; padding-bottom: 0.7rem; border-bottom: 2px solid var(--color-navy); }
+.pdp-detail p { font: 500 0.95rem/1.7 var(--font-sans); color: var(--color-navy); overflow-wrap: anywhere; margin: 0; }
+@media (max-width: 1024px) { .pdp-details { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .pdp-details { grid-template-columns: minmax(0, 1fr); gap: 1rem; padding-bottom: 6rem; } .pdp-detail { box-shadow: 3px 3px 0 0 var(--color-navy); } }

@@ -11,7 +11,7 @@
  * Admins can also step one stage back to fix a mis-click.
  */
 
-export const ORDER_STATUSES = ["processing", "confirmed", "shipped", "out_for_delivery", "delivered", "cancelled", "return_requested", "returned"] as const;
+export const ORDER_STATUSES = ["processing", "confirmed", "packed", "on_hold", "shipped", "out_for_delivery", "delivery_failed", "delivered", "cancelled", "rto", "return_requested", "returned"] as const;
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
 
 export const CANCEL_WINDOW_DAYS = 7;
@@ -21,31 +21,41 @@ const DAY = 86_400_000;
 export const STATUS_LABEL: Record<OrderStatus, string> = {
   processing: "Order placed",
   confirmed: "Confirmed",
+  packed: "Packed",
+  on_hold: "On hold",
   shipped: "Shipped",
   out_for_delivery: "Out for delivery",
+  delivery_failed: "Delivery attempt failed",
   delivered: "Delivered",
   cancelled: "Cancelled",
+  rto: "Returned to origin",
   return_requested: "Return requested",
   returned: "Returned",
 };
 
 /** What an admin may move an order to from each status (no going backwards; terminal states are final). */
 export const ADMIN_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
-  processing: ["confirmed", "shipped", "cancelled"],
-  confirmed: ["shipped", "cancelled", "processing"],
-  shipped: ["out_for_delivery", "delivered", "cancelled", "confirmed"],
-  out_for_delivery: ["delivered", "cancelled", "shipped"],
+  processing: ["confirmed", "packed", "shipped", "on_hold", "cancelled"],
+  confirmed: ["packed", "shipped", "on_hold", "cancelled", "processing"],
+  packed: ["shipped", "on_hold", "cancelled", "confirmed"],
+  on_hold: ["processing", "confirmed", "packed", "cancelled"], // resume or cancel
+  shipped: ["out_for_delivery", "delivered", "delivery_failed", "cancelled", "packed", "confirmed"],
+  out_for_delivery: ["delivered", "delivery_failed", "cancelled", "shipped"],
+  delivery_failed: ["out_for_delivery", "delivered", "rto", "cancelled", "shipped"],
   delivered: ["returned", "out_for_delivery"],
   return_requested: ["returned", "delivered"], // "delivered" = return rejected
   cancelled: [],
+  rto: [],
   returned: [],
 };
 
 /** Moving to one of these is a correction of an earlier step, not progress. */
 export const BACKWARD: Partial<Record<OrderStatus, OrderStatus[]>> = {
   confirmed: ["processing"],
-  shipped: ["confirmed"],
+  packed: ["confirmed"],
+  shipped: ["packed", "confirmed"],
   out_for_delivery: ["shipped"],
+  delivery_failed: ["shipped"],
   delivered: ["out_for_delivery"],
 };
 export const isBackward = (from: string, to: string) => isOrderStatus(from) && isOrderStatus(to) && !!BACKWARD[from]?.includes(to);
@@ -60,11 +70,15 @@ const ts = (d: Date | string | number | undefined | null) => (d ? new Date(d).ge
 
 export interface Eligibility { ok: boolean; reason?: string; daysLeft?: number; /** 'direct' = cancels now; 'request' = needs admin approval (already shipped) */ mode?: "direct" | "request" }
 
+/** Statuses where the customer's cancel is instant / only a request to the admin. */
+export const DIRECT_CANCEL: string[] = ["processing", "confirmed", "packed", "on_hold"];
+export const REQUEST_CANCEL: string[] = ["shipped", "out_for_delivery", "delivery_failed"];
+
 /** Customers can cancel within 7 days of ordering: instantly before shipping, as a request to the admin once it has shipped. */
 export function cancelEligibility(o: { fulfillmentStatus: string; createdAt: Date | string; cancelRequestedAt?: Date | string | null }, now = Date.now()): Eligibility {
   if (o.fulfillmentStatus === "cancelled") return { ok: false, reason: "This order is already cancelled." };
-  const direct = ["processing", "confirmed"].includes(o.fulfillmentStatus);
-  const request = ["shipped", "out_for_delivery"].includes(o.fulfillmentStatus);
+  const direct = DIRECT_CANCEL.includes(o.fulfillmentStatus);
+  const request = REQUEST_CANCEL.includes(o.fulfillmentStatus);
   if (!direct && !request) {
     return { ok: false, reason: o.fulfillmentStatus === "delivered" ? "Delivered orders can be returned instead." : "This order can't be cancelled now." };
   }
@@ -92,11 +106,11 @@ export const RETURN_REASONS = ["Size doesn't fit", "Not as described / photos", 
 export interface HistoryEvent { status: string; note?: string; at: Date | string; by?: string }
 export interface TimelineStep { key: string; label: string; at?: string; state: "done" | "current" | "todo" | "bad"; note?: string }
 
-const FLOW: OrderStatus[] = ["processing", "confirmed", "shipped", "out_for_delivery", "delivered"];
+const FLOW: OrderStatus[] = ["processing", "confirmed", "packed", "shipped", "out_for_delivery", "delivered"];
 
 /**
  * Tracking steps for the order page. Done steps carry the time they were reached (from statusHistory);
- * cancelled / return states are appended as a final red/amber step.
+ * on hold / failed delivery / returned-to-origin / cancelled / return states are appended as a final step.
  */
 export function buildTimeline(o: { fulfillmentStatus: string; createdAt: Date | string; statusHistory?: HistoryEvent[] }): TimelineStep[] {
   const hist = o.statusHistory ?? [];
@@ -104,24 +118,30 @@ export function buildTimeline(o: { fulfillmentStatus: string; createdAt: Date | 
     const e = [...hist].reverse().find((h) => h.status === s);
     return e ? new Date(e.at).toISOString() : undefined;
   };
+  const noteOf = (s: string) => [...hist].reverse().find((h) => h.status === s)?.note;
   const status = isOrderStatus(o.fulfillmentStatus) ? o.fulfillmentStatus : "processing";
-  const cancelled = status === "cancelled";
   const returnFlow = status === "return_requested" || status === "returned";
+  const sideStep = status === "cancelled" || status === "on_hold" || status === "delivery_failed" || status === "rto";
 
-  // How far along the normal flow did it get? (cancelled orders stop at their last reached normal step)
+  // How far along the normal flow did it get?
   let reached = FLOW.indexOf(status as OrderStatus);
-  if (cancelled || returnFlow) reached = returnFlow ? FLOW.length - 1 : Math.max(0, ...FLOW.map((s, i) => (when(s) ? i : 0)));
+  if (returnFlow) reached = FLOW.length - 1;
+  else if (status === "delivery_failed" || status === "rto") reached = Math.max(FLOW.indexOf("shipped"), ...FLOW.map((s, i) => (when(s) ? i : 0)));
+  else if (sideStep) reached = Math.max(0, ...FLOW.map((s, i) => (when(s) ? i : 0)));
   if (reached < 0) reached = 0;
 
   const steps: TimelineStep[] = FLOW.map((s, i) => ({
     key: s,
     label: STATUS_LABEL[s],
     at: s === "processing" ? new Date(o.createdAt).toISOString() : when(s),
-    state: cancelled ? (i <= reached ? "done" : "todo") : i < reached ? "done" : i === reached ? (status === "delivered" ? "done" : "current") : "todo",
+    state: sideStep ? (i <= reached ? "done" : "todo") : i < reached ? "done" : i === reached ? (status === "delivered" || returnFlow ? "done" : "current") : "todo",
   }));
-  if (cancelled) steps.push({ key: "cancelled", label: "Cancelled", at: when("cancelled"), state: "bad", note: hist.find((h) => h.status === "cancelled")?.note });
+  if (status === "cancelled") steps.push({ key: "cancelled", label: "Cancelled", at: when("cancelled"), state: "bad", note: noteOf("cancelled") });
+  if (status === "rto") steps.push({ key: "rto", label: "Returned to origin", at: when("rto"), state: "bad", note: noteOf("rto") });
+  if (status === "on_hold") steps.push({ key: "on_hold", label: "On hold", at: when("on_hold"), state: "current", note: noteOf("on_hold") });
+  if (status === "delivery_failed") steps.push({ key: "delivery_failed", label: "Delivery attempt failed", at: when("delivery_failed"), state: "current", note: noteOf("delivery_failed") });
   if (returnFlow) {
-    steps.push({ key: "return_requested", label: "Return requested", at: when("return_requested"), state: status === "return_requested" ? "current" : "done", note: hist.find((h) => h.status === "return_requested")?.note });
+    steps.push({ key: "return_requested", label: "Return requested", at: when("return_requested"), state: status === "return_requested" ? "current" : "done", note: noteOf("return_requested") });
     if (status === "returned") steps.push({ key: "returned", label: "Returned & refunded", at: when("returned"), state: "bad" });
   }
   return steps;

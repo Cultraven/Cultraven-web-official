@@ -5,7 +5,7 @@ import "@/styles/orders.css";
 import { STATUS_LABEL, isOrderStatus } from "@/lib/order-lifecycle";
 
 const inr = (paise: number) => `₹${(paise / 100).toLocaleString("en-IN")}`;
-const tone = (s: string) => (s === "delivered" ? "is-ok" : s === "cancelled" || s === "returned" ? "is-bad" : s === "shipped" || s === "out_for_delivery" ? "is-info" : "is-warn");
+const tone = (s: string) => (s === "delivered" ? "is-ok" : s === "cancelled" || s === "returned" || s === "rto" ? "is-bad" : s === "shipped" || s === "out_for_delivery" || s === "packed" ? "is-info" : "is-warn");
 const date = (d: string) => new Date(d).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
 const label = (s: string) => (isOrderStatus(s) ? STATUS_LABEL[s] : s);
 
