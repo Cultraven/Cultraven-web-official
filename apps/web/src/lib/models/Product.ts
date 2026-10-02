@@ -27,6 +27,11 @@ const ProductSchema = new mongoose.Schema(
       type: [new mongoose.Schema({ size: { type: String, required: true }, pricePaise: { type: Number }, mrpPaise: { type: Number }, stockCount: { type: Number, min: 0 } }, { _id: false })],
       default: [],
     },
+    /** Optional per-color price / MRP override. */
+    colorOptions: {
+      type: [new mongoose.Schema({ color: { type: String, required: true }, pricePaise: { type: Number }, mrpPaise: { type: Number } }, { _id: false })],
+      default: [],
+    },
     category: { type: String, required: true },
     fit: { type: String, required: true },
     badge: { type: String },

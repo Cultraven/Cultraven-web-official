@@ -3,6 +3,14 @@ import { isSafeMediaUrl } from "./hero";
 
 const mediaUrl = z.string().refine((v) => isSafeMediaUrl(v, false), "Must be an https:// URL or an uploaded file");
 
+const ColorOptionSchema = z
+  .object({
+    color: z.string().trim().min(1).max(50),
+    pricePaise: z.number().int().positive().max(100_000_000).optional(),
+    mrpPaise: z.number().int().positive().max(100_000_000).optional(),
+  })
+  .refine((o) => o.pricePaise === undefined || o.mrpPaise === undefined || o.mrpPaise >= o.pricePaise, { message: "A color's MRP can't be lower than its price" });
+
 const SizeOptionSchema = z
   .object({
     size: z.string().trim().min(1).max(20),
@@ -26,6 +34,7 @@ export const ProductWriteSchema = z.object({
   fit: z.string().trim().min(1).max(30).default("regular"),
   sizes: z.array(z.string().max(20)).max(20).optional(),
   sizeOptions: z.array(SizeOptionSchema).max(20).refine((a) => new Set(a.map((o) => o.size)).size === a.length, { message: "Each size can only appear once" }).optional(),
+  colorOptions: z.array(ColorOptionSchema).max(20).refine((a) => new Set(a.map((o) => o.color)).size === a.length, { message: "Each color can only appear once" }).optional(),
   colors: z
     .array(z.object({ hex: z.string().regex(/^#[0-9a-fA-F]{6}$/, "Color must be a #RRGGBB hex"), label: z.string().trim().min(1).max(50) }))
     .max(20)

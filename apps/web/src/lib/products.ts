@@ -28,6 +28,8 @@ export interface PublicProduct {
   sizeOptions: PublicSizeOption[];
   /** Admin only: the raw per-size options including stock counts. */
   sizeOptionsAdmin?: SizeOption[];
+  /** Per-color price overrides (keyed by color label). */
+  colorOptions: { color: string; pricePaise?: number; mrpPaise?: number }[];
   isNewArrival: boolean;
   isBestseller: boolean;
 }
@@ -66,6 +68,9 @@ export function normalizeProduct(doc: any, opts: { admin?: boolean } = {}): Publ
     inStock: doc.inStock !== false,
     sizeOptions: toPublicSizeOptions(normalizeSizeOptions(doc.sizeOptions, sizes), sizes),
     ...(opts.admin ? { sizeOptionsAdmin: normalizeSizeOptions(doc.sizeOptions, sizes) } : {}),
+    colorOptions: Array.isArray(doc.colorOptions)
+      ? doc.colorOptions.filter((o: any) => o && typeof o.color === "string").map((o: any) => ({ color: o.color, ...(o.pricePaise ? { pricePaise: Number(o.pricePaise) } : {}), ...(o.mrpPaise ? { mrpPaise: Number(o.mrpPaise) } : {}) }))
+      : [],
     isNewArrival: doc.isNewArrival === true,
     isBestseller: doc.isBestseller === true,
   };
