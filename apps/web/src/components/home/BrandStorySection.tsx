@@ -22,7 +22,7 @@ export function BrandStorySection({ content }: { content: BrandStoryContent }) {
 
   return (
     <section
-      className="cv-auto"
+      className="cv-auto bs-section"
       aria-labelledby="brand-story-heading"
       style={{
         position: "relative",
@@ -72,6 +72,7 @@ export function BrandStorySection({ content }: { content: BrandStoryContent }) {
 
       {/* Content */}
       <div
+        className="bs-inner"
         style={{
           position: "relative",
           zIndex: 10,

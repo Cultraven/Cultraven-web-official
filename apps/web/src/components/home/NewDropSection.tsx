@@ -22,6 +22,7 @@ export interface DropProduct {
   mrpPaise: number;
   colors: { hex: string; label: string }[];
   isNew?: boolean;
+  inStock?: boolean;
   badge?: string;
 }
 
@@ -275,6 +276,9 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
         />
 
         {/* Quick Add — LP-style slides up on hover */}
+        {p.inStock === false ? (
+          <span className="sold-out-tag">SOLD OUT</span>
+        ) : null}
         <div
           style={{
             position: "absolute",
@@ -288,8 +292,10 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
           }}
         >
           <button
+            disabled={p.inStock === false}
             onClick={(e) => {
               e.preventDefault();
+              if (p.inStock === false) return;
               addItem({
                 productId: p.id,
                 slug,
@@ -319,7 +325,7 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
               transition: "background-color 0.2s ease",
             }}
           >
-            {added ? "ADDED ✓" : "QUICK ADD"}
+            {p.inStock === false ? "SOLD OUT" : added ? "ADDED ✓" : "QUICK ADD"}
           </button>
         </div>
       </Link>

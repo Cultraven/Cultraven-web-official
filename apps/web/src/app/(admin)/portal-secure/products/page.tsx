@@ -46,7 +46,7 @@ const Row = memo(function Row({ p, selected, onSelect, onToggle, onDelete }: {
       </td>
       <td><Switch checked={p.isNewArrival} onChange={(v) => onToggle(p.id, "isNewArrival", v)} label={`New arrival: ${p.title}`} /></td>
       <td><Switch checked={p.isBestseller} onChange={(v) => onToggle(p.id, "isBestseller", v)} label={`Bestseller: ${p.title}`} /></td>
-      <td><Switch checked={p.inStock} onChange={(v) => onToggle(p.id, "inStock", v)} label={`In stock: ${p.title}`} /></td>
+      <td><Button size="sm" variant={p.inStock ? "danger" : "primary"} onClick={() => onToggle(p.id, "inStock", !p.inStock)} aria-label={p.inStock ? `Mark ${p.title} out of stock` : `Mark ${p.title} back in stock`}>{p.inStock ? "Mark sold out" : "Restock"}</Button></td>
       <td>
         <div className="adm-actions" style={{ justifyContent: "flex-end", flexWrap: "nowrap" }}>
           <LinkButton href={`/portal-secure/products/${p.id}/edit`} size="sm" icon="edit">Edit</LinkButton>
@@ -172,7 +172,7 @@ export default function AdminProductsPage() {
                 <tr>
                   <th style={{ width: 36 }}><input type="checkbox" className="adm-check" checked={allOn} onChange={toggleAll} aria-label="Select all" /></th>
                   <th>Product</th><th>Category</th><th className="num">Price</th><th className="num">Stock</th>
-                  <th title="Shows in homepage New Drop">New</th><th title="Shows in homepage Bestsellers">Best</th><th>In stock</th><th />
+                  <th title="Shows in homepage New Drop">New</th><th title="Shows in homepage Bestsellers">Best</th><th>Availability</th><th />
                 </tr>
               </thead>
               <tbody>

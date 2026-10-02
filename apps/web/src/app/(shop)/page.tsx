@@ -83,6 +83,7 @@ export default async function HomePage() {
     mrpPaise: p.mrpPaise,
     colors: p.colors,
     isNew: true,
+    inStock: p.inStock,
     badge: p.badge,
   }));
 
@@ -97,6 +98,7 @@ export default async function HomePage() {
     rating: p.rating,
     reviewCount: p.reviewCount,
     colors: p.colors,
+    inStock: p.inStock,
     badge: p.badge === "BESTSELLER" || p.badge === "LOW STOCK" ? (p.badge as "BESTSELLER" | "LOW STOCK") : undefined,
   }));
 

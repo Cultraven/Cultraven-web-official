@@ -14,6 +14,7 @@ import { useCartStore } from "@/store/cart";
 import { useWishlisted } from "@/store/wishlist";
 
 export interface BestProduct {
+  inStock?: boolean;
   id: string;
   title: string;
   href: string;
@@ -301,6 +302,9 @@ function BestsellerCard({ product: p }: { product: BestProduct }) {
         />
 
         {/* Quick Add */}
+        {p.inStock === false ? (
+          <span className="sold-out-tag">SOLD OUT</span>
+        ) : null}
         <div
           style={{
             position: "absolute",
@@ -314,8 +318,10 @@ function BestsellerCard({ product: p }: { product: BestProduct }) {
           }}
         >
           <button
+            disabled={p.inStock === false}
             onClick={(e) => {
               e.preventDefault();
+              if (p.inStock === false) return;
               addItem({
                 productId: p.id,
                 slug,
@@ -345,7 +351,7 @@ function BestsellerCard({ product: p }: { product: BestProduct }) {
               transition: "background-color 0.2s ease",
             }}
           >
-            {added ? "ADDED \u2713" : "QUICK ADD"}
+            {p.inStock === false ? "SOLD OUT" : added ? "ADDED \u2713" : "QUICK ADD"}
           </button>
         </div>
       </Link>

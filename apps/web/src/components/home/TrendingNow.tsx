@@ -32,11 +32,6 @@ export function TrendingNow({ heading, items }: { heading?: string; items: Trend
 
         {/* 3-column grid */}
         <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3,1fr)",
-            gap: "1.5rem",
-          }}
           className="trend-grid"
         >
           {items.map((item) => (
@@ -62,7 +57,6 @@ function TrendCard({ item }: { item: TrendItem }) {
           display: "block",
           width: "100%",
           aspectRatio: "3/4",
-          maxHeight: "clamp(280px, 30vw, 460px)",
           overflow: "hidden",
         }}
       >
@@ -70,7 +64,7 @@ function TrendCard({ item }: { item: TrendItem }) {
           src={item.image}
           alt={item.alt || item.title}
           fill
-          sizes="(max-width: 768px) 100vw, 33vw"
+          sizes="(max-width: 1024px) 75vw, 33vw"
           style={{ objectFit: "cover", transition: "transform 0.65s ease" }}
           className="trend-img"
         />

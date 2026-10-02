@@ -22,6 +22,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/store/cart";
 import { useBuyNowStore } from "@/store/buyNow";
+import { ProductReviews } from "@/components/product/ProductReviews";
 import { useWishlisted } from "@/store/wishlist";
 import { toast } from "@/components/common/Toast";
 
@@ -41,6 +42,7 @@ export interface PdpProduct {
   colors: { hex: string; label: string }[];
   sizes: string[];
   fit?: string;
+  inStock?: boolean;
 }
 export interface RelatedProduct { id: string; title: string; price: number; image: string; href: string }
 
@@ -76,14 +78,18 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
   const [openAccordion, setOpenAccordion] = useState<string | null>("description");
   const [sizeError, setSizeError] = useState(false);
 
+  const soldOut = product.inStock === false;
+  const [live, setLive] = useState<{ rating: number; count: number } | null>(null);
+  const onSummary = React.useCallback((r: number, c: number) => setLive({ rating: r, count: c }), []);
   const finalName = product.title;
   const pricePaise = product.pricePaise;
   const mrpPaise = product.mrpPaise;
   const disc = mrpPaise && pricePaise ? Math.round(((mrpPaise - pricePaise) / mrpPaise) * 100) : 0;
-  const rating = product.rating || 0;
-  const reviewCount = product.reviewCount || 0;
+  const rating = live ? live.rating : product.rating || 0;
+  const reviewCount = live ? live.count : product.reviewCount || 0;
 
   const handleAddToBag = () => {
+    if (soldOut) return;
     if (!selectedSize) { 
       setSizeError(true); 
       setTimeout(() => setSizeError(false), 2000); 
@@ -110,6 +116,7 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
 
   /** COP IT NOW: one-item express checkout. The cart is left untouched. */
   const handleCopItNow = () => {
+    if (soldOut) return;
     if (!selectedSize) {
       setSizeError(true);
       setTimeout(() => setSizeError(false), 2000);
@@ -260,10 +267,11 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
 
           {/* CTAs */}
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem", marginBottom: "1.5rem" }}>
-            <button className="btn-primary" onClick={handleAddToBag} style={{ width: "100%", padding: "16px", fontSize: "16px" }}>
-              {added ? "BAG MEIN GAYA ✓" : "BAG IT"}
+            {soldOut ? <p role="status" className="pdp-sold">SOLD OUT — this piece is currently unavailable</p> : null}
+            <button className="btn-primary" onClick={handleAddToBag} disabled={soldOut} style={{ width: "100%", padding: "16px", fontSize: "16px" }}>
+              {soldOut ? "SOLD OUT" : added ? "BAG MEIN GAYA ✓" : "BAG IT"}
             </button>
-            <button onClick={handleCopItNow} style={{ width: "100%", padding: "16px", backgroundColor: "var(--color-mist)", color: "var(--color-navy)", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "16px", textTransform: "uppercase", border: "2px solid var(--color-navy)", cursor: "pointer", boxShadow: "4px 4px 0px 0px var(--color-navy)", transition: "transform 0.1s ease, box-shadow 0.1s ease" }}>
+            <button onClick={handleCopItNow} disabled={soldOut} style={{ opacity: soldOut ? 0.5 : 1, width: "100%", padding: "16px", backgroundColor: "var(--color-mist)", color: "var(--color-navy)", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "16px", textTransform: "uppercase", border: "2px solid var(--color-navy)", cursor: "pointer", boxShadow: "4px 4px 0px 0px var(--color-navy)", transition: "transform 0.1s ease, box-shadow 0.1s ease" }}>
               COP IT NOW
             </button>
             <button onClick={() => setWishlisted((w) => !w)} style={{ width: "100%", padding: "12px", backgroundColor: "transparent", color: wishlisted ? "var(--color-crimson)" : "var(--color-navy)", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", letterSpacing: "0.1em", textTransform: "uppercase", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
@@ -332,24 +340,8 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
       </div>
       )}
 
-      {/* ── Reviews Section ── */}
-      <div id="reviews" style={{ backgroundColor: "var(--color-cream)", padding: "clamp(3rem,6vw,6rem) clamp(1.25rem,4vw,5rem)", borderBottom: "var(--border-thick)" }}>
-        <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(2.5rem,5vw,4.5rem)", fontWeight: 400, letterSpacing: "0.02em", color: "var(--color-navy)", marginBottom: "0.5rem", textTransform: "uppercase" }}>CUSTOMER REVIEWS</h2>
-        {reviewCount > 0 && <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "2.5rem" }}>
-          <span style={{ fontFamily: "var(--font-sans)", fontSize: "3rem", fontWeight: 900, color: "var(--color-navy)" }}>{rating}</span>
-          <div>
-            <div style={{ display: "flex", gap: "3px", marginBottom: "4px" }}>
-              {Array.from({ length: 5 }).map((_, i) => <svg key={i} width="16" height="16" viewBox="0 0 24 24" fill={i < Math.floor(rating) ? "var(--color-crimson)" : "none"} stroke="var(--color-crimson)" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>)}
-            </div>
-            <p style={{ fontFamily: "var(--font-sans)", fontSize: "14px", fontWeight: 700, color: "var(--color-navy)", textTransform: "uppercase" }}>BASED ON {reviewCount} REVIEWS</p>
-          </div>
-        </div>}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "1.5rem" }} className="review-grid">
-          {reviewCount === 0 ? (
-            <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.9rem", color: "var(--color-gray)" }}>No reviews yet.</p>
-          ) : null}
-        </div>
-      </div>
+      {/* ── Reviews: verified-buyer feedback from the database ── */}
+      <ProductReviews slug={slug} onSummary={onSummary} />
 
       {/* ── You May Also Like ── */}
       <div style={{ backgroundColor: "var(--color-cream)", padding: "clamp(3rem,6vw,6rem) clamp(1.25rem,4vw,5rem)" }}>
@@ -369,8 +361,8 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
       
       {/* ── Sticky Mobile CTA ── */}
       <div className="mobile-sticky-cta">
-        <button className="btn-primary" onClick={handleAddToBag} style={{ width: "100%", padding: "16px", fontSize: "14px" }}>
-          {added ? "BAG MEIN GAYA ✓" : "BAG IT"}
+        <button className="btn-primary" onClick={handleAddToBag} disabled={soldOut} style={{ width: "100%", padding: "16px", fontSize: "14px" }}>
+          {soldOut ? "SOLD OUT" : added ? "BAG MEIN GAYA ✓" : "BAG IT"}
         </button>
       </div>
 

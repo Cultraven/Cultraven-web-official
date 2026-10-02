@@ -123,6 +123,12 @@ export async function POST(req: NextRequest) {
 
     const productMap = new Map(dbProducts.map((p) => [p.slug, p]));
 
+    // Sold-out pieces can't be bought, even from a stale cart or a crafted request.
+    const soldOut = dbProducts.filter((p) => p.inStock === false).map((p) => p.title);
+    if (soldOut.length) {
+      return NextResponse.json({ error: `Sold out: ${soldOut.join(", ")}. Please remove it from your bag.`, code: "OUT_OF_STOCK" }, { status: 409 });
+    }
+
     // 2. Compute subtotal from catalogue prices (never from the client); snapshot what the Order schema requires
     let subtotalPaise = 0;
     const finalItems = items.map((item) => {

@@ -59,8 +59,8 @@
         @media(max-width:640px){.prod-grid{grid-template-columns:repeat(2,1fr)!important; gap:1rem!important}}
 
 /* ── app/(shop)/collections/[slug]/CollectionClient.tsx ── */
-@media (max-width: 1024px) { .plp-grid { grid-template-columns: repeat(3,1fr) !important; } }
-        @media (max-width: 768px)  { .plp-grid { grid-template-columns: repeat(2,1fr) !important; } .plp-layout { grid-template-columns: 1fr !important; } }
+@media (max-width: 1024px) { .plp-grid { grid-template-columns: repeat(3,minmax(0,1fr)) !important; } }
+        @media (max-width: 768px)  { .plp-grid { grid-template-columns: repeat(2,minmax(0,1fr)) !important; } .plp-layout { grid-template-columns: 1fr !important; } }
 
 /* ── app/(shop)/collections/[slug]/CollectionClient.tsx ── */
 .product-card:hover { transform: translate(-2px, -2px); box-shadow: var(--shadow-md) !important; }
@@ -83,10 +83,16 @@
 
 /* ── app/(shop)/pages/our-heritage/page.tsx ── */
 @media (max-width: 768px) {
-          .about-section { grid-template-columns: 1fr !important; }
+          .about-section { grid-template-columns: minmax(0,1fr) !important; min-height: 0 !important; }
           .about-section > div { order: unset !important; }
-          .values-grid { grid-template-columns: repeat(2,1fr) !important; }
+          .about-section > div:first-child { min-height: 280px !important; aspect-ratio: 4 / 3; }
+          .values-grid { grid-template-columns: repeat(2,minmax(0,1fr)) !important; gap: 1rem !important; }
+          .values-grid > div { padding: 1.25rem 0.5rem !important; }
+          .values-grid h3 { font-size: 1.35rem !important; overflow-wrap: anywhere; }
         }
+        @media (max-width: 480px) { .values-grid { grid-template-columns: minmax(0,1fr) !important; } }
+        @media (max-width: 900px) { .ship-grid { grid-template-columns: repeat(2,minmax(0,1fr)) !important; } }
+        @media (max-width: 520px) { .ship-grid { grid-template-columns: minmax(0,1fr) !important; } }
 
 /* ── app/(shop)/pages/returns/page.tsx ── */
 @media (max-width: 768px) {
@@ -259,8 +265,14 @@
         @media (max-width: 1024px) {
           .footer-grid { grid-template-columns: 1fr 1fr !important; }
         }
+        /* Phones: brand block full width, Shop|Support side by side, last column full width with 2-col links → a much shorter footer */
         @media (max-width: 640px) {
-          .footer-grid { grid-template-columns: 1fr !important; }
+          .footer-grid { grid-template-columns: 1fr 1fr !important; gap: 1.75rem 1rem !important; }
+          .footer-grid > :first-child, .footer-grid > :last-child { grid-column: 1 / -1; }
+          .footer-grid ul { gap: 0.55rem !important; }
+          .footer-grid > :last-child > ul { display: grid !important; grid-template-columns: 1fr 1fr; margin-bottom: 1.25rem !important; }
+          .footer-grid h3, .footer-grid h4 { margin-bottom: 0.85rem !important; }
+          .footer-grid a { overflow-wrap: anywhere; }
         }
 
 /* ── components/home/Header.tsx ── */
@@ -362,8 +374,15 @@
         }
 
 /* ── components/home/TrendingNow.tsx ── */
-@media (max-width: 768px) { .trend-grid { grid-template-columns: 1fr; } }
-        @media (max-width: 1024px) and (min-width: 769px) { .trend-grid { grid-template-columns: repeat(2,1fr); } }
+.trend-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+/* Phones/tablets: swipeable row of large cards (class rules must not be fought by inline styles) */
+@media (max-width: 1024px) {
+  .trend-grid { display: flex; gap: 0.9rem; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; margin-inline: calc(-1 * clamp(1.25rem, 4vw, 5rem)); padding-inline: clamp(1.25rem, 4vw, 5rem); padding-bottom: 0.75rem; scrollbar-width: none; }
+  .trend-grid::-webkit-scrollbar { display: none; }
+  .trend-card { flex: 0 0 min(72vw, 340px); scroll-snap-align: start; }
+}
+.trend-card a { aspect-ratio: 3 / 4; max-height: 460px; }
+.trend-bar span { display: block; overflow-wrap: anywhere; line-height: 1.3; }
 
 /* ── components/home/TrendingNow.tsx ── */
 .trend-card:hover .trend-img { transform: scale(1.06); }
@@ -390,3 +409,14 @@
 @media (max-width: 1023px) {
   body { padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
 }
+
+/* ── Brand story: don't swallow a whole phone screen ── */
+@media (max-width: 768px) {
+  .bs-section { min-height: 0 !important; }
+  .bs-inner { padding-block: 3.5rem !important; }
+}
+
+/* ── Sold-out state ── */
+.sold-out-tag { position: absolute; left: 8px; bottom: 8px; z-index: 12; background: var(--color-navy); color: var(--color-cream); font: 900 0.62rem/1 var(--font-sans); letter-spacing: 0.14em; padding: 6px 9px; border: 2px solid var(--color-lava); pointer-events: none; }
+button:disabled { cursor: not-allowed; }
+.plp-grid > *, .prod-grid > * { min-width: 0; }

@@ -4,6 +4,8 @@ import Link from "next/link";
 
 const inr = (paise: number) => `₹${(paise / 100).toLocaleString("en-IN")}`;
 const tone = (s: string) => (s === "delivered" ? "is-ok" : s === "cancelled" || s === "returned" ? "is-bad" : s === "shipped" ? "is-info" : "is-warn");
+/** Orders store sku as `${slug}-${size}`; recover the slug for the product link. */
+const slugOf = (i: { sku?: string; size?: string }) => { const sku = i.sku ?? ""; const tail = `-${i.size ?? ""}`; return i.size && sku.endsWith(tail) ? sku.slice(0, -tail.length) : sku; };
 const date = (d: string) => new Date(d).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
 
 export default function OrdersPage() {
@@ -73,7 +75,12 @@ export default function OrdersPage() {
                         {[item.size, item.color].filter(Boolean).join(" · ")}{item.size || item.color ? " · " : ""}Qty {item.quantity}
                       </small>
                     </div>
-                    <b style={{ color: "var(--color-navy)", fontSize: "0.85rem" }}>{inr(item.pricePaise)}</b>
+                    <div style={{ textAlign: "right", display: "grid", gap: 6, justifyItems: "end" }}>
+                      <b style={{ color: "var(--color-navy)", fontSize: "0.85rem" }}>{inr(item.pricePaise)}</b>
+                      {order.fulfillmentStatus !== "cancelled" && order.fulfillmentStatus !== "returned" ? (
+                        <Link href={`/products/${slugOf(item)}#reviews`} className="cv-btn cv-btn-outline cv-btn-sm">Review</Link>
+                      ) : null}
+                    </div>
                   </div>
                 ))}
               </div>
