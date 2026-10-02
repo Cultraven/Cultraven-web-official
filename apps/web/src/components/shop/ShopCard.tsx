@@ -120,9 +120,12 @@ export function ShopCard({ product: p, priority = false }: { product: CardProduc
           {/* Row 1: size chips (each click = add to bag) */}
           <div className="sc-chips-row">
             {single ? (
-              <button type="button" className="sc-chip sc-chip-full" aria-live="polite" onClick={() => quickAdd(v.sizes[0].size)} data-added={added ? "true" : undefined}>
-                {added ? "Added to bag ✓" : "Add to bag"}
-              </button>
+              <>
+                <span className="sc-chips-label">{added ? "Added ✓" : "Add to bag"}</span>
+                <button type="button" className="sc-chip sc-chip-full" aria-live="polite" onClick={() => quickAdd(v.sizes[0].size)} data-added={added ? "true" : undefined}>
+                  {v.sizes[0]?.size ?? "One size"}
+                </button>
+              </>
             ) : (
               <>
               <span className="sc-chips-label">{added ? "Added ✓" : "Add to bag"}</span>
