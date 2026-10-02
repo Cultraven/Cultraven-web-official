@@ -23,6 +23,6 @@ export const useBuyNowStore = create<BuyNowState>()(
       set: (item) => set({ item }),
       clear: () => set({ item: null }),
     }),
-    { name: "cultraven-buy-now", storage: createJSONStorage(() => sessionStorage) }
+    { name: "cultraven-buy-now", skipHydration: true, storage: createJSONStorage(() => sessionStorage) }
   )
 );

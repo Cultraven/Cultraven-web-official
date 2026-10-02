@@ -86,9 +86,9 @@ export default function RegisterPage() {
 
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", zIndex: 1 }}>
           <Link href="/" style={{ display: "inline-block", textDecoration: "none" }}>
-            <Image src="/logo.png" alt="CULTRAVEN" width={240} height={80} style={{ objectFit: "contain", filter: "brightness(0) invert(1)", height: "80px", width: "auto" }} />
+            <Image src="/logo.png" alt="CULTRAVEN" width={80} height={80} style={{ objectFit: "contain", filter: "brightness(0) invert(1)", height: "80px", width: "auto" }} />
           </Link>
-          <Link href="/" style={{ fontFamily: "var(--font-sans)", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(245,241,232,0.55)", textDecoration: "none", display: "flex", alignItems: "center", gap: "0.35rem", border: "1px solid rgba(245,241,232,0.2)", padding: "6px 12px" }}>
+          <Link href="/" style={{ fontFamily: "var(--font-sans)", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(245,241,232,0.55)", textDecoration: "none", display: "flex", alignItems: "center", gap: "0.35rem", border: "1px solid rgba(245,241,232,0.2)", padding: "6px 14px", minHeight: "44px" }}>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square"><polyline points="15 18 9 12 15 6"/></svg>
             Home
           </Link>
@@ -155,7 +155,7 @@ export default function RegisterPage() {
               <label htmlFor="reg-password" style={LABEL}>Password</label>
               <div style={{ position: "relative" }}>
                 <input id="reg-password" type={showPw ? "text" : "password"} autoComplete="new-password" value={form.password} onChange={update("password")} disabled={loading} placeholder="Min 8 characters" style={{ ...inp("password"), paddingRight: "3rem" }} />
-                <button type="button" onClick={() => setShowPw((p) => !p)} style={{ position: "absolute", right: "0.75rem", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "var(--color-gray)", padding: 0, display: "flex", alignItems: "center" }}>
+                <button type="button" aria-label={showPw ? "Hide password" : "Show password"} onClick={() => setShowPw((p) => !p)} style={{ position: "absolute", right: "0", width: "44px", height: "44px", justifyContent: "center", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "var(--color-gray)", padding: 0, display: "flex", alignItems: "center" }}>
                   {showPw
                     ? <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
                     : <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -192,15 +192,15 @@ export default function RegisterPage() {
 
             <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.62rem", color: "var(--color-gray)", textAlign: "center", lineHeight: 1.7, letterSpacing: "0.04em" }}>
               By registering you agree to our{" "}
-              <Link href="/pages/terms" style={{ color: "var(--color-navy)", textDecoration: "underline" }}>Terms</Link>{" & "}
-              <Link href="/pages/privacy" style={{ color: "var(--color-navy)", textDecoration: "underline" }}>Privacy Policy</Link>.
+              <Link href="/pages/terms" style={{ padding: "10px 2px", color: "var(--color-navy)", textDecoration: "underline" }}>Terms</Link>{" & "}
+              <Link href="/pages/privacy" style={{ padding: "10px 2px", color: "var(--color-navy)", textDecoration: "underline" }}>Privacy Policy</Link>.
             </p>
           </form>
 
           <div style={{ marginTop: "2rem", paddingTop: "2rem", borderTop: "1px solid var(--color-line)", textAlign: "center" }}>
             <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-gray)" }}>
               Already a member?{" "}
-              <Link href="/login" style={{ color: "var(--color-navy)", fontWeight: 900, textDecoration: "none", borderBottom: "2px solid var(--color-lava)", paddingBottom: "1px" }}>
+              <Link href="/login" style={{ display: "inline-flex", alignItems: "center", minHeight: "44px", color: "var(--color-navy)", fontWeight: 900, textDecoration: "none", borderBottom: "2px solid var(--color-lava)", paddingBottom: "1px" }}>
                 SIGN IN
               </Link>
             </p>

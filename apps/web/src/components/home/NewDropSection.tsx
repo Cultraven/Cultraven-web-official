@@ -229,6 +229,7 @@ function NewDropCard({ product: p }: { product: DropProduct }) {
         <button
           onClick={(e) => { e.preventDefault(); setWishlisted(w => !w); }}
           aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+          className="wl-touch"
           style={{
             position: "absolute",
             top: "10px",

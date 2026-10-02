@@ -114,6 +114,8 @@ export const useCartStore = create<CartState>()(
     }),
     {
       name: "cultraven-cart",
+      // Rehydrated after mount by <StoreRehydrator/> so the first client render matches the server HTML.
+      skipHydration: true,
       storage: createJSONStorage(() => localStorage),
     }
   )

@@ -46,17 +46,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/category/tshirts`, changeFrequency: "weekly", priority: 0.7 },
     { url: `${BASE}/category/jeans`, changeFrequency: "weekly", priority: 0.7 },
     { url: `${BASE}/category/accessories`, changeFrequency: "weekly", priority: 0.7 },
-    { url: `${BASE}/about`, changeFrequency: "monthly", priority: 0.5 },
-    { url: `${BASE}/contact`, changeFrequency: "monthly", priority: 0.5 },
-    { url: `${BASE}/faq`, changeFrequency: "monthly", priority: 0.5 },
-    { url: `${BASE}/returns`, changeFrequency: "monthly", priority: 0.4 },
-    { url: `${BASE}/shipping-policy`, changeFrequency: "monthly", priority: 0.4 },
-    { url: `${BASE}/privacy-policy`, changeFrequency: "yearly", priority: 0.3 },
-    { url: `${BASE}/terms`, changeFrequency: "yearly", priority: 0.3 },
+    { url: `${BASE}/pages/about`, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${BASE}/pages/contact`, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${BASE}/pages/faq`, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${BASE}/pages/returns`, changeFrequency: "monthly", priority: 0.4 },
+    { url: `${BASE}/pages/shipping`, changeFrequency: "monthly", priority: 0.4 },
+    { url: `${BASE}/pages/privacy`, changeFrequency: "yearly", priority: 0.3 },
+    { url: `${BASE}/pages/terms`, changeFrequency: "yearly", priority: 0.3 },
   ];
 
   const productPages: MetadataRoute.Sitemap = productSlugs.map((slug) => ({
-    url: `${BASE}/product/${slug}`,
+    url: `${BASE}/products/${slug}`,
     changeFrequency: "weekly" as const,
     priority: 0.8,
   }));

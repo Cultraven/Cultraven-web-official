@@ -3,7 +3,7 @@
  * Search Page — /search
  * Full predictive search with trending queries, category/product results.
  */
-import React, { useState, useEffect, useDeferredValue, useMemo } from "react";
+import React, { useState, useEffect, useDeferredValue, useMemo, useRef } from "react";
 import Image from "@/components/common/CmsImage";
 import Link from "next/link";
 
@@ -16,6 +16,14 @@ interface SearchProduct { id: string; title: string; pricePaise: number; categor
 export default function SearchPage() {
   const [query, setQuery] = useState("");
   const [products, setProducts] = useState<SearchProduct[]>([]);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // /search?q=… pre-fills the query; focus the field only where there is no on-screen keyboard to cover the results.
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get("q");
+    if (q) setQuery(q.slice(0, 80));
+    if (window.matchMedia("(hover: hover)").matches) inputRef.current?.focus();
+  }, []);
 
   // The catalog comes from the database (/api/products). Nothing is hardcoded.
   useEffect(() => {
@@ -40,7 +48,9 @@ export default function SearchPage() {
         <div style={{ position: "relative", maxWidth: "640px" }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(245,241,232,0.5)" strokeWidth="2" style={{ position: "absolute", left: "1rem", top: "50%", transform: "translateY(-50%)" }}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <input
-            autoFocus
+            ref={inputRef}
+            type="search"
+            aria-label="Search products"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search products, categories..."

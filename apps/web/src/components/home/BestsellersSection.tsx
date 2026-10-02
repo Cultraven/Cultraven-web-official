@@ -255,6 +255,7 @@ function BestsellerCard({ product: p }: { product: BestProduct }) {
             setWishlisted((w) => !w);
           }}
           aria-label="Toggle wishlist"
+          className="wl-touch"
           style={{
             position: "absolute",
             top: "12px",

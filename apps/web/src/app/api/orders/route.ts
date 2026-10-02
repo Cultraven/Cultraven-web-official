@@ -36,18 +36,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(req: NextRequest) {
-  if (!isAdminRequest(req)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  try {
-    await connectToDatabase();
-    const body = await req.json();
-    const newOrder = await Order.create(body);
-    return NextResponse.json({ order: newOrder }, { status: 201 });
-  } catch (error: unknown) {
-    const msg = error instanceof Error ? error.message : "Failed to create order";
-    return NextResponse.json({ error: msg }, { status: 500 });
-  }
+/** Orders are only ever created server-priced via /api/razorpay/create-order; no mass-assignment endpoint. */
+export async function POST() {
+  return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
 }

@@ -77,7 +77,7 @@ export default function CartPage() {
           </Link>
         </div>
       ) : (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 380px", gap: "3rem", alignItems: "start" }} className="cart-grid">
+        <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) 380px", gap: "3rem", alignItems: "start" }} className="cart-grid">
           {/* ── Cart Items ── */}
           <div>
             {/* Free shipping bar */}
@@ -109,7 +109,8 @@ export default function CartPage() {
               {items.map((item) => (
                 <div
                   key={item.sku}
-                  style={{ display: "grid", gridTemplateColumns: "120px 1fr", gap: "1.5rem", padding: "1.5rem 0", borderBottom: "1px solid var(--color-border)" }}
+                  className="cart-item"
+                  style={{ display: "grid", gridTemplateColumns: "120px minmax(0,1fr)", gap: "1.5rem", padding: "1.5rem 0", borderBottom: "1px solid var(--color-border)" }}
                 >
                   <Link href={`/products/${item.slug}`} style={{ position: "relative", display: "block", aspectRatio: "3/4", overflow: "hidden", backgroundColor: "var(--color-mist)" }}>
                     <Image src={item.image} alt={item.title} fill sizes="120px" style={{ objectFit: "cover" }} />
@@ -132,7 +133,7 @@ export default function CartPage() {
                     </div>
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.75rem" }}>
                       {/* Qty stepper */}
-                      <div style={{ display: "flex", alignItems: "center", border: "2px solid var(--color-navy)", boxShadow: "inset 2px 2px 0px 0px rgba(23,37,69,0.1)" }}>
+                      <div className="cart-qty" style={{ display: "flex", alignItems: "center", border: "2px solid var(--color-navy)", boxShadow: "inset 2px 2px 0px 0px rgba(23,37,69,0.1)" }}>
                         <button
                           onClick={() => updateQty(item.sku, -1)}
                           aria-label="Decrease quantity"
@@ -152,6 +153,7 @@ export default function CartPage() {
                         </button>
                       </div>
                       <button
+                        className="cart-link-btn"
                         onClick={() => removeItem(item.sku)}
                         style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-crimson)", background: "none", border: "none", cursor: "pointer" }}
                       >
@@ -166,11 +168,13 @@ export default function CartPage() {
             <div style={{ paddingTop: "1.5rem", display: "flex", gap: "2rem", alignItems: "center", flexWrap: "wrap" }}>
               <Link
                 href="/collections/all"
+                className="cart-link-btn"
                 style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-navy)", borderBottom: "2px solid var(--color-navy)", paddingBottom: "2px", textDecoration: "none" }}
               >
                 ← CONTINUE SHOPPING
               </Link>
               <button
+                className="cart-link-btn"
                 onClick={clearCart}
                 style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", fontWeight: 600, color: "var(--color-gray)", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}
               >
@@ -180,7 +184,7 @@ export default function CartPage() {
           </div>
 
           {/* ── Order Summary ── */}
-          <div style={{ backgroundColor: "var(--color-mist)", padding: "2rem", position: "sticky", top: "100px" }}>
+          <div className="cart-summary" style={{ backgroundColor: "var(--color-mist)", padding: "2rem", position: "sticky", top: "100px" }}>
             <h2 style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.82rem", letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--color-navy)", marginBottom: "1.5rem" }}>ORDER SUMMARY</h2>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", marginBottom: "1.5rem", paddingBottom: "1.5rem", borderBottom: "1px solid var(--color-border)" }}>
@@ -197,8 +201,9 @@ export default function CartPage() {
             {/* Coupon */}
             <div style={{ marginBottom: "1.5rem" }}>
               <p style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.68rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-navy)", marginBottom: "0.5rem" }}>HAVE A COUPON?</p>
-              <div style={{ display: "flex", gap: "0.5rem" }}>
+              <div className="cart-coupon" style={{ display: "flex", gap: "0.5rem" }}>
                 <input
+                  aria-label="Coupon code"
                   value={coupon}
                   onChange={(e) => { setCoupon(e.target.value); setCouponError(""); }}
                   onKeyDown={(e) => e.key === "Enter" && applyCoupon()}
@@ -213,7 +218,7 @@ export default function CartPage() {
                 </button>
               </div>
               {couponError && <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "var(--color-crimson)", marginTop: "0.4rem" }}>{couponError}</p>}
-              {couponApplied && <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "var(--color-navy)", fontWeight: 700, marginTop: "0.4rem" }}>✓ Coupon applied — 10% off!</p>}
+              {couponApplied && <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "var(--color-navy)", fontWeight: 700, marginTop: "0.4rem" }}>✓ Coupon applied — you save {fmt(discount)}!</p>}
             </div>
 
             <Link

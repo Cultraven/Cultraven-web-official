@@ -8,11 +8,12 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import "@/components/admin/admin.css";
 import { Button, Field } from "@/components/admin/ui";
+import { safeRedirect } from "@/lib/safe-redirect";
 
 function AdminLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirect = searchParams.get("redirect") || "/portal-secure";
+  const redirect = safeRedirect(searchParams.get("redirect"), "/portal-secure", "/portal-secure");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

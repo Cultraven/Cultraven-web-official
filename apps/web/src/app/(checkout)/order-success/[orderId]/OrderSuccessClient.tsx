@@ -70,7 +70,7 @@ function OrderSuccessContent({ orderId }: OrderSuccessClientProps) {
           {paymentId && (
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-gray)" }}>Payment ID</span>
-              <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", color: "var(--color-navy)" }}>{paymentId}</span>
+              <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", color: "var(--color-navy)", wordBreak: "break-all", textAlign: "right", marginLeft: "1rem" }}>{paymentId}</span>
             </div>
           )}
           {amountPaise > 0 && (
@@ -87,8 +87,8 @@ function OrderSuccessContent({ orderId }: OrderSuccessClientProps) {
 
         <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.78rem", color: "var(--color-gray)", marginBottom: "2rem", lineHeight: 1.6 }}>
           🚀 Shipping & tracking updates via WhatsApp.{" "}
-          <a href="https://wa.me/919876543210" style={{ color: "var(--color-navy)", fontWeight: 700 }}>Contact us</a>{" "}or{" "}
-          <a href="mailto:support@cultraven.com" style={{ color: "var(--color-navy)", fontWeight: 700 }}>support@cultraven.com</a>
+          <a href="https://wa.me/919876543210" style={{ color: "var(--color-navy)", fontWeight: 700, display: "inline-flex", alignItems: "center", minHeight: "44px", padding: "0 0.25rem" }}>Contact us</a>{" "}or{" "}
+          <a href="mailto:support@cultraven.com" style={{ color: "var(--color-navy)", fontWeight: 700, display: "inline-flex", alignItems: "center", minHeight: "44px", padding: "0 0.25rem" }}>support@cultraven.com</a>
         </p>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>

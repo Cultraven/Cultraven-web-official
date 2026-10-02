@@ -29,6 +29,8 @@ const config: NextConfig = {
       // { protocol: "https", hostname: "cdn.cultraven.com" },
     ],
     formats: ["image/avif", "image/webp"],
+    // Qualities requested in code (hero uses 70, optimizedImage defaults to 72); required config from Next 16.
+    qualities: [70, 72, 75],
     // Optimized variants are immutable for a given URL — keep them for 30 days instead of the 60s default.
     minimumCacheTTL: 60 * 60 * 24 * 30,
     deviceSizes: [375, 640, 750, 828, 1080, 1200, 1440, 1920],
@@ -90,6 +92,8 @@ const config: NextConfig = {
         destination: "/pages/size-guide",
         permanent: true,
       },
+      // The static blog duplicated the CMS-driven Journal and linked to non-existent posts
+      { source: "/pages/blog/:path*", destination: "/pages/journal", permanent: false },
       // /shop/t-shirts → /shop/category/t-shirts (canonical for social links)
       {
         source: "/shop/:slug",

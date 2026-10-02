@@ -10,6 +10,13 @@ interface Addr { id: string; label: string; name: string; line1: string; line2: 
 const STATES = ["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal","Andaman & Nicobar","Chandigarh","Dadra & Nagar Haveli","Daman & Diu","Delhi","Jammu & Kashmir","Ladakh","Lakshadweep","Puducherry"];
 const EMPTY = { label: "Home", name: "", line1: "", line2: "", city: "", state: "", pincode: "", phone: "", isDefault: false };
 
+/** Module-level (not nested in the page) so inputs keep focus while typing. */
+function Field({ err, label, full, children }: { err?: string; k: string; label: string; full?: boolean; children: React.ReactNode }) {
+  return (
+    <div className={`acct-field ${full ? "full" : ""}`}><label>{label}</label>{children}{err ? <em>{err}</em> : null}</div>
+  );
+}
+
 export default function AddressesPage() {
   const [list, setList] = useState<Addr[] | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -61,9 +68,6 @@ export default function AddressesPage() {
   const remove = async (id: string) => { const r = await fetch(`/api/account/addresses/${id}`, { method: "DELETE" }); setConfirmId(null); if (r.ok) { flash("Address deleted"); load(); } else setError("Could not delete the address"); };
   const edit = (a: Addr) => { setEditingId(a.id); setForm({ label: a.label, name: a.name, line1: a.line1, line2: a.line2, city: a.city, state: a.state, pincode: a.pincode, phone: a.phone, isDefault: a.isDefault }); setErrs({}); };
 
-  const Field = ({ k, label, full, children }: { k: keyof typeof EMPTY; label: string; full?: boolean; children: React.ReactNode }) => (
-    <div className={`acct-field ${full ? "full" : ""}`}><label>{label}</label>{children}{errs[k] ? <em>{errs[k]}</em> : null}</div>
-  );
 
   return (
     <>
@@ -85,14 +89,14 @@ export default function AddressesPage() {
           <div className="acct-card-b">
             {errs._ ? <p role="alert" style={{ color: "#b42318", fontWeight: 700, marginBottom: "1rem" }}>{errs._}</p> : null}
             <div className="acct-form">
-              <Field k="label" label="Label"><select value={form.label} onChange={set("label")}><option>Home</option><option>Work</option><option>Other</option></select></Field>
-              <Field k="name" label="Full name"><input value={form.name} onChange={set("name")} autoComplete="name" /></Field>
-              <Field k="line1" label="Address line 1" full><input value={form.line1} onChange={set("line1")} autoComplete="address-line1" /></Field>
-              <Field k="line2" label="Address line 2 (optional)" full><input value={form.line2} onChange={set("line2")} autoComplete="address-line2" /></Field>
-              <Field k="city" label="City"><input value={form.city} onChange={set("city")} autoComplete="address-level2" /></Field>
-              <Field k="state" label="State"><select value={form.state} onChange={set("state")}><option value="">Select state</option>{STATES.map((s) => <option key={s}>{s}</option>)}</select></Field>
-              <Field k="pincode" label="Pincode"><input inputMode="numeric" maxLength={6} value={form.pincode} onChange={set("pincode")} autoComplete="postal-code" /></Field>
-              <Field k="phone" label="Phone"><input inputMode="tel" maxLength={10} value={form.phone} onChange={set("phone")} autoComplete="tel-national" /></Field>
+              <Field err={errs.label} k="label" label="Label"><select value={form.label} onChange={set("label")}><option>Home</option><option>Work</option><option>Other</option></select></Field>
+              <Field err={errs.name} k="name" label="Full name"><input value={form.name} onChange={set("name")} autoComplete="name" /></Field>
+              <Field err={errs.line1} k="line1" label="Address line 1" full><input value={form.line1} onChange={set("line1")} autoComplete="address-line1" /></Field>
+              <Field err={errs.line2} k="line2" label="Address line 2 (optional)" full><input value={form.line2} onChange={set("line2")} autoComplete="address-line2" /></Field>
+              <Field err={errs.city} k="city" label="City"><input value={form.city} onChange={set("city")} autoComplete="address-level2" /></Field>
+              <Field err={errs.state} k="state" label="State"><select value={form.state} onChange={set("state")}><option value="">Select state</option>{STATES.map((s) => <option key={s}>{s}</option>)}</select></Field>
+              <Field err={errs.pincode} k="pincode" label="Pincode"><input inputMode="numeric" maxLength={6} value={form.pincode} onChange={set("pincode")} autoComplete="postal-code" /></Field>
+              <Field err={errs.phone} k="phone" label="Phone"><input inputMode="tel" maxLength={10} value={form.phone} onChange={set("phone")} autoComplete="tel-national" /></Field>
               <label className="full" style={{ display: "flex", gap: 10, alignItems: "center", fontWeight: 800, fontSize: "0.8rem", color: "var(--color-navy)", cursor: "pointer" }}>
                 <input type="checkbox" checked={form.isDefault} onChange={(e) => setForm((f) => f && { ...f, isDefault: e.target.checked })} /> Make this my default address
               </label>

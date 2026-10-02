@@ -276,3 +276,29 @@
   .adm-toolbar .adm-search { width: 100%; }
   .adm-card-h { flex-wrap: wrap; }
 }
+
+/* ── Touch targets: every control is at least 40px tall/wide on phones and tablets ── */
+@media (max-width: 900px) {
+  .adm-btn, .adm-btn-sm { height: 40px; min-width: 40px; }
+  .adm-btn-icon { width: 40px; }
+  .adm-input, .adm-select { height: 42px; }
+  .adm-nav-item { min-height: 40px; }
+  .adm-nav-sub { padding-top: 8px; padding-bottom: 8px; }
+  .adm-seg button { min-height: 40px; padding: 0 14px; }
+  .adm-check { min-height: 40px; }
+  .adm-switch input { inset: -9px -1px; width: auto; height: auto; }
+  .adm-switch input { width: calc(100% + 2px); height: 40px; top: -9px; bottom: auto; }
+  .adm-login a, .adm-empty a:not(.adm-btn), .adm-table a:not(.adm-btn) { display: inline-flex; align-items: center; min-height: 40px; }
+  .adm-toasts { right: 12px; bottom: 12px; width: calc(100vw - 24px); }
+}
+@media (max-width: 900px) {
+  /* bare table checkboxes: a 40px hit area drawn around a normal-size box */
+  input.adm-check { appearance: none; -webkit-appearance: none; width: 40px; height: 40px; margin: 0; border: 0; background: transparent; position: relative; cursor: pointer; flex-shrink: 0; }
+  input.adm-check::before { content: ""; position: absolute; inset: 11px; border: 2px solid var(--a-border-strong); border-radius: 4px; background: #fff; }
+  input.adm-check:checked::before, input.adm-check:indeterminate::before { background: var(--a-brand); border-color: var(--a-brand); }
+  input.adm-check:checked::after { content: ""; position: absolute; left: 17px; top: 13px; width: 5px; height: 10px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+  input.adm-check:indeterminate::after { content: ""; position: absolute; left: 15px; top: 19px; width: 10px; height: 2px; background: #fff; }
+}
+.adm-seg { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+.adm-seg::-webkit-scrollbar { display: none; }
+.adm-seg button { white-space: nowrap; flex-shrink: 0; }

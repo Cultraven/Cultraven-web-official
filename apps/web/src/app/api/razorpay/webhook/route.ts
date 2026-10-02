@@ -14,7 +14,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import crypto from "crypto";
+import { getWebhookSecret, verifyWebhookSignature } from "@/lib/razorpay";
 import { connectToDatabase } from "@/lib/db";
 import { Order } from "@/lib/models/Order";
 import { Product } from "@/lib/models/Product";
@@ -48,26 +48,12 @@ interface RazorpayWebhookPayload {
 
 // ── Signature verification ────────────────────────────────────────────────────
 function verifySignature(rawBody: string, signature: string): boolean {
-  try {
-    const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
-    if (!secret) {
-      console.error("[webhook] RAZORPAY_WEBHOOK_SECRET not set");
-      return false;
-    }
-
-    const expected = crypto
-      .createHmac("sha256", secret)
-      .update(rawBody)
-      .digest("hex");
-
-    return crypto.timingSafeEqual(
-      Buffer.from(expected, "hex"),
-      Buffer.from(signature, "hex")
-    );
-  } catch (err) {
-    console.error("[webhook] Signature verification failed:", err);
+  const secret = getWebhookSecret();
+  if (!secret) {
+    console.error("[webhook] RAZORPAY_WEBHOOK_SECRET not set");
     return false;
   }
+  return verifyWebhookSignature(rawBody, signature, secret);
 }
 
 // ── Event handlers ────────────────────────────────────────────────────────────

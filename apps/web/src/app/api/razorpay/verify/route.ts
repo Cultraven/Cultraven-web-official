@@ -10,7 +10,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import crypto from "crypto";
+import { getRazorpayConfig, verifyPaymentSignature } from "@/lib/razorpay";
 import { z } from "zod";
 import { connectToDatabase } from "@/lib/db";
 import { Order } from "@/lib/models/Order";
@@ -39,29 +39,12 @@ export async function POST(req: NextRequest) {
 
   const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = result.data;
 
-  const keySecret = process.env.RAZORPAY_KEY_SECRET;
-  if (!keySecret) {
-    console.error("[verify] RAZORPAY_KEY_SECRET not set");
-    return NextResponse.json({ error: "Payment configuration error" }, { status: 500 });
+  const cfg = getRazorpayConfig();
+  if (!cfg) {
+    return NextResponse.json({ error: "Online payments are not configured", code: "PAYMENTS_NOT_CONFIGURED" }, { status: 503 });
   }
 
-  // Generate expected signature: HMAC-SHA256 of "orderId|paymentId"
-  const expectedSignature = crypto
-    .createHmac("sha256", keySecret)
-    .update(`${razorpay_order_id}|${razorpay_payment_id}`)
-    .digest("hex");
-
-  // Timing-safe comparison to prevent timing attacks
-  let isValid = false;
-  try {
-    isValid = crypto.timingSafeEqual(
-      Buffer.from(expectedSignature, "hex"),
-      Buffer.from(razorpay_signature, "hex")
-    );
-  } catch {
-    // Buffers of different length — definitely invalid
-    isValid = false;
-  }
+  const isValid = verifyPaymentSignature(razorpay_order_id, razorpay_payment_id, razorpay_signature, cfg.keySecret);
 
   if (!isValid) {
     console.warn(`[verify] Signature mismatch for order ${razorpay_order_id}`);

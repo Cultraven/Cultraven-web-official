@@ -65,13 +65,13 @@ export default function OrderSuccessClient({ orderId, paymentId, isConfirmed, or
                 {orderId && (
                   <div style={{ display: "flex", justifyContent: "space-between" }}>
                     <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-gray)" }}>Order ID</span>
-                    <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", color: "var(--color-navy)" }}>{orderId}</span>
+                    <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", color: "var(--color-navy)", wordBreak: "break-all", textAlign: "right", marginLeft: "1rem" }}>{orderId}</span>
                   </div>
                 )}
                 {paymentId && (
                   <div style={{ display: "flex", justifyContent: "space-between" }}>
                     <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-gray)" }}>Payment ID</span>
-                    <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", color: "var(--color-navy)" }}>{paymentId}</span>
+                    <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", color: "var(--color-navy)", wordBreak: "break-all", textAlign: "right", marginLeft: "1rem" }}>{paymentId}</span>
                   </div>
                 )}
                 {amountPaise > 0 && (
@@ -108,8 +108,8 @@ export default function OrderSuccessClient({ orderId, paymentId, isConfirmed, or
 
         <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", color: "var(--color-gray)", marginBottom: "2rem", lineHeight: 1.6 }}>
           🚀 Shipping & tracking updates will be sent via WhatsApp. For queries:{" "}
-          <a href="https://wa.me/919876543210" style={{ color: "var(--color-navy)", fontWeight: 700 }}>WhatsApp</a>{" "}or{" "}
-          <a href="mailto:support@cultraven.com" style={{ color: "var(--color-navy)", fontWeight: 700 }}>support@cultraven.com</a>
+          <a href="https://wa.me/919876543210" style={{ color: "var(--color-navy)", fontWeight: 700, display: "inline-flex", alignItems: "center", minHeight: "44px", padding: "0 0.25rem" }}>WhatsApp</a>{" "}or{" "}
+          <a href="mailto:support@cultraven.com" style={{ color: "var(--color-navy)", fontWeight: 700, display: "inline-flex", alignItems: "center", minHeight: "44px", padding: "0 0.25rem" }}>support@cultraven.com</a>
         </p>
 
         <div style={{ display: "flex", gap: "0.75rem", flexDirection: "column" }}>

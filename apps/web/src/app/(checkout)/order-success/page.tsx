@@ -1,6 +1,7 @@
 import React, { Suspense } from "react";
 import { connectToDatabase } from "@/lib/db";
 import { Order } from "@/lib/models/Order";
+import { maskEmail } from "@/lib/mask-email";
 import OrderSuccessClient from "./OrderSuccessClient";
 
 interface Props {
@@ -9,7 +10,8 @@ interface Props {
 
 export default async function OrderSuccessPage({ searchParams }: Props) {
   const resolvedParams = await searchParams;
-  const orderId = resolvedParams.orderId as string | undefined;
+  const rawId = resolvedParams.orderId;
+  const orderId = (Array.isArray(rawId) ? rawId[0] : rawId)?.slice(0, 64);
   
   let isConfirmed = false;
   let orderData = null;
@@ -30,7 +32,7 @@ export default async function OrderSuccessPage({ searchParams }: Props) {
       
       if (order) {
         orderData = {
-          email: order.deliveryAddress?.email || "",
+          email: maskEmail(order.deliveryAddress?.email || ""),
           amountPaise: order.totalPaise || 0,
         };
         // For COD, "pending" is expected. For Razorpay, we expect "paid" after webhook.

@@ -22,6 +22,7 @@ export default function NotFound() {
         style={{
           display: "flex",
           alignItems: "center",
+          minHeight: "44px",
           gap: "0.75rem",
           marginBottom: "4rem",
           textDecoration: "none",

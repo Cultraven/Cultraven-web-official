@@ -27,7 +27,7 @@ export const useWishlistStore = create<WishlistState>()(
       remove: (id) => set((s) => ({ items: s.items.filter((i) => i.id !== id) })),
       has: (id) => get().items.some((i) => i.id === id),
     }),
-    { name: "cultraven-wishlist", storage: createJSONStorage(() => localStorage) }
+    { name: "cultraven-wishlist", skipHydration: true, storage: createJSONStorage(() => localStorage) }
   )
 );
 

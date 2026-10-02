@@ -22,6 +22,7 @@ interface OrderItem {
 
 interface DeliveryAddress {
   name: string;
+  email?: string;
   line1: string;
   line2?: string;
   city: string;
@@ -73,6 +74,7 @@ const OrderItemSchema = new Schema<OrderItem>({
 
 const AddressSchema = new Schema<DeliveryAddress>({
   name: { type: String, required: true },
+  email: { type: String },
   line1: { type: String, required: true },
   line2: { type: String },
   city: { type: String, required: true },
@@ -125,7 +127,8 @@ const OrderSchema = new Schema<IOrder>(
 
 // ── Indexes ──────────────────────────────────────────────────────────────────
 OrderSchema.index({ userId: 1, createdAt: -1 });
-OrderSchema.index({ razorpayOrderId: 1 }, { unique: true });
+// razorpayOrderId is already indexed (unique + sparse) on the field; a second non-sparse unique index would
+// make every COD order (no Razorpay id) collide on null.
 OrderSchema.index({ razorpayPaymentId: 1 }, { sparse: true });
 OrderSchema.index({ paymentStatus: 1, fulfillmentStatus: 1 });
 

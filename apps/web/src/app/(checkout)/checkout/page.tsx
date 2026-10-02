@@ -181,14 +181,13 @@ export default function CheckoutPage() {
             state: form.state,
             pincode: form.pincode
           },
-          userId: "guest", // Could fetch from session if logged in
           paymentMethod,
           couponCode: couponCode || undefined,
         }),
       });
 
       if (!res.ok) {
-        const data = await res.json();
+        const data = await res.json().catch(() => ({} as { error?: string }));
         throw new Error(data.error ?? "Order creation failed");
       }
 
@@ -218,10 +217,31 @@ export default function CheckoutPage() {
           contact: form.phone,
         },
         theme: { color: "var(--color-navy)" },
-        handler: (response: any) => {
-          // Payment successful — redirect to order success
-          // Note: server-side webhook (payment.captured) is the authoritative confirmation
-          router.push(`/order-success?paymentId=${response.razorpay_payment_id}&orderId=${response.razorpay_order_id}`);
+        handler: async (response: any) => {
+          // Verify the payment signature server-side BEFORE showing success.
+          // (The webhook remains the authoritative capture confirmation.)
+          try {
+            const vr = await fetch("/api/razorpay/verify", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
+            const vd = await vr.json().catch(() => ({}));
+            if (!vr.ok || vd.verified !== true) {
+              throw new Error(vd.error ?? "Payment could not be verified");
+            }
+            router.push(`/order-success?paymentId=${response.razorpay_payment_id}&orderId=${response.razorpay_order_id}`);
+          } catch (err) {
+            console.error("[checkout] Payment verification failed:", err);
+            setPaymentError(
+              `We could not verify your payment${err instanceof Error && err.message ? ` (${err.message})` : ""}. If money was deducted it will be refunded; please try again or choose Cash on Delivery.`
+            );
+            setLoading(false);
+          }
         },
         modal: {
           ondismiss: () => {
@@ -477,7 +497,7 @@ export default function CheckoutPage() {
                   disabled={loading}
                   style={{ width: "70%", padding: "1.1rem", backgroundColor: "var(--color-navy)", color: "var(--color-cream)", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.82rem", letterSpacing: "0.14em", textTransform: "uppercase", border: "none", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.75 : 1 }}
                 >
-                  {loading ? "PROCESSING..." : `PAY ${fmt(total)}`}
+                  {loading ? "PROCESSING..." : paymentMethod === "cod" ? `PLACE ORDER · ${fmt(total)}` : `PAY ${fmt(total)}`}
                 </button>
               </div>
 

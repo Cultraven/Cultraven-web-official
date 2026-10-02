@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Archivo, Hanken_Grotesk, Noto_Sans_Devanagari } from "next/font/google";
 import "@/styles/globals.css";
 import { ChatWidgetGate } from "@/components/common/ChatWidgetGate";
+import { StoreRehydrator } from "@/components/common/StoreRehydrator";
 import { ToastProvider } from "@/components/common/Toast";
 
 // ─── Font loading (next/font — zero layout shift) ─────────────────────────────
@@ -153,6 +154,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       </head>
       <body suppressHydrationWarning>
         <ToastProvider>
+          <StoreRehydrator />
           {children}
           <ChatWidgetGate />
         </ToastProvider>

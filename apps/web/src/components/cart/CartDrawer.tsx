@@ -28,6 +28,7 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
   const removeItem = useCartStore((s) => s.removeItem);
   const setQuantity = useCartStore((s) => s.setQuantity);
   const drawerRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
 
   const subtotal = items.reduce((s, i) => s + i.pricePaise * i.quantity, 0);
   const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
@@ -67,6 +68,7 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
+  useEffect(() => { if (open && mounted) closeRef.current?.focus(); }, [open, mounted]);
 
   if (!mounted) return null;
 
@@ -93,6 +95,7 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
         role="dialog"
         aria-modal="true"
         aria-label="Shopping cart"
+        aria-hidden={!open}
         style={{
           position: "fixed",
           top: 0,
@@ -102,7 +105,8 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
           backgroundColor: "var(--color-stone)",
           zIndex: 9999,
           transform: open ? "translateX(0)" : "translateX(100%)",
-          transition: "transform 0.35s cubic-bezier(0.4,0,0.2,1)",
+          visibility: open ? "visible" : "hidden",
+          transition: `transform 0.35s cubic-bezier(0.4,0,0.2,1), visibility 0s linear ${open ? "0s" : "0.35s"}`,
           display: "flex",
           flexDirection: "column",
           borderLeft: "2px solid var(--color-raven)",
@@ -133,6 +137,8 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
           <button
             onClick={onClose}
             aria-label="Close cart"
+            className="cd-close"
+            ref={closeRef}
             style={{
               background: "var(--color-raven)",
               border: "2px solid var(--color-raven)",
@@ -220,11 +226,11 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
                       </p>
                       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "0.75rem" }}>
                         <div style={{ display: "flex", alignItems: "center", border: "2px solid var(--color-raven)", boxShadow: "2px 2px 0px 0px var(--color-raven)", backgroundColor: "var(--color-bone)" }}>
-                          <button onClick={() => updateQty(item.sku, -1)} aria-label="Decrease" style={{ width: "28px", height: "28px", background: "none", border: "none", cursor: "pointer", color: "var(--color-raven)", fontSize: "1rem", fontWeight: 900 }}>−</button>
+                          <button className="cd-qty-btn" onClick={() => updateQty(item.sku, -1)} aria-label="Decrease" style={{ width: "28px", height: "28px", background: "none", border: "none", cursor: "pointer", color: "var(--color-raven)", fontSize: "1rem", fontWeight: 900 }}>−</button>
                           <span style={{ width: "28px", textAlign: "center", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", color: "var(--color-raven)" }}>{item.quantity}</span>
-                          <button onClick={() => updateQty(item.sku, 1)} aria-label="Increase" style={{ width: "28px", height: "28px", background: "none", border: "none", cursor: "pointer", color: "var(--color-raven)", fontSize: "1rem", fontWeight: 900 }}>+</button>
+                          <button className="cd-qty-btn" onClick={() => updateQty(item.sku, 1)} aria-label="Increase" style={{ width: "28px", height: "28px", background: "none", border: "none", cursor: "pointer", color: "var(--color-raven)", fontSize: "1rem", fontWeight: 900 }}>+</button>
                         </div>
-                        <button onClick={() => removeItem(item.sku)} style={{ fontFamily: "var(--font-sans)", fontSize: "10px", fontWeight: 900, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--color-smoke)", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}>
+                        <button className="cd-remove" onClick={() => removeItem(item.sku)} style={{ fontFamily: "var(--font-sans)", fontSize: "10px", fontWeight: 900, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--color-smoke)", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}>
                           REMOVE
                         </button>
                       </div>
@@ -235,23 +241,6 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
             </>
           )}
           
-          {/* Upsell Section (Only if items exist) */}
-          {items.length > 0 && (
-            <div style={{ padding: "1.5rem", backgroundColor: "var(--color-bone)", marginTop: "auto", borderTop: "2px solid var(--color-raven)" }}>
-              <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-                <div style={{ position: "relative", width: "60px", aspectRatio: "1", border: "2px solid var(--color-raven)", flexShrink: 0, backgroundColor: "var(--color-line)" }}>
-                  <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "8px", fontFamily: "var(--font-mono)", color: "var(--color-smoke)", textAlign: "center" }} data-todo="real-photo">CAP IMAGE</div>
-                </div>
-                <div style={{ flex: 1 }}>
-                  <p style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "11px", color: "var(--color-raven)", textTransform: "uppercase", marginBottom: "4px" }}>Add a Cult Cap?</p>
-                  <p style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "12px", color: "var(--color-smoke)", marginBottom: "4px" }}>{fmt(99900)}</p>
-                </div>
-                <button style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "10px", padding: "6px 12px", border: "2px solid var(--color-raven)", backgroundColor: "var(--color-bone)", color: "var(--color-raven)", cursor: "pointer", boxShadow: "2px 2px 0px 0px var(--color-raven)" }}>
-                  ADD
-                </button>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Footer */}

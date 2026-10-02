@@ -267,6 +267,7 @@ export const SECTIONS: SectionDef[] = [
         { kind: "text", key: "date", label: "Date label (e.g. Sep 2026)", max: 20 },
         { kind: "image", key: "image", label: "Image", required: true },
         { kind: "textarea", key: "excerpt", label: "Excerpt", max: 300 },
+        { kind: "textarea", key: "body", label: "Article body (blank line = new paragraph)", max: 8000 },
         { kind: "text", key: "slug", label: "URL slug", required: true, max: 100 },
         active,
       ] },

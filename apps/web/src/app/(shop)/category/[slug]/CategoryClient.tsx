@@ -229,7 +229,7 @@ function CategoryClientInner({ slug, categoryName }: CategoryClientProps) {
 
       {/* ── Hero ──────────────────────────────────────────────────────────── */}
       <div style={{ backgroundColor: "var(--color-navy)", padding: "clamp(3rem,6vw,6rem) clamp(1.25rem,4vw,5rem)", paddingTop: "calc(clamp(3rem,6vw,6rem) + 80px)" }}>
-        <nav style={{ marginBottom: "1rem" }}>
+        <nav aria-label="Breadcrumb" style={{ marginBottom: "1rem" }}>
           <Link href="/" style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", color: "rgba(245,241,232,0.5)", textDecoration: "none", letterSpacing: "0.1em" }}>HOME</Link>
           <span style={{ color: "rgba(245,241,232,0.3)", margin: "0 0.5rem" }}>/</span>
           <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", color: "rgba(245,241,232,0.9)", letterSpacing: "0.1em" }}>{categoryName.toUpperCase()}</span>
@@ -248,7 +248,7 @@ function CategoryClientInner({ slug, categoryName }: CategoryClientProps) {
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
             <button
               onClick={() => setFilterOpen(!filterOpen)}
-              style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-navy)", background: "none", border: "1.5px solid var(--color-navy)", padding: "0.5rem 1rem", cursor: "pointer" }}
+              style={{ display: "flex", alignItems: "center", gap: "0.5rem", minHeight: "44px", fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-navy)", background: "none", border: "1.5px solid var(--color-navy)", padding: "0.5rem 1rem", cursor: "pointer" }}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
               FILTER {activeFiltersCount > 0 && `(${activeFiltersCount})`}

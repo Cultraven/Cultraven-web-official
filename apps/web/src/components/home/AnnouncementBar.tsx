@@ -70,12 +70,12 @@ export function AnnouncementBar({ data }: AnnouncementBarProps) {
         aria-label="Dismiss announcement"
         style={{
           position: "absolute",
-          right: "1rem",
+          right: 0,
           top: "50%",
           transform: "translateY(-50%)",
           zIndex: 10,
-          width: "20px",
-          height: "20px",
+          width: "44px",
+          height: "36px",
           color: "rgba(245,241,232,0.5)",
           background: "transparent",
           border: "none",

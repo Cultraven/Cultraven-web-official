@@ -131,6 +131,7 @@ export function ChatWidget() {
     <>
       {/* ── Floating button ── */}
       <div
+        className="chat-fab"
         style={{
           position: "fixed",
           bottom: "calc(env(safe-area-inset-bottom) + 88px)",
@@ -151,6 +152,7 @@ export function ChatWidget() {
         )}
         <button
           id="chat-widget-toggle"
+          className="chat-toggle"
           aria-label={open ? "Close support" : "Open chat support"}
           aria-expanded={open}
           onClick={() => setOpen((o) => !o)}
@@ -184,14 +186,14 @@ export function ChatWidget() {
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square">
                 <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
               </svg>
-              <span style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "11px", letterSpacing: "0.12em", textTransform: "uppercase" }}>CLOSE</span>
+              <span className="chat-toggle-label" style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "11px", letterSpacing: "0.12em", textTransform: "uppercase" }}>CLOSE</span>
             </>
           ) : (
             <>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
               </svg>
-              <span style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "11px", letterSpacing: "0.12em", textTransform: "uppercase" }}>NEED HELP?</span>
+              <span className="chat-toggle-label" style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "11px", letterSpacing: "0.12em", textTransform: "uppercase" }}>NEED HELP?</span>
             </>
           )}
         </button>
@@ -203,6 +205,7 @@ export function ChatWidget() {
           role="dialog"
           aria-modal="true"
           aria-label="Chat support"
+          className="chat-panel"
           style={{
             position: "fixed",
             bottom: "calc(env(safe-area-inset-bottom) + 152px)",
@@ -476,7 +479,7 @@ export function ChatWidget() {
 
           {/* Tab: Chat */}
           {tab === "chat" && (
-            <div style={{ display: "flex", flexDirection: "column", height: "380px" }}>
+            <div style={{ display: "flex", flexDirection: "column", height: "min(380px, calc(100dvh - 300px))" }}>
               {/* Messages */}
               <div
                 role="log"

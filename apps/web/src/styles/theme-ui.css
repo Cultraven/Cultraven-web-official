@@ -164,3 +164,13 @@
 .footer-divider::after {
   content: ""; display: block; height: 3px; background: var(--color-lava);
 }
+
+/* ── My Account: comfortable touch targets (>= 44px) on phones and tablets ── */
+@media (max-width: 1000px) {
+  .acct-link { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; padding: 0 2px; }
+  .acct-wish-x { width: 44px; height: 44px; }
+  .acct-field input:not([type="checkbox"]), .acct-field select { min-height: 44px; }
+  .acct-card .cv-btn-sm, .acct-addr-actions .cv-btn-sm, .acct-wish-b .cv-btn { min-height: 44px; }
+  .acct-form label.full { min-height: 44px; }
+  .acct-form label.full input[type="checkbox"] { width: 20px; height: 20px; }
+}

@@ -15,36 +15,36 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { getRazorpayConfig } from "@/lib/razorpay";
 import Razorpay from "razorpay";
 import { connectToDatabase } from "@/lib/db";
 import { Order } from "@/lib/models/Order";
 import { Product } from "@/lib/models/Product";
+import { customerFromRequest } from "@/lib/customer-auth";
 import { validateCoupon } from "@/lib/promotion-service";
 import { FREE_SHIPPING_THRESHOLD, SHIPPING_FEE, COD_FEE, COD_MAX_LIMIT } from "@/lib/constants";
 
 // ── Zod schema ────────────────────────────────────────────────────────────────
 const BodySchema = z.object({
-  userId: z.string().optional().default("guest"),
   items: z.array(z.object({
-    slug: z.string(),
-    quantity: z.number().int().min(1),
-    size: z.string().optional(),
-    color: z.string().optional(),
-  })).min(1, "Cart is empty"),
-  currency: z.string().default("INR"),
+    slug: z.string().min(1).max(200),
+    quantity: z.number().int().min(1).max(20),
+    size: z.string().max(40).optional(),
+    color: z.string().max(60).optional(),
+  })).min(1, "Cart is empty").max(50),
   receipt: z.string().trim().max(40).optional(),
   name: z.string().trim().max(100),
-  email: z.string().email(),
+  email: z.string().email().max(200),
   phone: z.string().regex(/^\d{10}$/, "Invalid phone"),
   address: z.object({
-    line1: z.string(),
-    line2: z.string().optional(),
-    city: z.string(),
-    state: z.string(),
-    pincode: z.string(),
+    line1: z.string().trim().min(1).max(200),
+    line2: z.string().max(200).optional(),
+    city: z.string().trim().min(1).max(100),
+    state: z.string().trim().min(1).max(100),
+    pincode: z.string().regex(/^\d{6}$/, "Invalid pincode"),
   }),
   paymentMethod: z.enum(["razorpay", "cod"]).default("razorpay"),
-  couponCode: z.string().optional(),
+  couponCode: z.string().max(40).optional(),
 });
 
 // ── Rate limiting (production: use Upstash Redis) ─────────────────────────────
@@ -66,14 +66,9 @@ function isRateLimited(ip: string): boolean {
 
 // ── Razorpay client (server-only) ─────────────────────────────────────────────
 function getRazorpayClient(): Razorpay {
-  const key_id = process.env.RAZORPAY_KEY_ID;
-  const key_secret = process.env.RAZORPAY_KEY_SECRET;
-
-  if (!key_id || !key_secret) {
-    throw new Error("Razorpay keys not configured");
-  }
-
-  return new Razorpay({ key_id, key_secret });
+  const cfg = getRazorpayConfig();
+  if (!cfg) throw new Error("Razorpay keys not configured");
+  return new Razorpay({ key_id: cfg.keyId, key_secret: cfg.keySecret });
 }
 
 export async function POST(req: NextRequest) {
@@ -101,27 +96,50 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { currency, receipt, name, email, phone, items, address, userId, paymentMethod, couponCode } = result.data;
+  const { receipt, name, email, phone, items, address, paymentMethod, couponCode } = result.data;
+  // Never trust client-supplied identity or currency: the owner comes from the signed session, the currency is fixed.
+  const userId = customerFromRequest(req)?.userId ?? "guest";
+  const currency = "INR";
+
+  // Online payment needs the Razorpay keys (placeholders in .env count as missing). COD never does.
+  const razorpayConfig = getRazorpayConfig();
+  if (paymentMethod !== "cod" && !razorpayConfig) {
+    return NextResponse.json(
+      { error: "Online payments are not available right now. Please choose Cash on Delivery.", code: "PAYMENTS_NOT_CONFIGURED" },
+      { status: 503 }
+    );
+  }
 
   try {
     await connectToDatabase();
 
     // 1. Load prices from catalogue
-    const slugs = items.map((i) => i.slug);
+    const slugs = Array.from(new Set(items.map((i) => i.slug)));
     const dbProducts = await Product.find({ slug: { $in: slugs } });
-    if (dbProducts.length !== items.length) {
-      // Could be some products were deleted or inactive, simplify for now
+    if (dbProducts.length !== slugs.length) {
+      // Some products were deleted or are unknown
       return NextResponse.json({ error: "Some items in your cart are invalid or out of stock" }, { status: 400 });
     }
 
-    const productMap = new Map(dbProducts.map((p) => [p.slug, p.pricePaise]));
+    const productMap = new Map(dbProducts.map((p) => [p.slug, p]));
 
-    // 2. Compute subtotal
+    // 2. Compute subtotal from catalogue prices (never from the client); snapshot what the Order schema requires
     let subtotalPaise = 0;
     const finalItems = items.map((item) => {
-      const price = productMap.get(item.slug) || 0;
+      const p = productMap.get(item.slug)!;
+      const price = p.pricePaise || 0;
       subtotalPaise += price * item.quantity;
-      return { ...item, pricePaise: price };
+      const size = item.size || "Free Size";
+      return {
+        productId: String(p._id),
+        sku: `${p.slug}-${size}`.slice(0, 120),
+        title: p.title,
+        image: p.image || (p.images && p.images[0]) || "",
+        size,
+        color: item.color || "",
+        quantity: item.quantity,
+        pricePaise: price,
+      };
     });
 
     // 3. Validate coupon and apply discount
@@ -183,7 +201,8 @@ export async function POST(req: NextRequest) {
         pincode: address.pincode,
       },
       paymentMethod,
-      razorpayOrderId,
+      // Omit entirely for COD: a stored null would collide on the unique razorpayOrderId index.
+      ...(razorpayOrderId ? { razorpayOrderId } : {}),
       paymentStatus: paymentMethod === "cod" ? "pending" : "pending",
       fulfillmentStatus: "processing",
     });
@@ -199,7 +218,7 @@ export async function POST(req: NextRequest) {
         dbOrderId: newOrder._id,
         amount: amountPaise,
         currency,
-        keyId: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ?? "",
+        keyId: razorpayConfig?.keyId ?? "",
       },
       { status: 200 }
     );

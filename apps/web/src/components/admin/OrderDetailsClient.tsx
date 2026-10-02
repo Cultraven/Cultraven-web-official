@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Alert, Badge, Button, Card, EmptyState, LinkButton, PageHeader, Skeleton, inr, useApi, useToast } from "./ui";
 
 type Item = { productId?: string; title: string; image?: string; size?: string; color?: string; quantity: number; pricePaise: number };
-type Address = { name?: string; email?: string; phone?: string; addressLine1?: string; addressLine2?: string; city?: string; state?: string; pincode?: string };
+type Address = { line1?: string; line2?: string; name?: string; email?: string; phone?: string; addressLine1?: string; addressLine2?: string; city?: string; state?: string; pincode?: string };
 type Order = {
   _id: string;
   orderNumber?: string;
@@ -97,7 +97,7 @@ export default function OrderDetailsClient({ id }: { id: string }) {
   const items = order.items ?? [];
   const subtotal = order.subtotalPaise ?? items.reduce((s, i) => s + i.pricePaise * i.quantity, 0);
   const title = order.razorpayOrderId || order.orderNumber || order._id;
-  const addr = [a.addressLine1, a.addressLine2, [a.city, a.state].filter(Boolean).join(", "), a.pincode].filter(Boolean);
+  const addr = [a.line1 ?? a.addressLine1, a.line2 ?? a.addressLine2, [a.city, a.state].filter(Boolean).join(", "), a.pincode].filter(Boolean);
 
   return (
     <>

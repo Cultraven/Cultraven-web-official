@@ -3,11 +3,12 @@ import React, { Suspense, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
+import { safeRedirect } from "@/lib/safe-redirect";
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirect = searchParams.get("redirect") || "/account";
+  const redirect = safeRedirect(searchParams.get("redirect"), "/account");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -81,9 +82,9 @@ function LoginForm() {
         {/* Top bar: logo + back */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", zIndex: 1 }}>
           <Link href="/" style={{ display: "inline-block", textDecoration: "none" }}>
-            <Image src="/logo.png" alt="CULTRAVEN" width={240} height={80} style={{ objectFit: "contain", filter: "brightness(0) invert(1)", height: "80px", width: "auto" }} />
+            <Image src="/logo.png" alt="CULTRAVEN" width={80} height={80} style={{ objectFit: "contain", filter: "brightness(0) invert(1)", height: "80px", width: "auto" }} />
           </Link>
-          <Link href="/" style={{ fontFamily: "var(--font-sans)", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(245,241,232,0.55)", textDecoration: "none", display: "flex", alignItems: "center", gap: "0.35rem", border: "1px solid rgba(245,241,232,0.2)", padding: "6px 12px" }}>
+          <Link href="/" style={{ fontFamily: "var(--font-sans)", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(245,241,232,0.55)", textDecoration: "none", display: "flex", alignItems: "center", gap: "0.35rem", border: "1px solid rgba(245,241,232,0.2)", padding: "6px 14px", minHeight: "44px" }}>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square"><polyline points="15 18 9 12 15 6"/></svg>
             Home
           </Link>
@@ -127,11 +128,11 @@ function LoginForm() {
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "0.45rem" }}>
                 <label htmlFor="login-password" style={{ ...LABEL, marginBottom: 0 }}>Password</label>
-                <Link href="/forgot-password" style={{ fontFamily: "var(--font-sans)", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-lava)", textDecoration: "none", borderBottom: "1px solid var(--color-lava)" }}>Forgot?</Link>
+                <Link href="/forgot-password" style={{ fontFamily: "var(--font-sans)", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-lava)", textDecoration: "underline", padding: "12px 0" }}>Forgot?</Link>
               </div>
               <div style={{ position: "relative" }}>
                 <input id="login-password" type={showPw ? "text" : "password"} required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} disabled={loading} placeholder="••••••••" style={{ ...INPUT, paddingRight: "3rem" }} />
-                <button type="button" onClick={() => setShowPw((p) => !p)} style={{ position: "absolute", right: "0.75rem", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "var(--color-gray)", padding: 0, display: "flex", alignItems: "center" }}>
+                <button type="button" aria-label={showPw ? "Hide password" : "Show password"} onClick={() => setShowPw((p) => !p)} style={{ position: "absolute", right: "0", width: "44px", height: "44px", justifyContent: "center", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "var(--color-gray)", padding: 0, display: "flex", alignItems: "center" }}>
                   {showPw
                     ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
                     : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -160,7 +161,7 @@ function LoginForm() {
           <div style={{ marginTop: "2rem", paddingTop: "2rem", borderTop: "1px solid var(--color-line)" }}>
             <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-gray)", textAlign: "center" }}>
               Don&apos;t have an account?{" "}
-              <Link href="/register" style={{ color: "var(--color-navy)", fontWeight: 900, textDecoration: "none", borderBottom: "2px solid var(--color-lava)", paddingBottom: "1px" }}>
+              <Link href="/register" style={{ display: "inline-flex", alignItems: "center", minHeight: "44px", color: "var(--color-navy)", fontWeight: 900, textDecoration: "none", borderBottom: "2px solid var(--color-lava)", paddingBottom: "1px" }}>
                 CREATE ACCOUNT
               </Link>
             </p>

@@ -104,6 +104,7 @@ export function CookieConsentBanner() {
           onClick={decline}
           style={{
             padding: "0.625rem 1.5rem",
+            minHeight: "44px",
             backgroundColor: "transparent",
             color: "rgba(245,241,232,0.7)",
             fontFamily: "var(--font-sans)",
@@ -131,6 +132,7 @@ export function CookieConsentBanner() {
           onClick={accept}
           style={{
             padding: "0.625rem 1.75rem",
+            minHeight: "44px",
             backgroundColor: "var(--color-crimson)",
             color: "var(--color-cream)",
             fontFamily: "var(--font-sans)",

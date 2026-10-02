@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import type { NavMenu } from "@shop/types";
 import { MegaMenu } from "./MegaMenu";
 import { CartBadge } from "./CartBadge";
+import { useUiStore } from "@/store/ui";
 import { CartDrawerHost } from "@/components/cart/CartDrawerHost";
 
 interface HeaderProps {
@@ -21,6 +22,7 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
 
   const [isScrolled, setIsScrolled] = useState(!isHomepage);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const openCart = useUiStore((s) => s.openCart);
 
   useEffect(() => {
     if (!isHomepage) {
@@ -115,14 +117,14 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
           </Link>
 
           {/* Desktop Nav */}
-          <nav style={{ display: "flex", flex: 1, justifyContent: "center" }} className="hide-mobile">
+          <div className="header-nav-wrap">
             <MegaMenu
               navMenu={navMenu}
               mobileOpen={mobileMenuOpen}
               onMobileClose={() => setMobileMenuOpen(false)}
               isScrolled={!transparent}
             />
-          </nav>
+          </div>
 
           {/* Right actions */}
           <div style={{ display: "flex", alignItems: "center", gap: "0.25rem", flexShrink: 0 }}>
@@ -184,8 +186,8 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
             </svg>
             <span>Wishlist</span>
           </Link>
-          <div className="bottom-nav-item">
-            <CartBadge isScrolled={false} />
+          <div className="bottom-nav-item" onClick={openCart} style={{ cursor: "pointer" }}>
+            <CartBadge isScrolled />
             <span>Bag</span>
           </div>
         </div>

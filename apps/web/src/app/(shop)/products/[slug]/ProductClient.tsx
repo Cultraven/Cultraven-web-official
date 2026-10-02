@@ -142,11 +142,7 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
     <div style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh" }}>
       {/* Back + Breadcrumb */}
       <div style={{ paddingInline: "clamp(1.25rem,4vw,5rem)", paddingTop: "2rem", paddingBottom: "0.5rem" }}>
-        <Link href="/collections/all" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", fontFamily: "var(--font-sans)", fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-gray)", textDecoration: "none", marginBottom: "0.6rem" }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square"><polyline points="15 18 9 12 15 6"/></svg>
-          Back to Shop
-        </Link>
-        <nav style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+        <nav aria-label="Breadcrumb" style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
           {[{ label: "Home", href: "/" }, { label: "Shop", href: "/collections/all" }, { label: finalName }].map((c, i, arr) => (
             <React.Fragment key={i}>
               {c.href ? <Link href={c.href} style={{ fontFamily: "var(--font-sans)", fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-gray)", textDecoration: "none" }}>{c.label}</Link> : <span style={{ fontFamily: "var(--font-sans)", fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-navy)" }}>{c.label}</span>}
@@ -186,7 +182,7 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
               ))}
             </div>
             {/* Discount badge */}
-            <span style={{ position: "absolute", top: "16px", left: "16px", backgroundColor: "var(--color-crimson)", color: "var(--color-cream)", fontFamily: "var(--font-mono)", fontSize: "12px", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", padding: "5px 10px", border: "2px solid var(--color-navy)", boxShadow: "2px 2px 0px 0px var(--color-navy)", transform: "rotate(-3deg)" }}>{disc}% OFF</span>
+            {disc > 0 && <span style={{ position: "absolute", top: "16px", left: "16px", backgroundColor: "var(--color-crimson)", color: "var(--color-cream)", fontFamily: "var(--font-mono)", fontSize: "12px", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", padding: "5px 10px", border: "2px solid var(--color-navy)", boxShadow: "2px 2px 0px 0px var(--color-navy)", transform: "rotate(-3deg)" }}>{disc}% OFF</span>}
           </div>
         </div>
 
@@ -205,7 +201,7 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
                 <svg key={i} width="13" height="13" viewBox="0 0 24 24" fill={i < Math.floor(rating) ? "var(--color-crimson)" : (i < rating ? "var(--color-crimson)" : "none")} stroke="var(--color-crimson)" strokeWidth="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
               ))}
             </div>
-            <Link href="#reviews" style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", fontWeight: 600, color: "var(--color-gray)", textDecoration: "underline" }}>{reviewCount} Reviews</Link>
+            <Link href="#reviews" style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", fontWeight: 600, color: "var(--color-gray)", textDecoration: "underline", padding: "12px 0" }}>{reviewCount} Reviews</Link>
           </div>
 
           {/* Price */}
@@ -214,11 +210,6 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
             <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: "1.2rem", color: "var(--color-gray)", textDecoration: "line-through" }}>{fmt(mrpPaise)}</span>
           </div>
           <div style={{ marginBottom: "1.5rem", paddingBottom: "1.5rem", borderBottom: "var(--border-thick)", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            {disc > 0 && (
-              <span style={{ backgroundColor: "var(--color-navy)", color: "var(--color-cream)", padding: "4px 8px", fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase" }}>
-                FINAL SALE - NO RETURNS
-              </span>
-            )}
             <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", color: "var(--color-gray)" }}>Inclusive of all taxes</span>
           </div>
 
@@ -230,7 +221,7 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
             </p>
             <div style={{ display: "flex", gap: "0.5rem" }}>
               {COLORS.map((c, i) => (
-                <button key={c.hex} onClick={() => setSelectedColor(i)} title={c.label} style={{ width: "36px", height: "36px", borderRadius: "0", backgroundColor: c.hex, border: `3px solid ${selectedColor === i ? "var(--color-navy)" : "var(--color-border)"}`, cursor: "pointer", padding: 0 }} />
+                <button key={i} onClick={() => setSelectedColor(i)} title={c.label} aria-label={`Colour ${c.label}`} aria-pressed={selectedColor === i} style={{ width: "40px", height: "40px", borderRadius: "0", backgroundColor: c.hex, border: `3px solid ${selectedColor === i ? "var(--color-navy)" : "var(--color-border)"}`, cursor: "pointer", padding: 0 }} />
               ))}
             </div>
           </div>
@@ -241,7 +232,7 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>
               <p style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", letterSpacing: "0.12em", textTransform: "uppercase", color: sizeError ? "var(--color-crimson)" : "var(--color-navy)" }}>{sizeError ? "PLEASE SELECT A SIZE" : "SIZE"}</p>
               <div style={{ textAlign: "right" }}>
-                <Link href="/size-guide" style={{ fontFamily: "var(--font-sans)", fontSize: "10px", fontWeight: 800, color: "var(--color-navy)", textDecoration: "underline", display: "block", marginBottom: "2px" }}>SIZE GUIDE</Link>
+                <Link href="/size-guide" style={{ fontFamily: "var(--font-sans)", fontSize: "10px", fontWeight: 800, color: "var(--color-navy)", textDecoration: "underline", display: "block", padding: "14px 0" }}>SIZE GUIDE</Link>
                 <span style={{ fontFamily: "var(--font-sans)", fontSize: "9px", fontWeight: 800, color: "var(--color-gray)", textTransform: "uppercase", letterSpacing: "0.05em" }}>{product.fit ? `FIT: ${product.fit}` : ""}</span>
               </div>
             </div>
@@ -249,7 +240,7 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
               {SIZES.map((sz) => {
                 const isOut = SOLD_OUT_SIZES.includes(sz);
                 return (
-                  <button key={sz} onClick={() => !isOut && setSelectedSize(sz)} disabled={isOut} style={{ width: "52px", height: "48px", border: "2px solid var(--color-navy)", backgroundColor: selectedSize === sz ? "var(--color-navy)" : "transparent", color: selectedSize === sz ? "var(--color-cream)" : isOut ? "#C4BBAA" : "var(--color-navy)", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "14px", cursor: isOut ? "not-allowed" : "pointer", position: "relative", textDecoration: isOut ? "line-through" : "none", boxShadow: selectedSize === sz ? "0px 0px 0px" : "2px 2px 0px 0px var(--color-navy)", opacity: isOut ? 0.5 : 1 }}>
+                  <button key={sz} onClick={() => !isOut && setSelectedSize(sz)} disabled={isOut} aria-pressed={selectedSize === sz} style={{ width: "52px", height: "48px", border: "2px solid var(--color-navy)", backgroundColor: selectedSize === sz ? "var(--color-navy)" : "transparent", color: selectedSize === sz ? "var(--color-cream)" : isOut ? "#C4BBAA" : "var(--color-navy)", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "14px", cursor: isOut ? "not-allowed" : "pointer", position: "relative", textDecoration: isOut ? "line-through" : "none", boxShadow: selectedSize === sz ? "0px 0px 0px" : "2px 2px 0px 0px var(--color-navy)", opacity: isOut ? 0.5 : 1 }}>
                     {sz}
                   </button>
                 );
@@ -261,9 +252,9 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
           <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.5rem" }}>
             <p style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-navy)" }}>QTY</p>
             <div style={{ display: "flex", alignItems: "center", border: "2px solid var(--color-navy)", boxShadow: "2px 2px 0px 0px var(--color-navy)", backgroundColor: "var(--color-cream)" }}>
-              <button onClick={() => setQty(Math.max(1, qty - 1))} style={{ width: "40px", height: "40px", background: "none", border: "none", cursor: "pointer", fontSize: "1.2rem", color: "var(--color-navy)", fontWeight: 900 }}>−</button>
+              <button aria-label="Decrease quantity" onClick={() => setQty(Math.max(1, qty - 1))} style={{ width: "40px", height: "40px", background: "none", border: "none", cursor: "pointer", fontSize: "1.2rem", color: "var(--color-navy)", fontWeight: 900 }}>−</button>
               <span style={{ width: "40px", textAlign: "center", fontFamily: "var(--font-sans)", fontWeight: 900, color: "var(--color-navy)" }}>{qty}</span>
-              <button onClick={() => setQty(qty + 1)} style={{ width: "40px", height: "40px", background: "none", border: "none", cursor: "pointer", fontSize: "1.2rem", color: "var(--color-navy)", fontWeight: 900 }}>+</button>
+              <button aria-label="Increase quantity" onClick={() => setQty(qty + 1)} style={{ width: "40px", height: "40px", background: "none", border: "none", cursor: "pointer", fontSize: "1.2rem", color: "var(--color-navy)", fontWeight: 900 }}>+</button>
             </div>
           </div>
 
@@ -286,7 +277,7 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
           <div style={{ backgroundColor: "var(--color-cream)", padding: "1.25rem", marginBottom: "1.5rem", border: "2px solid var(--color-navy)", boxShadow: "4px 4px 0px 0px var(--color-navy)" }}>
             <p style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-navy)", marginBottom: "0.75rem" }}>DELIVERY</p>
             <div style={{ display: "flex", gap: "0.5rem" }}>
-              <input value={pincode} onChange={(e) => { setPincode(e.target.value.replace(/\D/g, "").slice(0, 6)); setDeliveryMsg(null); }} placeholder="Enter Pincode" style={{ flex: 1, padding: "0.65rem 0.875rem", border: "2px solid var(--color-navy)", backgroundColor: "var(--color-cream)", fontFamily: "var(--font-sans)", fontSize: "14px", fontWeight: 800, color: "var(--color-navy)", outline: "none" }} />
+              <input aria-label="Delivery pincode" inputMode="numeric" autoComplete="postal-code" onKeyDown={(e) => { if (e.key === "Enter") checkDelivery(); }} value={pincode} onChange={(e) => { setPincode(e.target.value.replace(/\D/g, "").slice(0, 6)); setDeliveryMsg(null); }} placeholder="Enter Pincode" style={{ flex: 1, padding: "0.65rem 0.875rem", border: "2px solid var(--color-navy)", backgroundColor: "var(--color-cream)", fontFamily: "var(--font-sans)", fontSize: "14px", fontWeight: 800, color: "var(--color-navy)", outline: "none" }} />
               <button className="btn-primary" onClick={checkDelivery} style={{ padding: "0.65rem 1.25rem", fontSize: "12px" }}>CHECK</button>
             </div>
             {deliveryMsg && <p style={{ fontFamily: "var(--font-sans)", fontSize: "12px", fontWeight: 800, color: pincode.length === 6 ? "var(--color-navy)" : "var(--color-crimson)", marginTop: "0.625rem", textTransform: "uppercase" }}>{deliveryMsg} (COD AVAILABLE)</p>}
@@ -306,7 +297,7 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
           <div style={{ borderTop: "var(--border-thick)" }}>
             {ACCORDIONS.map((acc) => (
               <div key={acc.id} style={{ borderBottom: "var(--border-thick)" }}>
-                <button onClick={() => setOpenAccordion(openAccordion === acc.id ? null : acc.id)} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", padding: "1rem 0", background: "none", border: "none", cursor: "pointer", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "14px", textTransform: "uppercase", color: "var(--color-navy)" }}>
+                <button aria-expanded={openAccordion === acc.id} onClick={() => setOpenAccordion(openAccordion === acc.id ? null : acc.id)} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", padding: "1rem 0", background: "none", border: "none", cursor: "pointer", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "14px", textTransform: "uppercase", color: "var(--color-navy)" }}>
                   {acc.title}
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-navy)" strokeWidth="2.5" style={{ transform: openAccordion === acc.id ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}><polyline points="6 9 12 15 18 9"/></svg>
                 </button>
@@ -320,6 +311,7 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
       </div>
 
       {/* ── Shop the Look ── */}
+      {ALSO_LIKE.length > 0 && (
       <div style={{ backgroundColor: "var(--color-navy)", padding: "clamp(3rem,6vw,6rem) clamp(1rem,4vw,5rem)" }}>
         <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(3rem,8vw,6.5rem)", fontWeight: 400, letterSpacing: "0.02em", color: "var(--color-cream)", marginBottom: "3rem", textTransform: "uppercase", textShadow: "4px 4px 0px rgba(0,0,0,0.5)" }}>SHOP THE LOOK</h2>
         
@@ -327,23 +319,23 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
           <div style={{ position: "relative", aspectRatio: "3/4", border: "var(--border-thick)", boxShadow: "8px 8px 0px 0px #000" }}>
             <Image src={product.image} alt="Shop the look" fill sizes="100vw" style={{ objectFit: "cover" }} />
             
-            {/* Hotspot 1 */}
-            <Link href="/products/raven-oversized-tee-acid-black" style={{ position: "absolute", top: "35%", left: "45%", width: "24px", height: "24px", backgroundColor: "var(--color-crimson)", borderRadius: "50%", border: "2px solid var(--color-cream)", display: "flex", alignItems: "center", justifyContent: "center", transform: "translate(-50%, -50%)", cursor: "pointer", zIndex: 10, animation: "pulse 2s infinite" }}>
-              <span style={{ backgroundColor: "var(--color-cream)", width: "8px", height: "8px", borderRadius: "50%" }}></span>
-            </Link>
-            
-            {/* Hotspot 2 */}
-            <Link href="/products/core-straight-jeans-indigo" style={{ position: "absolute", top: "65%", left: "55%", width: "24px", height: "24px", backgroundColor: "var(--color-crimson)", borderRadius: "50%", border: "2px solid var(--color-cream)", display: "flex", alignItems: "center", justifyContent: "center", transform: "translate(-50%, -50%)", cursor: "pointer", zIndex: 10, animation: "pulse 2s infinite 1s" }}>
-              <span style={{ backgroundColor: "var(--color-cream)", width: "8px", height: "8px", borderRadius: "50%" }}></span>
-            </Link>
+            {/* Hotspots link to real related products from the database */}
+            {ALSO_LIKE.slice(0, 2).map((p, i) => (
+              <Link key={p.id} href={p.href} aria-label={`Shop ${p.title}`} style={{ position: "absolute", top: i === 0 ? "35%" : "65%", left: i === 0 ? "45%" : "55%", width: "44px", height: "44px", display: "flex", alignItems: "center", justifyContent: "center", transform: "translate(-50%, -50%)", zIndex: 10 }}>
+                <span style={{ width: "24px", height: "24px", backgroundColor: "var(--color-crimson)", borderRadius: "50%", border: "2px solid var(--color-cream)", display: "flex", alignItems: "center", justifyContent: "center", animation: `pulse 2s infinite ${i}s` }}>
+                  <span style={{ backgroundColor: "var(--color-cream)", width: "8px", height: "8px", borderRadius: "50%" }}></span>
+                </span>
+              </Link>
+            ))}
           </div>
         </div>
       </div>
+      )}
 
       {/* ── Reviews Section ── */}
       <div id="reviews" style={{ backgroundColor: "var(--color-cream)", padding: "clamp(3rem,6vw,6rem) clamp(1.25rem,4vw,5rem)", borderBottom: "var(--border-thick)" }}>
         <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(2.5rem,5vw,4.5rem)", fontWeight: 400, letterSpacing: "0.02em", color: "var(--color-navy)", marginBottom: "0.5rem", textTransform: "uppercase" }}>CUSTOMER REVIEWS</h2>
-        <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "2.5rem" }}>
+        {reviewCount > 0 && <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "2.5rem" }}>
           <span style={{ fontFamily: "var(--font-sans)", fontSize: "3rem", fontWeight: 900, color: "var(--color-navy)" }}>{rating}</span>
           <div>
             <div style={{ display: "flex", gap: "3px", marginBottom: "4px" }}>
@@ -351,7 +343,7 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
             </div>
             <p style={{ fontFamily: "var(--font-sans)", fontSize: "14px", fontWeight: 700, color: "var(--color-navy)", textTransform: "uppercase" }}>BASED ON {reviewCount} REVIEWS</p>
           </div>
-        </div>
+        </div>}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "1.5rem" }} className="review-grid">
           {reviewCount === 0 ? (
             <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.9rem", color: "var(--color-gray)" }}>No reviews yet.</p>

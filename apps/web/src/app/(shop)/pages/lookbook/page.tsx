@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "@/components/common/CmsImage";
 import { getCmsSection } from "@/lib/cms/server";
 import { liveItems } from "@/lib/cms/registry";
 
@@ -41,8 +42,7 @@ export default async function LookbookPage() {
 
               {/* Image */}
               <div style={{ position: "relative", aspectRatio: "3/4", overflow: "hidden", backgroundColor: "var(--color-bone)" }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={look.image} alt={look.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                <Image src={look.image} alt={look.title} fill sizes="(max-width: 700px) 100vw, 400px" style={{ objectFit: "cover" }} />
                 <div style={{ position: "absolute", top: "12px", left: "12px", backgroundColor: "var(--color-lava)", color: "var(--color-navy)", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "0.6rem", letterSpacing: "0.14em", textTransform: "uppercase", padding: "3px 10px" }}>
                   {look.season}
                 </div>

@@ -71,7 +71,7 @@ export function ProductCard({ product, cardWidth = "100%" }: ProductCardProps) {
 
       {/* Image block */}
       <Link
-        href={`/product/${product.slug}`}
+        href={`/products/${product.slug}`}
         style={{
           position: "relative",
           display: "block",
@@ -187,7 +187,7 @@ export function ProductCard({ product, cardWidth = "100%" }: ProductCardProps) {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "8px" }}>
           <h3 style={{ margin: 0 }}>
             <Link
-              href={`/product/${product.slug}`}
+              href={`/products/${product.slug}`}
               style={{
                 fontFamily: "var(--font-heading)",
                 fontWeight: 400,

@@ -34,7 +34,23 @@
         }
 
 /* ── app/(shop)/cart/page.tsx ── */
-@media (max-width: 900px) { .cart-grid { grid-template-columns: 1fr !important; } }
+@media (max-width: 900px) {
+  .cart-grid { grid-template-columns: minmax(0, 1fr) !important; gap: 2rem !important; }
+  .cart-summary { position: static !important; padding: 1.5rem !important; }
+}
+@media (max-width: 640px) {
+  .cart-item { grid-template-columns: 92px minmax(0, 1fr) !important; gap: 1rem !important; }
+  .cart-qty button { width: 44px !important; height: 44px !important; font-size: 1.25rem !important; }
+  .cart-link-btn { display: inline-flex !important; align-items: center; min-height: 44px; }
+  .cart-coupon input, .cart-coupon button { min-height: 44px; }
+}
+
+/* ── components/cart/CartDrawer.tsx: touch-size controls on phones/tablets ── */
+@media (max-width: 900px), (pointer: coarse) {
+  .cd-qty-btn { width: 40px !important; height: 40px !important; font-size: 1.1rem !important; }
+  .cd-remove { min-height: 40px; padding: 0 0.5rem !important; }
+  .cd-close { width: 44px; height: 44px; padding: 0 !important; }
+}
 
 /* ── app/(shop)/category/[slug]/CategoryClient.tsx ── */
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
@@ -86,9 +102,11 @@
 @media (max-width: 768px) { .measure-grid { grid-template-columns: 1fr !important; } .fit-grid { grid-template-columns: repeat(2,1fr) !important; } }
 
 /* ── app/(shop)/products/[slug]/ProductClient.tsx ── */
-.pdp-grid { @media (max-width: 768px) { grid-template-columns: 1fr !important; } }
-        .review-grid { @media (max-width: 768px) { grid-template-columns: 1fr !important; } }
-        .also-like-grid { @media (max-width: 768px) { grid-template-columns: repeat(2,1fr) !important; } }
+@media (max-width: 768px) {
+          .pdp-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
+          .review-grid { grid-template-columns: 1fr !important; }
+          .also-like-grid { grid-template-columns: repeat(2,1fr) !important; }
+        }
         .also-like-img:hover { transform: scale(1.05) !important; }
         
         .gallery-container { display: flex; gap: 1rem; align-items: start; }
@@ -97,13 +115,14 @@
         .mobile-sticky-cta {
           display: none;
           position: fixed;
-          bottom: 0;
+          /* sits directly above the fixed mobile bottom nav (64px + safe area) so the two never overlap */
+          bottom: calc(64px + env(safe-area-inset-bottom));
           left: 0;
           right: 0;
-          padding: 16px;
+          padding: 10px 16px;
           background-color: var(--color-cream);
           border-top: var(--border-thick);
-          z-index: 100;
+          z-index: 99;
           box-shadow: 0px -4px 0px rgba(23,37,69,0.1);
         }
 
@@ -124,6 +143,9 @@
             display: block !important;
           }
           .mobile-sticky-cta { display: block; }
+          /* keep the chat button above the PDP sticky CTA */
+          body:has(.mobile-sticky-cta) .chat-fab { bottom: calc(env(safe-area-inset-bottom) + 160px) !important; }
+          body:has(.mobile-sticky-cta) .chat-panel { bottom: calc(env(safe-area-inset-bottom) + 224px) !important; }
         }
 
 /* ── app/(shop)/search/page.tsx ── */
@@ -151,9 +173,6 @@
           0% { opacity: 0.8; transform: scale(1); }
           70% { opacity: 0; transform: scale(1.5); }
           100% { opacity: 0; transform: scale(1.5); }
-        }
-        @media (max-width: 1023px) {
-          #chat-widget-toggle { bottom: calc(env(safe-area-inset-bottom) + 80px) !important; }
         }
 
 /* ── components/common/CookieConsentBanner.tsx ── */
@@ -257,6 +276,8 @@
         }
         @media (max-width: 1023px) {
           .hide-mobile { display: none !important; }
+          .action-icon { width: 44px !important; height: 44px !important; }
+          .show-mobile { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
           .mobile-bottom-nav {
             position: fixed;
             bottom: 0;
@@ -288,7 +309,11 @@
             letter-spacing: 0.04em;
           }
           .bottom-nav-item svg { width: 20px; height: 20px; }
+          .bottom-nav-item .action-icon { width: 24px !important; height: 24px !important; }
         }
+        /* Wrapper for MegaMenu: on phones it must not render a box (the mobile drawer inside it is position:fixed and must stay visible) */
+        .header-nav-wrap { display: flex; flex: 1; justify-content: center; }
+        @media (max-width: 1023px) { .header-nav-wrap { display: contents; } }
         .action-icon:hover {
           opacity: 0.6;
         }
@@ -349,3 +374,19 @@
 .skel { background: linear-gradient(90deg, var(--color-bone) 25%, var(--color-cream) 37%, var(--color-bone) 63%); background-size: 400% 100%; animation: skel-shimmer 1.3s ease infinite; }
 @keyframes skel-shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
 @media (prefers-reduced-motion: reduce) { .skel { animation: none; } }
+
+/* Touch devices: wishlist hearts that fade in on hover must always be visible, and tap targets >= 40px */
+@media (hover: none), (pointer: coarse) {
+  .wl-touch, .wishlist-btn { opacity: 1 !important; transform: none !important; width: 40px !important; height: 40px !important; }
+}
+
+/* ChatWidget: icon-only on phones so it never covers content */
+@media (max-width: 640px) {
+  .chat-toggle { width: 52px; padding-inline: 0 !important; justify-content: center; }
+  .chat-toggle-label { display: none; }
+}
+
+/* Reserve room for the fixed mobile bottom nav so page content / footer is never hidden behind it */
+@media (max-width: 1023px) {
+  body { padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
+}

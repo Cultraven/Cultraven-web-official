@@ -13,9 +13,11 @@ export const metadata: Metadata = {
 
 const CATEGORIES = ["ALL", "STYLE", "CULTURE", "FASHION", "PEOPLE", "MUSIC"];
 
-export default async function JournalPage() {
+export default async function JournalPage({ searchParams }: { searchParams: Promise<{ category?: string }> }) {
+  const { category } = await searchParams;
+  const activeCat = CATEGORIES.includes((category ?? "").toUpperCase()) ? (category as string).toUpperCase() : "ALL";
   const section = await getCmsSection<any>("page.journal");
-  const ARTICLES = liveItems<any>(section.data?.items);
+  const ARTICLES = liveItems<any>(section.data?.items).filter((a) => activeCat === "ALL" || String(a.category).toUpperCase() === activeCat);
   const featured = ARTICLES[0];
   const rest = ARTICLES.slice(1);
 
@@ -30,13 +32,13 @@ export default async function JournalPage() {
       {/* Category filter */}
       <div style={{ backgroundColor: "var(--color-mist)", padding: "1.25rem clamp(1.25rem,4vw,5rem)", display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
         {CATEGORIES.map((cat) => (
-          <button key={cat} style={{ padding: "0.4rem 1rem", border: "1.5px solid var(--color-navy)", backgroundColor: cat === "ALL" ? "var(--color-navy)" : "transparent", color: cat === "ALL" ? "var(--color-cream)" : "var(--color-navy)", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.68rem", letterSpacing: "0.12em", textTransform: "uppercase", cursor: "pointer" }}>{cat}</button>
+          <Link key={cat} href={cat === "ALL" ? "/pages/journal" : `/pages/journal?category=${cat}`} aria-current={cat === activeCat ? "page" : undefined} style={{ display: "inline-flex", alignItems: "center", minHeight: "40px", textDecoration: "none", padding: "0.4rem 1rem", border: "1.5px solid var(--color-navy)", backgroundColor: cat === activeCat ? "var(--color-navy)" : "transparent", color: cat === activeCat ? "var(--color-cream)" : "var(--color-navy)", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.68rem", letterSpacing: "0.12em", textTransform: "uppercase", cursor: "pointer" }}>{cat}</Link>
         ))}
       </div>
 
       <div style={{ padding: "3rem clamp(1.25rem,4vw,5rem)" }}>
         {ARTICLES.length === 0 ? (
-          <p style={{ textAlign: "center", fontFamily: "var(--font-sans)", color: "var(--color-gray)" }}>New stories are coming soon.</p>
+          <p style={{ textAlign: "center", fontFamily: "var(--font-sans)", color: "var(--color-gray)" }}>{activeCat === "ALL" ? "New stories are coming soon." : `No ${activeCat.toLowerCase()} stories yet.`}</p>
         ) : null}
 
         {/* Featured article */}
