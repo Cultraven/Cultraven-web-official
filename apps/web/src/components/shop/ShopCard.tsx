@@ -124,7 +124,9 @@ export function ShopCard({ product: p, priority = false }: { product: CardProduc
                 {added ? "Added to bag ✓" : "Add to bag"}
               </button>
             ) : (
-              v.sizes.map((s) => (
+              <>
+              <span className="sc-chips-label">{added ? "Added ✓" : "Add to bag"}</span>
+              {v.sizes.map((s) => (
                 <button
                   key={s.size}
                   type="button"
@@ -137,7 +139,8 @@ export function ShopCard({ product: p, priority = false }: { product: CardProduc
                   <span className="sc-chip-sz">{s.size}</span>
                   {v.varies ? <span className="sc-chip-price">{formatPriceINR(s.pricePaise)}</span> : null}
                 </button>
-              ))
+              ))}
+              </>
             )}
           </div>
           {/* Row 2: cop it now — goes straight to the product page */}

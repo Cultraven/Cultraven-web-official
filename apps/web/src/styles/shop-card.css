@@ -60,6 +60,7 @@
 }
 .sc-size-row-sold { background: transparent; }
 .sc-chips-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.sc-chips-label { width: 100%; font: 800 9px/1 var(--font-sans); letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-gray); margin-bottom: 2px; }
 /* COP IT NOW — full-width second option */
 .sc-cop-btn {
   display: flex; align-items: center; justify-content: center; width: 100%; min-height: 32px; padding: 0 10px;
