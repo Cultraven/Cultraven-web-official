@@ -333,31 +333,6 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
         </div>
       </div>
 
-      {/* ── Size & Fit: all sizes with per-size pricing, selected state, availability ── */}
-      <div className="pdp-fit-section">
-        <div className="pdp-fit-card">
-          <div className="pdp-fit-header">
-            <span className="pdp-fit-title">Size &amp; Fit</span>
-            {product.fit ? <span className="pdp-fit-badge">Fit: {product.fit}</span> : null}
-            <Link href="/size-guide" className="pdp-fit-guide">Size guide →</Link>
-          </div>
-          <div className="pdp-fit-sizes">
-            {SIZES.map((sz) => {
-              const o = SIZE_OPTS.find((x) => x.size === sz);
-              const isOut = !!o?.soldOut || soldOut;
-              const szPrice = priceForSize(basePrice, SIZE_OPTS, sz).pricePaise;
-              return (
-                <div key={sz} className={`pdp-fit-size${selectedSize === sz ? " is-sel" : ""}${isOut ? " is-out" : ""}`}>
-                  <span className="pdp-fit-size-label">{sz}</span>
-                  {range.varies ? <span className="pdp-fit-size-price">{fmt(szPrice)}</span> : null}
-                  {isOut ? <span className="pdp-fit-size-out">Sold out</span> : null}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
       {/* ── Product details: full-width cards (description / shipping / returns), so the page never has an empty left side ── */}
       <section className="pdp-details" aria-label="Product details">
         {ACCORDIONS.map((acc) => (
