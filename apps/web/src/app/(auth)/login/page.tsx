@@ -119,6 +119,9 @@ function LoginForm() {
             Log in to access your account
           </p>
 
+          {redirect.startsWith("/checkout") ? (
+            <p role="status" className="auth-gate">One last step — sign in or create an account to place your order. Your item is saved.</p>
+          ) : null}
           <form onSubmit={handleLogin} noValidate style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
             <div>
               <label htmlFor="login-email" style={LABEL}>Email Address</label>
@@ -161,7 +164,7 @@ function LoginForm() {
           <div style={{ marginTop: "2rem", paddingTop: "2rem", borderTop: "1px solid var(--color-line)" }}>
             <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-gray)", textAlign: "center" }}>
               Don&apos;t have an account?{" "}
-              <Link href="/register" style={{ display: "inline-flex", alignItems: "center", minHeight: "44px", color: "var(--color-navy)", fontWeight: 900, textDecoration: "none", borderBottom: "2px solid var(--color-lava)", paddingBottom: "1px" }}>
+              <Link href={redirect === "/account" ? "/register" : `/register?redirect=${encodeURIComponent(redirect)}`} style={{ display: "inline-flex", alignItems: "center", minHeight: "44px", color: "var(--color-navy)", fontWeight: 900, textDecoration: "none", borderBottom: "2px solid var(--color-lava)", paddingBottom: "1px" }}>
                 CREATE ACCOUNT
               </Link>
             </p>

@@ -387,6 +387,7 @@ export function Footer({ config }: FooterProps) {
 
         {/* ── Bottom bar ─────────────────────────────────────────────────── */}
         <div
+          className="footer-bottom"
           style={{
             marginTop: "4rem",
             borderTop: "2px solid var(--color-raven)",

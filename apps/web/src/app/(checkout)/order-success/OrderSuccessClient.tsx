@@ -5,14 +5,25 @@ import { useCartStore } from "@/store/cart";
 import { useBuyNowStore } from "@/store/buyNow";
 import Confetti from "react-confetti";
 
+export interface OrderSummary {
+  number: string;
+  paymentMethod: "cod" | "razorpay";
+  paymentStatus: string;
+  items: { title: string; image: string; size: string; color: string; quantity: number; pricePaise: number }[];
+  subtotalPaise: number; discountPaise: number; shippingPaise: number; codFeePaise: number; totalPaise: number;
+  address: { name: string; line1: string; line2: string; city: string; state: string; pincode: string; phone: string };
+}
+
 interface Props {
+  summary?: OrderSummary | null;
+  emailOn?: boolean;
   orderId?: string;
   paymentId?: string;
   isConfirmed: boolean;
   orderData: { email: string; amountPaise: number } | null;
 }
 
-export default function OrderSuccessClient({ orderId, paymentId, isConfirmed, orderData }: Props) {
+export default function OrderSuccessClient({ orderId, paymentId, isConfirmed, orderData, summary, emailOn }: Props) {
   const { clearCart } = useCartStore();
 
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
@@ -57,7 +68,7 @@ export default function OrderSuccessClient({ orderId, paymentId, isConfirmed, or
 
             <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.92rem", color: "#4B5563", lineHeight: 1.7, marginBottom: "2rem" }}>
               Your order has been successfully placed and is being processed.
-              {email && <> A confirmation email has been sent to <strong style={{ color: "var(--color-navy)" }}>{email}</strong>.</>}
+              {email && emailOn && <> A confirmation email is on its way to <strong style={{ color: "var(--color-navy)" }}>{email}</strong>.</>}
             </p>
 
             {(paymentId || amountPaise > 0) && (
@@ -105,6 +116,24 @@ export default function OrderSuccessClient({ orderId, paymentId, isConfirmed, or
             </p>
           </>
         )}
+
+        {summary ? (
+          <div className="os-sum">
+            <p className="os-no">Order <b>{summary.number}</b></p>
+            {summary.items.map((i, k) => (
+              <div key={k} className="os-line"><span>{i.title}<small>{[i.size, i.color].filter(Boolean).join(" · ")} · Qty {i.quantity}</small></span><b>{fmt(i.pricePaise * i.quantity)}</b></div>
+            ))}
+            <div className="os-line"><span>Subtotal</span><b>{fmt(summary.subtotalPaise)}</b></div>
+            {summary.discountPaise > 0 ? <div className="os-line"><span>Discount</span><b>−{fmt(summary.discountPaise)}</b></div> : null}
+            <div className="os-line"><span>Shipping</span><b>{summary.shippingPaise === 0 ? "FREE" : fmt(summary.shippingPaise)}</b></div>
+            {summary.codFeePaise > 0 ? <div className="os-line"><span>COD fee</span><b>{fmt(summary.codFeePaise)}</b></div> : null}
+            <div className="os-line os-total"><span>{summary.paymentMethod === "cod" ? "Pay on delivery" : "Total"}</span><b>{fmt(summary.totalPaise)}</b></div>
+            <p className="os-h">Delivering to</p>
+            <p className="os-addr">{summary.address.name}<br />{summary.address.line1}{summary.address.line2 ? `, ${summary.address.line2}` : ""}<br />{summary.address.city}, {summary.address.state} {summary.address.pincode}<br />Phone: {summary.address.phone}</p>
+            <p className="os-h">Payment</p>
+            <p className="os-addr">{summary.paymentMethod === "cod" ? "Cash on Delivery" : summary.paymentStatus === "paid" ? "Paid online" : "Online payment (pending)"} · Est. delivery 3–5 business days</p>
+          </div>
+        ) : null}
 
         <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", color: "var(--color-gray)", marginBottom: "2rem", lineHeight: 1.6 }}>
           🚀 Shipping & tracking updates will be sent via WhatsApp. For queries:{" "}

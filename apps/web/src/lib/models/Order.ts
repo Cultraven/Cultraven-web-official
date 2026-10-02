@@ -57,6 +57,10 @@ export interface IOrder extends Document {
   courierName?: string;
   statusHistory: StatusEvent[];
   notes?: string;
+  /** Set once the "order placed" emails have been sent (prevents duplicates). */
+  emailNotifiedAt?: Date | null;
+  /** Client-generated key so a double-click / retry can't create two orders. */
+  idempotencyKey?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -118,6 +122,8 @@ const OrderSchema = new Schema<IOrder>(
     courierName: { type: String },
     statusHistory: { type: [StatusEventSchema], default: [] },
     notes: { type: String, maxlength: 500 },
+    emailNotifiedAt: { type: Date, default: null },
+    idempotencyKey: { type: String, maxlength: 80 },
   },
   {
     timestamps: true,
@@ -131,6 +137,8 @@ OrderSchema.index({ userId: 1, createdAt: -1 });
 // make every COD order (no Razorpay id) collide on null.
 OrderSchema.index({ razorpayPaymentId: 1 }, { sparse: true });
 OrderSchema.index({ paymentStatus: 1, fulfillmentStatus: 1 });
+// One order per (customer, checkout attempt); partial so orders without a key are unaffected.
+OrderSchema.index({ userId: 1, idempotencyKey: 1 }, { unique: true, partialFilterExpression: { idempotencyKey: { $type: "string" } } });
 
 // ── Virtual: order number (human-readable) ────────────────────────────────────
 OrderSchema.virtual("orderNumber").get(function (this: IOrder) {

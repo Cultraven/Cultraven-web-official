@@ -111,7 +111,9 @@ export async function middleware(req: NextRequest) {
     if (!payload) {
       const loginUrl = req.nextUrl.clone();
       loginUrl.pathname = "/login";
-      loginUrl.searchParams.set("redirect", pathname);
+      // Keep the query too (e.g. /checkout?mode=buy-now) so the shopper lands back on exactly what they were doing.
+      loginUrl.search = "";
+      loginUrl.searchParams.set("redirect", pathname + req.nextUrl.search);
       return NextResponse.redirect(loginUrl);
     }
   }

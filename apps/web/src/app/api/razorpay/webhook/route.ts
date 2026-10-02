@@ -14,6 +14,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { notifyOrderPlaced } from "@/lib/order-notify";
 import { getWebhookSecret, verifyWebhookSignature } from "@/lib/razorpay";
 import { connectToDatabase } from "@/lib/db";
 import { Order } from "@/lib/models/Order";
@@ -88,8 +89,9 @@ async function handlePaymentCaptured(payload: RazorpayWebhookPayload) {
 
     // Deduct inventory
     for (const item of order.items) {
+      // Order items carry productId (not slug). Never decrement below zero.
       await Product.findOneAndUpdate(
-        { slug: item.slug },
+        { _id: item.productId, stockCount: { $gte: item.quantity } },
         { $inc: { stockCount: -item.quantity } }
       );
     }
@@ -112,6 +114,7 @@ async function handlePaymentCaptured(payload: RazorpayWebhookPayload) {
       }
     );
     console.log(`[webhook] Order ${payment.order_id} marked as paid and inventory deducted`);
+    await notifyOrderPlaced(String(order._id));
   } catch (err) {
     console.error("[webhook] Failed to handle payment captured:", err);
   }

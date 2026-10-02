@@ -24,6 +24,14 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const openCart = useUiStore((s) => s.openCart);
 
+  // While the side menu is open, hide the bottom bar + chat button so they can't sit on top of it (they return on close).
+  useEffect(() => {
+    const root = document.documentElement;
+    if (mobileMenuOpen) root.setAttribute("data-menu-open", "");
+    else root.removeAttribute("data-menu-open");
+    return () => root.removeAttribute("data-menu-open");
+  }, [mobileMenuOpen]);
+
   useEffect(() => {
     if (!isHomepage) {
       setIsScrolled(true);

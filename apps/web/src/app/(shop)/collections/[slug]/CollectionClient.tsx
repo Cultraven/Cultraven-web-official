@@ -194,7 +194,7 @@ function CollectionPageClientInner({
 
       <div style={{ paddingInline: "clamp(1.25rem,4vw,5rem)", paddingBottom: "6rem" }}>
         {/* ── Controls bar ── */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.5rem", borderBottom: "var(--border-thick)", borderTop: "var(--border-thick)", flexWrap: "wrap", gap: "1rem", position: "sticky", top: "72px", backgroundColor: "var(--color-cream)", zIndex: 40, marginTop: "2rem", boxShadow: "0 4px 0px rgba(23,37,69,1)" }}>
+        <div className="plp-controls" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.5rem", borderBottom: "var(--border-thick)", borderTop: "var(--border-thick)", flexWrap: "wrap", gap: "1rem", position: "sticky", top: "72px", backgroundColor: "var(--color-cream)", zIndex: 40, marginTop: "2rem", boxShadow: "0 4px 0px rgba(23,37,69,1)" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
             {/* Filter toggle */}
             <button onClick={() => setFilterOpen(!filterOpen)} style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.6rem 1.25rem", minHeight: "44px", border: "2px solid var(--color-navy)", backgroundColor: filterOpen ? "var(--color-navy)" : "var(--color-cream)", color: filterOpen ? "var(--color-cream)" : "var(--color-navy)", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", boxShadow: "2px 2px 0px 0px var(--color-navy)" }}>

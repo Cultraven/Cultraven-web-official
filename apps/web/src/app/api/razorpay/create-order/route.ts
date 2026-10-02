@@ -13,7 +13,8 @@
  * Returns: { orderId, amount, currency, keyId } — keyId is PUBLIC safe to send to client.
  */
 
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
+import { notifyOrderPlaced } from "@/lib/order-notify";
 import { z } from "zod";
 import { getRazorpayConfig } from "@/lib/razorpay";
 import Razorpay from "razorpay";
@@ -45,6 +46,7 @@ const BodySchema = z.object({
   }),
   paymentMethod: z.enum(["razorpay", "cod"]).default("razorpay"),
   couponCode: z.string().max(40).optional(),
+  idempotencyKey: z.string().min(8).max(80).regex(/^[A-Za-z0-9_-]+$/).optional(),
 });
 
 // ── Rate limiting (production: use Upstash Redis) ─────────────────────────────
@@ -96,7 +98,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { receipt, name, email, phone, items, address, paymentMethod, couponCode } = result.data;
+  const { receipt, name, email, phone, items, address, paymentMethod, couponCode, idempotencyKey } = result.data;
   // Never trust client-supplied identity or currency: the owner comes from the signed session, the currency is fixed.
   const userId = customerFromRequest(req)?.userId ?? "guest";
   const currency = "INR";
@@ -112,6 +114,12 @@ export async function POST(req: NextRequest) {
 
   try {
     await connectToDatabase();
+
+    // A repeated submit (double-click, retry, reload) returns the order already created for this attempt.
+    if (idempotencyKey && userId !== "guest") {
+      const prior = (await Order.findOne({ userId, idempotencyKey }).select("_id paymentMethod").lean()) as any;
+      if (prior) return NextResponse.json({ orderId: String(prior._id), duplicate: true }, { status: 200 });
+    }
 
     // 1. Load prices from catalogue
     const slugs = Array.from(new Set(items.map((i) => i.slug)));
@@ -189,6 +197,7 @@ export async function POST(req: NextRequest) {
     // Create DB order
     const newOrder = await Order.create({
       userId,
+      ...(idempotencyKey && userId !== "guest" ? { idempotencyKey } : {}),
       items: finalItems,
       subtotalPaise,
       shippingPaise,
@@ -214,6 +223,8 @@ export async function POST(req: NextRequest) {
     });
 
     if (paymentMethod === "cod") {
+      // Emails go out after the response is sent; a mail failure can never fail or delay the order.
+      after(() => notifyOrderPlaced(String(newOrder._id)));
       return NextResponse.json({ orderId: newOrder._id }, { status: 200 });
     }
 

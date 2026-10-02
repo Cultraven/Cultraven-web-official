@@ -24,6 +24,10 @@ function useNav(): NavGroup[] {
         ],
       },
       {
+        label: "Settings",
+        items: [{ label: "Email (SMTP)", href: "/portal-secure/settings/email", icon: "mail" }],
+      },
+      {
         label: "Website content",
         items: [
           { label: "All content", href: "/portal-secure/cms", icon: "layout" },

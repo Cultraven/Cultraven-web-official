@@ -1,11 +1,14 @@
 "use client";
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { safeRedirect } from "@/lib/safe-redirect";
 
-export default function RegisterPage() {
+function RegisterForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = safeRedirect(searchParams.get("redirect"), "/account");
 
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "", password: "", confirmPassword: "" });
   const [showPw, setShowPw] = useState(false);
@@ -44,7 +47,7 @@ export default function RegisterPage() {
         body: JSON.stringify({ firstName: form.firstName.trim(), lastName: form.lastName.trim(), email: form.email.trim().toLowerCase(), password: form.password }),
       });
       if (res.ok) {
-        router.push("/account");
+        router.push(redirect);
         router.refresh();
       } else {
         const data = await res.json();
@@ -131,6 +134,9 @@ export default function RegisterPage() {
             Join the movement. Get 10% off your first order.
           </p>
 
+          {redirect.startsWith("/checkout") ? (
+            <p role="status" className="auth-gate">One last step — create an account or sign in to place your order. Your item is saved.</p>
+          ) : null}
           <form onSubmit={handleRegister} noValidate style={{ display: "flex", flexDirection: "column", gap: "1.1rem" }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.875rem" }}>
               <div>
@@ -200,7 +206,7 @@ export default function RegisterPage() {
           <div style={{ marginTop: "2rem", paddingTop: "2rem", borderTop: "1px solid var(--color-line)", textAlign: "center" }}>
             <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-gray)" }}>
               Already a member?{" "}
-              <Link href="/login" style={{ display: "inline-flex", alignItems: "center", minHeight: "44px", color: "var(--color-navy)", fontWeight: 900, textDecoration: "none", borderBottom: "2px solid var(--color-lava)", paddingBottom: "1px" }}>
+              <Link href={redirect === "/account" ? "/login" : `/login?redirect=${encodeURIComponent(redirect)}`} style={{ display: "inline-flex", alignItems: "center", minHeight: "44px", color: "var(--color-navy)", fontWeight: 900, textDecoration: "none", borderBottom: "2px solid var(--color-lava)", paddingBottom: "1px" }}>
                 SIGN IN
               </Link>
             </p>
@@ -209,5 +215,13 @@ export default function RegisterPage() {
       </div>
 
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={null}>
+      <RegisterForm />
+    </Suspense>
   );
 }

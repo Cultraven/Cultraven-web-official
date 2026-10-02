@@ -7,6 +7,7 @@ const ChatWidget = dynamic(() => import("./ChatWidget").then((m) => m.ChatWidget
 
 export function ChatWidgetGate() {
   const pathname = usePathname() ?? "";
-  if (pathname.startsWith("/portal-")) return null;
+  // Hidden on admin screens and during checkout (it would float over the form fields on phones).
+  if (pathname.startsWith("/portal-") || pathname.startsWith("/checkout")) return null;
   return <ChatWidget />;
 }

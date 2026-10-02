@@ -9,7 +9,8 @@
  * - Marks order as paid in DB only after successful verification
  */
 
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
+import { notifyOrderPlaced } from "@/lib/order-notify";
 import { getRazorpayConfig, verifyPaymentSignature } from "@/lib/razorpay";
 import { z } from "zod";
 import { connectToDatabase } from "@/lib/db";
@@ -54,7 +55,7 @@ export async function POST(req: NextRequest) {
   // Signature valid — mark order paid in DB
   try {
     await connectToDatabase();
-    await Order.findOneAndUpdate(
+    const paid = await Order.findOneAndUpdate(
       { razorpayOrderId: razorpay_order_id },
       {
         $set: {
@@ -68,8 +69,10 @@ export async function POST(req: NextRequest) {
             at: new Date(),
           },
         },
-      }
+      },
+      { new: true }
     );
+    if (paid) after(() => notifyOrderPlaced(String(paid._id)));
   } catch (err) {
     console.error("[verify] DB update failed:", err);
     // Still return verified: true — payment is real, webhook will handle DB
