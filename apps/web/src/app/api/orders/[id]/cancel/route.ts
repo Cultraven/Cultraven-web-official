@@ -27,11 +27,27 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     await connectToDatabase();
     const cur = (await Order.findOne({ _id: id, userId: me.userId }).lean()) as any;
     if (!cur) return NextResponse.json({ error: "Order not found" }, { status: 404 });
-    const el = cancelEligibility({ fulfillmentStatus: cur.fulfillmentStatus, createdAt: cur.createdAt });
+    const el = cancelEligibility({ fulfillmentStatus: cur.fulfillmentStatus, createdAt: cur.createdAt, cancelRequestedAt: cur.cancelRequestedAt });
     if (!el.ok) return NextResponse.json({ error: el.reason }, { status: 409 });
 
     const now = new Date();
     const cutoff = new Date(now.getTime() - CANCEL_WINDOW_DAYS * 86_400_000);
+
+    // Already shipped: the customer sends a cancellation REQUEST; the admin approves it (the courier must be stopped).
+    if (el.mode === "request") {
+      const reqd = (await Order.findOneAndUpdate(
+        { _id: id, userId: me.userId, fulfillmentStatus: { $in: ["shipped", "out_for_delivery"] }, cancelRequestedAt: null, createdAt: { $gte: cutoff } },
+        { $set: { cancelRequestedAt: now, cancelRequestReason: reason }, $push: { statusHistory: { status: cur.fulfillmentStatus, note: `Cancellation requested: ${reason}`, at: now, by: "customer" } } },
+        { new: true }
+      ).lean()) as any;
+      if (!reqd) return NextResponse.json({ error: "This order can no longer be cancelled." }, { status: 409 });
+      after(async () => {
+        await notifyStatusChange(id, { status: "cancel_requested", note: reason });
+        await notifyAdminCustomerAction(id, "cancel_requested", reason);
+      });
+      return NextResponse.json({ success: true, requested: true });
+    }
+
     // Atomic: only succeeds if the order is still unshipped and inside the window at this very moment.
     const upd = (await Order.findOneAndUpdate(
       { _id: id, userId: me.userId, fulfillmentStatus: { $in: ["processing", "confirmed"] }, createdAt: { $gte: cutoff } },

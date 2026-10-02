@@ -109,17 +109,35 @@ const STATUS_COPY: Record<string, string> = {
   shipped: "Your order is on its way.",
   out_for_delivery: "Your order is out for delivery today — please keep your phone handy.",
   delivered: "Your order has been delivered. We hope you love it! You can return it within 7 days if something isn't right.",
-  cancelled: "Your order has been cancelled.",
+  cancelled: "Your order has been cancelled. We're sorry to see this one go.",
+  cancel_requested: "We've received your request to cancel. Because the order has already shipped, we're checking with the courier and will confirm very soon.",
   return_requested: "We've received your return request and will update you shortly.",
   returned: "Your return is complete. Any refund is processed to your original payment method within 5–7 business days.",
 };
 
-export interface StatusEmailInput { status: string; note?: string; courier?: string; trackingNumber?: string; trackingUrl?: string }
+export interface EmailPick { title: string; pricePaise: number; image?: string; url: string }
+export interface StatusEmailInput { status: string; note?: string; courier?: string; trackingNumber?: string; trackingUrl?: string; /** Products to suggest (used on cancellation emails) */ picks?: EmailPick[] }
+
+/** Warm sign-off for a cancelled order: refund note, a few picks, and a link to their wishlist. */
+function cancelledExtras(o: MailOrder, siteUrl: string, picks: EmailPick[]): string {
+  const refund = o.paymentMethod === "razorpay" && o.paymentStatus !== "pending"
+    ? `<p style="margin:16px 0 0;font-size:14px;line-height:1.6"><b>Refund:</b> if you paid online, your refund goes back to the original payment method within 5–7 business days.</p>`
+    : `<p style="margin:16px 0 0;font-size:14px;line-height:1.6">Nothing was charged — this was a Cash on Delivery order, so there's nothing to refund.</p>`;
+  const cards = picks.length
+    ? `<p style="margin:22px 0 8px;font-size:12px;font-weight:900;letter-spacing:2px">PICKS FOR YOU</p><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>${picks
+        .slice(0, 4)
+        .map(
+          (p) => `<td width="25%" valign="top" style="padding:0 4px"><a href="${escapeHtml(p.url)}" style="text-decoration:none;color:${NAVY}">${p.image ? `<img src="${escapeHtml(p.image)}" alt="" width="100%" style="display:block;border:2px solid ${NAVY};aspect-ratio:3/4;object-fit:cover">` : ""}<div style="font-size:11px;font-weight:900;text-transform:uppercase;margin-top:6px;line-height:1.3">${escapeHtml(p.title)}</div><div style="font-size:12px">${inr(p.pricePaise)}</div></a></td>`
+        )
+        .join("")}</tr></table>`
+    : "";
+  return `${refund}<p style="margin:18px 0 0;font-size:14px;line-height:1.7;background:${BONE};padding:12px 14px;border-left:4px solid ${GOLD}">Wishing you a great day — and if something on your wishlist is still calling your name, it's waiting for you. <a href="${escapeHtml(siteUrl)}/account/wishlist" style="color:${NAVY};font-weight:900">Open my wishlist →</a></p>${cards}`;
+}
 
 /** Sent to the customer whenever the status of their order changes (admin action or their own cancel/return). */
 export function orderStatusEmail(o: MailOrder, siteUrl: string, s: StatusEmailInput) {
   const no = orderNumber(o.id);
-  const label = isOrderStatus(s.status) ? STATUS_LABEL[s.status] : s.status;
+  const label = isOrderStatus(s.status) ? STATUS_LABEL[s.status] : s.status === "cancel_requested" ? "Cancellation requested" : s.status;
   const subject = `${no}: ${label}`;
   const copy = STATUS_COPY[s.status] ?? "There's an update on your order.";
   const trackBits = [s.courier && `Courier: <b>${escapeHtml(s.courier)}</b>`, s.trackingNumber && `Tracking no.: <b>${escapeHtml(s.trackingNumber)}</b>`].filter(Boolean).join("<br>");
@@ -129,6 +147,7 @@ export function orderStatusEmail(o: MailOrder, siteUrl: string, s: StatusEmailIn
     (trackBits ? `<p style="margin:0 0 14px;font-size:14px;line-height:1.7">${trackBits}</p>` : "") +
     (s.trackingUrl && /^https?:\/\//i.test(s.trackingUrl) ? `<p style="margin:0 0 14px"><a href="${escapeHtml(s.trackingUrl)}" style="color:${NAVY};font-weight:900">Track with the courier →</a></p>` : "") +
     itemsTable(o) +
+    (s.status === "cancelled" ? cancelledExtras(o, siteUrl, s.picks ?? []) : "") +
     `<p style="margin:24px 0 0"><a href="${escapeHtml(siteUrl)}/account/orders/${escapeHtml(o.id)}" style="display:inline-block;background:${NAVY};color:${CREAM};padding:12px 20px;text-decoration:none;font-weight:900;font-size:13px;letter-spacing:2px;border-bottom:4px solid ${GOLD}">TRACK MY ORDER</a></p>`;
   const html = shell(`Order ${no}`, escapeHtml(copy), body, siteUrl);
   const text = [`${no}: ${label}`, copy, s.note ? `Note: ${s.note}` : "", s.courier ? `Courier: ${s.courier}` : "", s.trackingNumber ? `Tracking no.: ${s.trackingNumber}` : "", s.trackingUrl ?? "", "", `Track your order: ${siteUrl}/account/orders/${o.id}`].filter((l) => l !== "").join("\n");
@@ -136,10 +155,10 @@ export function orderStatusEmail(o: MailOrder, siteUrl: string, s: StatusEmailIn
 }
 
 /** Admin alert when a customer cancels an order or asks for a return. */
-export function adminCustomerActionEmail(o: MailOrder, siteUrl: string, kind: "cancelled" | "return_requested", reason: string) {
+export function adminCustomerActionEmail(o: MailOrder, siteUrl: string, kind: "cancelled" | "cancel_requested" | "return_requested", reason: string) {
   const no = orderNumber(o.id);
-  const what = kind === "cancelled" ? "cancelled" : "requested a return for";
-  const subject = `${kind === "cancelled" ? "Order cancelled" : "Return requested"} — ${no}`;
+  const what = kind === "cancelled" ? "cancelled" : kind === "cancel_requested" ? "asked to cancel (already shipped)" : "requested a return for";
+  const subject = `${kind === "cancelled" ? "Order cancelled" : kind === "cancel_requested" ? "Cancellation requested" : "Return requested"} — ${no}`;
   const html = shell(
     subject,
     `${escapeHtml(o.deliveryAddress.name)} ${what} order <b>${no}</b> (${inr(o.totalPaise)}, ${o.paymentMethod === "cod" ? "COD" : "online"}).`,

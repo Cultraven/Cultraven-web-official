@@ -57,6 +57,9 @@ export interface IOrder extends Document {
   deliveredAt?: Date | null;
   cancelledAt?: Date | null;
   cancelReason?: string;
+  /** Set when a customer asks to cancel an order that has already shipped; the admin approves or ignores it. */
+  cancelRequestedAt?: Date | null;
+  cancelRequestReason?: string;
   returnReason?: string;
   returnRequestedAt?: Date | null;
   trackingNumber?: string;
@@ -133,6 +136,8 @@ const OrderSchema = new Schema<IOrder>(
     deliveredAt: { type: Date, default: null },
     cancelledAt: { type: Date, default: null },
     cancelReason: { type: String, maxlength: 300 },
+    cancelRequestedAt: { type: Date, default: null },
+    cancelRequestReason: { type: String, maxlength: 300 },
     returnReason: { type: String, maxlength: 300 },
     returnRequestedAt: { type: Date, default: null },
     emailNotifiedAt: { type: Date, default: null },

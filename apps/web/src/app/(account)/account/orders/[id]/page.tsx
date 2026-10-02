@@ -23,13 +23,13 @@ interface Order {
   tracking: { courier: string; number: string; url: string };
   deliveredAt: string | null; cancelReason: string; returnReason: string;
   timeline: TimelineStep[]; history: { status: string; note?: string; at: string; by?: string }[];
-  canCancel: { ok: boolean; reason?: string; daysLeft?: number }; canReturn: { ok: boolean; reason?: string; daysLeft?: number };
+  canCancel: { ok: boolean; reason?: string; daysLeft?: number; mode?: "direct" | "request" }; cancelRequested: boolean; cancelRequestReason: string; canReturn: { ok: boolean; reason?: string; daysLeft?: number };
 }
 
 /** Product slug from sku (`<slug>-<size>`), for the review link. */
 const slugOf = (i: { sku?: string; size?: string }) => { const sku = i.sku ?? ""; const tail = `-${i.size ?? ""}`; return i.size && sku.endsWith(tail) ? sku.slice(0, -tail.length) : sku; };
 
-function ReasonDialog({ kind, onClose, onDone, orderId }: { kind: "cancel" | "return"; onClose: () => void; onDone: (msg: string) => void; orderId: string }) {
+function ReasonDialog({ kind, onClose, onDone, orderId, request }: { kind: "cancel" | "return"; onClose: () => void; onDone: (msg: string) => void; orderId: string; request?: boolean }) {
   const reasons = kind === "cancel" ? CANCEL_REASONS : RETURN_REASONS;
   const [reason, setReason] = useState("");
   const [note, setNote] = useState("");
@@ -50,15 +50,15 @@ function ReasonDialog({ kind, onClose, onDone, orderId }: { kind: "cancel" | "re
       const r = await fetch(`/api/orders/${orderId}/${kind}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ reason, note: note.trim() || undefined }) });
       const d = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(d.error || `HTTP ${r.status}`);
-      onDone(kind === "cancel" ? `Order cancelled.${d.refund ? " " + d.refund : ""}` : "Return requested. We'll email you once it's reviewed.");
+      onDone(kind === "cancel" ? (d.requested ? "Cancellation requested. Your order has already shipped, so we're checking with the courier — we'll email you as soon as it's confirmed." : `Order cancelled.${d.refund ? " " + d.refund : ""}`) : "Return requested. We'll email you once it's reviewed.");
     } catch (e2: any) { setErr(e2.message); setBusy(false); }
   };
 
   return (
     <div className="om-back" onMouseDown={(e) => e.target === e.currentTarget && !busy && onClose()}>
       <form className="om" role="dialog" aria-modal="true" aria-labelledby="om-title" onSubmit={submit} noValidate>
-        <h2 id="om-title">{kind === "cancel" ? "Cancel this order?" : "Return this order"}</h2>
-        <p>{kind === "cancel" ? "Tell us why — it helps us improve. This can't be undone." : "Tell us what went wrong. Once approved, your refund goes to your original payment method."}</p>
+        <h2 id="om-title">{kind === "cancel" ? (request ? "Request cancellation" : "Cancel this order?") : "Return this order"}</h2>
+        <p>{kind === "cancel" ? (request ? "Your order has already shipped, so we'll ask the courier to stop it and confirm by email. Tell us why." : "Tell us why — it helps us improve. This can't be undone.") : "Tell us what went wrong. Once approved, your refund goes to your original payment method."}</p>
         <label htmlFor="om-reason">Reason</label>
         <select id="om-reason" value={reason} onChange={(e) => setReason(e.target.value)} autoFocus>
           <option value="">Select a reason</option>
@@ -68,8 +68,8 @@ function ReasonDialog({ kind, onClose, onDone, orderId }: { kind: "cancel" | "re
         <textarea id="om-note" rows={3} maxLength={kind === "cancel" ? 200 : 300} value={note} onChange={(e) => setNote(e.target.value)} />
         {err ? <p role="alert" className="om-err">{err}</p> : null}
         <div className="om-actions">
-          <button type="button" className="cv-btn cv-btn-outline" onClick={onClose} disabled={busy}>Keep order</button>
-          <button type="submit" className="cv-btn cv-btn-navy" disabled={busy}>{busy ? "Please wait…" : kind === "cancel" ? "Cancel order" : "Request return"}</button>
+          <button type="button" className="cv-btn cv-btn-outline" onClick={onClose} disabled={busy}>{request ? "Never mind" : "Keep order"}</button>
+          <button type="submit" className="cv-btn cv-btn-navy" disabled={busy}>{busy ? "Please wait…" : kind === "cancel" ? (request ? "Send request" : "Cancel order") : "Request return"}</button>
         </div>
       </form>
     </div>
@@ -86,7 +86,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
 
   const load = useCallback(async () => {
     try {
-      const r = await fetch(`/api/orders/${id}`, { cache: "no-store" });
+      const r = await fetch(`/api/orders/${id}?view=customer`, { cache: "no-store" });
       const d = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(r.status === 404 ? "We couldn't find that order." : d.error || `HTTP ${r.status}`);
       setOrder(d.order);
@@ -117,6 +117,8 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
   const label = isOrderStatus(st) ? STATUS_LABEL[st] : st;
   const t = order.tracking;
   const delivered = st === "delivered";
+  /** Statuses where the Cancel option is relevant (shown disabled with the reason when it can't be used). */
+  const canCancelStatus = ["processing", "confirmed", "shipped", "out_for_delivery"].includes(st);
 
   return (
     <>
@@ -128,6 +130,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
 
       {notice ? <div role="status" className="od-banner warn">{notice}</div> : null}
       {st === "cancelled" ? <div className="od-banner bad">This order was cancelled{order.cancelReason ? ` — ${order.cancelReason}` : ""}.{order.paymentStatus === "refund_pending" ? " Your refund is being processed (5–7 business days)." : order.paymentStatus === "refunded" ? " Your refund has been issued." : ""}</div> : null}
+      {order.cancelRequested && st !== "cancelled" ? <div className="od-banner warn">Cancellation requested — we're checking with the courier and will email you once it's confirmed.{order.cancelRequestReason ? ` (${order.cancelRequestReason})` : ""}</div> : null}
       {st === "return_requested" ? <div className="od-banner warn">Return requested — we&apos;ll email you once it&apos;s reviewed.{order.returnReason ? ` (${order.returnReason})` : ""}</div> : null}
       {st === "returned" ? <div className="od-banner">Return complete.{order.paymentStatus === "refunded" ? " Your refund has been issued." : " Your refund is being processed (5–7 business days)."}</div> : null}
 
@@ -189,11 +192,11 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
             <h2>Manage</h2>
             <div style={{ display: "grid", gap: "0.6rem" }}>
               <a href={`/api/orders/${order.id}/invoice`} className="cv-btn cv-btn-navy" style={{ justifyContent: "center" }}>Download receipt (PDF)</a>
-              {order.canCancel.ok ? <button type="button" className="cv-btn cv-btn-outline" onClick={() => setDialog("cancel")}>Cancel order</button> : null}
+              {order.canCancel.ok ? <button type="button" className="cv-btn cv-btn-outline" onClick={() => setDialog("cancel")}>{order.canCancel.mode === "request" ? "Request cancellation" : "Cancel order"}</button> : canCancelStatus ? <button type="button" className="cv-btn cv-btn-outline" disabled title={order.canCancel.reason}>Cancel order</button> : null}
               {order.canReturn.ok ? <button type="button" className="cv-btn cv-btn-outline" onClick={() => setDialog("return")}>Return / exchange</button> : null}
-              {order.canCancel.ok ? <small style={{ font: "600 0.74rem var(--font-sans)", color: "var(--color-smoke)" }}>You can cancel for {order.canCancel.daysLeft} more day{order.canCancel.daysLeft === 1 ? "" : "s"}, until it ships.</small> : null}
+              {order.canCancel.ok ? <small style={{ font: "600 0.74rem var(--font-sans)", color: "var(--color-smoke)" }}>{order.canCancel.mode === "request" ? "Already shipped — send a cancellation request (" : "You can cancel for "}{order.canCancel.daysLeft} more day{order.canCancel.daysLeft === 1 ? "" : "s"}{order.canCancel.mode === "request" ? " left)." : ", until it ships."}</small> : null}
               {order.canReturn.ok ? <small style={{ font: "600 0.74rem var(--font-sans)", color: "var(--color-smoke)" }}>Returns open for {order.canReturn.daysLeft} more day{order.canReturn.daysLeft === 1 ? "" : "s"}.</small> : null}
-              {!order.canCancel.ok && order.canCancel.reason && !["cancelled", "returned", "return_requested", "delivered"].includes(st) ? <small style={{ font: "600 0.74rem var(--font-sans)", color: "var(--color-smoke)" }}>{order.canCancel.reason}</small> : null}
+              {!order.canCancel.ok && order.canCancel.reason && canCancelStatus ? <small style={{ font: "600 0.74rem var(--font-sans)", color: "var(--color-smoke)" }}>{order.canCancel.reason}</small> : null}
               <a href="mailto:support@cultraven.com?subject=Order%20help" className="cv-btn cv-btn-ghost" style={{ justifyContent: "center" }}>Need help?</a>
             </div>
           </section>
@@ -216,7 +219,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
         </div>
       </div>
 
-      {dialog ? <ReasonDialog kind={dialog} orderId={order.id} onClose={() => setDialog(null)} onDone={(m) => { setDialog(null); setNotice(m); load(); }} /> : null}
+      {dialog ? <ReasonDialog kind={dialog} request={dialog === "cancel" && order.canCancel.mode === "request"} orderId={order.id} onClose={() => setDialog(null)} onDone={(m) => { setDialog(null); setNotice(m); load(); }} /> : null}
     </>
   );
 }

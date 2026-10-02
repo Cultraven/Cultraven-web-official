@@ -5,6 +5,7 @@
  */
 import { connectToDatabase } from "@/lib/db";
 import { Order } from "@/lib/models/Order";
+import { Product } from "@/lib/models/Product";
 import { getSmtpSettings, sendMail } from "@/lib/mailer";
 import { customerOrderEmail, adminOrderEmail, orderStatusEmail, adminCustomerActionEmail, orderNumber, type MailOrder, type StatusEmailInput } from "@/lib/email-templates";
 import { buildInvoicePdf } from "@/lib/invoice-pdf";
@@ -60,7 +61,16 @@ export async function notifyStatusChange(orderId: string, info: StatusEmailInput
     if (!o?.deliveryAddress?.email) return;
     const settings = await getSmtpSettings();
     const mo = toMailOrder(o);
-    const m = orderStatusEmail(mo, siteUrl(), { ...info, courier: info.courier ?? o.courierName, trackingNumber: info.trackingNumber ?? o.trackingNumber, trackingUrl: info.trackingUrl ?? o.trackingUrl });
+    // A cancellation email suggests a few things to shop next (bestsellers first), only in-stock ones.
+    let picks = info.picks;
+    if (info.status === "cancelled" && !picks) {
+      try {
+        const ids = new Set((o.items ?? []).map((i: any) => String(i.productId)));
+        const docs = (await Product.find({ inStock: { $ne: false } }).sort({ isBestseller: -1, createdAt: -1 }).limit(8).select("title slug image images pricePaise").lean()) as any[];
+        picks = docs.filter((d) => !ids.has(String(d._id))).slice(0, 4).map((d) => ({ title: d.title, pricePaise: d.pricePaise, image: /^https?:\/\//.test(d.image ?? "") ? d.image : d.image ? `${siteUrl()}${d.image}` : undefined, url: `${siteUrl()}/products/${d.slug}` }));
+      } catch { picks = []; }
+    }
+    const m = orderStatusEmail(mo, siteUrl(), { ...info, picks, courier: info.courier ?? o.courierName, trackingNumber: info.trackingNumber ?? o.trackingNumber, trackingUrl: info.trackingUrl ?? o.trackingUrl });
     await sendMail({ to: mo.deliveryAddress.email!, ...m, kind: `order-status-${info.status}`, orderId: mo.id, replyTo: settings?.fromEmail });
   } catch (e) {
     console.error("[order-notify] status email failed:", e instanceof Error ? e.message : e);
@@ -68,7 +78,7 @@ export async function notifyStatusChange(orderId: string, info: StatusEmailInput
 }
 
 /** Alert the admin(s) that a customer cancelled or asked for a return. Never throws. */
-export async function notifyAdminCustomerAction(orderId: string, kind: "cancelled" | "return_requested", reason: string): Promise<void> {
+export async function notifyAdminCustomerAction(orderId: string, kind: "cancelled" | "cancel_requested" | "return_requested", reason: string): Promise<void> {
   try {
     await connectToDatabase();
     const o = (await Order.findById(orderId).lean()) as any;

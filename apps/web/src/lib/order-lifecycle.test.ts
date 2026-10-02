@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { canAdminTransition, cancelEligibility, returnEligibility, buildTimeline, ADMIN_TRANSITIONS, ORDER_STATUSES } from "./order-lifecycle";
+import { canAdminTransition, cancelEligibility, returnEligibility, buildTimeline, ADMIN_TRANSITIONS, ORDER_STATUSES, isBackward } from "./order-lifecycle";
 
 const DAY = 86_400_000;
 const now = Date.UTC(2026, 9, 10, 12);
@@ -16,12 +16,22 @@ describe("admin transitions", () => {
   });
   it("blocks going backwards, skipping out of terminal states, and junk", () => {
     expect(canAdminTransition("delivered", "processing")).toBe(false);
-    expect(canAdminTransition("shipped", "cancelled")).toBe(false);
+    expect(canAdminTransition("cancelled", "shipped")).toBe(false);
     expect(canAdminTransition("cancelled", "processing")).toBe(false);
     expect(canAdminTransition("returned", "delivered")).toBe(false);
     expect(canAdminTransition("processing", "return_requested")).toBe(false);
     expect(canAdminTransition("processing", "nonsense")).toBe(false);
     expect(canAdminTransition({ $ne: 1 } as any, "shipped")).toBe(false);
+  });
+  it("lets an admin cancel a shipped order and undo a mis-click one step back", () => {
+    expect(canAdminTransition("shipped", "cancelled")).toBe(true);
+    expect(canAdminTransition("out_for_delivery", "cancelled")).toBe(true);
+    expect(canAdminTransition("shipped", "confirmed")).toBe(true);
+    expect(canAdminTransition("delivered", "out_for_delivery")).toBe(true);
+    expect(isBackward("shipped", "confirmed")).toBe(true);
+    expect(isBackward("shipped", "out_for_delivery")).toBe(false);
+    expect(canAdminTransition("cancelled", "processing")).toBe(false);
+    expect(canAdminTransition("returned", "delivered")).toBe(false);
   });
   it("covers every status", () => expect(Object.keys(ADMIN_TRANSITIONS).sort()).toEqual([...ORDER_STATUSES].sort()));
 });
@@ -32,8 +42,14 @@ describe("customer cancel (7 days, before shipping)", () => {
     expect(cancelEligibility({ fulfillmentStatus: "confirmed", createdAt: ago(6) }, now)).toMatchObject({ ok: true, daysLeft: 1 });
   });
   it("blocked after 7 days", () => expect(cancelEligibility({ fulfillmentStatus: "processing", createdAt: ago(7.01) }, now).ok).toBe(false));
-  it("blocked once shipped / delivered / already cancelled, with a helpful reason", () => {
-    expect(cancelEligibility({ fulfillmentStatus: "shipped", createdAt: ago(1) }, now).reason).toMatch(/shipped/i);
+  it("after shipping it becomes a request (admin approves) within the 7 days", () => {
+    expect(cancelEligibility({ fulfillmentStatus: "shipped", createdAt: ago(1) }, now)).toMatchObject({ ok: true, mode: "request" });
+    expect(cancelEligibility({ fulfillmentStatus: "out_for_delivery", createdAt: ago(3) }, now)).toMatchObject({ ok: true, mode: "request" });
+    expect(cancelEligibility({ fulfillmentStatus: "processing", createdAt: ago(1) }, now).mode).toBe("direct");
+    expect(cancelEligibility({ fulfillmentStatus: "shipped", createdAt: ago(1), cancelRequestedAt: ago(0) }, now).ok).toBe(false);
+    expect(cancelEligibility({ fulfillmentStatus: "shipped", createdAt: ago(8) }, now).ok).toBe(false);
+  });
+  it("blocked once delivered / cancelled, with a helpful reason", () => {
     expect(cancelEligibility({ fulfillmentStatus: "delivered", createdAt: ago(1) }, now).reason).toMatch(/return/i);
     expect(cancelEligibility({ fulfillmentStatus: "cancelled", createdAt: ago(1) }, now).ok).toBe(false);
   });

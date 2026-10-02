@@ -4,7 +4,7 @@
  * Order confirmations go to the customer and an alert goes to the admin addresses below.
  */
 import React, { useEffect, useState } from "react";
-import { Alert, Button, Card, Field, PageHeader, Switch, useToast } from "@/components/admin/ui";
+import { Alert, Badge, Button, Card, Field, PageHeader, Switch, useToast } from "@/components/admin/ui";
 
 interface Form { enabled: boolean; host: string; port: string; secure: boolean; user: string; pass: string; fromName: string; fromEmail: string; adminEmails: string }
 const EMPTY: Form = { enabled: true, host: "", port: "587", secure: false, user: "", pass: "", fromName: "CULTRAVEN", fromEmail: "", adminEmails: "" };
@@ -26,6 +26,9 @@ export default function EmailSettingsPage() {
   const [testTo, setTestTo] = useState("");
   const [testing, setTesting] = useState(false);
   const [result, setResult] = useState<{ ok: boolean; text: string } | null>(null);
+  const [logs, setLogs] = useState<{ id: string; kind: string; to: string; subject: string; status: string; error: string; at: string }[] | null>(null);
+  const loadLogs = () => fetch("/api/admin/email-logs", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then((d) => setLogs(d?.logs ?? [])).catch(() => setLogs([]));
+  useEffect(() => { loadLogs(); }, []);
 
   useEffect(() => {
     fetch("/api/admin/settings/smtp", { cache: "no-store" })
@@ -121,6 +124,28 @@ export default function EmailSettingsPage() {
           <Button onClick={test} loading={testing} disabled={!testTo}>Send test</Button>
         </div>
         {result ? <div style={{ marginTop: 12 }}><Alert kind={result.ok ? "success" : "error"}>{result.text}</Alert></div> : null}
+      </Card>
+
+      <div style={{ height: 16 }} />
+      <Card title="Recent emails" actions={<Button size="sm" onClick={loadLogs}>Refresh</Button>}>
+        <p className="adm-cell-sub" style={{ marginBottom: 10 }}>Every order email the site tried to send. &quot;Skipped&quot; means email isn&apos;t set up (or is switched off); &quot;Failed&quot; shows why.</p>
+        {logs === null ? <p className="adm-cell-sub">Loading…</p> : logs.length === 0 ? <p className="adm-cell-sub">Nothing sent yet.</p> : (
+          <div className="adm-table-wrap">
+            <table className="adm-table">
+              <thead><tr><th scope="col">When</th><th scope="col">To</th><th scope="col">Email</th><th scope="col">Result</th></tr></thead>
+              <tbody>
+                {logs.map((l) => (
+                  <tr key={l.id}>
+                    <td style={{ whiteSpace: "nowrap" }}>{new Date(l.at).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })}</td>
+                    <td>{l.to}</td>
+                    <td>{l.subject}</td>
+                    <td><Badge tone={l.status === "sent" ? "success" : l.status === "failed" ? "danger" : "warn"}>{l.status}</Badge>{l.error ? <div className="adm-cell-sub">{l.error}</div> : null}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </Card>
     </>
   );

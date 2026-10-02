@@ -5,6 +5,10 @@
  *   processing → confirmed → shipped → out_for_delivery → delivered
  *        ↘ cancelled (customer within 7 days, or admin)        ↘ return_requested → returned
  *                                                                  (admin may reject → back to delivered)
+ *
+ * Cancelling: before shipping the customer cancels instantly; once shipped (within 7 days of ordering) they send a
+ * cancellation REQUEST which the admin approves (the courier has to be stopped / the parcel refused).
+ * Admins can also step one stage back to fix a mis-click.
  */
 
 export const ORDER_STATUSES = ["processing", "confirmed", "shipped", "out_for_delivery", "delivered", "cancelled", "return_requested", "returned"] as const;
@@ -28,14 +32,23 @@ export const STATUS_LABEL: Record<OrderStatus, string> = {
 /** What an admin may move an order to from each status (no going backwards; terminal states are final). */
 export const ADMIN_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   processing: ["confirmed", "shipped", "cancelled"],
-  confirmed: ["shipped", "cancelled"],
-  shipped: ["out_for_delivery", "delivered"],
-  out_for_delivery: ["delivered"],
-  delivered: ["returned"],
+  confirmed: ["shipped", "cancelled", "processing"],
+  shipped: ["out_for_delivery", "delivered", "cancelled", "confirmed"],
+  out_for_delivery: ["delivered", "cancelled", "shipped"],
+  delivered: ["returned", "out_for_delivery"],
   return_requested: ["returned", "delivered"], // "delivered" = return rejected
   cancelled: [],
   returned: [],
 };
+
+/** Moving to one of these is a correction of an earlier step, not progress. */
+export const BACKWARD: Partial<Record<OrderStatus, OrderStatus[]>> = {
+  confirmed: ["processing"],
+  shipped: ["confirmed"],
+  out_for_delivery: ["shipped"],
+  delivered: ["out_for_delivery"],
+};
+export const isBackward = (from: string, to: string) => isOrderStatus(from) && isOrderStatus(to) && !!BACKWARD[from]?.includes(to);
 
 export const isOrderStatus = (v: unknown): v is OrderStatus => typeof v === "string" && (ORDER_STATUSES as readonly string[]).includes(v);
 
@@ -45,17 +58,20 @@ export function canAdminTransition(from: string, to: string): boolean {
 
 const ts = (d: Date | string | number | undefined | null) => (d ? new Date(d).getTime() : NaN);
 
-export interface Eligibility { ok: boolean; reason?: string; daysLeft?: number }
+export interface Eligibility { ok: boolean; reason?: string; daysLeft?: number; /** 'direct' = cancels now; 'request' = needs admin approval (already shipped) */ mode?: "direct" | "request" }
 
-/** Customers can cancel until the order ships, and only within 7 days of placing it. */
-export function cancelEligibility(o: { fulfillmentStatus: string; createdAt: Date | string }, now = Date.now()): Eligibility {
+/** Customers can cancel within 7 days of ordering: instantly before shipping, as a request to the admin once it has shipped. */
+export function cancelEligibility(o: { fulfillmentStatus: string; createdAt: Date | string; cancelRequestedAt?: Date | string | null }, now = Date.now()): Eligibility {
   if (o.fulfillmentStatus === "cancelled") return { ok: false, reason: "This order is already cancelled." };
-  if (!["processing", "confirmed"].includes(o.fulfillmentStatus)) {
-    return { ok: false, reason: o.fulfillmentStatus === "delivered" ? "Delivered orders can be returned instead." : "This order has already shipped, so it can't be cancelled. You can return it after delivery." };
+  const direct = ["processing", "confirmed"].includes(o.fulfillmentStatus);
+  const request = ["shipped", "out_for_delivery"].includes(o.fulfillmentStatus);
+  if (!direct && !request) {
+    return { ok: false, reason: o.fulfillmentStatus === "delivered" ? "Delivered orders can be returned instead." : "This order can't be cancelled now." };
   }
+  if (request && o.cancelRequestedAt) return { ok: false, reason: "You've already asked to cancel this order — we'll confirm shortly." };
   const elapsed = now - ts(o.createdAt);
   if (!(elapsed >= 0) || elapsed > CANCEL_WINDOW_DAYS * DAY) return { ok: false, reason: `The ${CANCEL_WINDOW_DAYS}-day cancellation window has passed.` };
-  return { ok: true, daysLeft: Math.max(0, Math.ceil((CANCEL_WINDOW_DAYS * DAY - elapsed) / DAY)) };
+  return { ok: true, mode: direct ? "direct" : "request", daysLeft: Math.max(0, Math.ceil((CANCEL_WINDOW_DAYS * DAY - elapsed) / DAY)) };
 }
 
 /** Customers can request a return within 7 days of delivery. */

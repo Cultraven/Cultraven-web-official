@@ -4,7 +4,7 @@ import { connectToDatabase } from "@/lib/db";
 import { Order } from "@/lib/models/Order";
 import { isAdminRequest } from "@/lib/admin-auth";
 import { customerFromRequest } from "@/lib/customer-auth";
-import { canAdminTransition, isOrderStatus, ORDER_STATUSES, ADMIN_TRANSITIONS } from "@/lib/order-lifecycle";
+import { canAdminTransition, isOrderStatus, isBackward, ORDER_STATUSES, ADMIN_TRANSITIONS } from "@/lib/order-lifecycle";
 import { customerOrderView, validId } from "@/lib/order-view";
 import { notifyStatusChange } from "@/lib/order-notify";
 
@@ -16,7 +16,10 @@ type Ctx = { params: Promise<{ id: string }> };
 export async function GET(req: NextRequest, { params }: Ctx) {
   const { id } = await params;
   if (!validId(id)) return NextResponse.json({ error: "Order not found" }, { status: 404 });
-  const admin = isAdminRequest(req);
+  // The storefront order page asks for ?view=customer so that someone signed in as BOTH admin and customer in one browser
+  // still gets the customer shape there (and the admin panel keeps getting the full order).
+  const asCustomer = req.nextUrl.searchParams.get("view") === "customer";
+  const admin = !asCustomer && isAdminRequest(req);
   const me = admin ? null : customerFromRequest(req);
   if (!admin && !me) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   try {
@@ -78,6 +81,13 @@ export async function PUT(req: NextRequest, { params }: Ctx) {
         return NextResponse.json({ error: to === "cancelled" ? "Add a note with the cancellation reason" : "Add a note explaining why the return was rejected" }, { status: 422 });
       }
       $set.fulfillmentStatus = to;
+      if (isBackward(from, to)) {
+        // Correcting a mis-click: undo what the forward step stamped.
+        if (from === "delivered") {
+          $set.deliveredAt = null;
+          if (cur.paymentMethod === "cod" && cur.paymentStatus === "paid") $set.paymentStatus = "pending";
+        }
+      }
       if (to === "delivered" && from !== "return_requested") {
         $set.deliveredAt = now;
         if (cur.paymentMethod === "cod" && cur.paymentStatus === "pending") $set.paymentStatus = "paid"; // cash collected by the courier
@@ -98,10 +108,12 @@ export async function PUT(req: NextRequest, { params }: Ctx) {
       (d.courierName !== undefined && d.courierName !== (cur.courierName ?? "")) ||
       (d.trackingNumber !== undefined && d.trackingNumber !== (cur.trackingNumber ?? "")) ||
       (d.trackingUrl !== undefined && d.trackingUrl !== (cur.trackingUrl ?? ""));
+    const backward = changedStatus && isBackward(from, d.fulfillmentStatus!);
     const status = (changedStatus ? d.fulfillmentStatus : from) as string;
     const noteBits = [
       d.note,
       !changedStatus && trackingChanged ? "Tracking details updated" : "",
+      backward ? "Status corrected (moved back)" : "",
       d.paymentStatus !== undefined && d.paymentStatus !== cur.paymentStatus ? `Payment marked ${d.paymentStatus.replace("_", " ")}` : "",
     ].filter(Boolean);
 
@@ -112,7 +124,9 @@ export async function PUT(req: NextRequest, { params }: Ctx) {
     const updated = (await Order.findOneAndUpdate({ _id: id, fulfillmentStatus: from }, update, { new: true }).lean()) as any;
     if (!updated) return NextResponse.json({ error: "The order changed while you were editing — refresh and try again." }, { status: 409 });
 
-    if (d.notify !== false && (changedStatus || trackingChanged)) {
+    // A correction of a mis-click isn't news to the customer unless the admin explicitly asks to notify.
+    const shouldNotify = d.notify === true || (d.notify !== false && !backward);
+    if (shouldNotify && (changedStatus || trackingChanged)) {
       after(() => notifyStatusChange(id, { status, note: d.note }));
     }
     return NextResponse.json({ success: true, order: { ...updated, allowedNext: ADMIN_TRANSITIONS[updated.fulfillmentStatus as keyof typeof ADMIN_TRANSITIONS] ?? [] } }, { headers: NO_STORE });

@@ -4,8 +4,8 @@
  * record payment/refund, approve or reject a customer's return, and see the full history. Every status change emails the customer.
  */
 import React, { useEffect, useState } from "react";
-import { Alert, Badge, Button, Card, EmptyState, Field, LinkButton, PageHeader, Skeleton, inr, useApi, useToast } from "./ui";
-import { STATUS_LABEL, isOrderStatus, type OrderStatus } from "@/lib/order-lifecycle";
+import { Alert, Badge, Button, Card, EmptyState, Field, LinkButton, PageHeader, Skeleton, Switch, inr, useApi, useToast } from "./ui";
+import { STATUS_LABEL, isOrderStatus, isBackward, type OrderStatus } from "@/lib/order-lifecycle";
 
 type Item = { productId?: string; title: string; image?: string; size?: string; color?: string; quantity: number; pricePaise: number };
 type Address = { line1?: string; line2?: string; name?: string; email?: string; phone?: string; city?: string; state?: string; pincode?: string };
@@ -15,7 +15,7 @@ type Order = {
   subtotalPaise?: number; discountPaise?: number; shippingPaise?: number; codFeePaise?: number; totalPaise?: number;
   deliveryAddress?: Address; paymentMethod?: string; paymentStatus?: string; fulfillmentStatus?: string; createdAt?: string;
   deliveredAt?: string | null; courierName?: string; trackingNumber?: string; trackingUrl?: string;
-  cancelReason?: string; returnReason?: string; statusHistory?: Event[]; allowedNext?: OrderStatus[];
+  cancelReason?: string; returnReason?: string; cancelRequestedAt?: string | null; cancelRequestReason?: string; statusHistory?: Event[]; allowedNext?: OrderStatus[];
 };
 
 const TONES: Record<string, "warn" | "info" | "success" | "danger" | "neutral"> = { processing: "warn", confirmed: "info", shipped: "info", out_for_delivery: "info", delivered: "success", cancelled: "danger", return_requested: "warn", returned: "danger" };
@@ -40,6 +40,8 @@ export default function OrderDetailsClient({ id }: { id: string }) {
   const { toast } = useToast();
   const [saving, setSaving] = useState(false);
   const [note, setNote] = useState("");
+  const [emailCustomer, setEmailCustomer] = useState(true);
+  const [fixTo, setFixTo] = useState("");
   const [courier, setCourier] = useState("");
   const [tno, setTno] = useState("");
   const [turl, setTurl] = useState("");
@@ -93,6 +95,8 @@ export default function OrderDetailsClient({ id }: { id: string }) {
   const title = `CR-${order._id.slice(-6).toUpperCase()}`;
   const addr = [a.line1, a.line2, [a.city, a.state].filter(Boolean).join(", "), a.pincode].filter(Boolean);
   const next = order.allowedNext ?? [];
+  const forward = next.filter((to) => !isBackward(status, to));
+  const undoable = next.filter((to) => isBackward(status, to));
   const needsNote = (to: string) => to === "cancelled" || (status === "return_requested" && to === "delivered");
   const finished = next.length === 0;
   const trackingDirty = courier !== (order.courierName ?? "") || tno !== (order.trackingNumber ?? "") || turl !== (order.trackingUrl ?? "");
@@ -107,6 +111,14 @@ export default function OrderDetailsClient({ id }: { id: string }) {
       </PageHeader>
 
       {status === "return_requested" ? <div style={{ marginBottom: 14 }}><Alert kind="info"><b>Return requested</b> — {order.returnReason || "no reason given"}. Approve to refund, or reject with a note.</Alert></div> : null}
+      {order.cancelRequestedAt && status !== "cancelled" ? (
+        <div style={{ marginBottom: 14 }}>
+          <Alert kind="info">
+            <span><b>Customer asked to cancel</b> (already {label(status).toLowerCase()}) — {order.cancelRequestReason || "no reason given"}. </span>
+            <Button size="sm" variant="danger" disabled={saving} onClick={() => send({ fulfillmentStatus: "cancelled", note: `Cancelled at your request${order.cancelRequestReason ? `: ${order.cancelRequestReason}` : ""}` }, "Order cancelled · customer notified")}>Approve cancellation</Button>
+          </Alert>
+        </div>
+      ) : null}
       {refundDue ? <div style={{ marginBottom: 14 }}><Alert kind="info"><b>Refund due</b> — {inr(order.totalPaise ?? 0)} paid online. Refund it in your Razorpay dashboard, then mark payment as refunded below.</Alert></div> : null}
 
       <div className="adm-grid adm-grid-main">
@@ -116,20 +128,37 @@ export default function OrderDetailsClient({ id }: { id: string }) {
               <p className="adm-cell-sub">This order is {label(status).toLowerCase()} — no further status changes.</p>
             ) : (
               <>
-                <Field label={`Note to customer ${next.some(needsNote) ? "(required to cancel / reject a return)" : "(optional)"}`}>
+                <Field label={`Note to customer ${forward.some(needsNote) ? "(required to cancel / reject a return)" : "(optional)"}`}>
                   <input className="adm-input" value={note} maxLength={300} onChange={(e) => setNote(e.target.value)} placeholder="Shown in their email and order page" />
                 </Field>
                 <div className="adm-actions" style={{ marginTop: 12 }}>
-                  {next.map((to) => {
+                  {forward.map((to) => {
                     const reject = status === "return_requested" && to === "delivered";
                     const danger = to === "cancelled" || reject;
                     return (
-                      <Button key={to} variant={danger ? "danger" : to === "delivered" || to === "returned" ? "primary" : "default"} disabled={saving || (needsNote(to) && !note.trim())} loading={saving} onClick={() => send({ fulfillmentStatus: to, note: note.trim() || undefined }, `Order ${reject ? "return rejected" : label(to).toLowerCase()} · customer notified`)}>
+                      <Button key={to} variant={danger ? "danger" : to === "delivered" || to === "returned" ? "primary" : "default"} disabled={saving || (needsNote(to) && !note.trim())} loading={saving} onClick={() => send({ fulfillmentStatus: to, note: note.trim() || undefined, notify: emailCustomer }, `Order ${reject ? "return rejected" : label(to).toLowerCase()}${emailCustomer ? " · customer notified" : ""}`)}>
                         {reject ? "Reject return" : ACTION[to] ?? cap(to)}
                       </Button>
                     );
                   })}
                 </div>
+                <label className="adm-row" style={{ marginTop: 14, cursor: "pointer" }}>
+                  <span className="adm-row-main"><b>Email the customer about this change</b><span className="adm-cell-sub" style={{ display: "block" }}>Sends the status update (and tracking) to {a.email || "the customer"}.</span></span>
+                  <Switch checked={emailCustomer} onChange={setEmailCustomer} label="Email the customer" />
+                </label>
+                {undoable.length > 0 ? (
+                  <div style={{ marginTop: 16, paddingTop: 14, borderTop: "1px solid var(--a-border)" }}>
+                    <div style={{ fontWeight: 600, marginBottom: 6 }}>Clicked the wrong status?</div>
+                    <div className="adm-actions">
+                      <select className="adm-select" style={{ maxWidth: 260 }} aria-label="Move order back to" value={fixTo} onChange={(e) => setFixTo(e.target.value)}>
+                        <option value="">Move back to…</option>
+                        {undoable.map((to) => <option key={to} value={to}>{label(to)}</option>)}
+                      </select>
+                      <Button disabled={saving || !fixTo} onClick={() => send({ fulfillmentStatus: fixTo, notify: false }, `Order moved back to ${label(fixTo).toLowerCase()}`).then(() => setFixTo(""))}>Apply correction</Button>
+                    </div>
+                    <div className="adm-cell-sub" style={{ marginTop: 4 }}>Fixes a mis-click. The customer is not emailed.</div>
+                  </div>
+                ) : null}
               </>
             )}
           </Card>

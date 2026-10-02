@@ -10,7 +10,7 @@ const date = (d: string) => new Date(d).toLocaleDateString("en-IN", { day: "nume
 const label = (s: string) => (isOrderStatus(s) ? STATUS_LABEL[s] : s);
 
 interface Item { title: string; image: string; size: string; color: string; quantity: number; pricePaise: number }
-interface Order { id: string; number: string; createdAt: string; status: string; totalPaise: number; paymentMethod: string; items: Item[]; tracking: { courier: string; number: string }; canCancel: { ok: boolean }; canReturn: { ok: boolean }; timeline: { key: string; state: string; label: string }[] }
+interface Order { id: string; number: string; createdAt: string; status: string; totalPaise: number; paymentMethod: string; items: Item[]; tracking: { courier: string; number: string }; canCancel: { ok: boolean; mode?: "direct" | "request" }; canReturn: { ok: boolean }; timeline: { key: string; state: string; label: string }[] }
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[] | null>(null);
@@ -87,7 +87,7 @@ export default function OrdersPage() {
                 <div className="ord-actions">
                   <Link href={`/account/orders/${o.id}`} className="cv-btn cv-btn-navy cv-btn-sm">Track &amp; details</Link>
                   <a href={`/api/orders/${o.id}/invoice`} className="cv-btn cv-btn-outline cv-btn-sm">Receipt (PDF)</a>
-                  {o.canCancel.ok ? <Link href={`/account/orders/${o.id}?action=cancel`} className="cv-btn cv-btn-outline cv-btn-sm">Cancel order</Link> : null}
+                  {o.canCancel.ok ? <Link href={`/account/orders/${o.id}?action=cancel`} className="cv-btn cv-btn-outline cv-btn-sm">{o.canCancel.mode === "request" ? "Request cancellation" : "Cancel order"}</Link> : null}
                   {o.canReturn.ok ? <Link href={`/account/orders/${o.id}?action=return`} className="cv-btn cv-btn-outline cv-btn-sm">Return</Link> : null}
                 </div>
               </article>

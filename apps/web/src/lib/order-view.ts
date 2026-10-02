@@ -25,10 +25,12 @@ export function customerOrderView(o: any) {
     tracking: { courier: o.courierName ?? "", number: o.trackingNumber ?? "", url: o.trackingUrl ?? "" },
     deliveredAt: o.deliveredAt ?? null,
     cancelReason: o.cancelReason ?? "",
+    cancelRequested: !!o.cancelRequestedAt,
+    cancelRequestReason: o.cancelRequestReason ?? "",
     returnReason: o.returnReason ?? "",
     timeline: buildTimeline({ fulfillmentStatus: o.fulfillmentStatus, createdAt: o.createdAt, statusHistory: history }),
     history: history.slice().reverse(),
-    canCancel: cancelEligibility({ fulfillmentStatus: o.fulfillmentStatus, createdAt: o.createdAt }),
+    canCancel: cancelEligibility({ fulfillmentStatus: o.fulfillmentStatus, createdAt: o.createdAt, cancelRequestedAt: o.cancelRequestedAt }),
     canReturn: returnEligibility({ fulfillmentStatus: o.fulfillmentStatus, deliveredAt: o.deliveredAt }),
   };
 }
