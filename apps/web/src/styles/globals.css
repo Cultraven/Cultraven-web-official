@@ -74,6 +74,7 @@
   html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+    overflow-x: clip; /* prevent horizontal scrollbar from box-shadows / elements at viewport edge */
   }
 
   body {

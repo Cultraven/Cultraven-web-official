@@ -111,6 +111,7 @@
 .sc-color-label {
   font: 700 9px/1 var(--font-sans); letter-spacing: 0.1em; text-transform: uppercase;
   color: var(--color-gray); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  min-width: 0; /* allow flex shrink so ellipsis activates correctly */
 }
 .sc-color-label strong { color: var(--color-lava); font-weight: 800; letter-spacing: 0.08em; }
 .sc-color-swatches { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
@@ -135,6 +136,11 @@
   .sc-price b { font-size: 15px; }
   .sc-brand { font-size: 10px; }
   .sc-sizes, .sc-few, .sc-price .sc-off { font-size: 11.5px; }
+  /* color row: wrap onto two lines so the label and swatches both have full width on narrow cards */
+  .sc-color-row { flex-wrap: wrap; padding: 5px 9px 7px; gap: 4px; }
+  .sc-color-label { width: 100%; }
+  .sc-color-swatch { width: 16px; height: 16px; }
+  .sc-color-swatches { gap: 4px; }
 }
 
 /* ── loading placeholder ── */
