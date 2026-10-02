@@ -94,29 +94,34 @@ export function ShopCard({ product: p, priority = false }: { product: CardProduc
         ) : null}
       </Link>
 
-      {/* ── Quick-add sizes — below the card, not overlaid on the image ── */}
+      {/* ── Quick-add panel — two options: size chips (bag it) + cop it now ── */}
       {!v.soldOut ? (
         <div className="sc-size-row" role="group" aria-label={`Quick add ${p.title}`}>
-          {single ? (
-            <button type="button" className="sc-chip sc-chip-full" aria-live="polite" onClick={() => quickAdd(v.sizes[0].size)} data-added={added ? "true" : undefined}>
-              {added ? "Added to bag ✓" : "Add to bag"}
-            </button>
-          ) : (
-            v.sizes.map((s) => (
-              <button
-                key={s.size}
-                type="button"
-                className="sc-chip"
-                disabled={s.soldOut}
-                data-added={added === s.size ? "true" : undefined}
-                aria-label={s.soldOut ? `Size ${s.size} sold out` : `Add size ${s.size} to bag`}
-                onClick={() => quickAdd(s.size)}
-              >
-                <span className="sc-chip-sz">{s.size}</span>
-                {v.varies ? <span className="sc-chip-price">{formatPriceINR(s.pricePaise)}</span> : null}
+          {/* Row 1: size chips (each click = add to bag) */}
+          <div className="sc-chips-row">
+            {single ? (
+              <button type="button" className="sc-chip sc-chip-full" aria-live="polite" onClick={() => quickAdd(v.sizes[0].size)} data-added={added ? "true" : undefined}>
+                {added ? "Added to bag ✓" : "Add to bag"}
               </button>
-            ))
-          )}
+            ) : (
+              v.sizes.map((s) => (
+                <button
+                  key={s.size}
+                  type="button"
+                  className="sc-chip"
+                  disabled={s.soldOut}
+                  data-added={added === s.size ? "true" : undefined}
+                  aria-label={s.soldOut ? `Size ${s.size} sold out` : `Add size ${s.size} to bag`}
+                  onClick={() => quickAdd(s.size)}
+                >
+                  <span className="sc-chip-sz">{s.size}</span>
+                  {v.varies ? <span className="sc-chip-price">{formatPriceINR(s.pricePaise)}</span> : null}
+                </button>
+              ))
+            )}
+          </div>
+          {/* Row 2: cop it now — goes straight to the product page */}
+          <Link href={p.href} className="sc-cop-btn">COP IT NOW →</Link>
         </div>
       ) : (
         <div className="sc-size-row sc-size-row-sold">

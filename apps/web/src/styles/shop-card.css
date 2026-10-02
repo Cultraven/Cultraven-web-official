@@ -42,23 +42,35 @@
 
 /* ── size row below the card — hidden until the card is hovered (mouse) or focused ── */
 .sc-size-row {
-  display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+  display: flex; flex-direction: column; gap: 7px;
   padding: 9px 11px 11px; border-top: 1.5px solid var(--color-border);
   background: var(--color-bone);
   /* collapsed by default */
   max-height: 0; padding-top: 0; padding-bottom: 0; overflow: hidden; border-top-width: 0;
-  transition: max-height 0.22s ease, padding 0.22s ease, border-top-width 0.22s ease;
+  transition: max-height 0.24s ease, padding 0.24s ease, border-top-width 0.24s ease;
 }
 /* show on hover (mouse) or keyboard focus anywhere inside the card */
 @media (hover: hover) and (pointer: fine) {
   .sc:hover .sc-size-row,
-  .sc:focus-within .sc-size-row { max-height: 80px; padding-top: 9px; padding-bottom: 11px; border-top-width: 1.5px; }
+  .sc:focus-within .sc-size-row { max-height: 120px; padding-top: 9px; padding-bottom: 11px; border-top-width: 1.5px; }
 }
 /* on touch devices always show the size row (no hover available) */
 @media (hover: none), (pointer: coarse) {
-  .sc-size-row { max-height: 80px; padding-top: 9px; padding-bottom: 11px; border-top-width: 1.5px; }
+  .sc-size-row { max-height: 120px; padding-top: 9px; padding-bottom: 11px; border-top-width: 1.5px; }
 }
 .sc-size-row-sold { background: transparent; }
+.sc-chips-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+/* COP IT NOW — full-width second option */
+.sc-cop-btn {
+  display: flex; align-items: center; justify-content: center; width: 100%; min-height: 32px; padding: 0 10px;
+  background: var(--color-navy); color: var(--color-cream); border: 2px solid var(--color-navy);
+  font: 900 10px/1 var(--font-sans); letter-spacing: 0.12em; text-transform: uppercase; text-decoration: none;
+  box-shadow: 2px 2px 0 var(--color-lava); transition: background 0.12s, color 0.12s, transform 0.1s, box-shadow 0.1s;
+}
+@media (hover: hover) and (pointer: fine) {
+  .sc-cop-btn:hover { background: var(--color-lava); color: var(--color-navy); box-shadow: 2px 2px 0 var(--color-navy); }
+}
+.sc-cop-btn:active { transform: translate(2px, 2px); box-shadow: none; }
 .sc-chip {
   min-width: 36px; padding: 0 8px; height: 34px; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; cursor: pointer;
   font: 800 11px/1 var(--font-sans); letter-spacing: 0.04em; color: var(--color-navy); background: var(--color-cream); border: 2px solid var(--color-navy);
