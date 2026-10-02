@@ -65,6 +65,36 @@
 @media (prefers-reduced-motion: reduce) { .pdp-btn, .pdp-wish, .pdp-wish svg { transition: none; } .pdp-wish.pop svg { animation: none; } }
 .pdp-sold { margin-bottom: 0.9rem; }
 
+/* ── Price update animation: pop in when the displayed price changes (key-based remount triggers it) ── */
+@keyframes pdpPricePop {
+  0%   { transform: scale(0.82) translateY(4px); opacity: 0; }
+  60%  { transform: scale(1.06) translateY(-1px); opacity: 1; }
+  100% { transform: scale(1)    translateY(0);    opacity: 1; }
+}
+.pdp-price-val { display: inline-block; animation: pdpPricePop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1); }
+@media (prefers-reduced-motion: reduce) { .pdp-price-val { animation: none; } }
+
+/* ── Size & Fit card in the detail strip ── */
+.pdp-fit-section { padding: 0 clamp(1rem, 4vw, 5rem) clamp(2rem, 4vw, 3.5rem); }
+.pdp-fit-card { background: var(--color-navy); color: var(--color-cream); padding: clamp(1.25rem, 3vw, 2.25rem) clamp(1.25rem, 3vw, 2.5rem); border: 2px solid var(--color-navy); box-shadow: 6px 6px 0 var(--color-lava); }
+.pdp-fit-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.25rem; }
+.pdp-fit-title { font: 900 0.78rem var(--font-sans); letter-spacing: 0.18em; text-transform: uppercase; color: var(--color-lava); }
+.pdp-fit-badge { font: 900 0.72rem var(--font-sans); letter-spacing: 0.14em; text-transform: uppercase; border: 2px solid var(--color-lava); color: var(--color-lava); padding: 4px 10px; }
+.pdp-fit-guide { font: 800 0.72rem var(--font-sans); letter-spacing: 0.1em; text-transform: uppercase; color: rgba(250,249,246,0.6); text-decoration: underline; padding: 10px 0; }
+.pdp-fit-guide:hover { color: var(--color-cream); }
+.pdp-fit-sizes { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.pdp-fit-size {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  min-width: 64px; padding: 0.6rem 0.75rem; border: 2px solid rgba(250,249,246,0.22);
+  background: transparent; color: var(--color-cream); cursor: default; position: relative;
+  transition: border-color 0.15s, background 0.15s;
+}
+.pdp-fit-size.is-sel { border-color: var(--color-lava); background: rgba(218,178,5,0.12); }
+.pdp-fit-size.is-out { opacity: 0.38; }
+.pdp-fit-size-label { font: 900 0.9rem var(--font-sans); letter-spacing: 0.05em; }
+.pdp-fit-size-price { font: 700 0.7rem var(--font-mono); color: var(--color-lava); letter-spacing: 0.04em; }
+.pdp-fit-size-out { font: 700 0.62rem var(--font-sans); letter-spacing: 0.1em; text-transform: uppercase; color: rgba(250,249,246,0.45); }
+
 /* ── Product page layout: the gallery stays in view while the buy box scrolls (no empty left side), details run full width ── */
 @media (min-width: 769px) {
   .pdp-gallery-sticky { position: sticky; top: 96px; align-self: start; }

@@ -54,42 +54,21 @@ export function ShopCard({ product: p, priority = false }: { product: CardProduc
 
   return (
     <article className="sc" data-testid="shop-card" data-sold-out={v.soldOut ? "true" : undefined}>
+      {/* ── Photo ── */}
       <div className="sc-media">
         <Link href={p.href} className="sc-photo" aria-label={p.title} tabIndex={-1}>
           <Image src={p.image} alt={p.title} fill sizes={SIZES_ATTR} priority={priority} className="sc-img sc-img-1" />
           {hover ? <Image src={hover} alt="" aria-hidden="true" fill sizes={SIZES_ATTR} className="sc-img sc-img-2" /> : null}
         </Link>
-
         {v.badge ? <span className="sc-badge" data-kind={v.soldOut ? "sold" : "tag"}>{v.badge}</span> : null}
-
         <button type="button" className="sc-heart" aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"} aria-pressed={wishlisted} onClick={toggleWishlist}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill={wishlisted ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2.4" strokeLinecap="square" strokeLinejoin="miter" aria-hidden="true">
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
           </svg>
         </button>
-
-        {!v.soldOut ? (
-          <div className="sc-quick" role="group" aria-label={`Add ${p.title} to bag`}>
-            <span className="sc-quick-label" aria-live="polite">{added ? "Added to bag ✓" : single ? "Add to bag" : "Add your size"}</span>
-            <div className="sc-chips">
-              {v.sizes.map((s) => (
-                <button
-                  key={s.size}
-                  type="button"
-                  className="sc-chip"
-                  disabled={s.soldOut}
-                  data-added={added === s.size ? "true" : undefined}
-                  aria-label={s.soldOut ? `Size ${s.size} sold out` : `Add size ${s.size} to bag`}
-                  onClick={() => quickAdd(s.size)}
-                >
-                  {s.size}
-                </button>
-              ))}
-            </div>
-          </div>
-        ) : null}
       </div>
 
+      {/* ── Text info ── */}
       <Link href={p.href} className="sc-info">
         <span className="sc-meta">
           <span className="sc-brand">CULTRAVEN</span>
@@ -107,11 +86,6 @@ export function ShopCard({ product: p, priority = false }: { product: CardProduc
           {v.varies ? <em>onwards</em> : null}
         </span>
         {v.fewLeft ? <span className="sc-few">Only few left</span> : null}
-        {v.sizeLabel ? (
-          <span className="sc-sizes">{single ? v.sizeLabel : <><span>Size</span> {v.sizeLabel}</>}</span>
-        ) : (
-          <span className="sc-sizes sc-sizes-sold">Currently unavailable</span>
-        )}
         {colors.length ? (
           <span className="sc-colors" aria-label={`Colours: ${colors.map((c) => c.label).join(", ")}`}>
             {colors.slice(0, 5).map((c) => <i key={c.hex + c.label} title={c.label} style={{ background: c.hex }} />)}
@@ -119,6 +93,36 @@ export function ShopCard({ product: p, priority = false }: { product: CardProduc
           </span>
         ) : null}
       </Link>
+
+      {/* ── Quick-add sizes — below the card, not overlaid on the image ── */}
+      {!v.soldOut ? (
+        <div className="sc-size-row" role="group" aria-label={`Quick add ${p.title}`}>
+          {single ? (
+            <button type="button" className="sc-chip sc-chip-full" aria-live="polite" onClick={() => quickAdd(v.sizes[0].size)} data-added={added ? "true" : undefined}>
+              {added ? "Added to bag ✓" : "Add to bag"}
+            </button>
+          ) : (
+            v.sizes.map((s) => (
+              <button
+                key={s.size}
+                type="button"
+                className="sc-chip"
+                disabled={s.soldOut}
+                data-added={added === s.size ? "true" : undefined}
+                aria-label={s.soldOut ? `Size ${s.size} sold out` : `Add size ${s.size} to bag`}
+                onClick={() => quickAdd(s.size)}
+              >
+                <span className="sc-chip-sz">{s.size}</span>
+                {v.varies ? <span className="sc-chip-price">{formatPriceINR(s.pricePaise)}</span> : null}
+              </button>
+            ))
+          )}
+        </div>
+      ) : (
+        <div className="sc-size-row sc-size-row-sold">
+          <span className="sc-sizes-sold">Currently unavailable</span>
+        </div>
+      )}
     </article>
   );
 }
