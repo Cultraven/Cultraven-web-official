@@ -5,6 +5,7 @@
    ═══════════════════════════════════════════════════════════════════════════════ */
 .sc {
   position: relative; display: flex; flex-direction: column; min-width: 0;
+  height: 100%; /* fill grid cell / flex-column container so color+size rows pin to bottom */
   background: var(--color-cream); border: 2px solid var(--color-navy); box-shadow: 3px 3px 0 var(--color-navy);
   transition: transform 0.18s ease, box-shadow 0.18s ease;
 }

@@ -164,7 +164,7 @@ export function BestsellersSection({ content, products }: { content: Bestsellers
           className="bs-scroll"
         >
           {products.map((p, i) => (
-            <div key={p.id} className="bs-card" style={{ flexShrink: 0, width: "clamp(200px, 22vw, 290px)", scrollSnapAlign: "start", display: "flex", flexDirection: "column", padding: "0 4px 6px 0" }}>
+            <div key={p.id} className="bs-card" style={{ flexShrink: 0, width: "clamp(200px, 22vw, 290px)", scrollSnapAlign: "start", display: "flex", flexDirection: "column" }}>
               <ShopCard product={p} priority={i < 3} />
             </div>
           ))}
