@@ -220,51 +220,26 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
             </div>
           </Card>
 
-          <Card title="Variants">
-            <div className="adm-form-grid">
-              <Field label="Sizes" hint={f.sizes.trim() ? "Comma separated, e.g. S, M, L, XL" : "Empty = sold as Free Size"}><input className="adm-input" value={f.sizes} onChange={(e) => set("sizes", e.target.value)} placeholder="S, M, L, XL" /></Field>
-              <Field label="Fit">
-                <select className="adm-select" value={f.fit} onChange={(e) => set("fit", e.target.value)}>
-                  {["oversized", "relaxed", "boxy", "baggy", "regular"].map((x) => <option key={x} value={x}>{x}</option>)}
+          <Card title=”Variants”>
+            <div className=”adm-form-grid”>
+              <Field label=”Sizes” hint={f.sizes.trim() ? “Comma separated, e.g. S, M, L, XL” : “Empty = sold as Free Size”}><input className=”adm-input” value={f.sizes} onChange={(e) => set(“sizes”, e.target.value)} placeholder=”S, M, L, XL” /></Field>
+              <Field label=”Fit”>
+                <select className=”adm-select” value={f.fit} onChange={(e) => set(“fit”, e.target.value)}>
+                  {[“oversized”, “relaxed”, “boxy”, “baggy”, “regular”].map((x) => <option key={x} value={x}>{x}</option>)}
                 </select>
               </Field>
-              <Field label="Colors" hint="Name:#hex, comma separated" span>
-                <input className="adm-input" value={f.colors} onChange={(e) => set("colors", e.target.value)} placeholder="Black:#0A0A0A, Olive:#556B2F" />
+              <Field label=”Colors” hint=”Name:#hex, comma separated” span>
+                <input className=”adm-input” value={f.colors} onChange={(e) => set(“colors”, e.target.value)} placeholder=”Black:#0A0A0A, Olive:#556B2F” />
               </Field>
             </div>
-          </Card>
-
-          <Card title="Size price & stock">
-            <p className="adm-hint" style={{ marginBottom: 10 }}>
-              Optional. Give a size its own price (for example XL costs more) or its own stock count. Leave a box empty to use the base price / not track stock for that size.
-              The product page and the bag update their price live when a customer picks the size, and the server charges the same price.
-              {sizeList.length === 1 && sizeList[0] === FREE_SIZE ? " This product has no sizes, so customers see one “Free Size”." : ""}
+            <p className=”adm-hint” style={{ marginTop: 10 }}>
+              💡 To set a <b>different price per size</b> (e.g. XL costs more), use the <b>Per-size pricing &amp; stock</b> card on the right →
             </p>
-            <div className="adm-table-wrap">
-              <table className="adm-table">
-                <thead><tr><th scope="col">Size</th><th scope="col">Price (₹)</th><th scope="col">MRP (₹)</th><th scope="col">Off</th><th scope="col">Stock (units)</th></tr></thead>
-                <tbody>
-                  {sizeList.map((size) => {
-                    const r = sizeOpt[size] ?? { price: "", mrp: "", stock: "" };
-                    return (
-                      <tr key={size}>
-                        <td style={{ fontWeight: 700 }}>{size}</td>
-                        <td><input className="adm-input" style={{ minWidth: 96 }} type="number" min="0" step="0.01" inputMode="decimal" value={r.price} onChange={(e) => setOpt(size, "price", e.target.value)} placeholder={f.price || "base"} aria-label={`Price for size ${size}`} /></td>
-                        <td><input className="adm-input" style={{ minWidth: 96 }} type="number" min="0" step="0.01" inputMode="decimal" value={r.mrp} onChange={(e) => setOpt(size, "mrp", e.target.value)} placeholder={f.mrp || f.price || "base"} aria-label={`MRP for size ${size}`} /></td>
-                        <td data-testid={`off-${size}`} style={{ fontWeight: 700, whiteSpace: "nowrap", color: "#15803d" }}>{(() => { const pr = paiseOf(r.price) || livePrice, mr = paiseOf(r.mrp) || liveMrp; const o = discountPercent(pr, mr); return o > 0 ? `${o}%` : "—"; })()}</td>
-                        <td><input className="adm-input" style={{ minWidth: 96 }} type="number" min="0" step="1" inputMode="numeric" value={r.stock} onChange={(e) => setOpt(size, "stock", e.target.value)} placeholder="not tracked" aria-label={`Stock for size ${size}`} /></td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-            <p className="adm-hint" style={{ marginTop: 8 }}>Stock 0 marks that size “sold out” on the product page. When a size has a stock count, each order reserves units and cancellations give them back.</p>
           </Card>
         </div>
 
-        <div className="adm-grid">
-          <Card title="Pricing & discount">
+        <div className=”adm-grid”>
+          <Card title=”Pricing & discount”>
             <div className="adm-form-grid">
               <Field label="MRP (₹)" hint="The original price (shown struck through)"><input className="adm-input" type="number" min="0" step="0.01" value={f.mrp} onChange={(e) => onMrp(e.target.value)} aria-label="MRP" /></Field>
               <Field label="Discount (%)" hint={`0–${MAX_DISCOUNT_PERCENT}. Works out the selling price`}>
@@ -277,6 +252,58 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
                 ? <>Shoppers see <b>{formatPriceINR(livePrice)}</b>{liveOff > 0 ? <> <s>{formatPriceINR(liveMrp)}</s> <b style={{ color: "#15803d" }}>{liveOff}% OFF</b></> : " (no discount)"} on the shop, the product page and the bag.</>
                 : "Enter the MRP and a discount, or type the selling price."}
             </p>
+          </Card>
+
+          <Card title="Per-size pricing & stock">
+            <p className="adm-hint" style={{ marginBottom: 12 }}>
+              Leave any field blank to inherit the base price above. Set a different price for XL, or enter stock counts to track availability per size. Changes go live on the product page the moment you save.
+              {sizeList.length === 1 && sizeList[0] === FREE_SIZE ? " Add sizes in the Variants card first." : ""}
+            </p>
+            <div className="adm-table-wrap">
+              <table className="adm-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Size</th>
+                    <th scope="col">Selling price (₹)</th>
+                    <th scope="col">MRP (₹)</th>
+                    <th scope="col">Discount</th>
+                    <th scope="col">Stock (units)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sizeList.map((size) => {
+                    const r = sizeOpt[size] ?? { price: "", mrp: "", stock: "" };
+                    const pr = paiseOf(r.price) || livePrice;
+                    const mr = paiseOf(r.mrp) || liveMrp;
+                    const off = discountPercent(pr, mr);
+                    return (
+                      <tr key={size}>
+                        <td style={{ fontWeight: 800, fontSize: 14 }}>{size}</td>
+                        <td>
+                          <input className="adm-input" style={{ minWidth: 100 }} type="number" min="0" step="0.01" inputMode="decimal"
+                            value={r.price} onChange={(e) => setOpt(size, "price", e.target.value)}
+                            placeholder={f.price || "same as base"} aria-label={`Selling price for size ${size}`} />
+                        </td>
+                        <td>
+                          <input className="adm-input" style={{ minWidth: 100 }} type="number" min="0" step="0.01" inputMode="decimal"
+                            value={r.mrp} onChange={(e) => setOpt(size, "mrp", e.target.value)}
+                            placeholder={f.mrp || f.price || "same as base"} aria-label={`MRP for size ${size}`} />
+                        </td>
+                        <td data-testid={`off-${size}`} style={{ fontWeight: 700, whiteSpace: "nowrap", color: off > 0 ? "#15803d" : "var(--a-muted)" }}>
+                          {off > 0 ? `${off}% off` : "—"}
+                        </td>
+                        <td>
+                          <input className="adm-input" style={{ minWidth: 100 }} type="number" min="0" step="1" inputMode="numeric"
+                            value={r.stock} onChange={(e) => setOpt(size, "stock", e.target.value)}
+                            placeholder="not tracked" aria-label={`Stock for size ${size}`} />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <p className="adm-hint" style={{ marginTop: 8 }}>Stock = 0 → that size shows "Sold out" on the product page. Blank → stock not tracked for that size.</p>
           </Card>
 
           <Card title="Inventory">

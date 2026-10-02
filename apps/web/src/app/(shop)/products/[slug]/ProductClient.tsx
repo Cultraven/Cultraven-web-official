@@ -234,7 +234,10 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
             {disc > 0 ? <span style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "0.72rem", letterSpacing: "0.08em", background: "var(--color-lava)", color: "var(--color-navy)", padding: "3px 7px", border: "2px solid var(--color-navy)" }}>{disc}% OFF</span> : null}
           </div>
           <div style={{ marginBottom: "1.5rem", paddingBottom: "1.5rem", borderBottom: "var(--border-thick)", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", color: "var(--color-gray)" }}>Inclusive of all taxes{selectedSize && range.varies ? ` · price for size ${selectedSize}` : ""}</span>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: "10px", color: "var(--color-gray)" }}>
+              Inclusive of all taxes
+              {selectedSize ? <> · <span style={{ color: "var(--color-navy)", fontWeight: 700 }}>{fmt(pricePaise)}</span> for size <b>{selectedSize}</b></> : null}
+            </span>
           </div>
 
           {/* Color */}
