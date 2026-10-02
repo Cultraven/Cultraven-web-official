@@ -91,7 +91,10 @@
 .sc-chip:disabled { cursor: not-allowed; color: var(--color-gray); background: rgba(245,241,232,0.55); border-color: var(--color-border); box-shadow: none; text-decoration: line-through; opacity: 0.6; }
 
 /* ── text block ── */
-.sc-info { display: flex; flex-direction: column; gap: 5px; padding: 11px 12px 13px; color: var(--color-navy); text-decoration: none; flex: 1; min-width: 0; }
+.sc-info { display: flex; flex-direction: column; gap: 5px; padding: 11px 12px 13px; color: var(--color-navy); text-decoration: none; min-width: 0; }
+/* push color row (or size row if no colors) to the bottom of the card with auto margin */
+.sc-color-row { margin-top: auto; }
+.sc:not(:has(.sc-color-row)) .sc-size-row { margin-top: auto; }
 .sc-meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-width: 0; }
 .sc-brand { font: 800 11px/1.1 var(--font-sans); letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-gray); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sc-rating { flex-shrink: 0; font: 800 11px/1 var(--font-sans); color: var(--color-navy); }
