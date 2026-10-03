@@ -29,18 +29,37 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     try {
       const Order = mongoose.models.Order;
       if (Order) {
-        const orders = await Order.find({ userId: id })
-          .select("_id totalPaise status createdAt")
-          .sort({ createdAt: -1 })
-          .limit(5)
-          .lean() as any[];
-        orderCount = await Order.countDocuments({ userId: id });
-        const allOrders = await Order.find({ userId: id }).select("totalPaise").lean() as any[];
+        const [orders, count, allOrders] = await Promise.all([
+          Order.find({ userId: id })
+            .select("_id items totalPaise subtotalPaise discountPaise shippingPaise fulfillmentStatus paymentStatus paymentMethod deliveryAddress couponCode createdAt")
+            .sort({ createdAt: -1 })
+            .limit(10)
+            .lean() as Promise<any[]>,
+          Order.countDocuments({ userId: id }),
+          Order.find({ userId: id }).select("totalPaise").lean() as Promise<any[]>,
+        ]);
+        orderCount = count;
         orderTotal = allOrders.reduce((s: number, o: any) => s + (o.totalPaise ?? 0), 0);
         recentOrders = orders.map((o: any) => ({
           id: o._id.toString(),
+          orderNumber: `CR-${o._id.toString().slice(-6).toUpperCase()}`,
+          items: (o.items ?? []).map((item: any) => ({
+            title: item.title,
+            size: item.size,
+            color: item.color ?? "",
+            quantity: item.quantity,
+            pricePaise: item.pricePaise,
+          })),
           totalPaise: o.totalPaise,
-          status: o.status,
+          subtotalPaise: o.subtotalPaise,
+          discountPaise: o.discountPaise ?? 0,
+          shippingPaise: o.shippingPaise ?? 0,
+          fulfillmentStatus: o.fulfillmentStatus,
+          paymentStatus: o.paymentStatus,
+          paymentMethod: o.paymentMethod,
+          couponCode: o.couponCode ?? "",
+          deliveryCity: o.deliveryAddress?.city ?? "",
+          deliveryState: o.deliveryAddress?.state ?? "",
           createdAt: o.createdAt,
         }));
       }

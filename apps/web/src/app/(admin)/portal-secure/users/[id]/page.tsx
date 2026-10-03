@@ -13,7 +13,15 @@ type User = {
   createdAt: string; updatedAt: string; deletedAt: string | null;
 };
 type Stats = { orderCount: number; orderTotalPaise: number };
-type Order = { id: string; totalPaise: number; status: string; createdAt: string };
+type OrderItem = { title: string; size: string; color: string; quantity: number; pricePaise: number };
+type Order = {
+  id: string; orderNumber: string;
+  items: OrderItem[];
+  totalPaise: number; subtotalPaise: number; discountPaise: number; shippingPaise: number;
+  fulfillmentStatus: string; paymentStatus: string; paymentMethod: string;
+  couponCode: string; deliveryCity: string; deliveryState: string;
+  createdAt: string;
+};
 type EmailLog = { id: string; kind: string; subject: string; status: string; error: string; orderId: string; createdAt: string };
 type Detail = { user: User; stats: Stats; recentOrders: Order[]; emailLogs: EmailLog[] };
 
@@ -194,38 +202,69 @@ export default function UserDetailPage() {
         </div>
       </div>
 
-      {/* ── Recent orders ── */}
+      {/* ── Orders ── */}
       <div style={{ marginTop: "20px" }}>
         <Card pad={false}>
-          <div style={{ padding: "16px 20px 12px", fontWeight: 700, fontSize: "13px", textTransform: "uppercase", letterSpacing: "0.1em" }}>
-            Recent Orders {stats?.orderCount ? `(${stats.orderCount} total)` : ""}
+          <div style={{ padding: "16px 20px 12px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <span style={{ fontWeight: 700, fontSize: "13px", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+              Orders {stats?.orderCount ? `(${stats.orderCount} total · ${fmtINR(stats.orderTotalPaise)} spent)` : ""}
+            </span>
           </div>
           {(data?.recentOrders ?? []).length === 0 ? (
             <EmptyState title="No orders" description="This user has not placed any orders yet." />
           ) : (
-            <div className="adm-table-wrap">
-              <table className="adm-table">
-                <thead>
-                  <tr>
-                    <th>Order ID</th>
-                    <th>Status</th>
-                    <th className="num">Total</th>
-                    <th>Date</th>
-                    <th><span style={{ position: "absolute", left: -9999 }}>Actions</span></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data!.recentOrders.map((o) => (
-                    <tr key={o.id}>
-                      <td style={{ fontWeight: 600 }}>#{o.id.slice(-8).toUpperCase()}</td>
-                      <td><Badge tone={STATUS_TONES[o.status] ?? "neutral"}>{cap(o.status)}</Badge></td>
-                      <td className="num">{fmtINR(o.totalPaise)}</td>
-                      <td>{fmtDate(o.createdAt)}</td>
-                      <td><LinkButton href={`/portal-secure/orders/${o.id}`} size="sm">View</LinkButton></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+              {data!.recentOrders.map((o, i) => (
+                <div key={o.id} style={{
+                  padding: "16px 20px",
+                  borderTop: i === 0 ? "1px solid var(--adm-border)" : "1px solid var(--adm-border)",
+                }}>
+                  {/* Order header row */}
+                  <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "10px", marginBottom: "10px" }}>
+                    <span style={{ fontWeight: 800, fontSize: "14px", fontFamily: "var(--font-mono, monospace)", color: "var(--adm-text)" }}>
+                      {o.orderNumber}
+                    </span>
+                    <Badge tone={STATUS_TONES[o.fulfillmentStatus] ?? "neutral"}>{cap(o.fulfillmentStatus)}</Badge>
+                    <Badge tone={o.paymentStatus === "paid" ? "success" : o.paymentStatus === "failed" ? "danger" : "warn"}>
+                      {cap(o.paymentStatus)}
+                    </Badge>
+                    <span style={{ fontSize: "11px", color: "var(--adm-muted)" }}>
+                      {o.paymentMethod === "cod" ? "Cash on delivery" : "Online payment"}
+                    </span>
+                    {o.couponCode ? (
+                      <span style={{ fontSize: "11px", color: "var(--adm-muted)" }}>Coupon: <strong>{o.couponCode}</strong></span>
+                    ) : null}
+                    <span style={{ fontSize: "11px", color: "var(--adm-muted)", marginLeft: "auto" }}>{fmtDate(o.createdAt)}</span>
+                    <LinkButton href={`/portal-secure/orders/${o.id}`} size="sm">View order</LinkButton>
+                  </div>
+
+                  {/* Items */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: "6px", marginBottom: "10px" }}>
+                    {o.items.map((item, j) => (
+                      <div key={j} style={{ display: "flex", alignItems: "baseline", gap: "10px", fontSize: "13px" }}>
+                        <span style={{ fontWeight: 700, minWidth: "18px", color: "var(--adm-muted)", fontSize: "11px" }}>×{item.quantity}</span>
+                        <span style={{ fontWeight: 600, color: "var(--adm-text)" }}>{item.title}</span>
+                        <span style={{ fontSize: "11px", color: "var(--adm-muted)" }}>
+                          {item.size}{item.color ? ` · ${item.color}` : ""}
+                        </span>
+                        <span style={{ fontSize: "12px", color: "var(--adm-muted)", marginLeft: "auto" }}>{fmtINR(item.pricePaise * item.quantity)}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Totals + delivery */}
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "6px", paddingTop: "8px", borderTop: "1px dashed var(--adm-border)" }}>
+                    <span style={{ fontSize: "12px", color: "var(--adm-muted)" }}>
+                      {o.deliveryCity ? `Deliver to: ${o.deliveryCity}, ${o.deliveryState}` : ""}
+                      {o.discountPaise > 0 ? ` · Discount: −${fmtINR(o.discountPaise)}` : ""}
+                      {o.shippingPaise > 0 ? ` · Shipping: ${fmtINR(o.shippingPaise)}` : " · Free shipping"}
+                    </span>
+                    <span style={{ fontWeight: 800, fontSize: "14px", color: "var(--adm-text)" }}>
+                      Total: {fmtINR(o.totalPaise)}
+                    </span>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </Card>
