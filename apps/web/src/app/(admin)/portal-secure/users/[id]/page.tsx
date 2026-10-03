@@ -101,17 +101,24 @@ export default function UserDetailPage() {
 
       {/* ── Summary stats ── */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: "12px", marginBottom: "20px" }}>
-        {[
-          { label: "Orders", value: stats?.orderCount ?? 0 },
-          { label: "Total spent", value: stats ? fmtINR(stats.orderTotalPaise) : "—" },
-          { label: "Role", value: cap(user.role) },
-          { label: "Status", value: cap(user.status) },
-        ].map((s) => (
-          <Card key={s.label} pad>
-            <div style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--adm-muted)", marginBottom: "4px" }}>{s.label}</div>
-            <div style={{ fontSize: "22px", fontWeight: 800, color: "var(--adm-text)" }}>{s.value}</div>
-          </Card>
-        ))}
+        <Card pad>
+          <div style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--adm-muted)", marginBottom: "4px" }}>Orders</div>
+          <div style={{ fontSize: "22px", fontWeight: 800, color: "var(--adm-text)" }}>{stats?.orderCount ?? 0}</div>
+        </Card>
+        <Card pad>
+          <div style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--adm-muted)", marginBottom: "4px" }}>Total spent</div>
+          <div style={{ fontSize: "22px", fontWeight: 800, color: "var(--adm-text)" }}>{stats ? fmtINR(stats.orderTotalPaise) : "—"}</div>
+        </Card>
+        <Card pad>
+          <div style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--adm-muted)", marginBottom: "6px" }}>Role</div>
+          <Badge tone={user.role === "admin" ? "info" : "neutral"}>{cap(user.role)}</Badge>
+        </Card>
+        <Card pad>
+          <div style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--adm-muted)", marginBottom: "6px" }}>Status</div>
+          <Badge tone={user.status === "active" ? "success" : "danger"}>
+            {user.status === "active" ? "Active" : "Deactivated"}
+          </Badge>
+        </Card>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", alignItems: "start" }}>
@@ -125,7 +132,6 @@ export default function UserDetailPage() {
               ["Email", user.email],
               ["Phone", user.phone ?? "—"],
               ["Role", cap(user.role)],
-              ["Status", cap(user.status)],
               ["Email verified", user.emailVerified ? "Yes" : "No"],
               ["Joined", fmtDate(user.createdAt)],
               ["Last updated", fmtDate(user.updatedAt)],
@@ -165,10 +171,16 @@ export default function UserDetailPage() {
           </Card>
 
           <Card pad>
-            <div style={{ fontWeight: 700, fontSize: "13px", marginBottom: "14px", textTransform: "uppercase", letterSpacing: "0.1em" }}>Account Status</div>
-            <p style={{ fontSize: "12px", color: "var(--adm-muted)", marginBottom: "12px" }}>
+            <div style={{ fontWeight: 700, fontSize: "13px", marginBottom: "10px", textTransform: "uppercase", letterSpacing: "0.1em" }}>Account Status</div>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
+              <span style={{ fontSize: "12px", color: "var(--adm-muted)" }}>Current:</span>
+              <Badge tone={user.status === "active" ? "success" : "danger"}>
+                {user.status === "active" ? "Active" : "Deactivated"}
+              </Badge>
+            </div>
+            <p style={{ fontSize: "12px", color: "var(--adm-muted)", marginBottom: "14px" }}>
               {user.status === "active"
-                ? "Deactivating this account marks it as deleted. The user cannot log in, but their data and orders are preserved."
+                ? "Deactivating blocks login access. The user's data and orders are preserved."
                 : "Reactivating restores login access for this account."}
             </p>
             <Button
