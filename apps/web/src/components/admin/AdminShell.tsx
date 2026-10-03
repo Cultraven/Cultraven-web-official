@@ -21,6 +21,7 @@ function useNav(): NavGroup[] {
           { label: "Products", href: "/portal-secure/products", icon: "box" },
           { label: "Categories", href: "/portal-secure/products/categories", icon: "tag" },
           { label: "Orders", href: "/portal-secure/orders", icon: "cart" },
+          { label: "Users", href: "/portal-secure/users", icon: "user" },
           { label: "Support inbox", href: "/portal-secure/support", icon: "mail" },
         ],
       },
@@ -60,6 +61,9 @@ function crumbsFor(pathname: string): string[] {
   } else if (first === "orders") {
     out.push("Orders");
     if (parts[1]) out.push("Order details");
+  } else if (first === "users") {
+    out.push("Users");
+    if (parts[1]) out.push("User details");
   } else out.push(first);
   return out;
 }
