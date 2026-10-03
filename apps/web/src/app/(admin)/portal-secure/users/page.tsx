@@ -113,7 +113,6 @@ function CreateStaffModal({ onClose, onCreated }: { onClose: () => void; onCreat
               <select className="adm-input" value={form.role} onChange={set("role")}>
                 <option value="admin">Admin — full panel access</option>
                 <option value="delivery">Delivery staff — delivery portal only</option>
-                <option value="customer">Customer — no staff access</option>
               </select>
             </Field>
           </form>

@@ -3,7 +3,7 @@ import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { SECTIONS, SECTION_MAP } from "@/lib/cms/registry";
-import { ConfirmProvider, Icon, ToastProvider } from "./ui";
+import { ConfirmProvider, Icon, ToastProvider, useApi } from "./ui";
 import "./admin.css";
 
 interface NavLeaf { label: string; href: string; icon?: string }
@@ -81,6 +81,8 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const nav = useNav();
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
   const crumbs = crumbsFor(pathname);
+  const { data: meData } = useApi<{ role: "admin" | "superadmin" }>("/api/admin/me");
+  const roleLabel = meData?.role === "superadmin" ? "Super Admin" : "Admin";
 
   const activeContentGroup = SECTIONS.find((s) => pathname === `/portal-secure/cms/${s.key}`)?.group;
 
@@ -99,7 +101,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               <div className="adm-brand-mark">C</div>
               <div>
                 <div className="adm-brand-name">CULTRAVEN</div>
-                <div className="adm-brand-sub">Admin</div>
+                <div className="adm-brand-sub">{roleLabel}</div>
               </div>
             </div>
 
