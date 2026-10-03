@@ -28,6 +28,10 @@ export interface IUser extends Document {
   deletedAt?: Date | null;
   /** The email the customer had before deleting their account (support / legal retention). */
   deletedEmail?: string;
+  /** Delivery partner KYC verification state. */
+  verificationStatus?: "unverified" | "pending" | "approved" | "rejected";
+  /** Admin note shown to delivery partner on rejection. */
+  verificationNote?: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -95,6 +99,15 @@ const UserSchema = new Schema<IUser>(
     deletedEmail: {
       type: String,
       select: false,
+    },
+    verificationStatus: {
+      type: String,
+      enum: ["unverified", "pending", "approved", "rejected"],
+      default: "unverified",
+    },
+    verificationNote: {
+      type: String,
+      default: null,
     },
   },
   {

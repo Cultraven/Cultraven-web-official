@@ -1,5 +1,6 @@
 "use client";
 import React, { useDeferredValue, useMemo, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import "@/components/admin/admin.css";
 import { Badge, Button, Card, EmptyState, Icon, TableSkeleton, useApi } from "@/components/admin/ui";
@@ -107,8 +108,11 @@ function OrderCard({ order, onStatusChange }: { order: DeliveryOrder; onStatusCh
   );
 }
 
+type Me = { id: string; firstName: string; fullName: string; verificationStatus: "unverified" | "pending" | "approved" | "rejected"; verificationNote?: string; avatarUpdatedAt?: string };
+
 export default function DeliveryPortal() {
   const { data, loading, error, reload } = useApi<{ orders: DeliveryOrder[] }>("/api/delivery/orders");
+  const { data: me, loading: meLoading } = useApi<Me>("/api/delivery/me");
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
@@ -151,8 +155,10 @@ export default function DeliveryPortal() {
     router.push("/portal-delivery-access");
   };
 
+  const vs = me?.verificationStatus;
+
   return (
-    <div className="adm" style={{ minHeight: "100vh", background: "var(--adm-bg)" }}>
+    <div className="adm" style={{ minHeight: "100vh", background: "var(--a-bg)" }}>
       {/* Toast */}
       {toast ? (
         <div style={{ position: "fixed", top: 16, right: 16, zIndex: 9999, background: toast.ok ? "#16a34a" : "#dc2626", color: "#fff", padding: "10px 16px", borderRadius: 6, fontWeight: 700, fontSize: 13 }}>
@@ -161,15 +167,55 @@ export default function DeliveryPortal() {
       ) : null}
 
       {/* Header */}
-      <div style={{ background: "var(--adm-surface)", borderBottom: "2px solid var(--adm-border)", padding: "14px 16px", display: "flex", alignItems: "center", gap: "12px" }}>
+      <div style={{ background: "var(--a-surface)", borderBottom: "1px solid var(--a-border)", padding: "14px 16px", display: "flex", alignItems: "center", gap: "12px" }}>
         <div style={{ fontWeight: 800, letterSpacing: "0.15em", fontSize: 14 }}>CULTRAVEN</div>
-        <div style={{ fontSize: 12, color: "var(--adm-muted)", fontWeight: 700 }}>Delivery Portal</div>
-        <div style={{ marginLeft: "auto", display: "flex", gap: "8px", alignItems: "center" }}>
-          <span style={{ fontSize: 12, color: "var(--adm-muted)" }}>{orders.length} active orders</span>
-          <button onClick={logout} style={{ fontSize: 12, fontWeight: 700, color: "var(--adm-muted)", background: "none", border: "none", cursor: "pointer" }}>Sign out</button>
+        <div style={{ fontSize: 12, color: "var(--a-muted)", fontWeight: 700 }}>Delivery Portal</div>
+        <div style={{ marginLeft: "auto", display: "flex", gap: "10px", alignItems: "center" }}>
+          {vs === "approved" && <span style={{ fontSize: 12, color: "var(--a-muted)" }}>{orders.length} active orders</span>}
+          <Link href="/portal-delivery/profile" style={{ fontSize: 12, fontWeight: 700, color: "var(--a-muted)", textDecoration: "none" }}>Profile</Link>
+          <button onClick={logout} style={{ fontSize: 12, fontWeight: 700, color: "var(--a-muted)", background: "none", border: "none", cursor: "pointer" }}>Sign out</button>
         </div>
       </div>
 
+      {/* ── Verification gates ─────────────────────────────────────────────── */}
+      {!meLoading && (vs === "unverified" || vs === "rejected") && (
+        <div style={{ maxWidth: 520, margin: "40px auto", padding: "0 16px", textAlign: "center" }}>
+          <div style={{ background: "var(--a-surface)", border: "1px solid var(--a-border)", borderRadius: 12, padding: "32px 28px" }}>
+            {vs === "rejected" ? (
+              <>
+                <div style={{ fontSize: 40, marginBottom: 12 }}>⚠️</div>
+                <h2 style={{ fontSize: 17, fontWeight: 800, marginBottom: 8 }}>Verification Unsuccessful</h2>
+                {me?.verificationNote && <p style={{ fontSize: 13, color: "var(--a-danger)", marginBottom: 16, lineHeight: 1.5 }}>Reason: {me.verificationNote}</p>}
+                <p style={{ fontSize: 13, color: "var(--a-muted)", marginBottom: 20, lineHeight: 1.5 }}>Please re-submit your documents addressing the issue above.</p>
+              </>
+            ) : (
+              <>
+                <div style={{ fontSize: 40, marginBottom: 12 }}>📋</div>
+                <h2 style={{ fontSize: 17, fontWeight: 800, marginBottom: 8 }}>Complete Your Verification</h2>
+                <p style={{ fontSize: 13, color: "var(--a-muted)", marginBottom: 20, lineHeight: 1.5 }}>Submit your KYC documents to get access to delivery orders.</p>
+              </>
+            )}
+            <Link href="/portal-delivery/register">
+              <Button variant="primary" style={{ width: "100%" }}>
+                {vs === "rejected" ? "Re-submit Documents" : "Start Verification →"}
+              </Button>
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {!meLoading && vs === "pending" && (
+        <div style={{ maxWidth: 520, margin: "40px auto", padding: "0 16px", textAlign: "center" }}>
+          <div style={{ background: "var(--a-surface)", border: "1px solid var(--a-border)", borderRadius: 12, padding: "32px 28px" }}>
+            <div style={{ fontSize: 40, marginBottom: 12 }}>⏳</div>
+            <h2 style={{ fontSize: 17, fontWeight: 800, marginBottom: 8 }}>Verification Pending</h2>
+            <p style={{ fontSize: 13, color: "var(--a-muted)", lineHeight: 1.5 }}>Your documents are being reviewed. You'll receive an email once approved. Delivery orders will appear here after verification.</p>
+          </div>
+        </div>
+      )}
+
+      {/* ── Main portal (approved only) ──────────────────────────────────── */}
+      {(meLoading || vs === "approved") && (
       <div style={{ maxWidth: 700, margin: "0 auto", padding: "16px" }}>
         {/* Search */}
         <div style={{ position: "relative", marginBottom: "16px" }}>
@@ -204,6 +250,7 @@ export default function DeliveryPortal() {
           </div>
         )}
       </div>
+      )}
     </div>
   );
 }

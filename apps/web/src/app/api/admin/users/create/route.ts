@@ -4,6 +4,8 @@ import { User } from "@/lib/models/User";
 import { isSuperAdminRequest } from "@/lib/admin-auth";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
+import { sendMail } from "@/lib/mailer";
+import { staffAccountCreatedEmail } from "@/lib/email-templates";
 
 export const dynamic = "force-dynamic";
 
@@ -45,6 +47,14 @@ export async function POST(req: NextRequest) {
       status: "active",
       emailVerified: true,
     });
+
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://cultraven.com";
+    const loginUrl = role === "delivery"
+      ? `${siteUrl}/portal-delivery-access`
+      : `${siteUrl}/portal-access`;
+
+    const tpl = staffAccountCreatedEmail({ firstName, email: email.toLowerCase(), password, role, loginUrl, siteUrl });
+    sendMail({ to: email.toLowerCase(), ...tpl, kind: "staff_account_created" }).catch(() => {});
 
     return NextResponse.json({ ok: true, id: user._id.toString() }, { status: 201 });
   } catch (err) {

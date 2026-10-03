@@ -72,3 +72,20 @@ export function isDeliveryRequest(req: Request): boolean {
 export function isStaffRequest(req: Request): boolean {
   return isAdminRequest(req) || isDeliveryRequest(req);
 }
+
+/** Returns the admin user's DB id (or "env-admin" for superadmin from env). Null if not authenticated. */
+export function getAdminUserId(req: Request): string | null {
+  const p = getAdminPayload(req);
+  return typeof p?.userId === "string" ? p.userId : null;
+}
+
+/** Returns delivery session payload. Null if not a delivery session. */
+export function getDeliveryPayload(req: Request): { userId: string; email: string; name: string } | null {
+  const secret = process.env.SESSION_SECRET;
+  if (!secret) return null;
+  const token = readCookie(req, DELIVERY_COOKIE);
+  if (!token) return null;
+  const p = verifyToken(token, secret);
+  if (!p || p.role !== "delivery" || typeof p.userId !== "string") return null;
+  return { userId: p.userId, email: p.email ?? "", name: p.name ?? "" };
+}

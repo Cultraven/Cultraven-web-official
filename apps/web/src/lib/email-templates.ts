@@ -209,3 +209,67 @@ export function supportAckEmail(m: SupportMail, siteUrl: string, hours: string) 
   const text = `We got your message — ${m.ref}\n\nThanks ${m.name.split(" ")[0]}. We usually reply within 24 hours (${hours}).\n\nYour message:\n${m.message}\n\nHelp Center: ${siteUrl}/help`;
   return { subject, html, text };
 }
+
+// ── Staff account emails ────────────────────────────────────────────────────────
+
+/** Sent to a newly created staff member with their login credentials. */
+export function staffAccountCreatedEmail(opts: {
+  firstName: string; email: string; password: string;
+  role: "admin" | "delivery" | "customer"; loginUrl: string; siteUrl: string;
+}) {
+  const { firstName, email, password, role, loginUrl, siteUrl } = opts;
+  const roleLabel = role === "admin" ? "Admin" : role === "delivery" ? "Delivery Staff" : "Staff";
+  const portalName = role === "delivery" ? "Delivery Portal" : "Admin Panel";
+  const subject = `Your CULTRAVEN ${roleLabel} account is ready`;
+  const credBlock = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${BONE};border-left:4px solid ${GOLD};padding:14px 16px;margin:16px 0 20px"><tr><td>
+    <p style="margin:0 0 8px;font-size:12px;font-weight:900;letter-spacing:2px">YOUR LOGIN DETAILS</p>
+    <p style="margin:0 0 4px;font-size:14px"><b>Email:</b> ${escapeHtml(email)}</p>
+    <p style="margin:0 0 4px;font-size:14px"><b>Password:</b> <code style="background:#fff;padding:2px 6px;border:1px solid #ccc">${escapeHtml(password)}</code></p>
+    <p style="margin:8px 0 0;font-size:12px;color:#666">Please change your password after your first sign-in.</p>
+  </td></tr></table>`;
+  const html = shell(
+    `${roleLabel} account created`,
+    `Hi ${escapeHtml(firstName)}, your CULTRAVEN ${roleLabel} account has been created. Use the credentials below to sign in to the ${escapeHtml(portalName)}.`,
+    credBlock + `<p style="margin:0"><a href="${escapeHtml(loginUrl)}" style="display:inline-block;background:${NAVY};color:${CREAM};padding:12px 20px;text-decoration:none;font-weight:900;font-size:13px;letter-spacing:2px;border-bottom:4px solid ${GOLD}">SIGN IN NOW</a></p>`,
+    siteUrl
+  );
+  const text = `Your CULTRAVEN ${roleLabel} account\n\nHi ${firstName},\n\nEmail: ${email}\nPassword: ${password}\n\nPlease change your password after signing in.\n\nSign in: ${loginUrl}`;
+  return { subject, html, text };
+}
+
+/** Sent to super admin when a delivery partner submits their KYC. */
+export function deliveryKYCSubmittedEmail(opts: {
+  partnerName: string; partnerEmail: string; adminUrl: string; siteUrl: string;
+}) {
+  const { partnerName, partnerEmail, adminUrl, siteUrl } = opts;
+  const subject = `New delivery partner verification — ${escapeHtml(partnerName)}`;
+  const html = shell(
+    "Delivery partner verification",
+    `${escapeHtml(partnerName)} (${escapeHtml(partnerEmail)}) has submitted their KYC documents and is awaiting verification.`,
+    `<p style="margin:0 0 20px"><a href="${escapeHtml(adminUrl)}" style="display:inline-block;background:${NAVY};color:${CREAM};padding:12px 20px;text-decoration:none;font-weight:900;font-size:13px;letter-spacing:2px;border-bottom:4px solid ${GOLD}">REVIEW DOCUMENTS</a></p>`,
+    siteUrl
+  );
+  const text = `${partnerName} (${partnerEmail}) submitted KYC for delivery partner verification.\n\nReview: ${adminUrl}`;
+  return { subject, html, text };
+}
+
+/** Sent to the delivery partner after admin approves or rejects their KYC. */
+export function deliveryKYCDecisionEmail(opts: {
+  firstName: string; approved: boolean; note?: string; loginUrl: string; siteUrl: string;
+}) {
+  const { firstName, approved, note, loginUrl, siteUrl } = opts;
+  const subject = approved ? "Your delivery account is approved — welcome!" : "Delivery account verification update";
+  const body = approved
+    ? `<p style="margin:0 0 14px;font-size:14px;line-height:1.6">Congratulations! Your account is verified and you now have full access to the Delivery Portal. Start accepting and delivering orders.</p><p style="margin:0"><a href="${escapeHtml(loginUrl)}" style="display:inline-block;background:${NAVY};color:${CREAM};padding:12px 20px;text-decoration:none;font-weight:900;font-size:13px;letter-spacing:2px;border-bottom:4px solid ${GOLD}">OPEN DELIVERY PORTAL</a></p>`
+    : `<p style="margin:0 0 14px;font-size:14px;line-height:1.6">Unfortunately, we were unable to verify your account at this time.${note ? ` Reason: <b>${escapeHtml(note)}</b>.` : ""} Please re-submit your documents from the portal, addressing the issue above.</p><p style="margin:0"><a href="${escapeHtml(loginUrl)}" style="display:inline-block;background:${NAVY};color:${CREAM};padding:12px 20px;text-decoration:none;font-weight:900;font-size:13px;letter-spacing:2px;border-bottom:4px solid ${GOLD}">RE-SUBMIT DOCUMENTS</a></p>`;
+  const html = shell(
+    approved ? "Account approved" : "Verification unsuccessful",
+    `Hi ${escapeHtml(firstName)}, here is an update on your CULTRAVEN delivery partner application.`,
+    body,
+    siteUrl
+  );
+  const text = approved
+    ? `Hi ${firstName}, your delivery account has been approved! Sign in: ${loginUrl}`
+    : `Hi ${firstName}, your delivery account verification was unsuccessful.${note ? ` Reason: ${note}.` : ""}\n\nResubmit: ${loginUrl}`;
+  return { subject, html, text };
+}

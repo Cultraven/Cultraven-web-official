@@ -21,7 +21,8 @@ function useNav(): NavGroup[] {
           { label: "Products", href: "/portal-secure/products", icon: "box" },
           { label: "Categories", href: "/portal-secure/products/categories", icon: "tag" },
           { label: "Orders", href: "/portal-secure/orders", icon: "cart" },
-          { label: "Users & Roles", href: "/portal-secure/users", icon: "user" },
+            { label: "Users & Roles", href: "/portal-secure/users", icon: "user" },
+          { label: "Delivery verification", href: "/portal-secure/delivery-verification", icon: "user" },
           { label: "Support inbox", href: "/portal-secure/support", icon: "mail" },
         ],
       },
@@ -64,6 +65,10 @@ function crumbsFor(pathname: string): string[] {
   } else if (first === "users") {
     out.push("Users");
     if (parts[1]) out.push("User details");
+  } else if (first === "delivery-verification") {
+    out.push("Delivery verification");
+  } else if (first === "profile") {
+    out.push("My profile");
   } else out.push(first);
   return out;
 }
@@ -81,8 +86,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const nav = useNav();
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
   const crumbs = crumbsFor(pathname);
-  const { data: meData } = useApi<{ role: "admin" | "superadmin" }>("/api/admin/me");
+  const { data: meData } = useApi<{ role: "admin" | "superadmin"; name: string; avatarUpdatedAt?: string | null }>("/api/admin/me");
   const roleLabel = meData?.role === "superadmin" ? "Super Admin" : "Admin";
+  const avatarTs = meData?.avatarUpdatedAt ?? "";
 
   const activeContentGroup = SECTIONS.find((s) => pathname === `/portal-secure/cms/${s.key}`)?.group;
 
@@ -97,13 +103,24 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       <ConfirmProvider>
         <div className="adm adm-shell">
           <aside className="adm-side" aria-label="Admin navigation">
-            <div className="adm-brand">
-              <div className="adm-brand-mark">C</div>
-              <div>
-                <div className="adm-brand-name">CULTRAVEN</div>
-                <div className="adm-brand-sub">{roleLabel}</div>
+            <Link href="/portal-secure/profile" prefetch={false} style={{ textDecoration: "none" }} aria-label="My profile">
+              <div className="adm-brand">
+                <div className="adm-brand-mark" style={{ overflow: "hidden", padding: 0 }}>
+                  {avatarTs ? (
+                    <img
+                      src={`/api/admin/profile/avatar?v=${encodeURIComponent(avatarTs)}`}
+                      alt="Profile"
+                      style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                      onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+                    />
+                  ) : "C"}
+                </div>
+                <div>
+                  <div className="adm-brand-name">CULTRAVEN</div>
+                  <div className="adm-brand-sub">{roleLabel}</div>
+                </div>
               </div>
-            </div>
+            </Link>
 
             <nav className="adm-nav">
               {nav.map((g) => (
