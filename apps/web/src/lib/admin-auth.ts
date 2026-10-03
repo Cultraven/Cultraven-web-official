@@ -1,7 +1,7 @@
 import crypto from "crypto";
 
-/** Admin sessions live in their own cookie so a customer login/logout on the storefront can never replace or clear them. */
 export const ADMIN_COOKIE = "cultraven_admin_session";
+export const DELIVERY_COOKIE = "cultraven_delivery_session";
 
 function readCookie(req: Request, name: string): string | null {
   const header = req.headers.get("cookie") || "";
@@ -13,27 +13,62 @@ function readCookie(req: Request, name: string): string | null {
   return null;
 }
 
-/** Server-side admin check. Verifies the HMAC session cookie and role === "admin". */
-export function isAdminRequest(req: Request): boolean {
-  const secret = process.env.SESSION_SECRET;
-  if (!secret) return false;
-
-  const token = readCookie(req, ADMIN_COOKIE);
-  if (!token || !token.includes(".")) return false;
-
+function verifyToken(token: string, secret: string): Record<string, any> | null {
+  if (!token || !token.includes(".")) return null;
   const [encodedPayload, signature] = token.split(".");
-  if (!encodedPayload || !signature) return false;
-
+  if (!encodedPayload || !signature) return null;
   try {
     const expected = crypto.createHmac("sha256", secret).update(encodedPayload).digest("base64url");
     const a = Buffer.from(signature);
     const b = Buffer.from(expected);
-    if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) return false;
-
+    if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) return null;
     const payload = JSON.parse(Buffer.from(encodedPayload, "base64url").toString("utf-8"));
-    if (payload.exp && payload.exp < Date.now()) return false;
-    return payload.role === "admin";
+    if (payload.exp && payload.exp < Date.now()) return null;
+    return payload;
   } catch {
-    return false;
+    return null;
   }
+}
+
+function getAdminPayload(req: Request): Record<string, any> | null {
+  const secret = process.env.SESSION_SECRET;
+  if (!secret) return null;
+  const token = readCookie(req, ADMIN_COOKIE);
+  if (!token) return null;
+  return verifyToken(token, secret);
+}
+
+/** Accepts admin OR superadmin session. Most admin API routes use this. */
+export function isAdminRequest(req: Request): boolean {
+  const p = getAdminPayload(req);
+  return p?.role === "admin" || p?.role === "superadmin";
+}
+
+/** Only superadmin — for role management and admin promotion/demotion. */
+export function isSuperAdminRequest(req: Request): boolean {
+  const p = getAdminPayload(req);
+  return p?.role === "superadmin";
+}
+
+/** Returns the role from the admin cookie, or null if invalid/missing. */
+export function getAdminRole(req: Request): "admin" | "superadmin" | null {
+  const p = getAdminPayload(req);
+  if (p?.role === "superadmin") return "superadmin";
+  if (p?.role === "admin") return "admin";
+  return null;
+}
+
+/** Delivery staff session check. */
+export function isDeliveryRequest(req: Request): boolean {
+  const secret = process.env.SESSION_SECRET;
+  if (!secret) return false;
+  const token = readCookie(req, DELIVERY_COOKIE);
+  if (!token) return false;
+  const p = verifyToken(token, secret);
+  return p?.role === "delivery";
+}
+
+/** Any staff (admin, superadmin, or delivery) — for shared endpoints. */
+export function isStaffRequest(req: Request): boolean {
+  return isAdminRequest(req) || isDeliveryRequest(req);
 }

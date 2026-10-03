@@ -21,7 +21,7 @@ function useNav(): NavGroup[] {
           { label: "Products", href: "/portal-secure/products", icon: "box" },
           { label: "Categories", href: "/portal-secure/products/categories", icon: "tag" },
           { label: "Orders", href: "/portal-secure/orders", icon: "cart" },
-          { label: "Users", href: "/portal-secure/users", icon: "user" },
+          { label: "Users & Roles", href: "/portal-secure/users", icon: "user" },
           { label: "Support inbox", href: "/portal-secure/support", icon: "mail" },
         ],
       },

@@ -13,6 +13,7 @@ import type { NextRequest } from "next/server";
 
 // ── Route patterns ─────────────────────────────────────────────────────────────
 const ADMIN_PATHS = ["/portal-secure"];
+const DELIVERY_PATHS = ["/portal-delivery"];
 const AUTH_PATHS = ["/account", "/checkout"];
 const PUBLIC_PATHS = ["/login", "/register", "/forgot-password"];
 
@@ -79,15 +80,25 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  // ── Admin routes: require a signed admin-session cookie (separate from the customer session) ──
+  // ── Admin routes: require admin or superadmin session ────────────────────────
   if (isMatch(pathname, ADMIN_PATHS)) {
     const session = req.cookies.get("cultraven_admin_session")?.value;
     const payload = session ? await verifyToken(session) : null;
-
-    if (!(payload && payload.role === "admin")) {
+    if (!(payload && (payload.role === "admin" || payload.role === "superadmin"))) {
       const loginUrl = req.nextUrl.clone();
       loginUrl.pathname = "/portal-access";
       loginUrl.searchParams.set("redirect", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+  }
+
+  // ── Delivery routes: require delivery session ─────────────────────────────────
+  if (isMatch(pathname, DELIVERY_PATHS)) {
+    const session = req.cookies.get("cultraven_delivery_session")?.value;
+    const payload = session ? await verifyToken(session) : null;
+    if (!(payload && payload.role === "delivery")) {
+      const loginUrl = req.nextUrl.clone();
+      loginUrl.pathname = "/portal-delivery-access";
       return NextResponse.redirect(loginUrl);
     }
   }
@@ -96,10 +107,19 @@ export async function middleware(req: NextRequest) {
   if (pathname === "/portal-access") {
     const session = req.cookies.get("cultraven_admin_session")?.value;
     const payload = session ? await verifyToken(session) : null;
-    if (payload && payload.role === "admin") {
+    if (payload && (payload.role === "admin" || payload.role === "superadmin")) {
       const dest = req.nextUrl.searchParams.get("redirect");
       const target = dest && dest.startsWith("/portal-secure") ? dest : "/portal-secure";
       return NextResponse.redirect(new URL(target, req.url));
+    }
+  }
+
+  // ── Delivery login page: already signed in → go straight to delivery portal ──
+  if (pathname === "/portal-delivery-access") {
+    const session = req.cookies.get("cultraven_delivery_session")?.value;
+    const payload = session ? await verifyToken(session) : null;
+    if (payload && payload.role === "delivery") {
+      return NextResponse.redirect(new URL("/portal-delivery", req.url));
     }
   }
 

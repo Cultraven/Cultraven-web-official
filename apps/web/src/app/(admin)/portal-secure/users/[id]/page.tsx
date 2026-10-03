@@ -24,6 +24,7 @@ type Order = {
 };
 type EmailLog = { id: string; kind: string; subject: string; status: string; error: string; orderId: string; createdAt: string };
 type Detail = { user: User; stats: Stats; recentOrders: Order[]; emailLogs: EmailLog[] };
+type Me = { role: "admin" | "superadmin" };
 
 const STATUS_TONES: Record<string, "success" | "danger" | "warn" | "neutral" | "info"> = {
   sent: "success", failed: "danger", skipped: "warn",
@@ -41,18 +42,31 @@ function fmtINR(paise: number) {
 }
 function cap(s: string) { return s ? s.charAt(0).toUpperCase() + s.slice(1).replace(/_/g, " ") : "—"; }
 
+const ROLE_LABELS: Record<string, string> = {
+  customer: "Customer",
+  delivery: "Delivery staff",
+  admin: "Admin",
+  superadmin: "Super admin",
+};
+const ROLE_TONES: Record<string, "neutral" | "info" | "warn" | "danger"> = {
+  customer: "neutral", delivery: "info", admin: "warn", superadmin: "danger",
+};
+
 export default function UserDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { data, error, loading, reload } = useApi<Detail>(`/api/admin/users/${id}`);
+  const { data: meData } = useApi<Me>("/api/admin/me");
   const { toast } = useToast();
   const confirm = useConfirm();
 
   const [newPw, setNewPw] = useState("");
   const [pwLoading, setPwLoading] = useState(false);
   const [statusLoading, setStatusLoading] = useState(false);
+  const [roleLoading, setRoleLoading] = useState(false);
 
   const user = data?.user;
   const stats = data?.stats;
+  const isSuperAdmin = meData?.role === "superadmin";
 
   const changePassword = async () => {
     if (newPw.trim().length < 8) { toast("Password must be at least 8 characters", "error"); return; }
@@ -71,6 +85,25 @@ export default function UserDetailPage() {
     } catch (e: any) {
       toast(e.message ?? "Failed to update password", "error");
     } finally { setPwLoading(false); }
+  };
+
+  const changeRole = async (newRole: string) => {
+    if (!user) return;
+    const ok = await confirm({ title: `Change role to ${ROLE_LABELS[newRole] ?? newRole}?`, message: `${user.fullName} will ${newRole === "admin" ? "gain full admin access" : newRole === "delivery" ? "get delivery portal access only" : newRole === "superadmin" ? "gain superadmin privileges — use with care" : "lose any staff access"}.`, danger: newRole === "superadmin" });
+    if (!ok) return;
+    setRoleLoading(true);
+    try {
+      const res = await fetch(`/api/admin/users/${id}/role`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role: newRole }),
+      });
+      if (!res.ok) { const d = await res.json(); throw new Error(d.error ?? "Failed"); }
+      toast(`Role changed to ${ROLE_LABELS[newRole] ?? newRole}`, "success");
+      reload();
+    } catch (e: any) {
+      toast(e.message ?? "Failed to change role", "error");
+    } finally { setRoleLoading(false); }
   };
 
   const toggleStatus = async () => {
@@ -199,6 +232,35 @@ export default function UserDetailPage() {
               {user.status === "active" ? "Deactivate account" : "Reactivate account"}
             </Button>
           </Card>
+
+          {/* Role Management — superadmin only */}
+          {isSuperAdmin ? (
+            <Card pad>
+              <div style={{ fontWeight: 700, fontSize: "13px", marginBottom: "10px", textTransform: "uppercase", letterSpacing: "0.1em" }}>Role Management</div>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>
+                <span style={{ fontSize: "12px", color: "var(--adm-muted)" }}>Current role:</span>
+                <Badge tone={ROLE_TONES[user.role] ?? "neutral"}>{ROLE_LABELS[user.role] ?? user.role}</Badge>
+              </div>
+              <div style={{ display: "grid", gap: "8px" }}>
+                {(["customer", "delivery", "admin"] as const)
+                  .filter((r) => r !== user.role)
+                  .map((r) => (
+                    <Button
+                      key={r}
+                      onClick={() => changeRole(r)}
+                      loading={roleLoading}
+                      variant={r === "admin" ? "primary" : "default"}
+                      style={{ justifyContent: "flex-start" }}
+                    >
+                      Make {ROLE_LABELS[r]}
+                    </Button>
+                  ))}
+              </div>
+              <p style={{ fontSize: "11px", color: "var(--adm-muted)", marginTop: "10px" }}>
+                Admin: full panel access. Delivery: delivery portal only. Customer: no staff access.
+              </p>
+            </Card>
+          ) : null}
         </div>
       </div>
 

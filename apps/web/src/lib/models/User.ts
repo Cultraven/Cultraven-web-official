@@ -18,7 +18,7 @@ export interface IUser extends Document {
   email: string;
   phone?: string;
   passwordHash: string;
-  role: "customer" | "admin";
+  role: "customer" | "admin" | "superadmin" | "delivery";
   emailVerified: boolean;
   /** Profile photo as a data URL (jpeg/png/webp, <= 150 KB). Never selected by default — select("+avatar") where needed. */
   avatar?: string;
@@ -66,7 +66,7 @@ const UserSchema = new Schema<IUser>(
     },
     role: {
       type: String,
-      enum: ["customer", "admin"],
+      enum: ["customer", "admin", "superadmin", "delivery"],
       default: "customer",
     },
     emailVerified: {
