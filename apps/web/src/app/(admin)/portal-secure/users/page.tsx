@@ -74,44 +74,56 @@ function CreateStaffModal({ onClose, onCreated }: { onClose: () => void; onCreat
   };
 
   return (
-    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
-      <div style={{ background: "var(--adm-surface)", border: "2px solid var(--adm-border)", borderRadius: 8, width: "100%", maxWidth: 480, padding: "24px" }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px" }}>
-          <h2 style={{ fontSize: 16, fontWeight: 800, margin: 0 }}>Create Staff Account</h2>
-          <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 20, color: "var(--adm-muted)" }}>×</button>
+    <div className="adm-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div style={{ background: "var(--a-surface)", border: "1px solid var(--a-border)", borderRadius: 14, width: "min(480px, 100%)", boxShadow: "0 20px 60px rgba(0,0,0,0.18)", maxHeight: "90dvh", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+        {/* Header */}
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, padding: "20px 24px 18px", borderBottom: "1px solid var(--a-border)" }}>
+          <div>
+            <h2 style={{ fontSize: 15, fontWeight: 800, margin: "0 0 3px", color: "var(--a-text)", letterSpacing: "-0.01em" }}>Create Staff Account</h2>
+            <p style={{ margin: 0, fontSize: 13, color: "var(--a-muted)", lineHeight: 1.4 }}>Add an admin, delivery staff, or customer account.</p>
+          </div>
+          <button onClick={onClose} aria-label="Close" style={{ flexShrink: 0, marginTop: 2, width: 28, height: 28, display: "grid", placeItems: "center", background: "var(--a-surface-2)", border: "1px solid var(--a-border)", borderRadius: 6, cursor: "pointer", fontSize: 16, color: "var(--a-muted)", lineHeight: 1 }}>×</button>
         </div>
 
-        {error ? (
-          <div style={{ background: "#fee2e2", color: "#dc2626", padding: "10px 12px", borderRadius: 4, marginBottom: "16px", fontSize: 13 }}>{error}</div>
-        ) : null}
+        {/* Body */}
+        <div style={{ padding: "20px 24px 24px", overflowY: "auto", flex: 1 }}>
+          {error ? (
+            <div role="alert" className="adm-alert adm-alert-error" style={{ marginBottom: 18 }}><div>{error}</div></div>
+          ) : null}
 
-        <form onSubmit={submit} style={{ display: "grid", gap: "14px" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-            <Field label="First name" required>
-              <input className="adm-input" value={form.firstName} onChange={set("firstName")} required placeholder="Rahul" />
+          <form id="create-staff-form" onSubmit={submit} style={{ display: "grid", gap: "16px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
+              <Field label="First name" required>
+                <input className="adm-input" value={form.firstName} onChange={set("firstName")} required placeholder="Rahul" autoFocus />
+              </Field>
+              <Field label="Last name" required>
+                <input className="adm-input" value={form.lastName} onChange={set("lastName")} required placeholder="Sharma" />
+              </Field>
+            </div>
+
+            <Field label="Email address" required>
+              <input className="adm-input" type="email" value={form.email} onChange={set("email")} required placeholder="rahul@example.com" />
             </Field>
-            <Field label="Last name" required>
-              <input className="adm-input" value={form.lastName} onChange={set("lastName")} required placeholder="Sharma" />
+
+            <Field label="Temporary password" required hint="Min. 8 characters — share this securely with the person">
+              <input className="adm-input" value={form.password} onChange={set("password")} required placeholder="At least 8 characters" minLength={8} />
             </Field>
-          </div>
-          <Field label="Email" required>
-            <input className="adm-input" type="email" value={form.email} onChange={set("email")} required placeholder="rahul@example.com" />
-          </Field>
-          <Field label="Password" required hint="Min. 8 characters — share this securely with the person">
-            <input className="adm-input" type="text" value={form.password} onChange={set("password")} required placeholder="Min. 8 characters" minLength={8} />
-          </Field>
-          <Field label="Role" required>
-            <select className="adm-input" value={form.role} onChange={set("role")} style={{ cursor: "pointer" }}>
-              <option value="admin">Admin — full panel access</option>
-              <option value="delivery">Delivery staff — delivery portal only</option>
-              <option value="customer">Customer — no staff access</option>
-            </select>
-          </Field>
-          <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end", marginTop: "4px" }}>
-            <Button variant="ghost" onClick={onClose} type="button">Cancel</Button>
-            <Button variant="primary" type="submit" loading={loading}>Create account</Button>
-          </div>
-        </form>
+
+            <Field label="Role" required>
+              <select className="adm-input" value={form.role} onChange={set("role")}>
+                <option value="admin">Admin — full panel access</option>
+                <option value="delivery">Delivery staff — delivery portal only</option>
+                <option value="customer">Customer — no staff access</option>
+              </select>
+            </Field>
+          </form>
+        </div>
+
+        {/* Footer */}
+        <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", padding: "14px 24px", borderTop: "1px solid var(--a-border)", background: "var(--a-surface-2)" }}>
+          <Button variant="ghost" type="button" onClick={onClose}>Cancel</Button>
+          <Button variant="primary" type="submit" form="create-staff-form" loading={loading}>Create account</Button>
+        </div>
       </div>
     </div>
   );
