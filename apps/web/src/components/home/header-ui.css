@@ -125,9 +125,9 @@
 
 /* ── Login / Register buttons (visitors) — last item of the header, and at the top of the phone side menu ── */
 .hdr-auth { display: inline-flex; align-items: center; gap: 8px; margin-left: 10px; flex-shrink: 0; }
-.hdr-auth-ph { width: 164px; height: 38px; } /* reserves the visitor-sized slot until we know who is signed in */
+.hdr-auth-ph { width: 164px; height: 44px; } /* reserves the visitor-sized slot until we know who is signed in */
 .hdr-auth-btn {
-  display: inline-flex; align-items: center; justify-content: center; min-height: 38px; padding: 0 16px; white-space: nowrap;
+  display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px; white-space: nowrap;
   font: 800 11px/1 var(--font-sans); letter-spacing: 0.14em; text-transform: uppercase; text-decoration: none; cursor: pointer;
   border: 2px solid currentColor; transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.15s ease, color 0.15s ease;
   -webkit-tap-highlight-color: transparent; touch-action: manipulation;

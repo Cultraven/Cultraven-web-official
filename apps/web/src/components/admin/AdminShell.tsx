@@ -85,10 +85,13 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const nav = useNav();
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
+  const [sideOpen, setSideOpen] = useState(false);
   const crumbs = crumbsFor(pathname);
   const { data: meData } = useApi<{ role: "admin" | "superadmin"; name: string; avatarUpdatedAt?: string | null }>("/api/admin/me");
   const roleLabel = meData?.role === "superadmin" ? "Super Admin" : "Admin";
   const avatarTs = meData?.avatarUpdatedAt ?? "";
+
+  React.useEffect(() => { setSideOpen(false); }, [pathname]);
 
   const activeContentGroup = SECTIONS.find((s) => pathname === `/portal-secure/cms/${s.key}`)?.group;
 
@@ -102,7 +105,8 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     <ToastProvider>
       <ConfirmProvider>
         <div className="adm adm-shell">
-          <aside className="adm-side" aria-label="Admin navigation">
+          {sideOpen && <div className="adm-backdrop" aria-hidden="true" onClick={() => setSideOpen(false)} />}
+          <aside className={`adm-side${sideOpen ? " adm-side-open" : ""}`} aria-label="Admin navigation">
             <Link href="/portal-secure/profile" prefetch={false} style={{ textDecoration: "none" }} aria-label="My profile">
               <div className="adm-brand">
                 <div className="adm-brand-mark" style={{ overflow: "hidden", padding: 0 }}>
@@ -162,6 +166,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
 
           <div className="adm-main">
             <header className="adm-top">
+              <button type="button" className="adm-hamburger" onClick={() => setSideOpen(true)} aria-label="Open navigation">
+                <Icon name="menu" size={20} />
+              </button>
               <nav className="adm-crumbs" aria-label="Breadcrumb">
                 <span>Admin</span>
                 {crumbs.map((c, i) => (

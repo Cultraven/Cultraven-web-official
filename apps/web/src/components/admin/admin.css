@@ -58,10 +58,10 @@
 .adm-brand { display: flex; align-items: center; gap: 10px; padding: 18px 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.07); }
 .adm-brand-mark { width: 34px; height: 34px; border-radius: 9px; background: var(--a-accent); color: var(--a-side); display: grid; place-items: center; font-weight: 900; font-size: 16px; flex-shrink: 0; }
 .adm-brand-name { color: #fff; font-weight: 800; letter-spacing: 0.12em; font-size: 13px; }
-.adm-brand-sub { color: var(--a-side-text); font-size: 11px; letter-spacing: 0.04em; }
+.adm-brand-sub { color: var(--a-side-text); font-size: 12px; letter-spacing: 0.04em; }
 .adm-nav { flex: 1; overflow-y: auto; padding: 14px 12px 20px; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.15) transparent; }
 .adm-nav-group { margin-bottom: 6px; }
-.adm-nav-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #6b7698; padding: 14px 10px 6px; }
+.adm-nav-label { font-size: 11.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #6b7698; padding: 14px 10px 6px; }
 .adm-nav-item {
   display: flex; align-items: center; gap: 11px; padding: 8px 10px; border-radius: 8px;
   color: var(--a-side-text); font-weight: 500; font-size: 13.5px; transition: background 0.12s, color 0.12s; width: 100%;
@@ -256,10 +256,28 @@
   .adm-login { grid-template-columns: 1fr; }
   .adm-login-art { display: none; }
 }
+/* ── Mobile sidebar backdrop / hamburger ─────────────────────────────────── */
+.adm-backdrop {
+  display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.45); z-index: 49;
+}
+.adm-hamburger {
+  display: none; align-items: center; justify-content: center;
+  width: 40px; height: 40px; flex-shrink: 0;
+  background: none; border: 1px solid var(--a-border); border-radius: 8px;
+  cursor: pointer; color: var(--a-text);
+}
+
 @media (max-width: 640px) {
   .adm-shell { grid-template-columns: minmax(0, 1fr); }
-  .adm-side { position: static; height: auto; border-right: 0; }
-  .adm-nav { max-height: 40dvh; }
+  .adm-side {
+    position: fixed; left: 0; top: 0; bottom: 0; z-index: 50; width: 280px;
+    border-right: 1px solid rgba(255, 255, 255, 0.07);
+    transform: translateX(-100%); transition: transform 0.25s ease;
+  }
+  .adm-side.adm-side-open { transform: none; box-shadow: 4px 0 20px rgba(0, 0, 0, 0.35); }
+  .adm-backdrop { display: block; }
+  .adm-hamburger { display: flex; }
+  .adm-nav { max-height: none; overflow-y: auto; }
 }
 @media (prefers-reduced-motion: reduce) {
   .adm *, .adm *::before, .adm *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
@@ -303,3 +321,13 @@
 .adm-seg { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
 .adm-seg::-webkit-scrollbar { display: none; }
 .adm-seg button { white-space: nowrap; flex-shrink: 0; }
+
+/* ── Phone-specific overrides (after ≤900px block so specificity wins) ────── */
+@media (max-width: 640px) {
+  /* iOS zoom prevention: inputs must be at least 16px */
+  .adm-input, .adm-select, .adm-textarea { font-size: 16px; }
+  /* Full 44px touch targets on phones (overrides the 40px from ≤900px above) */
+  .adm-btn, .adm-btn-sm { height: 44px; min-width: 44px; }
+  .adm-input, .adm-select { height: 46px; }
+  .adm-nav-item { min-height: 44px; }
+}

@@ -44,28 +44,28 @@ function OrderCard({ order, onStatusChange }: { order: DeliveryOrder; onStatusCh
   };
 
   return (
-    <div style={{ background: "var(--adm-surface)", border: "2px solid var(--adm-border)", borderRadius: 8, padding: "16px", display: "flex", flexDirection: "column", gap: "12px" }}>
+    <div style={{ background: "var(--a-surface)", border: "2px solid var(--a-border)", borderRadius: 8, padding: "16px", display: "flex", flexDirection: "column", gap: "12px" }}>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
         <span style={{ fontWeight: 800, fontSize: "15px", fontFamily: "monospace" }}>{order.orderNumber}</span>
         <Badge tone={STATUS_TONES[order.fulfillmentStatus] ?? "neutral"}>{cap(order.fulfillmentStatus)}</Badge>
-        <span style={{ fontSize: "12px", color: "var(--adm-muted)", marginLeft: "auto" }}>{fmtDate(order.createdAt)}</span>
+        <span style={{ fontSize: "12px", color: "var(--a-muted)", marginLeft: "auto" }}>{fmtDate(order.createdAt)}</span>
       </div>
 
       {/* Customer */}
-      <div style={{ background: "var(--adm-bg)", borderRadius: 6, padding: "10px 12px" }}>
+      <div style={{ background: "var(--a-surface-2)", borderRadius: 6, padding: "10px 12px" }}>
         <div style={{ fontWeight: 700, fontSize: "14px", marginBottom: "4px" }}>{order.address.name}</div>
-        <div style={{ fontSize: "13px", color: "var(--adm-muted)", lineHeight: 1.5 }}>
+        <div style={{ fontSize: "13px", color: "var(--a-muted)", lineHeight: 1.5 }}>
           {order.address.line1}{order.address.line2 ? `, ${order.address.line2}` : ""}
           <br />{order.address.city}, {order.address.state} — {order.address.pincode}
         </div>
         <div style={{ marginTop: "6px", display: "flex", gap: "12px", flexWrap: "wrap" }}>
-          <a href={`tel:${order.address.phone}`} style={{ fontSize: "13px", fontWeight: 700, color: "var(--adm-text)", textDecoration: "none" }}>
+          <a href={`tel:${order.address.phone}`} style={{ fontSize: "13px", fontWeight: 700, color: "var(--a-text)", textDecoration: "none" }}>
             📞 {order.address.phone}
           </a>
           <a href={`https://maps.google.com/?q=${encodeURIComponent(`${order.address.line1}, ${order.address.city}, ${order.address.pincode}`)}`}
             target="_blank" rel="noopener noreferrer"
-            style={{ fontSize: "13px", color: "var(--adm-muted)", textDecoration: "underline" }}>
+            style={{ fontSize: "13px", color: "var(--a-muted)", textDecoration: "underline" }}>
             📍 Open in Maps
           </a>
         </div>
@@ -75,16 +75,16 @@ function OrderCard({ order, onStatusChange }: { order: DeliveryOrder; onStatusCh
       <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
         {order.items.map((item, i) => (
           <div key={i} style={{ fontSize: "13px", display: "flex", gap: "8px" }}>
-            <span style={{ fontWeight: 600, color: "var(--adm-muted)", minWidth: "22px" }}>×{item.quantity}</span>
+            <span style={{ fontWeight: 600, color: "var(--a-muted)", minWidth: "22px" }}>×{item.quantity}</span>
             <span style={{ fontWeight: 600 }}>{item.title}</span>
-            <span style={{ color: "var(--adm-muted)" }}>{item.size}{item.color ? ` · ${item.color}` : ""}</span>
+            <span style={{ color: "var(--a-muted)" }}>{item.size}{item.color ? ` · ${item.color}` : ""}</span>
           </div>
         ))}
       </div>
 
       {/* Footer */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "8px", paddingTop: "8px", borderTop: "1px solid var(--adm-border)" }}>
-        <span style={{ fontSize: "12px", color: "var(--adm-muted)" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "8px", paddingTop: "8px", borderTop: "1px solid var(--a-border)" }}>
+        <span style={{ fontSize: "12px", color: "var(--a-muted)" }}>
           {order.paymentMethod === "cod" ? "💵 Cash on delivery" : "✅ Paid online"} · {fmtINR(order.totalPaise)}
         </span>
         <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>

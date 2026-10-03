@@ -4,7 +4,7 @@
 @keyframes rpIn { from { transform: translateY(18px); opacity: 0; } to { transform: none; opacity: 1; } }
 .rp-x { position: absolute; top: 4px; right: 4px; width: 44px; height: 44px; border: 0; background: none; font: 900 1.6rem/1 var(--font-sans); color: var(--color-navy); cursor: pointer; }
 .rp-x:focus-visible, .rp-stars button:focus-visible, .rp-link:focus-visible { outline: 3px solid var(--color-lava); outline-offset: 2px; }
-.rp-eyebrow { font: 800 0.66rem var(--font-sans); letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-smoke); margin: 0 2rem 0.55rem 0; }
+.rp-eyebrow { font: 800 0.75rem var(--font-sans); letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-smoke); margin: 0 2rem 0.55rem 0; }
 .rp-prod { display: flex; gap: 0.8rem; align-items: center; margin-bottom: 0.7rem; }
 .rp-prod img { width: 56px; height: 70px; object-fit: cover; border: 2px solid var(--color-navy); background: var(--color-bone); flex-shrink: 0; }
 .rp-prod h2 { font: 900 1.05rem/1.25 var(--font-sans); margin: 0; overflow-wrap: anywhere; }
@@ -18,7 +18,7 @@ textarea.rp-in { resize: vertical; }
 .rp-err { color: #b42318; font: 700 0.8rem/1.4 var(--font-sans); margin: 0 0 0.6rem; }
 .rp-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 1rem; }
 .rp-link { background: none; border: 0; min-height: 44px; padding: 0; font: 800 0.74rem var(--font-sans); letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-navy); text-decoration: underline; cursor: pointer; }
-.rp-foot { margin: 0.35rem 0 0; font: 600 0.7rem/1.5 var(--font-sans); color: var(--color-smoke); }
+.rp-foot { margin: 0.35rem 0 0; font: 600 0.75rem/1.5 var(--font-sans); color: var(--color-smoke); }
 .rp-foot a { color: var(--color-navy); text-decoration: underline; font-weight: 800; }
 .rp-done { display: grid; gap: 0.35rem; padding: 0.4rem 1.6rem 0.4rem 0; font: 600 0.9rem/1.5 var(--font-sans); }
 .rp-done b { font: 900 1.2rem var(--font-sans); }

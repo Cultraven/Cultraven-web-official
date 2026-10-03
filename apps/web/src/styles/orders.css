@@ -78,5 +78,5 @@
 
 /* Order confirmation meta rows */
 .os-meta { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; font: 600 0.82rem var(--font-sans); }
-.os-meta span { font-size: 0.68rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-smoke); }
+.os-meta span { font-size: 0.75rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-smoke); }
 .os-meta b { font-weight: 900; color: var(--color-navy); text-align: right; }

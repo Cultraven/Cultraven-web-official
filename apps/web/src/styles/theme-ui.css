@@ -28,7 +28,7 @@
 .cv-btn-ghost-light { background: rgba(255, 255, 255, 0.08); color: #fff; border-color: rgba(255, 255, 255, 0.9); backdrop-filter: blur(6px); box-shadow: 5px 5px 0 0 rgba(0, 0, 0, 0.35); }
 .cv-btn-ghost-light:hover { background: var(--color-cream); color: var(--color-navy); border-color: var(--color-cream); transform: translate(-2px, -2px); box-shadow: 7px 7px 0 0 var(--color-lava); }
 
-.cv-btn-sm { padding: 0.72rem 1.25rem; font-size: 0.7rem; }
+.cv-btn-sm { padding: 0.72rem 1.25rem; font-size: 0.75rem; }
 .cv-btn-sm.cv-btn-lava { box-shadow: 3px 3px 0 0 var(--color-navy); }
 .cv-btn-sm.cv-btn-navy { box-shadow: 3px 3px 0 0 var(--color-lava); }
 .cv-btn-sm.cv-btn-outline { box-shadow: 3px 3px 0 0 rgba(23, 37, 84, 0.18); }
@@ -64,7 +64,7 @@
 .acct-nav .acct-logout:hover { background: #fdecea; }
 
 .acct-head { margin-bottom: 1.75rem; }
-.acct-eyebrow { display: block; font-family: var(--font-sans); font-size: 11px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: var(--color-lava); margin-bottom: 0.5rem; }
+.acct-eyebrow { display: block; font-family: var(--font-sans); font-size: 12px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: var(--color-lava); margin-bottom: 0.5rem; }
 .acct-title { font-family: var(--font-heading); font-size: clamp(2rem, 4vw, 3.25rem); font-weight: 600; text-transform: uppercase; color: var(--color-navy); line-height: 1; }
 .acct-sub { margin-top: 0.6rem; color: var(--color-smoke); font-size: 0.95rem; max-width: 560px; }
 
@@ -76,7 +76,7 @@
 .acct-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-bottom: 2rem; }
 .acct-stat { background: #fff; border: 2px solid var(--color-navy); box-shadow: 4px 4px 0 0 var(--color-navy); padding: 1.15rem 1.25rem; }
 .acct-stat b { display: block; font-family: var(--font-heading); font-size: clamp(1.5rem, 2.6vw, 2.1rem); color: var(--color-navy); line-height: 1; }
-.acct-stat span { display: block; margin-top: 0.4rem; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-smoke); }
+.acct-stat span { display: block; margin-top: 0.4rem; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-smoke); }
 
 .acct-card { background: #fff; border: 2px solid var(--color-navy); box-shadow: 5px 5px 0 0 var(--color-navy); }
 .acct-card + .acct-card { margin-top: 1.5rem; }
@@ -88,7 +88,7 @@
 .acct-two > .acct-card + .acct-card { margin-top: 0; }
 .acct-two { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 1.5rem; align-items: start; }
 
-.acct-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; font-size: 0.66rem; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; border: 1.5px solid currentColor; }
+.acct-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; font-size: 0.75rem; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; border: 1.5px solid currentColor; }
 .acct-chip::before { content: ""; width: 6px; height: 6px; background: currentColor; border-radius: 50%; }
 .acct-chip.is-warn { color: #92600a; background: #fff6df; }
 .acct-chip.is-info { color: #1d4ed8; background: #e8f0ff; }
@@ -118,7 +118,7 @@
 
 .acct-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
 .acct-form .full { grid-column: 1 / -1; }
-.acct-field label { display: block; font-size: 0.68rem; font-weight: 900; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-navy); margin-bottom: 0.4rem; }
+.acct-field label { display: block; font-size: 0.75rem; font-weight: 900; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-navy); margin-bottom: 0.4rem; }
 .acct-field input, .acct-field select { width: 100%; padding: 0.8rem 0.9rem; border: 2px solid var(--color-navy); background: #fff; color: var(--color-navy); font: inherit; font-size: 0.92rem; }
 .acct-field input:focus, .acct-field select:focus { outline: none; box-shadow: 3px 3px 0 0 var(--color-lava); }
 .acct-field em { display: block; color: #b42318; font-size: 0.74rem; font-style: normal; margin-top: 4px; }

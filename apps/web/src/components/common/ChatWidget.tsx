@@ -272,12 +272,13 @@ export function ChatWidget() {
                   key={t}
                   onClick={() => setTab(t)}
                   style={{
-                    padding: "4px 10px",
+                    padding: "0 12px",
+                    minHeight: "44px",
                     borderRadius: "3px",
                     border: "none",
                     cursor: "pointer",
                     fontFamily: "var(--font-sans)",
-                    fontSize: "0.65rem",
+                    fontSize: "0.7rem",
                     fontWeight: 800,
                     letterSpacing: "0.1em",
                     textTransform: "uppercase",
@@ -585,7 +586,7 @@ export function ChatWidget() {
                     padding: "0.625rem 0.875rem",
                     border: "1.5px solid #E5E7EB",
                     fontFamily: "var(--font-sans)",
-                    fontSize: "0.82rem",
+                    fontSize: "16px",
                     color: "var(--color-navy)",
                     outline: "none",
                     borderRadius: "3px",
@@ -640,12 +641,13 @@ export function ChatWidget() {
                       setInput(q);
                     }}
                     style={{
-                      padding: "3px 10px",
+                      padding: "0 10px",
+                      minHeight: "44px",
                       backgroundColor: "var(--color-stone)",
                       border: "2px solid var(--color-navy)",
                       borderRadius: "0px",
                       fontFamily: "var(--font-sans)",
-                      fontSize: "0.65rem",
+                      fontSize: "0.75rem",
                       fontWeight: 600,
                       color: "var(--color-navy)",
                       cursor: "pointer",

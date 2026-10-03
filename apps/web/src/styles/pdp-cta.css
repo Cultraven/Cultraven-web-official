@@ -92,8 +92,8 @@
 .pdp-fit-size.is-sel { border-color: var(--color-lava); background: rgba(218,178,5,0.12); }
 .pdp-fit-size.is-out { opacity: 0.38; }
 .pdp-fit-size-label { font: 900 0.9rem var(--font-sans); letter-spacing: 0.05em; }
-.pdp-fit-size-price { font: 700 0.7rem var(--font-mono); color: var(--color-lava); letter-spacing: 0.04em; }
-.pdp-fit-size-out { font: 700 0.62rem var(--font-sans); letter-spacing: 0.1em; text-transform: uppercase; color: rgba(250,249,246,0.45); }
+.pdp-fit-size-price { font: 700 0.75rem var(--font-mono); color: var(--color-lava); letter-spacing: 0.04em; }
+.pdp-fit-size-out { font: 700 0.75rem var(--font-sans); letter-spacing: 0.1em; text-transform: uppercase; color: rgba(250,249,246,0.45); }
 
 /* ── Product page layout: the gallery stays in view while the buy box scrolls (no empty left side), details run full width ── */
 @media (min-width: 769px) {
