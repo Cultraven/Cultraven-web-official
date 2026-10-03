@@ -49,12 +49,12 @@ export default function OrderSuccessClient({ orderId, paymentId, isConfirmed, or
   }, [clearCart, isConfirmed]);
 
   return (
-    <div style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "2rem", paddingTop: "calc(2rem + 80px)" }}>
+    <div style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "clamp(1rem,3vw,2rem)", paddingTop: "calc(clamp(1rem,3vw,2rem) + 80px)" }}>
       {showConfetti && windowSize.width > 0 && (
         <Confetti width={windowSize.width} height={windowSize.height} colors={["var(--color-navy)", "var(--color-crimson)", "var(--color-yellow)", "var(--color-mist)", "#FFFFFF"]} recycle={false} numberOfPieces={400} gravity={0.14} />
       )}
 
-      <div style={{ backgroundColor: "var(--color-cream)", padding: "clamp(3rem,5vw,5rem)", maxWidth: "600px", width: "100%", textAlign: "center", border: "var(--border-thick)", boxShadow: "var(--shadow-md)", zIndex: 10, position: "relative" }}>
+      <div style={{ backgroundColor: "var(--color-cream)", padding: "clamp(1.5rem,5vw,5rem)", maxWidth: "600px", width: "100%", textAlign: "center", border: "var(--border-thick)", boxShadow: "var(--shadow-md)", zIndex: 10, position: "relative" }}>
         {isConfirmed ? (
           <>
             <div style={{ width: "64px", height: "64px", backgroundColor: "var(--color-navy)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 2rem" }}>
@@ -135,7 +135,7 @@ export default function OrderSuccessClient({ orderId, paymentId, isConfirmed, or
           {orderId && summary ? (
             <>
               <Link href={`/account/orders/${orderId}`} className="cv-btn cv-btn-navy" style={{ justifyContent: "center" }}>TRACK MY ORDER</Link>
-              <a href={`/api/orders/${orderId}/invoice`} className="cv-btn cv-btn-outline" style={{ justifyContent: "center" }}>DOWNLOAD RECEIPT (PDF)</a>
+              <a href={`/api/orders/${orderId}/invoice`} className="cv-btn cv-btn-outline" style={{ justifyContent: "center", whiteSpace: "normal", textAlign: "center" }}>DOWNLOAD RECEIPT (PDF)</a>
             </>
           ) : null}
           <Link href="/collections/all" style={{ display: "block", width: "100%", padding: "1.1rem", backgroundColor: "var(--color-navy)", color: "var(--color-cream)", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.82rem", letterSpacing: "0.14em", textTransform: "uppercase", textDecoration: "none" }}>CONTINUE SHOPPING</Link>

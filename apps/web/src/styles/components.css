@@ -436,6 +436,12 @@ html[data-menu-open] .chat-panel { display: none !important; }
   .plp-controls > div:last-child > button { width: 100%; min-width: 0 !important; }
 }
 
+/* ── Chat widget: icon-only on phones so it doesn't overlap page content ── */
+@media (max-width: 640px) {
+  .chat-toggle-label { display: none; }
+  .chat-toggle { padding-inline: 0 !important; width: 52px !important; justify-content: center !important; }
+}
+
 /* ── Footer bottom bar on phones: one tidy centred block, clear of the chat button + bottom nav ── */
 @media (max-width: 640px) {
   .footer-bottom { margin-top: 2rem !important; padding: 1.25rem 0 calc(6.5rem + env(safe-area-inset-bottom)) !important; flex-direction: column; justify-content: center !important; text-align: center; gap: 0.35rem !important; }
