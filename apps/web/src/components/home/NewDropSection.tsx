@@ -56,6 +56,8 @@ export function NewDropSection({ content, products }: { content: NewDropContent;
                 textTransform: "uppercase",
                 color: "var(--color-lava)",
                 marginBottom: "0.6rem",
+                cursor: "default",
+                userSelect: "none",
               }}
             >
               {content.eyebrow}
@@ -70,6 +72,8 @@ export function NewDropSection({ content, products }: { content: NewDropContent;
                 lineHeight: 0.95,
                 letterSpacing: "0.02em",
                 textTransform: "uppercase",
+                cursor: "default",
+                userSelect: "none",
               }}
             >
               {content.heading}
