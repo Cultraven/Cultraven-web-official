@@ -448,3 +448,8 @@ html[data-menu-open] .chat-panel { display: none !important; }
   .footer-bottom { margin-top: 2rem !important; padding: 1.25rem 0 calc(6.5rem + env(safe-area-inset-bottom)) !important; flex-direction: column; justify-content: center !important; text-align: center; gap: 0.35rem !important; }
   .footer-bottom p { font-size: 12px !important; letter-spacing: 0.08em; }
 }
+
+/* ── Order success: drop offset shadow on phones (heavy stripe against screen edge) ── */
+@media (max-width: 640px) {
+  .os-page-card { box-shadow: none !important; }
+}

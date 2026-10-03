@@ -54,7 +54,7 @@ export default function OrderSuccessClient({ orderId, paymentId, isConfirmed, or
         <Confetti width={windowSize.width} height={windowSize.height} colors={["var(--color-navy)", "var(--color-crimson)", "var(--color-yellow)", "var(--color-mist)", "#FFFFFF"]} recycle={false} numberOfPieces={400} gravity={0.14} />
       )}
 
-      <div style={{ backgroundColor: "var(--color-cream)", padding: "clamp(1.5rem,5vw,5rem)", maxWidth: "600px", width: "100%", textAlign: "center", border: "var(--border-thick)", boxShadow: "var(--shadow-md)", zIndex: 10, position: "relative" }}>
+      <div className="os-page-card" style={{ backgroundColor: "var(--color-cream)", padding: "clamp(1.5rem,5vw,5rem)", maxWidth: "600px", width: "100%", textAlign: "center", border: "var(--border-thick)", boxShadow: "var(--shadow-md)", zIndex: 10, position: "relative" }}>
         {isConfirmed ? (
           <>
             <div style={{ width: "64px", height: "64px", backgroundColor: "var(--color-navy)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 2rem" }}>

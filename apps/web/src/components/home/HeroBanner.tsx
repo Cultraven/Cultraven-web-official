@@ -312,6 +312,27 @@ function SlideLayer({ slide: s, index, visible, isPrev }: { slide: HeroSlide; in
   );
 }
 
+// ─── Trusted media host guard ─────────────────────────────────────────────────
+
+const TRUSTED_IMG_HOSTS = new Set([
+  "cultraven.com",
+  "www.cultraven.com",
+  "picsum.photos",
+  "images.unsplash.com",
+  "plus.unsplash.com",
+  "storage.googleapis.com",
+]);
+
+function isTrustedMediaUrl(url: string | null | undefined): url is string {
+  if (!url) return false;
+  if (url.startsWith("/")) return true;
+  try {
+    return TRUSTED_IMG_HOSTS.has(new URL(url).hostname);
+  } catch {
+    return false;
+  }
+}
+
 // ─── Slide media (image / video with safe fallbacks) ─────────────────────────
 
 const MEDIA_STYLE = (objectPosition?: string): React.CSSProperties => ({
@@ -343,7 +364,7 @@ function SlideMedia({ slide: s, index, visible }: { slide: HeroSlide; index: num
   const videoRef = React.useRef<HTMLVideoElement>(null);
 
   const isVideo = s.type === "video" && !videoError && !!s.srcDesktop;
-  const videoSrc = isMobile && s.srcMobile ? s.srcMobile : s.srcDesktop;
+  const videoSrc = isMobile && isTrustedMediaUrl(s.srcMobile) ? s.srcMobile : s.srcDesktop;
   const eager = index === 0;
 
   // Only the visible slide plays — saves bandwidth/CPU for the rest.
@@ -381,7 +402,7 @@ function SlideMedia({ slide: s, index, visible }: { slide: HeroSlide; index: num
   // Art-directed, optimized sources (AVIF/WebP at the right size) — a raw multi-MB upload
   // would otherwise dominate the page weight and LCP.
   const desktop = optimizedImage(fallback, { alt: s.altText || "", sizes: "100vw", priority: eager, quality: 70 });
-  const mobileSrc = s.type !== "video" && s.srcMobile ? optimizedImage(s.srcMobile, { alt: "", sizes: "100vw", quality: 70 }) : null;
+  const mobileSrc = s.type !== "video" && isTrustedMediaUrl(s.srcMobile) ? optimizedImage(s.srcMobile, { alt: "", sizes: "100vw", quality: 70 }) : null;
   const { fill: _f, style: _s, ...imgProps } = desktop as any;
 
   return (
