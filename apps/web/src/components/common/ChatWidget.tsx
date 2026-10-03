@@ -199,6 +199,15 @@ export function ChatWidget() {
         </button>
       </div>
 
+      {/* ── Click-outside backdrop ── */}
+      {open && (
+        <div
+          aria-hidden="true"
+          onClick={() => setOpen(false)}
+          style={{ position: "fixed", inset: 0, zIndex: 9988 }}
+        />
+      )}
+
       {/* ── Popup panel ── */}
       {open && (
         <div
