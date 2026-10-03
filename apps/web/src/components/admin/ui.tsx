@@ -54,7 +54,7 @@ export const Button = React.memo(function Button({
   variant = "default", size, loading, icon, children, className = "", ...rest
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant; size?: "sm" | "icon"; loading?: boolean; icon?: string }) {
   return (
-    <button type="button" {...rest} disabled={rest.disabled || loading} className={`${vcls(variant, size)} ${className}`}>
+    <button type="button" {...rest} disabled={rest.disabled || loading} aria-busy={loading || undefined} className={`${vcls(variant, size)} ${className}`}>
       {loading ? <span className="adm-spin" aria-hidden /> : icon ? <Icon name={icon} size={16} /> : null}
       {children}
     </button>

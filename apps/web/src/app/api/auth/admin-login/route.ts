@@ -57,7 +57,10 @@ export async function POST(req: NextRequest) {
     const emailOk = safeEqual(email.toLowerCase(), adminEmail.toLowerCase());
     const passwordOk = safeEqual(password, adminPassword);
     if (emailOk && passwordOk) {
-      const token = createToken(email, "superadmin");
+      let token: string;
+      try { token = createToken(email, "superadmin"); } catch {
+        return NextResponse.json({ error: "Server configuration error" }, { status: 503 });
+      }
       const res = NextResponse.json({ ok: true, role: "superadmin" });
       res.cookies.set("cultraven_admin_session", token, { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", maxAge: 60 * 60 * 8, path: "/" });
       res.headers.set("Cache-Control", "no-store");

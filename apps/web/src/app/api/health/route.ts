@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { isAdminRequest } from "@/lib/admin-auth";
 import { connectToDatabase } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
@@ -19,19 +20,21 @@ function explain(e: unknown): string {
 }
 
 /** GET /api/health — is the site able to reach its database? Safe to expose: reports status and cause category only. */
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const isAdmin = isAdminRequest(req);
   const missingEnv = REQUIRED_ENV.filter((k) => !process.env[k]);
   try {
     await Promise.race([
       connectToDatabase(),
       new Promise((_, rej) => setTimeout(() => rej(new Error("Server selection timed out")), 8000)),
     ]);
-    return NextResponse.json({ ok: true, database: "connected", missingEnv }, { headers: { "Cache-Control": "no-store" } });
+    const body: Record<string, unknown> = { ok: true, database: "connected" };
+    if (isAdmin) body.missingEnv = missingEnv;
+    return NextResponse.json(body, { headers: { "Cache-Control": "no-store" } });
   } catch (e) {
     console.error("[health] database check failed:", e instanceof Error ? e.message : e);
-    return NextResponse.json(
-      { ok: false, database: "unreachable", reason: explain(e), errorType: String((e as any)?.name ?? "Error"), errorCode: (e as any)?.code ?? null, missingEnv },
-      { status: 503, headers: { "Cache-Control": "no-store" } }
-    );
+    const body: Record<string, unknown> = { ok: false, database: "unreachable", reason: explain(e), errorType: String((e as any)?.name ?? "Error"), errorCode: (e as any)?.code ?? null };
+    if (isAdmin) body.missingEnv = missingEnv;
+    return NextResponse.json(body, { status: 503, headers: { "Cache-Control": "no-store" } });
   }
 }

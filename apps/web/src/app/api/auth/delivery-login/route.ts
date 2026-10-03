@@ -42,7 +42,11 @@ export async function POST(req: NextRequest) {
       .select("+passwordHash")
       .lean() as any;
 
-    if (!user || !user.passwordHash || !await bcrypt.compare(password, user.passwordHash)) {
+    // Always run bcrypt to prevent timing-based account enumeration
+    const DUMMY_HASH = "$2b$12$invalidhashtopreventtimingattacksonunknownemailaddresses.";
+    const hashToCompare = user?.passwordHash ?? DUMMY_HASH;
+    const passwordMatch = await bcrypt.compare(password, hashToCompare);
+    if (!user || !passwordMatch) {
       console.warn(`[delivery-login] Failed attempt from ${ip}`);
       return NextResponse.json({ error: "Invalid credentials." }, { status: 401 });
     }

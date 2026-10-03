@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { isAdminRequest } from "@/lib/admin-auth";
 import { getPublicSmtpSettings, saveSmtpSettings, parseEmailList, isEmail, defaultSecure } from "@/lib/mailer";
+import { clientIp, isSameOrigin, rateLimit, retryHeaders } from "@/lib/sanitize";
 
 export const dynamic = "force-dynamic";
 const NO_STORE = { "Cache-Control": "no-store" };
@@ -33,6 +34,9 @@ export async function GET(req: NextRequest) {
 /** PUT — save. Admin-only. */
 export async function PUT(req: NextRequest) {
   if (!isAdminRequest(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!isSameOrigin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const rl = rateLimit(`smtp-settings:${clientIp(req)}`, 20, 60 * 1000);
+  if (!rl.ok) return NextResponse.json({ error: "Too many requests" }, { status: 429, headers: retryHeaders(rl) });
   let raw: unknown;
   try { raw = await req.json(); } catch { return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 }); }
   const p = Body.safeParse(raw);

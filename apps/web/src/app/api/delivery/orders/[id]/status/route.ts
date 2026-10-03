@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import { isDeliveryRequest, isAdminRequest } from "@/lib/admin-auth";
+import { parseJsonBody } from "@/lib/sanitize";
 import mongoose from "mongoose";
 
 export const dynamic = "force-dynamic";
@@ -15,8 +16,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const { id } = await params;
   if (!mongoose.Types.ObjectId.isValid(id)) return NextResponse.json({ error: "Invalid id" }, { status: 400 });
 
-  let body: { status?: string; note?: string };
-  try { body = await req.json(); } catch { return NextResponse.json({ error: "Invalid JSON" }, { status: 400 }); }
+  const parsed = await parseJsonBody(req, 4 * 1024);
+  if (!parsed.ok) return NextResponse.json({ error: parsed.error }, { status: parsed.status });
+  const body = parsed.data as { status?: string; note?: string };
+  if (body.note && typeof body.note === "string" && body.note.length > 500) {
+    return NextResponse.json({ error: "Note must be 500 characters or less" }, { status: 422 });
+  }
 
   const status = body.status as typeof ALLOWED[number];
   if (!ALLOWED.includes(status)) {

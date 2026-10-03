@@ -68,7 +68,7 @@ export default function ForgotPasswordPage() {
         ) : (
           <form onSubmit={handleSubmit} noValidate style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
             <div>
-              <label htmlFor="forgot-email" style={{ display: "block", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "0.62rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--color-navy)", marginBottom: "0.45rem" }}>
+              <label htmlFor="forgot-email" style={{ display: "block", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "0.75rem", letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--color-navy)", marginBottom: "0.45rem" }}>
                 Email Address
               </label>
               <input
@@ -82,7 +82,7 @@ export default function ForgotPasswordPage() {
                 placeholder="you@example.com"
                 style={{ width: "100%", padding: "0.9rem 1rem", border: `2px solid ${error ? "var(--color-crimson)" : "var(--color-navy)"}`, backgroundColor: "var(--color-cream)", fontFamily: "var(--font-sans)", fontSize: "0.9rem", color: "var(--color-navy)", outline: "none", boxSizing: "border-box" }}
               />
-              {error && <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.65rem", fontWeight: 700, color: "var(--color-crimson)", marginTop: "4px" }}>{error}</p>}
+              {error && <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", fontWeight: 700, color: "var(--color-crimson)", marginTop: "4px" }}>{error}</p>}
             </div>
 
             <button

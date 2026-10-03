@@ -106,6 +106,7 @@
   input[type="password"]:not(.adm *),
   input[type="tel"]:not(.adm *),
   input[type="number"]:not(.adm *),
+  input[type="search"]:not(.adm *),
   textarea:not(.adm *),
   select:not(.adm *) {
     border: var(--border-thick) !important;

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import { User } from "@/lib/models/User";
-import { isAdminRequest } from "@/lib/admin-auth";
+import { isAdminRequest, isSuperAdminRequest } from "@/lib/admin-auth";
 import mongoose from "mongoose";
 
 export const dynamic = "force-dynamic";
@@ -21,6 +21,14 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   try {
     await connectToDatabase();
+
+    // Only superadmin can change status of admin/superadmin accounts
+    const target = await User.findById(id).select("role").lean() as any;
+    if (!target) return NextResponse.json({ error: "User not found" }, { status: 404 });
+    if ((target.role === "admin" || target.role === "superadmin") && !isSuperAdminRequest(req)) {
+      return NextResponse.json({ error: "Superadmin access required to modify admin accounts" }, { status: 403 });
+    }
+
     const update: Record<string, any> = { status };
     if (status === "deleted") update.deletedAt = new Date();
     else update.deletedAt = null;

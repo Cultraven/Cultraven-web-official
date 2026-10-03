@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
         const mime = m?.[1] ?? "image/jpeg";
         const b64 = user.avatar.split(",")[1];
         return new NextResponse(Buffer.from(b64, "base64"), {
-          headers: { "Content-Type": mime, "Cache-Control": "private, max-age=3600" },
+          headers: { "Content-Type": mime, "Cache-Control": "private, max-age=3600", "X-Content-Type-Options": "nosniff", "Content-Security-Policy": "default-src 'none'; sandbox" },
         });
       }
     } else {
@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
         const mime = m?.[1] ?? "image/jpeg";
         const b64 = doc.value.dataUrl.split(",")[1];
         return new NextResponse(Buffer.from(b64, "base64"), {
-          headers: { "Content-Type": mime, "Cache-Control": "private, max-age=3600" },
+          headers: { "Content-Type": mime, "Cache-Control": "private, max-age=3600", "X-Content-Type-Options": "nosniff", "Content-Security-Policy": "default-src 'none'; sandbox" },
         });
       }
     }

@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import { User } from "@/lib/models/User";
-import { isAdminRequest } from "@/lib/admin-auth";
+import { isSuperAdminRequest } from "@/lib/admin-auth";
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  if (!isAdminRequest(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!isSuperAdminRequest(req)) return NextResponse.json({ error: "Superadmin access required" }, { status: 403 });
   const { id } = await params;
   if (!mongoose.Types.ObjectId.isValid(id)) return NextResponse.json({ error: "Invalid id" }, { status: 400 });
 

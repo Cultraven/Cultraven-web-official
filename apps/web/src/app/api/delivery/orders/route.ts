@@ -9,8 +9,27 @@ export const dynamic = "force-dynamic";
 const DELIVERY_STATUSES = ["confirmed", "packed", "on_hold", "shipped", "out_for_delivery", "delivery_failed"];
 
 export async function GET(req: NextRequest) {
-  if (!isDeliveryRequest(req) && !isAdminRequest(req)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const adminOk = isAdminRequest(req);
+  const deliveryOk = !adminOk && isDeliveryRequest(req);
+  if (!adminOk && !deliveryOk) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  // Delivery users must be approved before seeing any orders (and customer PII)
+  if (deliveryOk) {
+    try {
+      await connectToDatabase();
+      const { getDeliveryPayload } = await import("@/lib/admin-auth");
+      const payload = getDeliveryPayload(req);
+      if (!payload) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      const User = mongoose.models.User as any;
+      if (User) {
+        const u = await User.findById(payload.userId).select("verificationStatus").lean() as any;
+        if (!u || u.verificationStatus !== "approved") {
+          return NextResponse.json({ orders: [] });
+        }
+      }
+    } catch {
+      return NextResponse.json({ error: "Database error" }, { status: 503 });
+    }
   }
 
   const q = (new URL(req.url).searchParams.get("q") ?? "").trim().slice(0, 80);

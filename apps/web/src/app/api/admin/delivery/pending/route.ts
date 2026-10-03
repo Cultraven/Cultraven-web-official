@@ -15,6 +15,7 @@ export async function GET(req: NextRequest) {
     const users = await User.find({ role: "delivery" })
       .select("firstName lastName email phone verificationStatus verificationNote createdAt avatarUpdatedAt")
       .sort({ createdAt: -1 })
+      .limit(500)
       .lean() as any[];
 
     const kycs = await DeliveryKyc.find({ userId: { $in: users.map((u: any) => u._id) } })

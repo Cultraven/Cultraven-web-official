@@ -12,13 +12,24 @@ export const dynamic = "force-dynamic";
 
 const KYC_IMG_MAX = 500 * 1024; // 500 KB decoded per image
 
+const KYC_ALLOWED_MIMES = new Set(["image/jpeg", "image/png", "image/webp"]);
+
 function validateImage(val: unknown, field: string): string | null {
   if (!val) return null; // optional images
   if (typeof val !== "string") return `${field}: must be a string`;
   const m = /^data:(image\/[a-z+]+);base64,([A-Za-z0-9+/]+=*)$/.exec(val.trim());
   if (!m) return `${field}: invalid image format`;
+  const mime = m[1];
+  if (!KYC_ALLOWED_MIMES.has(mime)) return `${field}: only JPEG, PNG or WebP images are allowed`;
   const bytes = Buffer.from(m[2], "base64");
   if (bytes.length > KYC_IMG_MAX) return `${field}: image too large (max 500 KB)`;
+  // Magic byte check to prevent MIME spoofing
+  const isJpeg = bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
+  const isPng = bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47;
+  const isWebp = bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46 && bytes[8] === 0x57 && bytes[9] === 0x45 && bytes[10] === 0x42 && bytes[11] === 0x50;
+  const realMime = isJpeg ? "image/jpeg" : isPng ? "image/png" : isWebp ? "image/webp" : null;
+  if (!realMime) return `${field}: file is not a valid image`;
+  if (realMime !== mime) return `${field}: image content does not match its declared type`;
   return null;
 }
 
@@ -62,6 +73,10 @@ export async function POST(req: NextRequest) {
     await connectToDatabase();
     const user = await User.findById(payload.userId).select("firstName email verificationStatus").lean() as any;
     if (!user) return NextResponse.json({ error: "Account not found" }, { status: 404 });
+
+    if (user.verificationStatus === "approved") {
+      return NextResponse.json({ error: "Your account is already approved. Re-submission is not allowed." }, { status: 409 });
+    }
 
     // Save or update KYC document
     await DeliveryKyc.findOneAndUpdate(

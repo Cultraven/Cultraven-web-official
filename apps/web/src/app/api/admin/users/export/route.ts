@@ -11,6 +11,15 @@ function escapeCsv(v: unknown): string {
   return s;
 }
 
+function escapeHtml(v: unknown): string {
+  return String(v ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 export async function GET(req: NextRequest) {
   if (!isAdminRequest(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -53,12 +62,12 @@ export async function GET(req: NextRequest) {
     // We return an HTML page with @media print styles; the browser does the PDF save.
     const rows = users.map((u) => `
       <tr>
-        <td>${u._id.toString().slice(-8).toUpperCase()}</td>
-        <td>${u.firstName} ${u.lastName}</td>
-        <td>${u.email}</td>
-        <td>${u.phone ?? "—"}</td>
-        <td>${u.role}</td>
-        <td>${u.status}</td>
+        <td>${escapeHtml(u._id.toString().slice(-8).toUpperCase())}</td>
+        <td>${escapeHtml(u.firstName)} ${escapeHtml(u.lastName)}</td>
+        <td>${escapeHtml(u.email)}</td>
+        <td>${escapeHtml(u.phone ?? "—")}</td>
+        <td>${escapeHtml(u.role)}</td>
+        <td>${escapeHtml(u.status)}</td>
         <td>${u.emailVerified ? "Yes" : "No"}</td>
         <td>${u.createdAt ? new Date(u.createdAt).toLocaleDateString("en-IN") : "—"}</td>
       </tr>`).join("");

@@ -35,12 +35,15 @@ export async function PATCH(
     const user = await User.findOne({ _id: id, role: "delivery" }).select("firstName email verificationStatus").lean() as any;
     if (!user) return NextResponse.json({ error: "Delivery user not found" }, { status: 404 });
 
-    await User.findByIdAndUpdate(id, {
-      $set: {
-        verificationStatus: decision,
-        verificationNote: note ?? null,
-      },
-    });
+    // Compare-and-set: only act on pending status to prevent race conditions
+    const updated = await User.findOneAndUpdate(
+      { _id: id, verificationStatus: "pending" },
+      { $set: { verificationStatus: decision, verificationNote: note ?? null } },
+      { new: false }
+    ).lean();
+    if (!updated) {
+      return NextResponse.json({ error: "This verification request is no longer pending" }, { status: 409 });
+    }
 
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://cultraven.com";
     const loginUrl = `${siteUrl}/portal-delivery-access`;
@@ -78,7 +81,7 @@ export async function GET(
         state: kyc.state,
         pincode: kyc.pincode,
         aadhaarNumber: kyc.aadhaarNumber ? `XXXX-XXXX-${kyc.aadhaarNumber.slice(-4)}` : null,
-        panNumber: kyc.panNumber,
+        panNumber: kyc.panNumber ? `XXXXX${kyc.panNumber.slice(-5)}` : null,
         submittedAt: kyc.submittedAt,
         selfieDataUrl: kyc.selfieDataUrl ?? null,
         aadhaarFrontDataUrl: kyc.aadhaarFrontDataUrl ?? null,

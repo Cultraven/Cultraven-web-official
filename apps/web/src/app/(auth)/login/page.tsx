@@ -64,7 +64,7 @@ function LoginForm() {
     display: "block",
     fontFamily: "var(--font-sans)",
     fontWeight: 900,
-    fontSize: "0.62rem",
+    fontSize: "0.75rem",
     letterSpacing: "0.16em",
     textTransform: "uppercase",
     color: "var(--color-navy)",
@@ -131,7 +131,7 @@ function LoginForm() {
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "0.45rem" }}>
                 <label htmlFor="login-password" style={{ ...LABEL, marginBottom: 0 }}>Password</label>
-                <Link href="/forgot-password" style={{ fontFamily: "var(--font-sans)", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-lava)", textDecoration: "underline", padding: "12px 0" }}>Forgot?</Link>
+                <Link href="/forgot-password" style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-lava)", textDecoration: "underline", padding: "12px 0" }}>Forgot?</Link>
               </div>
               <div style={{ position: "relative" }}>
                 <input id="login-password" type={showPw ? "text" : "password"} required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} disabled={loading} placeholder="••••••••" style={{ ...INPUT, paddingRight: "3rem" }} />

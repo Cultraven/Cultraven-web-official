@@ -47,8 +47,8 @@
 
 /* ── components/cart/CartDrawer.tsx: touch-size controls on phones/tablets ── */
 @media (max-width: 900px), (pointer: coarse) {
-  .cd-qty-btn { width: 40px !important; height: 40px !important; font-size: 1.1rem !important; }
-  .cd-remove { min-height: 40px; padding: 0 0.5rem !important; }
+  .cd-qty-btn { width: 44px !important; height: 44px !important; font-size: 1.1rem !important; }
+  .cd-remove { min-height: 44px; padding: 0 0.5rem !important; }
   .cd-close { width: 44px; height: 44px; padding: 0 !important; }
 }
 
@@ -439,5 +439,5 @@ html[data-menu-open] .chat-panel { display: none !important; }
 /* ── Footer bottom bar on phones: one tidy centred block, clear of the chat button + bottom nav ── */
 @media (max-width: 640px) {
   .footer-bottom { margin-top: 2rem !important; padding: 1.25rem 0 calc(6.5rem + env(safe-area-inset-bottom)) !important; flex-direction: column; justify-content: center !important; text-align: center; gap: 0.35rem !important; }
-  .footer-bottom p { font-size: 11px !important; letter-spacing: 0.08em; }
+  .footer-bottom p { font-size: 12px !important; letter-spacing: 0.08em; }
 }
