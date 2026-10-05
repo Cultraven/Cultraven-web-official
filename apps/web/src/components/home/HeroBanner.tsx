@@ -312,27 +312,6 @@ function SlideLayer({ slide: s, index, visible, isPrev }: { slide: HeroSlide; in
   );
 }
 
-// ─── Trusted media host guard ─────────────────────────────────────────────────
-
-const TRUSTED_IMG_HOSTS = new Set([
-  "cultraven.com",
-  "www.cultraven.com",
-  "picsum.photos",
-  "images.unsplash.com",
-  "plus.unsplash.com",
-  "storage.googleapis.com",
-]);
-
-function isTrustedMediaUrl(url: string | null | undefined): url is string {
-  if (!url) return false;
-  if (url.startsWith("/")) return true;
-  try {
-    return TRUSTED_IMG_HOSTS.has(new URL(url).hostname);
-  } catch {
-    return false;
-  }
-}
-
 // ─── Slide media (image / video with safe fallbacks) ─────────────────────────
 
 const MEDIA_STYLE = (objectPosition?: string): React.CSSProperties => ({
@@ -345,26 +324,14 @@ const MEDIA_STYLE = (objectPosition?: string): React.CSSProperties => ({
   zIndex: 0,
 });
 
-function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia("(max-width: 768px)");
-    const update = () => setIsMobile(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, []);
-  return isMobile;
-}
-
 function SlideMedia({ slide: s, index, visible }: { slide: HeroSlide; index: number; visible: boolean }) {
-  const isMobile = useIsMobile();
   const [videoError, setVideoError] = useState(false);
   const [imageError, setImageError] = useState(false);
   const videoRef = React.useRef<HTMLVideoElement>(null);
 
   const isVideo = s.type === "video" && !videoError && !!s.srcDesktop;
-  const videoSrc = isMobile && isTrustedMediaUrl(s.srcMobile) ? s.srcMobile : s.srcDesktop;
+  // One source for every device — the hero must look identical on phone, tablet and desktop (srcMobile is intentionally ignored).
+  const videoSrc = s.srcDesktop;
   const eager = index === 0;
 
   // Only the visible slide plays — saves bandwidth/CPU for the rest.
@@ -402,18 +369,14 @@ function SlideMedia({ slide: s, index, visible }: { slide: HeroSlide; index: num
   // Art-directed, optimized sources (AVIF/WebP at the right size) — a raw multi-MB upload
   // would otherwise dominate the page weight and LCP.
   const desktop = optimizedImage(fallback, { alt: s.altText || "", sizes: "100vw", priority: eager, quality: 70 });
-  const mobileSrc = s.type !== "video" && isTrustedMediaUrl(s.srcMobile) ? optimizedImage(s.srcMobile, { alt: "", sizes: "100vw", quality: 70 }) : null;
   const { fill: _f, style: _s, ...imgProps } = desktop as any;
 
   return (
-    <picture>
-      {mobileSrc?.srcSet ? <source media="(max-width: 768px)" srcSet={mobileSrc.srcSet} sizes="100vw" /> : null}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        {...imgProps}
-        onError={() => setImageError(true)}
-        style={MEDIA_STYLE(s.objectPosition)}
-      />
-    </picture>
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      {...imgProps}
+      onError={() => setImageError(true)}
+      style={MEDIA_STYLE(s.objectPosition)}
+    />
   );
 }

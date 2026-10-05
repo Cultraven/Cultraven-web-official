@@ -81,16 +81,14 @@ export function validateSlides(raw: unknown): { slides: HeroSlideInput[]; errors
     const label = `Slide ${i + 1}`;
     const type: "image" | "video" = r?.type === "video" ? "video" : "image";
     const srcDesktop = str(r?.srcDesktop, 2048);
-    const srcMobile = str(r?.srcMobile ?? r?.imageMobile, 2048);
+    const srcMobile = ""; // one hero media for every device — any previously stored mobile URL is cleared on save
     const posterSrc = str(r?.posterSrc, 2048);
 
     if (!srcDesktop) errors.push(`${label}: desktop ${type} is required`);
     if (!isSafeMediaUrl(srcDesktop, false)) errors.push(`${label}: desktop media URL is invalid (https:// or uploaded file only)`);
-    if (!isSafeMediaUrl(srcMobile)) errors.push(`${label}: mobile media URL is invalid`);
     if (!isSafeMediaUrl(posterSrc)) errors.push(`${label}: poster URL is invalid`);
     if (type === "video") {
       if (srcDesktop && !VIDEO_EXT.test(srcDesktop)) errors.push(`${label}: desktop video must be .mp4 or .webm`);
-      if (srcMobile && !VIDEO_EXT.test(srcMobile)) errors.push(`${label}: mobile video must be .mp4 or .webm`);
     }
 
     const ctaHref = str(r?.ctaHref, 512) || "/collections/all";

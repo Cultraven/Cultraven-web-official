@@ -292,7 +292,7 @@ export default function CheckoutPage() {
     <div className="co">
       <header className="co-top">
         <Link href="/" className="co-brand">CULTRAVEN</Link>
-        <span className="co-secure">{buyNow ? "COP IT NOW · EXPRESS CHECKOUT" : "SECURE CHECKOUT"}</span>
+        <span className="co-secure">{buyNow ? "EXPRESS CHECKOUT" : "SECURE CHECKOUT"}</span>
       </header>
 
       <div className="co-layout checkout-layout">

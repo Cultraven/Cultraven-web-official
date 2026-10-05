@@ -102,9 +102,8 @@ export default function AdminCmsHeroPage() {
 
   const validate = (): string[] => {
     const e: string[] = [];
-    if (!form.srcDesktop) e.push(`Desktop ${form.type} is required`);
-    if (form.type === "video" && form.srcDesktop && !isVideoUrl(form.srcDesktop)) e.push("Desktop video must be an .mp4 or .webm file");
-    if (form.type === "video" && form.srcMobile && !isVideoUrl(form.srcMobile)) e.push("Mobile video must be an .mp4 or .webm file");
+    if (!form.srcDesktop) e.push(`Hero ${form.type} is required`);
+    if (form.type === "video" && form.srcDesktop && !isVideoUrl(form.srcDesktop)) e.push("Hero video must be an .mp4 or .webm file");
     if (form.type === "video" && !form.posterSrc) e.push("A poster / fallback image is required for video slides");
     if (!/^(\/(?!\/)|https:\/\/)/.test(form.ctaHref)) e.push('Button link must start with "/" or https://');
     if (form.startsAt && form.endsAt && form.startsAt >= form.endsAt) e.push("End date must be after the start date");
@@ -173,7 +172,7 @@ export default function AdminCmsHeroPage() {
               <Media src={s.srcDesktop} kind={s.type} poster={s.posterSrc} big />
               <div className="adm-row-main">
                 <div className="adm-cell-title" style={{ maxWidth: "100%" }}>{i + 1}. {s.headline || "(No headline)"}</div>
-                <div className="adm-cell-sub">{s.type === "video" ? "Video" : "Image"} · {s.srcMobile ? "desktop + mobile" : "desktop only"} · {Math.round(s.durationMs / 1000)}s · {s.ctaLabel} → {s.ctaHref}{s.startsAt || s.endsAt ? " · scheduled" : ""}</div>
+                <div className="adm-cell-sub">{s.type === "video" ? "Video" : "Image"} · all devices · {Math.round(s.durationMs / 1000)}s · {s.ctaLabel} → {s.ctaHref}{s.startsAt || s.endsAt ? " · scheduled" : ""}</div>
               </div>
               <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5, color: "var(--a-muted)" }}>
                 {s.active ? "Live" : "Hidden"}
@@ -198,8 +197,7 @@ export default function AdminCmsHeroPage() {
               </Field>
               <Field label="Visible on website"><div style={{ height: 38, display: "flex", alignItems: "center" }}><Switch checked={form.active} onChange={(v) => setF("active", v)} label="Visible" /></div></Field>
 
-              <MediaField label={`Desktop ${form.type}`} hint={form.type === "video" ? "MP4 / WebM, up to 40 MB" : "JPG / PNG / WebP / AVIF, up to 10 MB"} value={form.srcDesktop} kind={form.type} poster={form.posterSrc} onChange={(u) => setF("srcDesktop", u)} onError={(m) => setFormErrors([m])} />
-              <MediaField label={`Mobile ${form.type} (optional)`} hint="Uses the desktop media if empty" value={form.srcMobile} kind={form.type} poster={form.posterSrc} onChange={(u) => setF("srcMobile", u)} onError={(m) => setFormErrors([m])} />
+              <MediaField label={`Hero ${form.type} (all devices)`} hint={form.type === "video" ? "MP4 / WebM, up to 40 MB" : "JPG / PNG / WebP / AVIF, up to 10 MB"} value={form.srcDesktop} kind={form.type} poster={form.posterSrc} onChange={(u) => setF("srcDesktop", u)} onError={(m) => setFormErrors([m])} />
               {form.type === "video" ? <MediaField label="Poster / fallback image (required)" hint="Shown while loading and if the video fails" value={form.posterSrc} kind="image" onChange={(u) => setF("posterSrc", u)} onError={(m) => setFormErrors([m])} /> : null}
 
               <Field label="Alt text" hint="Describes the media for screen readers" span><input className="adm-input" maxLength={200} value={form.altText} onChange={(e) => setF("altText", e.target.value)} /></Field>

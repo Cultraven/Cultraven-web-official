@@ -19,7 +19,8 @@
 @media (hover: hover) and (pointer: fine) {
   .sc:hover .sc-img-2, .sc:focus-within .sc-img-2 { opacity: 1; transform: scale(1.04); }
 }
-.sc[data-sold-out="true"] .sc-img { opacity: 0.55; filter: grayscale(0.35); }
+.sc[data-sold-out="true"] .sc-img-1 { opacity: 0.55; filter: grayscale(0.35); }
+.sc[data-sold-out="true"] .sc-img-2 { display: none; }
 
 .sc-badge {
   position: absolute; top: 10px; left: 10px; z-index: 3; pointer-events: none;
@@ -53,11 +54,12 @@
 /* show on hover (mouse) or keyboard focus anywhere inside the card */
 @media (hover: hover) and (pointer: fine) {
   .sc:hover .sc-size-row,
-  .sc:focus-within .sc-size-row { max-height: 120px; padding-top: 9px; padding-bottom: 11px; border-top-width: 1.5px; }
+  .sc:focus-within .sc-size-row { max-height: 320px; padding-top: 9px; padding-bottom: 11px; border-top-width: 1.5px; }
 }
 /* on touch devices always show the size row (no hover available) */
+/* No fixed height here: 4 size chips wrap to two rows and the COP IT NOW button must never be clipped. */
 @media (hover: none), (pointer: coarse) {
-  .sc-size-row { max-height: 120px; padding-top: 9px; padding-bottom: 11px; border-top-width: 1.5px; }
+  .sc-size-row { max-height: none; overflow: visible; padding-top: 9px; padding-bottom: 11px; border-top-width: 1.5px; }
 }
 .sc-size-row-sold { background: transparent; }
 .sc-chips-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
@@ -144,8 +146,20 @@
   /* color row: wrap onto two lines so the label and swatches both have full width on narrow cards */
   .sc-color-row { flex-wrap: wrap; padding: 5px 9px 7px; gap: 4px; }
   .sc-color-label { width: 100%; }
-  .sc-color-swatch { width: 16px; height: 16px; }
-  .sc-color-swatches { gap: 4px; }
+  .sc-color-swatch { width: 18px; height: 18px; }
+  .sc-color-swatches { gap: 5px; }
+  /* size chips share the row evenly (two per row) so the panel stays tidy and COP IT NOW sits right under them; text kept at 12px+ */
+  .sc-chips-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  .sc-chips-label { grid-column: 1 / -1; width: auto; }
+  .sc-chip { min-width: 0; width: 100%; height: 40px; }
+  .sc-chip-full { grid-column: 1 / -1; }
+  .sc-cop-btn { font-size: 12px; letter-spacing: 0.1em; }
+  .sc-chips-label, .sc-color-label, .sc-chip-price, .sc-chip-sz, .sc-badge { font-size: 12px; }
+}
+
+/* touch phones only — a mouse on a narrow window keeps the collapsed hover panel */
+@media (max-width: 480px) and (hover: none), (max-width: 480px) and (pointer: coarse) {
+  .sc-size-row { padding: 8px 9px 10px; gap: 8px; }
 }
 
 /* ── loading placeholder ── */

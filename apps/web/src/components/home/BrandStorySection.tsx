@@ -59,8 +59,9 @@ export function BrandStorySection({ content }: { content: BrandStoryContent }) {
         </video>
       ) : null}
 
-      {/* Overlay — left-heavy for text legibility */}
+      {/* Overlay — left-heavy for text legibility (full-area gradient on phones, see components.css) */}
       <div
+        className="bs-overlay"
         aria-hidden="true"
         style={{
           position: "absolute",
@@ -83,6 +84,7 @@ export function BrandStorySection({ content }: { content: BrandStoryContent }) {
       >
         {content.eyebrow ? (
           <span
+            className="bs-eyebrow"
             style={{
               display: "block",
               fontFamily: "var(--font-sans)",
@@ -100,6 +102,7 @@ export function BrandStorySection({ content }: { content: BrandStoryContent }) {
 
         <h2
           id="brand-story-heading"
+          className="bs-title"
           style={{
             fontFamily: "var(--font-heading)",
             fontSize: "clamp(2.5rem,6vw,5.5rem)",
@@ -116,6 +119,7 @@ export function BrandStorySection({ content }: { content: BrandStoryContent }) {
 
         {content.body ? (
           <p
+            className="bs-body"
             style={{
               fontFamily: "var(--font-sans)",
               fontSize: "1rem",

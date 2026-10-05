@@ -411,10 +411,14 @@
   body { padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
 }
 
-/* ── Brand story: don't swallow a whole phone screen ── */
+/* ── Brand story on phones: image fills the whole section edge to edge, copy sits at the bottom on a full-area gradient ── */
 @media (max-width: 768px) {
-  .bs-section { min-height: 0 !important; }
-  .bs-inner { padding-block: 3.5rem !important; }
+  .bs-section { min-height: min(84svh, 680px) !important; align-items: flex-end !important; }
+  .bs-overlay { background: linear-gradient(to top, rgba(23,37,69,0.94) 0%, rgba(23,37,69,0.72) 48%, rgba(23,37,69,0.36) 100%) !important; }
+  .bs-inner { max-width: none !important; width: 100%; padding-block: 2.75rem 3rem !important; }
+  .bs-eyebrow { font-size: 12px !important; margin-bottom: 1rem !important; }
+  .bs-title { font-size: clamp(2rem, 9.5vw, 2.8rem) !important; margin-bottom: 1.1rem !important; text-wrap: balance; }
+  .bs-body { font-size: 15px !important; line-height: 1.65 !important; max-width: none !important; white-space: normal !important; margin-bottom: 1.5rem !important; }
 }
 
 /* ── Sold-out state ── */
@@ -440,7 +444,9 @@ html[data-menu-open] .chat-panel { display: none !important; }
 /* ── Chat widget: icon-only on phones so it doesn't overlap page content ── */
 @media (max-width: 640px) {
   .chat-toggle-label { display: none; }
-  .chat-toggle { padding-inline: 0 !important; width: 52px !important; justify-content: center !important; }
+  .chat-toggle { padding-inline: 0 !important; width: 46px !important; height: 46px !important; justify-content: center !important; }
+  /* sits just above the 64px bottom nav, tucked toward the screen edge, so it covers as little content as possible */
+  .chat-fab { bottom: calc(env(safe-area-inset-bottom) + 76px) !important; right: 0.85rem !important; }
 }
 
 /* ── Footer bottom bar on phones: one tidy centred block, clear of the chat button + bottom nav ── */
