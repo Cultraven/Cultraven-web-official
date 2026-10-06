@@ -118,7 +118,7 @@ export function MenuLogoutButton({ onClose }: { onClose: () => void }) {
     <button
       type="button"
       onClick={handleLogout}
-      className="mm-foot-link"
+      className="mm-foot-link mm-logout"
       style={{
         display: "flex",
         alignItems: "center",

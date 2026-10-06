@@ -40,12 +40,12 @@
 
 /* ── Desktop nav links + dropdown triggers ── */
 .nav-link {
-  position: relative; display: inline-flex; align-items: center; gap: 0.25rem; min-height: 44px; padding: 0 0.45rem;
+  position: relative; display: inline-flex; align-items: center; gap: 0.25rem; min-height: 56px; padding: 0 0.6rem;
   background: none; border: 0; border-radius: 0; text-decoration: none; cursor: pointer; color: inherit;
   transition: background-color 0.15s ease, transform 0.1s ease, color 0.3s ease;
 }
 .nav-link::after {
-  content: ""; position: absolute; left: 0.45rem; right: 0.45rem; bottom: 7px; height: 3px; background: var(--nav-ul, var(--hdr-ul, var(--color-navy)));
+  content: ""; position: absolute; left: 0.6rem; right: 0.6rem; bottom: 11px; height: 3px; background: var(--nav-ul, var(--hdr-ul, var(--color-navy)));
   transform: scaleX(0); transform-origin: left center; transition: transform 0.2s ease;
 }
 .nav-link:focus-visible { outline: 3px solid var(--color-lava); outline-offset: -2px; }
@@ -68,8 +68,16 @@
 
 /* ── Mobile side menu ── */
 .mm-drawer { height: 100vh; height: 100dvh; max-height: 100dvh; overflow: hidden; }
-.mm-nav { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
-.mm-item { min-height: 52px; transition: background-color 0.12s ease; }
+.mm-nav {
+  flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+  /* soft shadows at the top/bottom edge appear only while there is more to scroll, so a partly hidden row never looks cut off by mistake */
+  background:
+    linear-gradient(var(--color-bone) 30%, rgba(237, 227, 207, 0)) top / 100% 24px no-repeat local,
+    linear-gradient(rgba(237, 227, 207, 0), var(--color-bone) 70%) bottom / 100% 24px no-repeat local,
+    radial-gradient(farthest-side at 50% 0, rgba(23, 37, 69, 0.28), rgba(23, 37, 69, 0)) top / 100% 9px no-repeat scroll,
+    radial-gradient(farthest-side at 50% 100%, rgba(23, 37, 69, 0.28), rgba(23, 37, 69, 0)) bottom / 100% 9px no-repeat scroll;
+}
+.mm-item { min-height: 48px; transition: background-color 0.12s ease; }
 .mm-item:focus-visible { outline: 3px solid var(--color-lava); outline-offset: -3px; background: rgba(218, 178, 5, 0.22); }
 .mm-item:active { background: rgba(218, 178, 5, 0.5); }
 .mm-item[aria-current="page"] { box-shadow: inset 5px 0 0 0 var(--color-lava); background: rgba(218, 178, 5, 0.16); }
@@ -80,7 +88,17 @@
 @media (hover: hover) { .mm-sub:hover { background: rgba(218, 178, 5, 0.22); } }
 
 /* The pinned footer of the drawer (My account / My orders / Search): always on screen, safe-area aware, 48px rows */
-.mm-foot { flex: 0 0 auto; padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom)) !important; gap: 0 !important; background: var(--color-bone); }
+.mm-foot { flex: 0 0 auto; padding: 0.7rem 1rem calc(0.7rem + env(safe-area-inset-bottom)) !important; gap: 0 !important; background: var(--color-bone); }
+/* three quick tiles in one row, log out underneath: the whole footer stays ~130px tall instead of ~240px */
+.mm-foot-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; }
+.mm-foot-tile {
+  flex-direction: column !important; justify-content: center; gap: 0.35rem !important; min-height: 62px; padding: 0.45rem 0.25rem !important;
+  text-align: center; font-size: 12px !important; letter-spacing: 0.06em !important; line-height: 1.1;
+  background: var(--color-cream); border: 2px solid var(--color-navy); box-shadow: 2px 2px 0 var(--color-navy);
+}
+.mm-foot-tile:active { transform: translate(2px, 2px); box-shadow: none; background: rgba(218, 178, 5, 0.5); }
+.mm-logout { justify-content: center !important; margin-top: 0.6rem; min-height: 46px; }
+@media (max-height: 640px) { .mm-foot-tile { min-height: 54px; } .mm-item { min-height: 44px; } }
 .mm-foot-link { min-height: 48px; padding: 0 0.5rem; border-radius: 0; transition: background-color 0.12s ease; }
 .mm-foot-link:focus-visible { outline: 3px solid var(--color-lava); outline-offset: -3px; background: rgba(218, 178, 5, 0.22); }
 .mm-foot-link:active { background: rgba(218, 178, 5, 0.5); }
@@ -97,7 +115,7 @@
 @media (hover: hover) { .mobile-bottom-nav .bottom-nav-item:hover { background: rgba(218, 178, 5, 0.22); } }
 
 /* Touch devices at >= 1024px (tablets in landscape): same 44px minimum (icons are already 44px) */
-@media (pointer: coarse) { .nav-link { min-height: 48px; } }
+@media (pointer: coarse) { .nav-link { min-height: 56px; } }
 
 @media (prefers-reduced-motion: reduce) {
   .hdr-icon, .hdr-icon svg, .nav-link, .nav-link::after, .mm-link, .mm-item, .mm-sub, .mm-foot-link, .hdr-logo { transition: none; }

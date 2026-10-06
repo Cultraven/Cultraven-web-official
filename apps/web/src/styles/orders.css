@@ -80,3 +80,33 @@
 .os-meta { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; font: 600 0.82rem var(--font-sans); }
 .os-meta span { font-size: 0.75rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-smoke); }
 .os-meta b { font-weight: 900; color: var(--color-navy); text-align: right; }
+
+/* Order confirmation actions: one button family, fluid from 320px up */
+.os-page { padding-bottom: max(clamp(1rem, 3vw, 2rem), 5rem) !important; } /* room under the last button for the floating chat button */
+.os-help { font: 600 0.8rem/1.6 var(--font-sans); color: var(--color-gray); margin: 0 0 0.35rem; }
+.os-help-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 1.4rem; margin-bottom: 1.6rem; }
+.os-help-links a { display: inline-flex; align-items: center; min-height: 44px; font: 800 0.82rem var(--font-sans); color: var(--color-navy); text-decoration: underline; text-underline-offset: 3px; overflow-wrap: anywhere; }
+.os-actions { display: grid; gap: 0.85rem; width: 100%; padding: 0 4px 4px 0; box-sizing: border-box; } /* 4px so the hard shadows stay inside the card padding */
+.os-actions-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.85rem; }
+.os-btn {
+  display: flex; align-items: center; justify-content: center; box-sizing: border-box; width: 100%; min-width: 0; min-height: 54px; padding: 0.8rem 0.9rem;
+  border: 2px solid var(--color-navy); text-align: center; text-decoration: none; text-transform: uppercase; overflow-wrap: anywhere;
+  font: 800 0.78rem/1.25 var(--font-sans); letter-spacing: 0.1em; -webkit-tap-highlight-color: transparent;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.15s ease, color 0.15s ease;
+}
+.os-btn-primary { background: var(--color-navy); color: var(--color-cream); box-shadow: 4px 4px 0 var(--color-lava); }
+.os-btn-outline { background: var(--color-cream); color: var(--color-navy); box-shadow: 4px 4px 0 var(--color-navy); }
+.os-btn-solid { background: var(--color-navy); color: var(--color-cream); }
+.os-btn-ghost { background: transparent; color: var(--color-navy); }
+@media (hover: hover) {
+  .os-btn-primary:hover, .os-btn-outline:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--color-lava); }
+  .os-btn-outline:hover { box-shadow: 6px 6px 0 var(--color-navy); }
+  .os-btn-solid:hover { background: var(--color-lava); color: var(--color-navy); }
+  .os-btn-ghost:hover { background: var(--color-navy); color: var(--color-cream); }
+}
+.os-btn:active { transform: translate(2px, 2px); box-shadow: none; }
+.os-btn:focus-visible { outline: 3px solid var(--color-lava); outline-offset: 3px; }
+@media (max-width: 420px) {
+  .os-actions-row { grid-template-columns: minmax(0, 1fr); }
+  .os-btn { font-size: 0.75rem; letter-spacing: 0.08em; }
+}

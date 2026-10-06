@@ -251,7 +251,7 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            padding: "1rem 1.5rem",
+            padding: "0.55rem 1.25rem",
             borderBottom: "2px solid var(--color-navy)",
             flex: "0 0 auto",
           }}
@@ -259,7 +259,7 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
           <span
             style={{
               fontFamily: "var(--font-heading)",
-              fontSize: "1.25rem",
+              fontSize: "1.15rem",
               fontWeight: 900,
               letterSpacing: "0.12em",
               textTransform: "uppercase",
@@ -284,7 +284,7 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
         <MenuUserBlock onClose={onMobileClose} />
 
         {/* Nav items (scrolls on short screens; the footer below stays pinned and visible) */}
-        <nav aria-label="Mobile navigation" className="mm-nav" style={{ paddingTop: "0.75rem", paddingBottom: "1rem" }}>
+        <nav aria-label="Mobile navigation" className="mm-nav" style={{ paddingTop: "0.25rem", paddingBottom: "0.5rem" }}>
           {!hasHome && (
             <Link
               href="/"
@@ -310,9 +310,11 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
 
         {/* Quick links footer */}
         <div className="mm-foot" style={{ borderTop: "2px solid var(--color-navy)", display: "flex", flexDirection: "column" }}>
-          <FooterLink href="/account" label="My Account" onClose={onMobileClose} icon={<><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></>} />
-          <FooterLink href="/account/orders" label="My Orders" onClose={onMobileClose} icon={<><path d="M21 8l-9-5-9 5v8l9 5 9-5z" /><path d="M3 8l9 5 9-5M12 13v8" /></>} />
-          <FooterLink href="/search" label="Search" onClose={onMobileClose} icon={<><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></>} />
+          <div className="mm-foot-grid">
+            <FooterLink href="/account" label="Account" onClose={onMobileClose} icon={<><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></>} />
+            <FooterLink href="/account/orders" label="Orders" onClose={onMobileClose} icon={<><path d="M21 8l-9-5-9 5v8l9 5 9-5z" /><path d="M3 8l9 5 9-5M12 13v8" /></>} />
+            <FooterLink href="/search" label="Search" onClose={onMobileClose} icon={<><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></>} />
+          </div>
           <MenuLogoutButton onClose={onMobileClose} />
         </div>
       </div>
@@ -333,9 +335,9 @@ const MOBILE_TOP_LINK: React.CSSProperties = {
   alignItems: "center",
   justifyContent: "space-between",
   width: "100%",
-  padding: "0.9rem 1.5rem",
+  padding: "0.65rem 1.25rem",
   fontFamily: "var(--font-heading)",
-  fontSize: "1.1rem",
+  fontSize: "clamp(1rem, 4.4vw, 1.1rem)",
   fontWeight: 900,
   letterSpacing: "0.06em",
   textTransform: "uppercase",
@@ -360,7 +362,7 @@ function FooterLink({ href, label, icon, onClose }: { href: string; label: strin
     <Link
       href={href}
       onClick={onClose}
-      className="mm-foot-link"
+      className="mm-foot-link mm-foot-tile"
       style={{
         display: "flex",
         alignItems: "center",
@@ -374,7 +376,7 @@ function FooterLink({ href, label, icon, onClose }: { href: string; label: strin
         textDecoration: "none",
       }}
     >
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square" aria-hidden="true">{icon}</svg>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square" aria-hidden="true">{icon}</svg>
       {label}
     </Link>
   );

@@ -209,7 +209,7 @@
 .co-brand { font: 900 1.1rem var(--font-sans); letter-spacing: 0.2em; color: var(--color-cream); text-decoration: none; }
 .co-secure { font: 800 0.68rem var(--font-sans); letter-spacing: 0.1em; color: rgba(250, 249, 246, 0.65); text-align: right; }
 .co-layout { display: grid; grid-template-columns: minmax(0, 1fr) 400px; align-items: stretch; min-height: calc(100dvh - 70px); }
-.co-main { padding: clamp(1.25rem, 4vw, 4rem); max-width: 760px; width: 100%; }
+.co-main { padding: clamp(1.25rem, 4vw, 4rem); max-width: 760px; width: 100%; min-width: 0; }
 .co-steps { display: flex; gap: 1.25rem; list-style: none; padding: 0; margin: 0 0 1.5rem; font: 800 0.72rem var(--font-sans); letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-smoke); }
 .co-steps li { display: flex; align-items: center; gap: 0.5rem; }
 .co-steps li span { width: 24px; height: 24px; display: grid; place-items: center; border: 2px solid currentColor; font-size: 0.75rem; }
@@ -240,13 +240,13 @@
 .co-f em { font: 700 0.74rem var(--font-sans); color: #b42318; font-style: normal; }
 .co-check { display: flex; gap: 0.6rem; align-items: center; margin-top: 1rem; font: 700 0.85rem var(--font-sans); min-height: 44px; }
 .co-check input { width: 18px; height: 18px; accent-color: var(--color-navy); }
-.co-cta { width: 100%; justify-content: center; margin-top: 0.5rem; padding-block: 1rem; text-align: center; }
+.co-cta { width: 100%; justify-content: center; margin-top: 0.5rem; padding: 1rem 1.1rem; text-align: center; white-space: normal; line-height: 1.35; } /* .cv-btn is nowrap: a long "PLACE ORDER · PAY ₹… ON DELIVERY" label must wrap, not push the page wider than the screen */
 .co-cta:disabled { opacity: 0.7; cursor: wait; }
 .co-addr-txt { font: 500 0.92rem/1.6 var(--font-sans); margin-bottom: 0.6rem; }
 .co-error { background: #FEF2F2; border: 2px solid #b42318; color: #7a1a12; font: 700 0.85rem/1.5 var(--font-sans); padding: 0.75rem 0.9rem; margin-bottom: 1rem; }
 .co-fine { font: 600 0.74rem/1.5 var(--font-sans); color: var(--color-smoke); margin-top: 0.8rem; }
 .co-fine a { color: var(--color-navy); text-decoration: underline; }
-.co-side { background: var(--color-bone); border-left: 2px solid var(--color-navy); padding: clamp(1.25rem, 3vw, 2.5rem); position: sticky; top: 0; height: 100%; min-height: 100dvh; align-self: stretch; }
+.co-side { min-width: 0; background: var(--color-bone); border-left: 2px solid var(--color-navy); padding: clamp(1.25rem, 3vw, 2.5rem); position: sticky; top: 0; height: 100%; min-height: 100dvh; align-self: stretch; }
 .co-side-h { font: 900 0.78rem var(--font-sans); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 1.25rem; }
 .co-items { display: grid; gap: 1rem; margin-bottom: 1.25rem; }
 .co-item { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 0.8rem; align-items: center; }

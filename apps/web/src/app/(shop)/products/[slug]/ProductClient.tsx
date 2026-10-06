@@ -10,7 +10,6 @@
  * - Size guide link
  * - Quantity selector
  * - ADD TO BAG (primary) + BUY NOW + ADD TO WISHLIST
- * - Pincode delivery checker
  * - Accordion: Description, Fabric & Care, Fit & Sizing, Shipping, Returns
  * - YOU MAY ALSO LIKE carousel
  */
@@ -80,8 +79,6 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
   const setWishlisted = (_next?: (w: boolean) => boolean) => toggleWishlist();
   const [added, setAdded] = useState(false);
   const [wishPop, setWishPop] = useState(false);
-  const [pincode, setPincode] = useState("");
-  const [deliveryMsg, setDeliveryMsg] = useState<string | null>(null);
   const [sizeError, setSizeError] = useState(false);
 
   const soldOut = product.inStock === false;
@@ -150,14 +147,6 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
       quantity: qty,
     });
     router.push("/checkout?mode=buy-now");
-  };
-
-  const checkDelivery = () => {
-    if (pincode.length === 6) {
-      setDeliveryMsg(`Delivery available to ${pincode}. Estimated arrival: 3–5 business days.`);
-    } else {
-      setDeliveryMsg("Please enter a valid 6-digit pincode.");
-    }
   };
 
   return (
@@ -309,16 +298,6 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
               <svg width="20" height="20" viewBox="0 0 24 24" fill={wishlisted ? "var(--color-crimson)" : "none"} stroke={wishlisted ? "var(--color-crimson)" : "currentColor"} strokeWidth="2.5" strokeLinecap="square" strokeLinejoin="miter" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
               {wishlisted ? "WISHLISTED ✓" : "WISHLIST KAR"}
             </button>
-          </div>
-
-          {/* Delivery checker */}
-          <div style={{ backgroundColor: "var(--color-cream)", padding: "1.25rem", marginBottom: "1.5rem", border: "2px solid var(--color-navy)", boxShadow: "4px 4px 0px 0px var(--color-navy)" }}>
-            <p style={{ fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "12px", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-navy)", marginBottom: "0.75rem" }}>DELIVERY</p>
-            <div style={{ display: "flex", gap: "0.5rem" }}>
-              <input aria-label="Delivery pincode" inputMode="numeric" autoComplete="postal-code" onKeyDown={(e) => { if (e.key === "Enter") checkDelivery(); }} value={pincode} onChange={(e) => { setPincode(e.target.value.replace(/\D/g, "").slice(0, 6)); setDeliveryMsg(null); }} placeholder="Enter Pincode" style={{ flex: 1, padding: "0.65rem 0.875rem", border: "2px solid var(--color-navy)", backgroundColor: "var(--color-cream)", fontFamily: "var(--font-sans)", fontSize: "14px", fontWeight: 800, color: "var(--color-navy)", outline: "none" }} />
-              <button className="btn-primary" onClick={checkDelivery} style={{ padding: "0.65rem 1.25rem", fontSize: "12px" }}>CHECK</button>
-            </div>
-            {deliveryMsg && <p style={{ fontFamily: "var(--font-sans)", fontSize: "12px", fontWeight: 800, color: pincode.length === 6 ? "var(--color-navy)" : "var(--color-crimson)", marginTop: "0.625rem", textTransform: "uppercase" }}>{deliveryMsg} (COD AVAILABLE)</p>}
           </div>
 
           {/* Trust strip */}

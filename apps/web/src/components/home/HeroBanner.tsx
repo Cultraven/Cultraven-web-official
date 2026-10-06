@@ -53,6 +53,7 @@ export function HeroBanner({ slides }: HeroBannerProps) {
   return (
     <section
       aria-label="Campaign Hero"
+      className="hero-section"
       style={{
         position: "relative",
         width: "100%",
@@ -74,6 +75,7 @@ export function HeroBanner({ slides }: HeroBannerProps) {
       {slides.length > 1 && (
         <>
           <button
+            className="hero-arrow"
             onClick={previous}
             aria-label="Previous slide"
             style={{
@@ -103,6 +105,7 @@ export function HeroBanner({ slides }: HeroBannerProps) {
           </button>
 
           <button
+            className="hero-arrow"
             onClick={next}
             aria-label="Next slide"
             style={{
@@ -136,6 +139,7 @@ export function HeroBanner({ slides }: HeroBannerProps) {
       {/* ── Dot indicators ───────────────────────────────────────────────── */}
       {slides.length > 1 && (
         <div
+          className="hero-dots"
           style={{
             position: "absolute",
             bottom: "2rem",
@@ -224,6 +228,7 @@ function SlideLayer({ slide: s, index, visible, isPrev }: { slide: HeroSlide; in
 
       {/* Content */}
       <div
+        className="hero-copy"
         style={{
           position: "absolute",
           inset: 0,
@@ -273,7 +278,7 @@ function SlideLayer({ slide: s, index, visible, isPrev }: { slide: HeroSlide; in
         )}
 
         {/* CTAs — shared theme buttons (see styles/theme-ui.css) */}
-        <div style={{ display: "flex", gap: "1.25rem", flexWrap: "wrap" }}>
+        <div className="hero-ctas" style={{ display: "flex", gap: "1.25rem", flexWrap: "wrap" }}>
           <Link href={s.ctaHref || "/collections/new-in"} className="cv-btn cv-btn-lava">
             {s.ctaLabel || "Shop Now"}
             <svg className="cv-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="square" aria-hidden="true">
@@ -290,6 +295,7 @@ function SlideLayer({ slide: s, index, visible, isPrev }: { slide: HeroSlide; in
       {visible && (
         <div
           aria-hidden="true"
+          className="hero-scroll"
           style={{
             position: "absolute", bottom: "2.5rem",
             right: "clamp(1.5rem,4vw,5rem)", zIndex: 10,
@@ -371,12 +377,19 @@ function SlideMedia({ slide: s, index, visible }: { slide: HeroSlide; index: num
   const desktop = optimizedImage(fallback, { alt: s.altText || "", sizes: "100vw", priority: eager, quality: 70 });
   const { fill: _f, style: _s, ...imgProps } = desktop as any;
 
+  // Same media on every device. On phones the image is shown whole (object-fit: contain, see components.css) and the
+  // bars above/below it are filled by a blurred copy of the same image; the two <img> share one URL, so it downloads once.
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      {...imgProps}
-      onError={() => setImageError(true)}
-      style={MEDIA_STYLE(s.objectPosition)}
-    />
+    <>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img {...imgProps} alt="" aria-hidden="true" className="hero-bg" onError={() => setImageError(true)} />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        {...imgProps}
+        className="hero-img"
+        onError={() => setImageError(true)}
+        style={MEDIA_STYLE(s.objectPosition)}
+      />
+    </>
   );
 }

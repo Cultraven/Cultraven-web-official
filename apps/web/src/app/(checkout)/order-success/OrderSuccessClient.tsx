@@ -5,7 +5,7 @@ import { useCartStore } from "@/store/cart";
 import { useBuyNowStore } from "@/store/buyNow";
 import Confetti from "react-confetti";
 import "@/styles/orders.css";
-import { mailtoLink, whatsappLink } from "@/lib/support";
+import { mailtoLink, supportConfig, whatsappLink } from "@/lib/support";
 
 export interface OrderSummary {
   number: string;
@@ -49,7 +49,7 @@ export default function OrderSuccessClient({ orderId, paymentId, isConfirmed, or
   }, [clearCart, isConfirmed]);
 
   return (
-    <div style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "clamp(1rem,3vw,2rem)", paddingTop: "calc(clamp(1rem,3vw,2rem) + 80px)" }}>
+    <div className="os-page" style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "clamp(1rem,3vw,2rem)", paddingTop: "calc(clamp(1rem,3vw,2rem) + 80px)" }}>
       {showConfetti && windowSize.width > 0 && (
         <Confetti width={windowSize.width} height={windowSize.height} colors={["var(--color-navy)", "var(--color-crimson)", "var(--color-yellow)", "var(--color-mist)", "#FFFFFF"]} recycle={false} numberOfPieces={400} gravity={0.14} />
       )}
@@ -125,21 +125,23 @@ export default function OrderSuccessClient({ orderId, paymentId, isConfirmed, or
           </div>
         ) : null}
 
-        <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", color: "var(--color-gray)", marginBottom: "2rem", lineHeight: 1.6 }}>
-          🚀 Shipping & tracking updates will be sent via WhatsApp. For queries:{" "}
-          <a href={whatsappLink(`Hi CULTRAVEN, I need help with my order${summary ? ` ${summary.number}` : ""}.`)} style={{ color: "var(--color-navy)", fontWeight: 700, display: "inline-flex", alignItems: "center", minHeight: "44px", padding: "0 0.25rem" }}>WhatsApp</a>{" "}or{" "}
-          <a href={mailtoLink(`Help with my order${summary ? ` ${summary.number}` : ""}`)} style={{ color: "var(--color-navy)", fontWeight: 700, display: "inline-flex", alignItems: "center", minHeight: "44px", padding: "0 0.25rem" }}>support@cultraven.com</a>
-        </p>
+        <p className="os-help">🚀 Shipping &amp; tracking updates will be sent via WhatsApp. Questions about your order?</p>
+        <div className="os-help-links">
+          <a href={whatsappLink(`Hi CULTRAVEN, I need help with my order${summary ? ` ${summary.number}` : ""}.`)}>WhatsApp us</a>
+          <a href={mailtoLink(`Help with my order${summary ? ` ${summary.number}` : ""}`)}>{supportConfig().email}</a>
+        </div>
 
-        <div style={{ display: "flex", gap: "0.75rem", flexDirection: "column" }}>
+        <div className="os-actions">
           {orderId && summary ? (
             <>
-              <Link href={`/account/orders/${orderId}`} className="cv-btn cv-btn-navy" style={{ justifyContent: "center" }}>TRACK MY ORDER</Link>
-              <a href={`/api/orders/${orderId}/invoice`} className="cv-btn cv-btn-outline" style={{ justifyContent: "center", whiteSpace: "normal", textAlign: "center" }}>DOWNLOAD RECEIPT (PDF)</a>
+              <Link href={`/account/orders/${orderId}`} className="os-btn os-btn-primary">TRACK MY ORDER</Link>
+              <a href={`/api/orders/${orderId}/invoice`} className="os-btn os-btn-outline">DOWNLOAD RECEIPT (PDF)</a>
             </>
           ) : null}
-          <Link href="/collections/all" style={{ display: "block", width: "100%", padding: "1.1rem", backgroundColor: "var(--color-navy)", color: "var(--color-cream)", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.82rem", letterSpacing: "0.14em", textTransform: "uppercase", textDecoration: "none" }}>CONTINUE SHOPPING</Link>
-          <Link href="/account/orders" style={{ display: "block", width: "100%", padding: "1rem", backgroundColor: "transparent", color: "var(--color-navy)", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.78rem", letterSpacing: "0.14em", textTransform: "uppercase", textDecoration: "none", border: "1.5px solid var(--color-navy)" }}>VIEW ORDERS</Link>
+          <div className="os-actions-row">
+            <Link href="/collections/all" className="os-btn os-btn-solid">CONTINUE SHOPPING</Link>
+            <Link href="/account/orders" className="os-btn os-btn-ghost">VIEW ORDERS</Link>
+          </div>
         </div>
       </div>
     </div>
