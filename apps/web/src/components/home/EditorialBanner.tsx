@@ -16,7 +16,7 @@ export function EditorialBanner({ banner }: EditorialBannerProps) {
         style={{
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
-          minHeight: "70vh",
+          minHeight: "clamp(380px, 65vh, 620px)",
         }}
         className="editorial-grid"
       >

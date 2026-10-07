@@ -26,7 +26,7 @@ export function BrandStorySection({ content }: { content: BrandStoryContent }) {
       aria-labelledby="brand-story-heading"
       style={{
         position: "relative",
-        minHeight: "80vh",
+        minHeight: "clamp(380px, 70vh, 640px)", // capped: plain 80vh fills a whole phone screen (and balloons in "desktop site" mode)
         display: "flex",
         alignItems: "center",
         overflow: "hidden",
@@ -127,7 +127,6 @@ export function BrandStorySection({ content }: { content: BrandStoryContent }) {
               color: "rgba(245,241,232,0.75)",
               maxWidth: "440px",
               marginBottom: "3rem",
-              whiteSpace: "pre-line",
             }}
           >
             {content.body}

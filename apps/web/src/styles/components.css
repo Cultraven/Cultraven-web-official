@@ -413,12 +413,17 @@
 
 /* ── Brand story on phones: image fills the whole section edge to edge, copy sits at the bottom on a full-area gradient ── */
 @media (max-width: 768px) {
-  .bs-section { min-height: min(84svh, 680px) !important; align-items: flex-end !important; }
+  .bs-section { min-height: min(60svh, 500px) !important; align-items: flex-end !important; }
   .bs-overlay { background: linear-gradient(to top, rgba(23,37,69,0.94) 0%, rgba(23,37,69,0.72) 48%, rgba(23,37,69,0.36) 100%) !important; }
   .bs-inner { max-width: none !important; width: 100%; padding-block: 2.75rem 3rem !important; }
   .bs-eyebrow { font-size: 12px !important; margin-bottom: 1rem !important; }
   .bs-title { font-size: clamp(2rem, 9.5vw, 2.8rem) !important; margin-bottom: 1.1rem !important; text-wrap: balance; }
   .bs-body { font-size: 15px !important; line-height: 1.65 !important; max-width: none !important; white-space: normal !important; margin-bottom: 1.5rem !important; }
+}
+
+/* Brand-story heading: the stored text has a hard line break; below desktop width let it wrap and balance itself (no lonely "JUST") */
+@media (max-width: 1024px) {
+  .bs-title { white-space: normal !important; text-wrap: balance; }
 }
 
 /* ── Sold-out state ── */
