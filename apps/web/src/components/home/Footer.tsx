@@ -12,6 +12,7 @@
  */
 "use client";
 
+import { BrandLogo } from "@/components/common/BrandLogo";
 import React, { useState } from "react";
 import Link from "next/link";
 import type { FooterConfig } from "@shop/types";
@@ -129,35 +130,7 @@ export function Footer({ config }: FooterProps) {
                 marginBottom: "1.5rem",
               }}
             >
-              <div
-                style={{
-                  width: "40px",
-                  height: "40px",
-                  border: "2px solid var(--color-raven)",
-                  backgroundColor: "var(--color-raven)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexShrink: 0,
-                  boxShadow: "2px 2px 0px 0px var(--color-raven)"
-                }}
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-bone)" strokeWidth="2.5" strokeLinecap="square">
-                  <path d="M12 21V12M12 12L4 4M12 12L20 4" />
-                </svg>
-              </div>
-              <span
-                style={{
-                  fontFamily: "var(--font-heading)",
-                  fontWeight: 900,
-                  fontSize: "32px",
-                  letterSpacing: "0.05em",
-                  textTransform: "uppercase",
-                  color: "var(--color-raven)",
-                }}
-              >
-                CULTRAVEN
-              </span>
+              <BrandLogo height={40} />
             </Link>
 
             <p

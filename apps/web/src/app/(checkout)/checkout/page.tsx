@@ -10,6 +10,7 @@
  * Place Order; the server (create-order zod schema) re-validates everything, re-prices from the catalogue and refuses sold-out
  * items, and answers 503 to online payment until Razorpay is configured. This page only ever displays estimates.
  */
+import { BrandLogo } from "@/components/common/BrandLogo";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -291,7 +292,7 @@ export default function CheckoutPage() {
   return (
     <div className="co">
       <header className="co-top">
-        <Link href="/" className="co-brand">CULTRAVEN</Link>
+        <Link href="/" className="co-brand" aria-label="CULTRAVEN home"><BrandLogo height={28} tone="light" /></Link>
         <span className="co-secure">{buyNow ? "EXPRESS CHECKOUT" : "SECURE CHECKOUT"}</span>
       </header>
 

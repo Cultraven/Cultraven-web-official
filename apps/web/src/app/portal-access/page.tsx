@@ -3,6 +3,7 @@
  * Admin Login. Wrapped in Suspense to allow useSearchParams in production builds.
  * Lives outside the admin shell, so it imports the admin styles itself.
  */
+import { BrandLogo } from "@/components/common/BrandLogo";
 import React, { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -116,7 +117,7 @@ export default function AdminLoginPage() {
     <div className="adm">
       <div className="adm-login">
         <div className="adm-login-art">
-          <div style={{ fontWeight: 800, letterSpacing: "0.2em", fontSize: 14 }}>CULTRAVEN</div>
+          <BrandLogo height={34} tone="light" />
           <div>
             <h2>Run the store. Shape the site.</h2>
             <p>Manage products, orders and every piece of website content from one place.</p>

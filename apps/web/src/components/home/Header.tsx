@@ -104,10 +104,10 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
           {/* Logo */}
           <Link href="/" className="hdr-logo" style={{ display: "flex", alignItems: "center", textDecoration: "none", flexShrink: 0 }}>
             <Image
-              src="/logo.png"
+              src="/logo-horizontal.png"
               alt="CULTRAVEN"
-              width={200}
-              height={66}
+              width={220}
+              height={48}
               className="site-logo"
               style={{
                 objectFit: "contain",

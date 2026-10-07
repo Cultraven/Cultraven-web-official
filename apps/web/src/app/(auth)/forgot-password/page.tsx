@@ -39,7 +39,7 @@ export default function ForgotPasswordPage() {
         {/* Logo */}
         <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
           <Link href="/" style={{ display: "inline-block", textDecoration: "none", marginBottom: "1.5rem" }}>
-            <Image src="/logo.png" alt="CULTRAVEN" width={46} height={46} style={{ objectFit: "contain", height: "46px", width: "auto" }} />
+            <Image src="/logo-mark.png" alt="CULTRAVEN" width={46} height={46} style={{ objectFit: "contain", height: "46px", width: "auto" }} />
           </Link>
           <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "2rem", fontWeight: 400, color: "var(--color-navy)", textTransform: "uppercase", lineHeight: 1.1, marginBottom: "0.5rem" }}>
             RESET<br />PASSWORD.

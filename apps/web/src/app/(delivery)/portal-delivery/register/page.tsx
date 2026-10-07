@@ -1,4 +1,5 @@
 "use client";
+import { BrandLogo } from "@/components/common/BrandLogo";
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import "@/components/admin/admin.css";
@@ -149,7 +150,7 @@ export default function DeliveryRegisterPage() {
     <div className="adm" style={{ minHeight: "100vh", background: "var(--a-bg)" }}>
       {/* Header */}
       <div style={{ background: "var(--a-surface)", borderBottom: "2px solid var(--a-border)", padding: "14px 20px", display: "flex", alignItems: "center", gap: 12 }}>
-        <div style={{ fontWeight: 800, letterSpacing: "0.15em", fontSize: 14 }}>CULTRAVEN</div>
+        <BrandLogo height={26} />
         <div style={{ fontSize: 12, color: "var(--a-muted)", fontWeight: 700 }}>Delivery Portal</div>
       </div>
 

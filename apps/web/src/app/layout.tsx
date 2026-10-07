@@ -34,7 +34,7 @@ const organizationJsonLd = {
   name: "CULTRAVEN",
   alternateName: "Cultraven Clothing",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://cultraven.com",
-  logo: `${process.env.NEXT_PUBLIC_SITE_URL || "https://cultraven.com"}/logo.png`,
+  logo: `${process.env.NEXT_PUBLIC_SITE_URL || "https://cultraven.com"}/logo-stacked.png`,
   description:
     "CULTRAVEN is an Indian clothing brand selling oversized t-shirts, hoodies, cargo pants and streetwear online, with Cash on Delivery and easy 7-day returns.",
   slogan: "Wear Your Difference.",
@@ -105,11 +105,15 @@ export const metadata = {
     },
   },
   icons: {
+    // PNG logo icons (?v= makes browsers drop a cached older tab icon). /favicon.ico stays on disk for crawlers that ask for it by default.
     icon: [
-      { url: "/logo.png", type: "image/png" },
-      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon-16.png?v=6", type: "image/png", sizes: "16x16" },
+      { url: "/favicon-32.png?v=6", type: "image/png", sizes: "32x32" },
+      { url: "/favicon-48.png?v=6", type: "image/png", sizes: "48x48" },
+      { url: "/icon-192.png?v=6", type: "image/png", sizes: "192x192" },
+      { url: "/icon.png?v=6", type: "image/png", sizes: "512x512" },
     ],
-    apple: [{ url: "/logo.png", type: "image/png" }],
+    apple: [{ url: "/apple-icon.png?v=6", type: "image/png", sizes: "180x180" }],
   },
 };
 

@@ -117,7 +117,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                       style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
                       onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
                     />
-                  ) : "C"}
+                  ) : <img src="/logo-mark.png" alt="" style={{ width: "74%", height: "74%", objectFit: "contain", display: "block", margin: "auto" }} />}
                 </div>
                 <div>
                   <div className="adm-brand-name">CULTRAVEN</div>

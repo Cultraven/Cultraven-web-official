@@ -1,4 +1,5 @@
 "use client";
+import { BrandLogo } from "@/components/common/BrandLogo";
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -36,7 +37,7 @@ export default function DeliveryLoginPage() {
     <div className="adm">
       <div className="adm-login">
         <div className="adm-login-art">
-          <div style={{ fontWeight: 800, letterSpacing: "0.2em", fontSize: 14 }}>CULTRAVEN</div>
+          <BrandLogo height={34} tone="light" />
           <div>
             <h2>Delivery Portal</h2>
             <p>View assigned orders and update delivery status on the go.</p>

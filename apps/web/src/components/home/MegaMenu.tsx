@@ -1,5 +1,6 @@
 "use client";
 
+import { BrandLogo } from "@/components/common/BrandLogo";
 import React, {
   useState,
   useRef,
@@ -256,18 +257,7 @@ export function MegaMenu({ navMenu, mobileOpen, onMobileClose, isScrolled = fals
             flex: "0 0 auto",
           }}
         >
-          <span
-            style={{
-              fontFamily: "var(--font-heading)",
-              fontSize: "1.15rem",
-              fontWeight: 900,
-              letterSpacing: "0.12em",
-              textTransform: "uppercase",
-              color: "var(--color-navy)",
-            }}
-          >
-            CULTRAVEN
-          </span>
+          <BrandLogo height={30} />
           <button
             ref={closeRef}
             type="button"

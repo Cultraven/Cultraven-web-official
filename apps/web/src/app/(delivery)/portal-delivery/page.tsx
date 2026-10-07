@@ -1,4 +1,5 @@
 "use client";
+import { BrandLogo } from "@/components/common/BrandLogo";
 import React, { useDeferredValue, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -168,7 +169,7 @@ export default function DeliveryPortal() {
 
       {/* Header */}
       <div style={{ background: "var(--a-surface)", borderBottom: "1px solid var(--a-border)", padding: "14px 16px", display: "flex", alignItems: "center", gap: "12px" }}>
-        <div style={{ fontWeight: 800, letterSpacing: "0.15em", fontSize: 14 }}>CULTRAVEN</div>
+        <BrandLogo height={26} />
         <div style={{ fontSize: 12, color: "var(--a-muted)", fontWeight: 700 }}>Delivery Portal</div>
         <div style={{ marginLeft: "auto", display: "flex", gap: "10px", alignItems: "center" }}>
           {vs === "approved" && <span style={{ fontSize: 12, color: "var(--a-muted)" }}>{orders.length} active orders</span>}

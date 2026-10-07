@@ -6,6 +6,7 @@
 
 "use client";
 
+import { BrandLogo } from "@/components/common/BrandLogo";
 import React, { useState, type FormEvent } from "react";
 import Link from "next/link";
 
@@ -77,31 +78,7 @@ export function ComingSoon({
           zIndex: 1,
         }}
       >
-        <div
-          style={{
-            width: "36px",
-            height: "36px",
-            border: "2px solid var(--color-cream)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <path d="M12 21V12M12 12L4 4M12 12L20 4" />
-          </svg>
-        </div>
-        <span
-          style={{
-            fontFamily: "var(--font-sans)",
-            fontWeight: 900,
-            fontSize: "1.1rem",
-            letterSpacing: "0.22em",
-            textTransform: "uppercase",
-          }}
-        >
-          CULTRAVEN
-        </span>
+        <BrandLogo height={34} tone="light" />
       </Link>
 
       {/* Main content */}
