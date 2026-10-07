@@ -26,7 +26,7 @@ export function BrandStorySection({ content }: { content: BrandStoryContent }) {
       aria-labelledby="brand-story-heading"
       style={{
         position: "relative",
-        minHeight: "clamp(380px, 70vh, 640px)", // capped: plain 80vh fills a whole phone screen (and balloons in "desktop site" mode)
+        minHeight: "clamp(420px, 76vh, 760px)", // capped: plain 80vh fills a whole phone screen (and balloons in "desktop site" mode)
         display: "flex",
         alignItems: "center",
         overflow: "hidden",
@@ -78,8 +78,8 @@ export function BrandStorySection({ content }: { content: BrandStoryContent }) {
           position: "relative",
           zIndex: 10,
           paddingInline: "clamp(1.25rem,4vw,5rem)",
-          paddingBlock: "clamp(5rem,10vw,10rem)",
-          maxWidth: "720px",
+          paddingBlock: "clamp(4.5rem,8vw,8rem)",
+          maxWidth: "960px",
         }}
       >
         {content.eyebrow ? (
@@ -105,7 +105,7 @@ export function BrandStorySection({ content }: { content: BrandStoryContent }) {
           className="bs-title"
           style={{
             fontFamily: "var(--font-heading)",
-            fontSize: "clamp(2.5rem,6vw,5.5rem)",
+            fontSize: "clamp(2.5rem,3.2vw,4rem)",
             fontWeight: 600,
             color: "var(--color-cream)",
             lineHeight: 1.0,
@@ -125,7 +125,8 @@ export function BrandStorySection({ content }: { content: BrandStoryContent }) {
               fontSize: "1rem",
               lineHeight: 1.8,
               color: "rgba(245,241,232,0.75)",
-              maxWidth: "440px",
+              maxWidth: "560px",
+              textWrap: "pretty", // avoids a single-word last line
               marginBottom: "3rem",
             }}
           >

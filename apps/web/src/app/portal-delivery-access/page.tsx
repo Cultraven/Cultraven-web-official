@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import "@/components/admin/admin.css";
 import { Button, Field } from "@/components/admin/ui";
@@ -64,6 +65,12 @@ export default function DeliveryLoginPage() {
               <Button type="submit" variant="primary" loading={loading} style={{ width: "100%", height: 40 }}>
                 {loading ? "Signing in…" : "Sign in"}
               </Button>
+              <Link href="/portal-access" style={{ fontSize: 13, color: "var(--a-text, inherit)", textAlign: "center", fontWeight: 600 }}>
+                Store admin? Sign in here →
+              </Link>
+              <Link href="/" style={{ fontSize: 13, color: "var(--a-muted)", textAlign: "center" }}>
+                ← Back to website
+              </Link>
             </form>
           </div>
         </div>

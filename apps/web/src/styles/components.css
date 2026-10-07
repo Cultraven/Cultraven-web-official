@@ -422,8 +422,12 @@
 }
 
 /* Brand-story heading: the stored text has a hard line break; below desktop width let it wrap and balance itself (no lonely "JUST") */
-@media (max-width: 1024px) {
+@media (max-width: 1280px) {
   .bs-title { white-space: normal !important; text-wrap: balance; }
+}
+/* Desktop: the copy block takes the left half of the banner (the dark overlay fades out over the right half, where the photo shows) */
+@media (min-width: 1025px) {
+  .bs-inner { width: 50%; max-width: 50% !important; }
 }
 
 /* ── Sold-out state ── */

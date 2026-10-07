@@ -101,6 +101,9 @@ function AdminLoginForm() {
         {loading ? "Signing in…" : "Sign in"}
       </Button>
 
+      <Link href="/portal-delivery-access" style={{ fontSize: 13, color: "var(--a-text, inherit)", textAlign: "center", fontWeight: 600 }}>
+        Delivery partner? Sign in here →
+      </Link>
       <Link href="/" style={{ fontSize: 13, color: "var(--a-muted)", textAlign: "center" }}>
         ← Back to website
       </Link>
