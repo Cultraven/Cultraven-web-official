@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import {
   Alert, Badge, Button, Card, EmptyState, Field, Icon, LinkButton,
   PageHeader, TableSkeleton, useApi, useConfirm, useToast,
@@ -63,10 +63,14 @@ export default function UserDetailPage() {
   const [pwLoading, setPwLoading] = useState(false);
   const [statusLoading, setStatusLoading] = useState(false);
   const [roleLoading, setRoleLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const router = useRouter();
 
   const user = data?.user;
   const stats = data?.stats;
   const isSuperAdmin = meData?.role === "superadmin";
+  // Superadmin accounts are never deletable here; admin accounts only by the superadmin.
+  const canDelete = !!user && user.role !== "superadmin" && (user.role !== "admin" || isSuperAdmin);
 
   const changePassword = async () => {
     if (newPw.trim().length < 8) { toast("Password must be at least 8 characters", "error"); return; }
@@ -109,7 +113,7 @@ export default function UserDetailPage() {
   const toggleStatus = async () => {
     if (!user) return;
     const next = user.status === "active" ? "deleted" : "active";
-    const ok = await confirm({ title: `${next === "deleted" ? "Deactivate" : "Reactivate"} account?`, message: `This will ${next === "deleted" ? "block login access for" : "restore login access for"} ${user.fullName}.`, danger: next === "deleted" });
+    const ok = await confirm({ title: `${next === "deleted" ? "Deactivate" : "Reactivate"} account?`, message: `This will ${next === "deleted" ? "block login access for" : "restore login access for"} ${user.fullName}.`, confirmLabel: next === "deleted" ? "Deactivate" : "Reactivate", danger: next === "deleted" });
     if (!ok) return;
     setStatusLoading(true);
     try {
@@ -124,6 +128,31 @@ export default function UserDetailPage() {
     } catch (e: any) {
       toast(e.message ?? "Failed", "error");
     } finally { setStatusLoading(false); }
+  };
+
+  const deleteAccount = async () => {
+    if (!user) return;
+    const ok = await confirm({
+      title: `Delete ${user.fullName} permanently?`,
+      message: `${user.role === "delivery" ? "Their KYC documents and " : "Their "}saved addresses will be erased and they will no longer be able to sign in. If they have orders, the orders are kept for your records and the personal details are anonymised. This cannot be undone.`,
+      confirmLabel: "Delete permanently",
+      danger: true,
+    });
+    if (!ok) return;
+    setDeleteLoading(true);
+    try {
+      const res = await fetch(`/api/admin/users/${id}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ confirm: "DELETE" }),
+      });
+      const d = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(d.error ?? "Failed to delete");
+      toast(d.mode === "anonymised" ? "Account deleted (orders kept, details anonymised)" : "Account deleted", "success");
+      router.push("/portal-secure/users");
+    } catch (e: any) {
+      toast(e.message ?? "Failed to delete", "error");
+    } finally { setDeleteLoading(false); }
   };
 
   if (loading && !data) return <TableSkeleton rows={6} cols={4} />;
@@ -231,10 +260,18 @@ export default function UserDetailPage() {
             >
               {user.status === "active" ? "Deactivate account" : "Reactivate account"}
             </Button>
+            {canDelete ? (
+              <div style={{ marginTop: "18px", paddingTop: "14px", borderTop: "1px solid var(--adm-border, #e5e7eb)" }}>
+                <p style={{ fontSize: "12px", color: "var(--adm-muted)", marginBottom: "10px" }}>
+                  Delete removes this account{user.role === "delivery" ? " and its KYC documents" : ""} for good. Accounts with orders are anonymised instead, so your order records stay intact.
+                </p>
+                <Button onClick={deleteAccount} loading={deleteLoading} variant="danger">Delete account</Button>
+              </div>
+            ) : null}
           </Card>
 
-          {/* Role Management — superadmin only */}
-          {isSuperAdmin ? (
+          {/* Role Management — superadmin only; not for delivery partners (they stay delivery staff) */}
+          {isSuperAdmin && user.role !== "delivery" ? (
             <Card pad>
               <div style={{ fontWeight: 700, fontSize: "13px", marginBottom: "10px", textTransform: "uppercase", letterSpacing: "0.1em" }}>Role Management</div>
               <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "14px" }}>

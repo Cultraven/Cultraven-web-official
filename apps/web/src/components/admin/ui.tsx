@@ -147,6 +147,10 @@ type Toast = { id: number; kind: "success" | "error" | "info"; text: string };
 const ToastCtx = createContext<{ toast: (text: string, kind?: Toast["kind"]) => void }>({ toast: () => {} });
 export const useToast = () => useContext(ToastCtx);
 
+// The toast stack and the confirm dialog are rendered OUTSIDE the .adm shell (the providers wrap it), so they need their own
+// .adm scope or every --a-* colour variable is undefined (the red confirm button lost its background and its white text vanished).
+const SCOPE: React.CSSProperties = { minHeight: 0, background: "transparent" };
+
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<Toast[]>([]);
   const seq = useRef(0);
@@ -159,8 +163,10 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   return (
     <ToastCtx.Provider value={value}>
       {children}
-      <div className="adm-toasts" aria-live="polite">
-        {items.map((t) => <div key={t.id} className="adm-toast" data-kind={t.kind}><Icon name={t.kind === "error" ? "alert" : "check"} size={16} /><span>{t.text}</span></div>)}
+      <div className="adm" style={SCOPE}>
+        <div className="adm-toasts" aria-live="polite">
+          {items.map((t) => <div key={t.id} className="adm-toast" data-kind={t.kind}><Icon name={t.kind === "error" ? "alert" : "check"} size={16} /><span>{t.text}</span></div>)}
+        </div>
       </div>
     </ToastCtx.Provider>
   );
@@ -185,13 +191,15 @@ export function ConfirmProvider({ children }: { children: React.ReactNode }) {
     <ConfirmCtx.Provider value={confirm}>
       {children}
       {state ? (
-        <div className="adm-overlay" onMouseDown={(e) => e.target === e.currentTarget && close(false)}>
-          <div className="adm-modal" role="alertdialog" aria-modal="true" aria-labelledby="adm-cf-t">
-            <h3 id="adm-cf-t">{state.title}</h3>
-            {state.message ? <p>{state.message}</p> : null}
-            <div className="adm-modal-actions">
-              <Button onClick={() => close(false)}>Cancel</Button>
-              <Button variant={state.danger === false ? "primary" : "danger-solid"} onClick={() => close(true)} autoFocus>{state.confirmLabel ?? "Confirm"}</Button>
+        <div className="adm" style={SCOPE}>
+          <div className="adm-overlay" onMouseDown={(e) => e.target === e.currentTarget && close(false)}>
+            <div className="adm-modal" role="alertdialog" aria-modal="true" aria-labelledby="adm-cf-t">
+              <h3 id="adm-cf-t">{state.title}</h3>
+              {state.message ? <p>{state.message}</p> : null}
+              <div className="adm-modal-actions">
+                <Button onClick={() => close(false)}>Cancel</Button>
+                <Button variant={state.danger === false ? "primary" : "danger-solid"} onClick={() => close(true)} autoFocus>{state.confirmLabel ?? "Confirm"}</Button>
+              </div>
             </div>
           </div>
         </div>
