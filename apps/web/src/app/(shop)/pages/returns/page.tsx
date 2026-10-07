@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Returns & Exchanges | CULTRAVEN",
+  title: "Returns & Exchanges",
   description:
     "CULTRAVEN returns and exchanges policy — 7-day returns, 15-day size exchanges, and hassle-free refunds.",
   alternates: { canonical: "/pages/returns" },

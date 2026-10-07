@@ -92,12 +92,12 @@ function LoginForm() {
 
         {/* Brand copy */}
         <div style={{ position: "relative", zIndex: 1 }}>
-          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-lava)", marginBottom: "1.25rem" }}>CULTRAVEN INSIDER</p>
+          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-lava)", marginBottom: "1.25rem" }}>WELCOME BACK</p>
           <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(2.5rem,4vw,4rem)", fontWeight: 400, color: "var(--color-cream)", lineHeight: 1.05, textTransform: "uppercase", marginBottom: "1.5rem" }}>
-            NOT MADE<br />TO BLEND IN.
+            SIGN IN TO<br />YOUR ACCOUNT.
           </h2>
           <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "rgba(245,241,232,0.6)", lineHeight: 1.7, maxWidth: "280px" }}>
-            Sign in to track orders, save your wishlist, and get early access to every drop.
+            Sign in to track orders, save your wishlist, and get early access to new arrivals and sales.
           </p>
         </div>
 

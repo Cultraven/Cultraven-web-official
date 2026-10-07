@@ -200,7 +200,8 @@ const g = globalThis as unknown as { __cvRateLimitStore?: Map<string, Bucket>; _
 const store: Map<string, Bucket> = (g.__cvRateLimitStore ??= new Map());
 
 function sweep(now: number) {
-  if (store.size < 2000 && now - (g.__cvRateLimitSweep ?? 0) < 60_000) return;
+  // A big store is swept at most once a second (not on every call): an attacker rotating keys must not turn each request into an O(n) scan.
+  if (now - (g.__cvRateLimitSweep ?? 0) < (store.size >= 2000 ? 1_000 : 60_000)) return;
   g.__cvRateLimitSweep = now;
   for (const [k, b] of store) {
     const last = b.hits[b.hits.length - 1];

@@ -38,7 +38,7 @@ const SECTIONS = {
   "site.announcement": {
     intervalMs: 4000,
     items: withIds("ann", [
-      { text: "ACID STATE DROP IS LIVE", link: "", active: true },
+      { text: "NEW ARRIVALS ARE LIVE", link: "", active: true },
       { text: "FREE SHIPPING ABOVE ₹1,999", link: "", active: true },
       { text: "CASH ON DELIVERY AVAILABLE", link: "", active: true },
       { text: "EASY 7-DAY RETURNS", link: "", active: true },
@@ -67,7 +67,7 @@ const SECTIONS = {
         ]),
       },
       {
-        label: "DROPS", href: "", active: true,
+        label: "COLLECTIONS", href: "", active: true,
         columns: withIds("navcol-drops", [
           { heading: "Collections", items: withIds("navlink-col", [
             { label: "Dharma // EP01", href: "/collections/dharma", isNew: true },
@@ -81,7 +81,7 @@ const SECTIONS = {
             { label: "Best Sellers", href: "/collections/bestsellers", isNew: false },
             { label: "Under ₹1,999", href: "/collections/sale", isNew: false },
             { label: "Lookbook", href: "/pages/lookbook", isNew: false },
-            { label: "The Culture Files (Blog)", href: "/pages/journal", isNew: false },
+            { label: "Style Blog", href: "/pages/journal", isNew: false },
           ]) },
         ]),
       },
@@ -109,7 +109,7 @@ const SECTIONS = {
         { label: "Privacy Policy", href: "/pages/privacy", openInNew: false },
         { label: "FAQ", href: "/pages/faq", openInNew: false },
       ]) },
-      { heading: "The Cult", links: withIds("flink-brand", [
+      { heading: "Company", links: withIds("flink-brand", [
         { label: "Our Heritage", href: "/pages/our-heritage", openInNew: false },
         { label: "Journal", href: "/pages/journal", openInNew: false },
         { label: "Size Guide", href: "/pages/size-guide", openInNew: false },
@@ -150,19 +150,19 @@ const SECTIONS = {
       { title: "Outerwear", sub: "From ₹3,499", href: "/collections/outerwear", image: U("1551028719-00167b16eac5"), size: "wide", active: true },
     ]),
   },
-  "home.newDrop": { eyebrow: "Just Landed", heading: "New Drop", ctaLabel: "View All New In", ctaHref: "/collections/new-in" },
-  "home.bestsellers": { eyebrow: "Most Loved", heading: "The Ones Everyone Wants." },
+  "home.newDrop": { eyebrow: "Just In", heading: "New Arrivals", ctaLabel: "View All New In", ctaHref: "/collections/new-in" },
+  "home.bestsellers": { eyebrow: "Most Loved", heading: "Best Sellers" },
   "home.trending": {
     heading: "Trending Now",
     items: withIds("trend", [
-      { title: "Dragon Blood Graphic Tee", href: "/products/dragon-blood-graphic-tee", image: U("1503341455253-b2e723bb3dbb", 800), alt: "Dragon Blood Graphic Tee", active: true },
-      { title: "Dharma EP01 Graphic Hoodie", href: "/products/dharma-ep01-hoodie", image: U("1556821840-3a63f95609a7", 800), alt: "Dharma EP01 Graphic Hoodie", active: true },
-      { title: "Raven Multi-Pocket Cargo", href: "/products/raven-cargo-pants", image: U("1552374196-1ab2a1c593e8", 800), alt: "Raven Multi-Pocket Cargo", active: true },
+      { title: "Dragon Blood Graphic Tee", href: "/products/dragon-blood-graphic-charcoal", image: U("1503341455253-b2e723bb3dbb", 800), alt: "Dragon Blood Graphic Tee", active: true },
+      { title: "Dharma EP01 Graphic Hoodie", href: "/products/dharma-graphic-hoodie-stone", image: U("1556821840-3a63f95609a7", 800), alt: "Dharma EP01 Graphic Hoodie", active: true },
+      { title: "Raven Multi-Pocket Cargo", href: "/products/raven-cargo-military-olive", image: U("1552374196-1ab2a1c593e8", 800), alt: "Raven Multi-Pocket Cargo", active: true },
     ]),
   },
   "home.community": {
     eyebrow: "Community",
-    heading: "Worn by the Culture.",
+    heading: "Styled by Our Customers",
     instagramUrl: "https://www.instagram.com/cultraven",
     ctaText: "Tag @cultraven to be featured",
     items: withIds("ugc", [
@@ -175,17 +175,17 @@ const SECTIONS = {
     ]),
   },
   "home.brandStory": {
-    eyebrow: "THE CULTURE",
-    headline: "Clothes aren't just\nwhat you wear.",
-    body: "They're how you move through the world. CULTRAVEN is built for\nthe generation that refuses to be defined by anyone else's rules.",
-    ctaLabel: "EXPLORE THE STORY",
+    eyebrow: "WHY CULTRAVEN",
+    headline: "Premium quality.\nDelivered to your door.",
+    body: "260 GSM heavyweight cotton, pre-washed fits and easy 7-day returns. Free delivery above ₹1,999 and Cash on Delivery available across India.",
+    ctaLabel: "ABOUT CULTRAVEN",
     ctaHref: "/pages/our-heritage",
     image: U("1503341455253-b2e723bb3dbb", 1400),
     videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-young-man-in-streetwear-standing-outdoors-42289-large.mp4",
   },
   "page.lookbook": {
     items: withIds("look", [
-      { season: "AW 2026", title: "RAVEN IN THE CITY", desc: "Oversized graphics, cargo layers, lava accents. The cult on concrete.", image: U("1583743814966-8936f5b7be1a", 800), href: "/collections/dharma", products: withIds("lkp1", [{ name: "Dharma EP01 Tee" }, { name: "Raven Cargo" }, { name: "Lava Stripe Hoodie" }]), active: true },
+      { season: "AW 2026", title: "RAVEN IN THE CITY", desc: "Oversized graphics, cargo layers, lava accents. Made for everyday city wear.", image: U("1583743814966-8936f5b7be1a", 800), href: "/collections/dharma", products: withIds("lkp1", [{ name: "Dharma EP01 Tee" }, { name: "Raven Cargo" }, { name: "Lava Stripe Hoodie" }]), active: true },
       { season: "AW 2026", title: "ACID STATE", desc: "Washed-out finishes, heavyweight cotton, zero compromise.", image: U("1503341455253-b2e723bb3dbb", 800), href: "/collections/acid-state", products: withIds("lkp2", [{ name: "Acid State Wash Tee" }, { name: "Wide-Leg Cargo" }, { name: "Dragon Blood Hoodie" }]), active: true },
       { season: "SS 2026", title: "CORE ESSENTIALS", desc: "Stripped back. Built to last. The CULTRAVEN uniform.", image: U("1556821840-3a63f95609a7", 800), href: "/collections/core", products: withIds("lkp3", [{ name: "260 GSM Blank Tee" }, { name: "Cult Wide-Leg Jeans" }, { name: "Core Sweat" }]), active: true },
       { season: "SS 2026", title: "DRAGON BLOOD", desc: "Mythic screen-print meets heavyweight silence.", image: U("1552374196-1ab2a1c593e8", 800), href: "/collections/dragon-blood", products: withIds("lkp4", [{ name: "Dragon Blood Graphic Tee" }, { name: "Raven Black Cargo" }, { name: "Oversized Coach" }]), active: true },
@@ -197,7 +197,7 @@ const SECTIONS = {
       { title: "What Fabric Weight Actually Means for Your Wardrobe", category: "FASHION", date: "Aug 2026", image: U("1583743814966-8936f5b7be1a", 800), excerpt: "The difference between 160 GSM, 200 GSM and 260 GSM — and why it matters.", slug: "fabric-weight-wardrobe", active: true },
       { title: "Delhi Street Culture: The Photographers Shaping Indian Fashion", category: "CULTURE", date: "Aug 2026", image: U("1515886657613-9f3515b0c78f", 800), excerpt: "Meet the photographers documenting India's growing streetwear scene.", slug: "delhi-street-culture-photographers", active: true },
       { title: "Building a Capsule Wardrobe Around Streetwear Basics", category: "STYLE", date: "Jul 2026", image: U("1529391409740-59f2cea08bc6", 800), excerpt: "Five essentials that work together and anchor everything else.", slug: "capsule-wardrobe-streetwear-basics", active: true },
-      { title: "Acid Wash: A History of the Process That Never Goes Out of Style", category: "FASHION", date: "Jul 2026", image: U("1594938298603-c8148c4dae35", 800), excerpt: "From 1980s rock culture to Gen-Z streetwear — why acid wash endures.", slug: "acid-wash-history", active: true },
+      { title: "Acid Wash: A History of the Process That Never Goes Out of Style", category: "FASHION", date: "Jul 2026", image: U("1594938298603-c8148c4dae35", 800), excerpt: "From 1980s rock culture to today's streetwear — why acid wash endures.", slug: "acid-wash-history", active: true },
       { title: "Music and Fashion: The Playlist That's Defining This Season", category: "MUSIC", date: "Jun 2026", image: U("1515886657613-9f3515b0c78f", 800), excerpt: "The tracks behind the CULTRAVEN AW2026 campaign shoot.", slug: "music-fashion-playlist", active: true },
     ]),
   },
@@ -207,7 +207,7 @@ const SECTIONS = {
       { tag: "THE BEGINNING", heading: "It started with a tee.", body: "CULTRAVEN was born out of frustration. Frustration at fashion that asked you to blend in. Frustration at streetwear that was either too cheap or too corporate. We wanted something different — clothes that felt like they belonged to us.", image: U("1503341455253-b2e723bb3dbb", 1200), reverse: false, active: true },
       { tag: "THE CULTURE", heading: "Built for the ones who create their own culture.", body: "We don't follow trends. We follow people — the artists, the rebels, the ones who refuse to be defined by a category. CULTRAVEN is for the generation that builds its own culture instead of borrowing someone else's.", image: U("1515886657613-9f3515b0c78f", 1200), reverse: true, active: true },
       { tag: "THE DESIGN", heading: "Every detail is a decision.", body: "260 GSM pre-shrunk heavyweight cotton. Acid wash processes done in small batches. Screen prints that survive a hundred washes. We're obsessive about quality because the people who wear our clothes are obsessive about their identity.", image: U("1583743814966-8936f5b7be1a", 1200), reverse: false, active: true },
-      { tag: "THE FUTURE", heading: "Not made to blend in.", body: "We're just getting started. More drops. More stories. More collaborations with artists, photographers and creators who refuse to be ordinary. CULTRAVEN is a movement, not a moment.", image: U("1529391409740-59f2cea08bc6", 1200), reverse: true, active: true },
+      { tag: "THE FUTURE", heading: "Not made to blend in.", body: "We're just getting started. More collections. More stories. More collaborations with artists, photographers and creators who refuse to be ordinary. CULTRAVEN is a movement, not a moment.", image: U("1529391409740-59f2cea08bc6", 1200), reverse: true, active: true },
     ]),
     values: withIds("hval", [
       { title: "Bold", desc: "We don't make timid clothes for timid people." },
@@ -218,7 +218,7 @@ const SECTIONS = {
   },
   "shop.collections": {
     items: withIds("coll", [
-      { slug: "new-in", name: "New In", description: "The freshest pieces from CULTRAVEN — new drops, updated silhouettes and limited editions.", image: U("1503341455253-b2e723bb3dbb", 1400), active: true },
+      { slug: "new-in", name: "New In", description: "The freshest pieces from CULTRAVEN — new arrivals, updated fits and limited editions.", image: U("1503341455253-b2e723bb3dbb", 1400), active: true },
       { slug: "street", name: "Street", description: "A collection built for movement, individuality and everyday rebellion.", image: U("1515886657613-9f3515b0c78f", 1400), active: true },
       { slug: "bestsellers", name: "Bestsellers", description: "The ones everyone keeps coming back for — our most loved styles.", image: U("1594938298603-c8148c4dae35", 1400), active: true },
       { slug: "essentials", name: "Essentials", description: "Clean, heavyweight basics built to outlast every trend.", image: U("1583743814966-8936f5b7be1a", 1400), active: true },
@@ -235,11 +235,11 @@ const HERO = {
   srcDesktop: U("1583743814966-8936f5b7be1a", 1600),
   srcMobile: U("1583743814966-8936f5b7be1a", 800),
   posterSrc: "",
-  altText: "CULTRAVEN DHARMA Collection — Gen-Z Streetwear India",
+  altText: "CULTRAVEN DHARMA Collection — Oversized T-Shirts & Hoodies",
   eyebrow: "Dharma Series EP 01",
   headline: "WEAR YOUR DIFFERENCE.",
-  subheadline: "DHARMA EP01 — 260 GSM heavyweight cotton. Mythic screen-prints. Built for those who create their own identity.",
-  ctaLabel: "SHOP THE DROP",
+  subheadline: "DHARMA EP01 — 260 GSM heavyweight cotton with premium screen-prints. Free delivery above ₹1,999.",
+  ctaLabel: "SHOP NOW",
   ctaHref: "/collections/new-in",
   objectPosition: "center center",
   overlayOpacity: 0.45,
@@ -262,7 +262,7 @@ const SHOP_LOOK = {
 
 // ─── Products (catalog) ──────────────────────────────────────────────────────
 
-const DESC = "260 GSM heavyweight cotton built for the streets. Oversized fit, pre-washed texture and graphics made for those who create their own identity.";
+const DESC = "260 GSM heavyweight cotton with an oversized fit, pre-washed texture and premium screen-printed graphics.";
 const SIZES = ["S", "M", "L", "XL"];
 const P = (slug, title, category, image, hoverImage, pricePaise, mrpPaise, colors, extra = {}) => ({
   slug, title, category, image, hoverImage, images: [image, hoverImage], pricePaise, mrpPaise, colors,

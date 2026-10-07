@@ -98,16 +98,16 @@ function RegisterForm() {
         </div>
 
         <div style={{ position: "relative", zIndex: 1 }}>
-          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-lava)", marginBottom: "1.25rem" }}>JOIN THE CULT</p>
+          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--color-lava)", marginBottom: "1.25rem" }}>CREATE YOUR ACCOUNT</p>
           <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(2.5rem,4vw,4rem)", fontWeight: 400, color: "var(--color-cream)", lineHeight: 1.05, textTransform: "uppercase", marginBottom: "1.5rem" }}>
-            THE CULTURE<br />STARTS HERE.
+            SIGN UP.<br />START SAVING.
           </h2>
           <div style={{ display: "flex", flexDirection: "column", gap: "0.875rem" }}>
             {[
-              { icon: "✦", text: "Early access to every drop" },
+              { icon: "✦", text: "Early access to new arrivals & sales" },
               { icon: "✦", text: "10% off your first order" },
               { icon: "✦", text: "Track orders & manage returns" },
-              { icon: "✦", text: "Save your wishlist forever" },
+              { icon: "✦", text: "Save items to your wishlist" },
             ].map((p) => (
               <div key={p.text} style={{ display: "flex", gap: "0.75rem", alignItems: "flex-start" }}>
                 <span style={{ color: "var(--color-lava)", fontSize: "0.7rem", marginTop: "2px", flexShrink: 0 }}>{p.icon}</span>
@@ -131,7 +131,7 @@ function RegisterForm() {
             CREATE<br />ACCOUNT.
           </h1>
           <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-gray)", marginBottom: "2.5rem" }}>
-            Join the movement. Get 10% off your first order.
+            Sign up today and get 10% off your first order.
           </p>
 
           {redirect.startsWith("/checkout") ? (

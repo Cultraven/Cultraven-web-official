@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start -p 3000",
     "typecheck": "tsc --noEmit",
-    "db:seed": "node scripts/seed-cms.mjs"
+    "db:seed": "node scripts/seed-cms.mjs",
+    "db:update-copy": "node scripts/update-copy.mjs"
   },
   "dependencies": {
     "@shop/api-client": "workspace:*",

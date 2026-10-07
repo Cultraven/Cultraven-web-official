@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | CULTRAVEN",
+  title: "Privacy Policy",
   description:
     "CULTRAVEN's privacy policy — how we collect, use and protect your personal data. Read our commitment to your privacy.",
   alternates: { canonical: "/pages/privacy" },

@@ -35,7 +35,7 @@ function SuccessContent() {
         ORDER CONFIRMED
       </h1>
       <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.85rem", color: "var(--color-gray)", letterSpacing: "0.08em", marginBottom: "2.5rem" }}>
-        YOU&apos;RE OFFICIALLY PART OF THE CULTURE.
+        THANK YOU FOR SHOPPING WITH US.
       </p>
 
       <div style={{ backgroundColor: "white", border: "2px solid var(--color-navy)", padding: "2rem 2.5rem", maxWidth: "480px", width: "100%", boxShadow: "6px 6px 0px var(--color-navy)", marginBottom: "2.5rem" }}>

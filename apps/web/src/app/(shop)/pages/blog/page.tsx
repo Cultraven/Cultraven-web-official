@@ -2,21 +2,21 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Blog — The Culture Files",
-  description: "Stories from the streets. Drops, culture, style, and the people who define it.",
+  title: "Blog — Style Guides & News",
+  description: "Style guides, new arrivals and stories from CULTRAVEN.",
 };
 
 const POSTS = [
-  { slug: "drop-dharma-series", date: "Sep 2025", category: "DROP", title: "DHARMA SERIES: The Drop That Changed Everything", excerpt: "260 GSM, acid-washed, mythic graphics — here's everything behind our biggest drop of the year." },
-  { slug: "gen-z-streetwear-guide", date: "Aug 2025", category: "STYLE", title: "HOW TO BUILD A WARDROBE THAT ACTUALLY SLAPS", excerpt: "Skip the fast-fashion trap. Here's how the culture actually dresses — and why it matters." },
-  { slug: "behind-the-brand", date: "Jul 2025", category: "CULTURE", title: "CULTRAVEN: BUILT FOR THE ONES WHO DON'T FIT THE MOLD", excerpt: "The story behind the brand, the obsession with craft, and why we do what we do." },
+  { slug: "drop-dharma-series", date: "Sep 2025", category: "NEW ARRIVALS", title: "DHARMA SERIES: Our Biggest Collection Yet", excerpt: "260 GSM, acid-washed, premium graphics — here's everything behind our biggest collection of the year." },
+  { slug: "gen-z-streetwear-guide", date: "Aug 2025", category: "STYLE GUIDE", title: "HOW TO BUILD A WARDROBE YOU'LL ACTUALLY WEAR", excerpt: "Skip the fast-fashion trap. Here's how to pick pieces that last, fit well and work together." },
+  { slug: "behind-the-brand", date: "Jul 2025", category: "ABOUT US", title: "ABOUT CULTRAVEN: QUALITY CLOTHING, MADE WITH CARE", excerpt: "The story behind the brand, our focus on craft, and why we do what we do." },
 ];
 
 export default function BlogPage() {
   return (
     <div style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh", paddingBottom: "6rem" }}>
       <div style={{ paddingInline: "clamp(1rem,4vw,5rem)", paddingTop: "3rem", paddingBottom: "2rem", borderBottom: "1px solid var(--color-line)" }}>
-        <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--color-gray)", marginBottom: "0.75rem" }}>THE CULTURE FILES</p>
+        <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--color-gray)", marginBottom: "0.75rem" }}>STYLE GUIDES &amp; NEWS</p>
         <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(2.5rem,6vw,5rem)", fontWeight: 400, color: "var(--color-navy)", textTransform: "uppercase", letterSpacing: "0.02em" }}>BLOG</h1>
       </div>
 

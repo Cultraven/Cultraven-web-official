@@ -126,7 +126,7 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
         >
           <div>
             <h2 style={{ fontFamily: "var(--font-heading)", fontWeight: 400, fontSize: "20px", letterSpacing: "0.05em", textTransform: "uppercase", color: "var(--color-raven)", margin: 0 }}>
-              YOUR BAG
+              YOUR CART
             </h2>
             {items.length > 0 && (
               <p style={{ fontFamily: "var(--font-sans)", fontSize: "12px", fontWeight: 700, margin: "0.15rem 0 0", letterSpacing: "0.06em", textTransform: "uppercase", background: "var(--color-lava)", color: "var(--color-navy)", padding: "2px 8px", display: "inline-block" }}>
@@ -195,14 +195,14 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
                 <path d="M16 10a4 4 0 0 1-8 0" />
               </svg>
               <p style={{ fontFamily: "var(--font-sans)", fontSize: "16px", fontWeight: 700, color: "var(--color-raven)", marginBottom: "1.5rem" }}>
-                Bag's empty. Start with the new drop.
+                Your cart is empty. Start with our new arrivals.
               </p>
               <Link
                 href="/collections/new-in"
                 onClick={onClose}
                 style={{ fontFamily: "var(--font-sans)", fontSize: "12px", fontWeight: 900, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-navy)", backgroundColor: "var(--color-lava)", border: "2px solid var(--color-navy)", padding: "12px 24px", cursor: "pointer", boxShadow: "4px 4px 0px 0px var(--color-navy)", textDecoration: "none" }}
               >
-                SHOP NEW DROPS
+                SHOP NEW ARRIVALS
               </Link>
             </div>
           ) : (

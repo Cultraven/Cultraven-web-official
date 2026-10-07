@@ -442,7 +442,7 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
             <div style={{ display: "grid", gap: 14, marginTop: 18 }}>
               {([
                 ["inStock", "Available to buy", "Turn off to mark out of stock."],
-                ["isNewArrival", "New arrival", 'Shows in the homepage "New Drop".'],
+                ["isNewArrival", "New arrival", 'Shows in the homepage "New Arrivals".'],
                 ["isBestseller", "Bestseller", 'Shows in the homepage "Bestsellers".'],
               ] as const).map(([k, title, desc]) => (
                 <div key={k} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>

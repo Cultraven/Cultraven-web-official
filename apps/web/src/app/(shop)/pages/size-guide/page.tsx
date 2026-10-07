@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Size Guide | CULTRAVEN",
+  title: "Size Guide",
   description: "Find your perfect CULTRAVEN size. Size charts for T-Shirts, Shirts, Hoodies and Bottoms. Includes fit guide and how to measure.",
 };
 

@@ -25,16 +25,16 @@ const FEATURED: Record<string, { label: string; title: string; sub: string; href
   shop: {
     label: "NEW SEASON",
     title: "DHARMA EP01",
-    sub: "260 GSM heavyweight cotton. Mythic screen-prints. Just dropped.",
+    sub: "260 GSM heavyweight cotton. Premium screen-prints. New arrival.",
     href: "/collections/dharma",
     tag: "SHOP NOW →",
   },
   drops: {
-    label: "CULT FAVOURITE",
+    label: "BEST SELLER",
     title: "DRAGON BLOOD",
-    sub: "Limited archive run. Built for those who don't blend in.",
+    sub: "Limited edition. Selling fast.",
     href: "/collections/dragon-blood",
-    tag: "SHOP THE DROP →",
+    tag: "SHOP NOW →",
   },
 };
 

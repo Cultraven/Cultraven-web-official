@@ -254,7 +254,7 @@ export function ShopTheLookSection({ look }: { look: ShopLookData | null }) {
                 className={`cv-btn cv-btn-block ${allAdded ? "cv-btn-lava" : "cv-btn-navy"}`}
                 style={{ padding: "1.15rem 1.5rem" }}
               >
-                {allAdded ? `✓ ${look.products.length} ITEMS ADDED TO BAG` : `BUY COMPLETE LOOK — ${fmt(totalLookPrice)}`}
+                {allAdded ? `✓ ${look.products.length} ITEMS ADDED TO CART` : `BUY COMPLETE LOOK — ${fmt(totalLookPrice)}`}
               </button>
 
               {/* Checkout link shown after adding */}
@@ -372,10 +372,10 @@ function LookProductRow({
         </span>
       </div>
 
-      {/* Add to bag button — wired to cart store */}
+      {/* Add to cart button — wired to cart store */}
       <button
         onClick={handleAdd}
-        aria-label={`Add ${p.title} to bag`}
+        aria-label={`Add ${p.title} to cart`}
         style={{
           padding: "0.65rem 0.9rem",
           backgroundColor: added ? "var(--color-lava)" : "transparent",
@@ -394,7 +394,7 @@ function LookProductRow({
           flexShrink: 0,
         }}
       >
-        {added ? "✓ ADDED" : "+ BAG"}
+        {added ? "✓ ADDED" : "+ CART"}
       </button>
     </div>
   );

@@ -6,7 +6,7 @@ import { useBuyNowStore } from "@/store/buyNow";
 
 /**
  * The cart, wishlist and express-checkout stores persist to the browser. Hydrating them at module load made the
- * first client render differ from the server HTML (hydration warnings for any visitor with a non-empty bag).
+ * first client render differ from the server HTML (hydration warnings for any visitor with a non-empty cart).
  * They are created with `skipHydration` and restored here, right after hydration and before paint.
  */
 export function StoreRehydrator() {

@@ -7,7 +7,7 @@ import { liveItems } from "@/lib/cms/registry";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Journal | CULTRAVEN",
+  title: "Journal",
   description: "Stories, style notes, culture and people from the CULTRAVEN journal.",
 };
 

@@ -15,7 +15,7 @@ async function findArticle(slug: string) {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const a = await findArticle(slug);
-  return a ? { title: `${a.title} | CULTRAVEN Journal`, description: a.excerpt } : { title: "Journal | CULTRAVEN" };
+  return a ? { title: a.title, description: a.excerpt } : { title: "Journal" };
 }
 
 /** Journal article — title, image, excerpt and optional body, all from the page.journal CMS section. */

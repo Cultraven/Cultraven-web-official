@@ -4,7 +4,7 @@
  *
  * Photo (second photo + size picker on hover), wishlist heart, one tag; then brand, title, price + MRP + "% off",
  * "Only few left" and the sizes in stock. On a mouse, hovering the card slides up the size chips: pick one and it goes
- * straight into the bag at that size's price. On touch the sizes are listed under the price and a tap opens the product.
+ * straight into the cart at that size's price. On touch the sizes are listed under the price and a tap opens the product.
  */
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -114,21 +114,21 @@ export function ShopCard({ product: p, priority = false }: { product: CardProduc
         </div>
       ) : null}
 
-      {/* ── Quick-add panel — two options: size chips (bag it) + cop it now ── */}
+      {/* ── Quick-add panel — two options: size chips (add to cart) + buy now ── */}
       {!v.soldOut ? (
-        <div className="sc-size-row" role="group" aria-label={`Quick add ${p.title}`}>
-          {/* Row 1: size chips (each click = add to bag) */}
+        <div className="sc-size-row" role="group" aria-label={`Add ${p.title} to cart`}>
+          {/* Row 1: size chips (each click = add to cart) */}
           <div className="sc-chips-row">
             {single ? (
               <>
-                <span className="sc-chips-label">{added ? "Added ✓" : "Add to bag"}</span>
-                <button type="button" className="sc-chip sc-chip-full" aria-live="polite" onClick={() => quickAdd(v.sizes[0].size)} data-added={added ? "true" : undefined}>
+                <span className="sc-chips-label">{added ? "Added to cart ✓" : "Add to cart"}</span>
+                <button type="button" className="sc-chip sc-chip-full" aria-live="polite" aria-label={`Add size ${v.sizes[0]?.size ?? "One size"} to cart`} onClick={() => quickAdd(v.sizes[0].size)} data-added={added ? "true" : undefined}>
                   {v.sizes[0]?.size ?? "One size"}
                 </button>
               </>
             ) : (
               <>
-              <span className="sc-chips-label">{added ? "Added ✓" : "Add to bag"}</span>
+              <span className="sc-chips-label">{added ? "Added to cart ✓" : "Add to cart"}</span>
               {v.sizes.map((s) => (
                 <button
                   key={s.size}
@@ -136,7 +136,7 @@ export function ShopCard({ product: p, priority = false }: { product: CardProduc
                   className="sc-chip"
                   disabled={s.soldOut}
                   data-added={added === s.size ? "true" : undefined}
-                  aria-label={s.soldOut ? `Size ${s.size} sold out` : `Add size ${s.size} to bag`}
+                  aria-label={s.soldOut ? `Size ${s.size} sold out` : `Add size ${s.size} to cart`}
                   onClick={() => quickAdd(s.size)}
                 >
                   <span className="sc-chip-sz">{s.size}</span>
@@ -146,8 +146,8 @@ export function ShopCard({ product: p, priority = false }: { product: CardProduc
               </>
             )}
           </div>
-          {/* Row 2: cop it now — goes straight to the product page */}
-          <Link href={p.href} className="sc-cop-btn">COP IT NOW →</Link>
+          {/* Row 2: buy now — goes straight to the product page */}
+          <Link href={p.href} className="sc-cop-btn">BUY NOW →</Link>
         </div>
       ) : (
         <div className="sc-size-row sc-size-row-sold">

@@ -22,11 +22,12 @@ async function getMeta(slug: string) {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const { name, description, image } = await getMeta(slug);
+  const metaDescription = description || `Shop ${name} online at CULTRAVEN. Free delivery above ₹1,999, Cash on Delivery and easy 7-day returns.`;
   return {
     title: name,
-    description: description || undefined,
+    description: metaDescription,
     alternates: { canonical: `/collections/${slug}` },
-    openGraph: { title: name, description: description || undefined, type: "website", images: image ? [image] : undefined },
+    openGraph: { title: name, description: metaDescription, type: "website", images: image ? [image] : undefined },
   };
 }
 

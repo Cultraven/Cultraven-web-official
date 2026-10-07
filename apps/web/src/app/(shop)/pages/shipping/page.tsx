@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Shipping Information | CULTRAVEN",
+  title: "Shipping Information",
   description: "CULTRAVEN shipping policy — delivery timelines, free shipping threshold, express delivery and tracking.",
 };
 

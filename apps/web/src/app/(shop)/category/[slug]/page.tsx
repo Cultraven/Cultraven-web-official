@@ -25,12 +25,12 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   const { slug } = await params;
   const name = formatTitle(slug);
   return {
-    title: `${name} | CULTRAVEN Drops`,
-    description: `Explore the ${name} collection from CULTRAVEN. Gen Z heavyweight streetwear crafted for the uncommon. Free shipping above ₹999.`,
+    title: name,
+    description: `Shop ${name} online at CULTRAVEN. Free delivery above ₹1,999, Cash on Delivery available and easy 7-day returns.`,
     alternates: { canonical: `/category/${slug}` },
     openGraph: {
       title: `${name} | CULTRAVEN`,
-      description: `Shop ${name} — premium Gen-Z streetwear.`,
+      description: `Buy ${name} online at CULTRAVEN.`,
       type: "website",
     },
   };

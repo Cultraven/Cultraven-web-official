@@ -5,8 +5,8 @@ import { liveItems } from "@/lib/cms/registry";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Our Story | CULTRAVEN",
-  description: "The story behind CULTRAVEN — a premium Gen-Z streetwear brand built for the generation creating its own culture.",
+  title: "Our Story",
+  description: "The story behind CULTRAVEN: an Indian clothing brand making premium oversized t-shirts, hoodies and streetwear.",
 };
 
 export default async function AboutPage() {
@@ -23,7 +23,7 @@ export default async function AboutPage() {
         <div style={{ position: "relative", zIndex: 10, paddingInline: "clamp(1.25rem,4vw,5rem)" }}>
           <p style={{ fontFamily: "var(--font-sans)", fontSize: "11px", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-crimson)", marginBottom: "1rem" }}>CULTRAVEN</p>
           <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(3rem,8vw,7rem)", fontWeight: 600, color: "var(--color-cream)", lineHeight: 0.95, letterSpacing: "-0.02em" }}>Our Story</h1>
-          <p style={{ fontFamily: "var(--font-sans)", fontSize: "1rem", color: "rgba(245,241,232,0.7)", maxWidth: "500px", marginTop: "1.5rem", lineHeight: 1.7 }}>NOT MADE TO BLEND IN. Built for the generation creating its own culture.</p>
+          <p style={{ fontFamily: "var(--font-sans)", fontSize: "1rem", color: "rgba(245,241,232,0.7)", maxWidth: "500px", marginTop: "1.5rem", lineHeight: 1.7 }}>Premium oversized t-shirts, hoodies and streetwear from India.</p>
         </div>
       </div>
 

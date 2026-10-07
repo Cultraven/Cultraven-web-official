@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terms & Conditions | CULTRAVEN",
+  title: "Terms & Conditions",
   description:
     "CULTRAVEN Terms and Conditions — your agreement with us when using our website and purchasing our products.",
   alternates: { canonical: "/pages/terms" },

@@ -55,7 +55,7 @@ export default function CartPage() {
   return (
     <div style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh", padding: "clamp(2rem,5vw,5rem) clamp(1.25rem,4vw,5rem)", paddingTop: "calc(clamp(2rem,5vw,5rem) + 80px)" }}>
       <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(2rem,4vw,3.5rem)", fontWeight: 600, color: "var(--color-navy)", marginBottom: "2.5rem" }}>
-        Shopping Bag
+        Shopping Cart
         {items.length > 0 && (
           <span style={{ fontFamily: "var(--font-sans)", fontStyle: "normal", fontSize: "0.78rem", fontWeight: 600, letterSpacing: "0.06em", color: "var(--color-gray)", marginLeft: "1rem" }}>
             ({items.length} {items.length === 1 ? "item" : "items"})
@@ -67,8 +67,8 @@ export default function CartPage() {
       {items.length === 0 ? (
         <div style={{ textAlign: "center", padding: "6rem 2rem" }}>
           <div style={{ fontSize: "3rem", marginBottom: "1.5rem" }}>🛍️</div>
-          <p style={{ fontFamily: "var(--font-heading)", fontSize: "1.75rem", color: "var(--color-navy)", marginBottom: "0.75rem" }}>Your bag is empty.</p>
-          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.85rem", color: "var(--color-gray)", marginBottom: "2rem" }}>Discover our latest drops and add them to your bag.</p>
+          <p style={{ fontFamily: "var(--font-heading)", fontSize: "1.75rem", color: "var(--color-navy)", marginBottom: "0.75rem" }}>Your cart is empty.</p>
+          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.85rem", color: "var(--color-gray)", marginBottom: "2rem" }}>Browse our latest arrivals and add your favourites to your cart.</p>
           <Link
             href="/collections/all"
             style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", padding: "1rem 2.5rem", backgroundColor: "var(--color-navy)", color: "var(--color-cream)", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.78rem", letterSpacing: "0.14em", textTransform: "uppercase", textDecoration: "none" }}
@@ -178,7 +178,7 @@ export default function CartPage() {
                 onClick={clearCart}
                 style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", fontWeight: 600, color: "var(--color-gray)", background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}
               >
-                Clear bag
+                Clear cart
               </button>
             </div>
           </div>

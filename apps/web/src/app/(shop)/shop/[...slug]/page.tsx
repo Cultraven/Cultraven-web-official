@@ -18,8 +18,8 @@ export async function generateMetadata({ params }: ShopPageProps): Promise<Metad
   const { slug } = await params;
   const name = formatTitle(slug);
   return {
-    title: `${name} | CULTRAVEN Drops`,
-    description: `Explore the ${name} collection from CULTRAVEN. Gen Z heavyweight streetwear crafted for the uncommon.`,
+    title: name,
+    description: `Shop ${name} online at CULTRAVEN. Free delivery above ₹1,999, Cash on Delivery available and easy 7-day returns.`,
   };
 }
 

@@ -1,8 +1,8 @@
 /**
- * Buy-Now store — the single item behind "COP IT NOW".
+ * Buy-Now store — the single item behind "BUY NOW".
  *
  * Kept apart from the cart so an express purchase never touches (or empties) what the shopper
- * already bagged. Lives in sessionStorage: it survives the checkout redirect and a refresh,
+ * already in their cart. Lives in sessionStorage: it survives the checkout redirect and a refresh,
  * but not a new tab.
  */
 

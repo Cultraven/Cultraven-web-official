@@ -8,7 +8,7 @@ interface OrderSuccessProps {
 export async function generateMetadata({ params }: OrderSuccessProps): Promise<Metadata> {
   const { orderId } = await params;
   return {
-    title: `Order Confirmed | CULTRAVEN`,
+    title: `Order Confirmed`,
     description: `Your order #${orderId.slice(-6).toUpperCase()} has been placed successfully. Thank you for shopping at CULTRAVEN.`,
   };
 }

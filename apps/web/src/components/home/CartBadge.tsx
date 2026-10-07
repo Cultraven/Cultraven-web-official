@@ -77,7 +77,7 @@ export function CartBadge({ isScrolled = false, bare = false }: { isScrolled?: b
     <button
       type="button"
       aria-label={`Open cart, ${count} item${count !== 1 ? "s" : ""}`}
-      title="Bag"
+      title="Cart"
       onClick={openCart}
       onPointerEnter={preloadCartDrawer}
       onFocus={preloadCartDrawer}
@@ -85,7 +85,7 @@ export function CartBadge({ isScrolled = false, bare = false }: { isScrolled?: b
       style={{ color }}
     >
       {content}
-      <span className="hdr-label" aria-hidden="true">Bag</span>
+      <span className="hdr-label" aria-hidden="true">Cart</span>
     </button>
   );
 }

@@ -8,7 +8,7 @@ import Link from "next/link";
 import { ShopCard } from "@/components/shop/ShopCard";
 import type { CardProduct } from "@/lib/card-info";
 
-const TRENDING = ["Oversized T-Shirts", "Cargos", "Hoodies", "New Drop", "Black", "Streetwear"];
+const TRENDING = ["Oversized T-Shirts", "Cargos", "Hoodies", "New Arrivals", "Black", "Streetwear"];
 
 interface SearchProduct extends CardProduct { category: string }
 
@@ -47,6 +47,7 @@ export default function SearchPage() {
     <div style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh" }}>
       {/* Search input hero */}
       <div style={{ backgroundColor: "var(--color-navy)", padding: "clamp(3rem,6vw,6rem) clamp(1.25rem,4vw,5rem)" }}>
+        <h1 className="sr-only">Search products</h1>
         <p style={{ fontFamily: "var(--font-sans)", fontSize: "11px", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "rgba(245,241,232,0.5)", marginBottom: "1rem" }}>What are you looking for?</p>
         <div style={{ position: "relative", maxWidth: "640px" }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(245,241,232,0.5)" strokeWidth="2" style={{ position: "absolute", left: "1rem", top: "50%", transform: "translateY(-50%)" }}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>

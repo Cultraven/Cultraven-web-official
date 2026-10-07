@@ -129,7 +129,7 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
             />
           </div>
 
-          {/* Right actions: Search, Wishlist, Orders, Bag, then the account (Login / Register or profile) */}
+          {/* Right actions: Search, Wishlist, Orders, Cart, then the account (Login / Register or profile) */}
           <div style={{ display: "flex", alignItems: "center", gap: "0.25rem", flexShrink: 0 }}>
             <Link href="/search" aria-label="Search" title="Search" className="hdr-icon action-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square" aria-hidden="true">
@@ -174,7 +174,7 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
             </svg>
             <span>Home</span>
           </Link>
-          <Link href="/collections/all" className="bottom-nav-item" style={{ color: pathname?.startsWith("/collections") && !pathname?.includes("/drops") ? "var(--color-lava)" : "var(--color-navy)" }}>
+          <Link href="/collections/all" className="bottom-nav-item" style={{ color: pathname?.startsWith("/collections") && !pathname?.includes("/new-in") ? "var(--color-lava)" : "var(--color-navy)" }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
               <rect x="3" y="3" width="7" height="7"/>
               <rect x="14" y="3" width="7" height="7"/>
@@ -183,11 +183,11 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
             </svg>
             <span>Shop</span>
           </Link>
-          <Link href="/collections/drops" className="bottom-nav-item" style={{ color: pathname?.includes("/drops") ? "var(--color-lava)" : "var(--color-navy)" }}>
+          <Link href="/collections/new-in" className="bottom-nav-item" style={{ color: pathname?.includes("/new-in") ? "var(--color-lava)" : "var(--color-navy)" }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
               <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
             </svg>
-            <span>Drops</span>
+            <span>New In</span>
           </Link>
           <Link href="/account/wishlist" className="bottom-nav-item" style={{ color: pathname === "/account/wishlist" ? "var(--color-lava)" : "var(--color-navy)" }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
@@ -198,7 +198,7 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
           {/* One real button (the cart icon inside is a plain badge, not a nested button) so the whole cell is a tap target. */}
           <button type="button" className="bottom-nav-item" onClick={openCart} onPointerEnter={preloadCartDrawer} onFocus={preloadCartDrawer} style={{ color: "var(--color-navy)" }}>
             <CartBadge isScrolled bare />
-            <span>Bag</span>
+            <span>Cart</span>
           </button>
         </div>
       </nav>

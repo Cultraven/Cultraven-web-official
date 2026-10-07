@@ -7,7 +7,7 @@ import { liveItems } from "@/lib/cms/registry";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Lookbook | CULTRAVEN",
+  title: "Lookbook",
   description: "CULTRAVEN lookbook — the visual identity of a generation. Shot on the streets of India.",
 };
 
@@ -27,7 +27,7 @@ export default async function LookbookPage() {
           LOOKBOOK
         </h1>
         <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.88rem", color: "rgba(245,241,232,0.6)", maxWidth: "480px", margin: "0 auto", lineHeight: 1.7 }}>
-          Shot on the streets of India. The culture wears itself.
+          Shot on the streets of India. Shop the looks you love.
         </p>
       </div>
 
@@ -78,7 +78,7 @@ export default async function LookbookPage() {
       {/* ── CTA ── */}
       <div style={{ backgroundColor: "var(--color-navy)", padding: "4rem clamp(1.25rem,5vw,5rem)", textAlign: "center" }}>
         <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(2rem,4vw,3.5rem)", fontWeight: 400, color: "var(--color-cream)", textTransform: "uppercase", lineHeight: 1.1, marginBottom: "1.5rem" }}>
-          WEAR THE CULTURE.
+          SHOP THE LOOKBOOK.
         </h2>
         <Link
           href="/collections/all"

@@ -23,8 +23,8 @@ export async function generateMetadata({
   const { slug } = await params;
   const title = formatTitle(slug);
   return {
-    title: `${title} | CULTRAVEN`,
-    description: `Read about CULTRAVEN's ${title}. A culture for the uncommon.`,
+    title,
+    description: `Read about CULTRAVEN's ${title}.`,
   };
 }
 

@@ -141,7 +141,7 @@ export const SECTIONS: SectionDef[] = [
   {
     key: "home.newDrop",
     group: "Homepage",
-    label: "New Drop section",
+    label: "New Arrivals section",
     description: "Heading and link. Products shown are those marked 'New arrival' in Products.",
     previewPath: "/",
     fields: [
@@ -182,7 +182,7 @@ export const SECTIONS: SectionDef[] = [
   {
     key: "home.community",
     group: "Homepage",
-    label: "Community (Worn by the Culture)",
+    label: "Community (Customer Photos)",
     description: "Customer / lifestyle photo grid.",
     previewPath: "/",
     fields: [

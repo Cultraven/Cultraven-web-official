@@ -57,9 +57,22 @@ function getRazorpayClient(cfg: RazorpayConfig): Razorpay {
   return new Razorpay({ key_id: cfg.keyId, key_secret: cfg.keySecret });
 }
 
+/** The colour is only a label for the packer: keep it only when the product really has that colour ("Default" = none chosen). */
+function allowedColor(doc: any, wanted?: string): string {
+  const w = (wanted ?? "").trim();
+  if (!w) return "";
+  if (/^default$/i.test(w)) return "Default";
+  const hit = (doc.colors ?? []).find((c: any) => String(c?.label ?? "").toLowerCase() === w.toLowerCase());
+  return hit ? String(hit.label) : "";
+}
+
 export async function POST(req: NextRequest) {
   // CSRF defence in depth (the session cookie is also SameSite=Lax)
   if (!isSameOrigin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+  // Checkout is for signed-in customers only (the page enforces it); the API must not accept anonymous "guest" orders either.
+  const customer = customerFromRequest(req);
+  if (!customer) return NextResponse.json({ error: "Please sign in to place your order.", code: "LOGIN_REQUIRED" }, { status: 401 });
 
   // Rate limiting
   const ip = clientIp(req);
@@ -80,9 +93,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(summarizeZodError(result.error), { status: 422 });
   }
 
-  const { receipt, name, email, phone, items, address, paymentMethod, couponCode, idempotencyKey } = result.data;
+  const { receipt, name, email, phone, items, address, paymentMethod, idempotencyKey } = result.data;
+  const couponCode = result.data.couponCode?.trim() || undefined; // a blank/whitespace coupon box means "no coupon"
   // Never trust client-supplied identity or currency: the owner comes from the signed session, the currency is fixed.
-  const userId = customerFromRequest(req)?.userId ?? "guest";
+  const userId = customer.userId;
   const currency = "INR";
 
   // The confirmation email goes to this address: stop one address being flooded with orders (email bombing).
@@ -122,7 +136,7 @@ export async function POST(req: NextRequest) {
     // Sold-out pieces can't be bought, even from a stale cart or a crafted request.
     const soldOut = dbProducts.filter((p) => p.inStock === false).map((p) => p.title);
     if (soldOut.length) {
-      return NextResponse.json({ error: `Sold out: ${soldOut.join(", ")}. Please remove it from your bag.`, code: "OUT_OF_STOCK" }, { status: 409 });
+      return NextResponse.json({ error: `Sold out: ${soldOut.join(", ")}. Please remove it from your cart.`, code: "OUT_OF_STOCK" }, { status: 409 });
     }
 
     // 2. Compute subtotal from catalogue prices — per SIZE, never from the client — and check size + per-size stock
@@ -139,7 +153,7 @@ export async function POST(req: NextRequest) {
       const opts = normalizeSizeOptions(doc.sizeOptions, doc.sizes);
       const av = sizeAvailability(opts, size, doc.inStock !== false);
       if (!av.available) {
-        return NextResponse.json({ error: `${doc.title} (size ${size}) is sold out. Please remove it from your bag.`, code: "OUT_OF_STOCK" }, { status: 409 });
+        return NextResponse.json({ error: `${doc.title} (size ${size}) is sold out. Please remove it from your cart.`, code: "OUT_OF_STOCK" }, { status: 409 });
       }
       // Not enough left in this size? Say how many remain (before any pricing / payment-method rules).
       const wanted = items.filter((x) => x.slug === item.slug && (x.size || FREE_SIZE).trim() === size).reduce((n, x) => n + x.quantity, 0);
@@ -155,7 +169,7 @@ export async function POST(req: NextRequest) {
         title: doc.title,
         image: doc.image || (doc.images && doc.images[0]) || "",
         size,
-        color: item.color || "",
+        color: allowedColor(doc, item.color),
         quantity: item.quantity,
         pricePaise: price,
       });
@@ -179,7 +193,7 @@ export async function POST(req: NextRequest) {
 
     // Maximum ₹5,000 for COD
     if (paymentMethod === "cod" && amountPaise > COD_MAX_LIMIT) {
-      return NextResponse.json({ error: "COD is not available for orders above ₹5,000" }, { status: 400 });
+      return NextResponse.json({ error: "Cash on Delivery is not available when the order total (including the COD fee) is above ₹5,000. Please pay online." }, { status: 400 });
     }
 
     let razorpayOrderId = null;

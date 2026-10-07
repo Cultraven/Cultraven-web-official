@@ -28,9 +28,9 @@ import { EditorialBanner } from "@/components/home/EditorialBanner";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "NOT MADE TO BLEND IN. | CULTRAVEN — Gen Z Streetwear India",
+  title: { absolute: "CULTRAVEN | Buy Oversized T-Shirts, Hoodies & Cargo Pants Online" },
   description:
-    "Shop CULTRAVEN's latest drops — oversized 260 GSM heavyweights, acid-state washes, mythic graphic tees & cargo pants. India's Gen Z streetwear cult. Free delivery above ₹999.",
+    "Shop the latest oversized t-shirts, hoodies, graphic tees and cargo pants at CULTRAVEN. Free delivery above ₹1,999, Cash on Delivery, easy 7-day returns.",
   alternates: { canonical: "/" },
 };
 

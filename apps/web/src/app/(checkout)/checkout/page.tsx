@@ -1,6 +1,6 @@
 "use client";
 /**
- * Checkout — /checkout (whole bag) and /checkout?mode=buy-now (COP IT NOW: one item, bag untouched).
+ * Checkout — /checkout (whole cart) and /checkout?mode=buy-now (BUY NOW: one item, cart untouched).
  *
  * Signed-in only (middleware sends visitors to login/register and brings them back here).
  *   1. Address   — pick a saved address (or fix/edit it) or add a new one (optionally saved to the address book)
@@ -49,7 +49,7 @@ export default function CheckoutPage() {
   const [buyNow, setBuyNow] = useState<boolean | null>(null); // null until the URL is read on the client
   useEffect(() => {
     const isBuyNow = new URLSearchParams(window.location.search).get("mode") === "buy-now";
-    if (!isBuyNow) useBuyNowStore.getState().clear(); // a stale express item must never leak into a bag checkout
+    if (!isBuyNow) useBuyNowStore.getState().clear(); // a stale express item must never leak into a cart checkout
     setBuyNow(isBuyNow);
   }, []);
   const items = buyNow ? (buyNowItem ? [buyNowItem] : []) : bagItems;
@@ -209,7 +209,7 @@ export default function CheckoutPage() {
   const ready = buyNow !== null && items.length > 0 && me !== null && addresses !== null;
   const blocker = useMemo(() => {
     if (!ready) return "Still loading — one moment.";
-    if (items.length === 0 || items.some((i) => !Number.isInteger(i.quantity) || i.quantity < 1)) return "Your bag is empty — add something before checking out.";
+    if (items.length === 0 || items.some((i) => !Number.isInteger(i.quantity) || i.quantity < 1)) return "Your cart is empty — add an item before checking out.";
     if (!shipTo) return "Add a valid delivery address first.";
     if (!me?.email) return "We couldn't load your account details. Please refresh the page.";
     if (method === "razorpay" && !online) return "Online payment isn't available yet — please choose Cash on Delivery.";

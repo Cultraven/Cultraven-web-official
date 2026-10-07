@@ -55,7 +55,7 @@ export function NewsletterSignup({ config }: { config: NewsletterConfig }) {
             display: "block",
           }}
         >
-          JOIN THE MOVEMENT
+          STAY UPDATED
         </span>
 
         <h2

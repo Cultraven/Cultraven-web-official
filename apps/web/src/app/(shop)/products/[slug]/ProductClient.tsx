@@ -126,11 +126,11 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
     }, qty);
 
     setAdded(true);
-    toast.success("Added to bag ✓");
+    toast.success("Added to cart ✓");
     setTimeout(() => setAdded(false), 2000);
   };
 
-  /** COP IT NOW: one-item express checkout. The cart is left untouched. */
+  /** BUY NOW: one-item express checkout. The cart is left untouched. */
   const handleCopItNow = () => {
     if (soldOut) return;
     if (!selectedSize) { needSize(); return; }
@@ -286,17 +286,17 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
           </div>
 
           {/* CTAs — class-based so they respond to hover / press / touch and reflow per screen size (styles/pdp-cta.css) */}
-          {soldOut ? <p role="status" className="pdp-sold">SOLD OUT — this piece is currently unavailable</p> : null}
+          {soldOut ? <p role="status" className="pdp-sold">SOLD OUT — this item is currently unavailable</p> : null}
           <div className="pdp-cta">
             <button type="button" className={`pdp-btn pdp-bag${added ? " is-done" : ""}`} onClick={handleAddToBag} disabled={soldOut}>
-              {soldOut ? "SOLD OUT" : added ? "BAG MEIN GAYA ✓" : "BAG IT"}
+              {soldOut ? "SOLD OUT" : added ? "ADDED TO CART ✓" : "ADD TO CART"}
             </button>
             <button type="button" className="pdp-btn pdp-cop" onClick={handleCopItNow} disabled={soldOut}>
-              COP IT NOW
+              BUY NOW
             </button>
             <button type="button" className={`pdp-wish${wishPop ? " pop" : ""}`} aria-pressed={wishlisted} onClick={() => { setWishlisted((w) => !w); setWishPop(true); setTimeout(() => setWishPop(false), 400); }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill={wishlisted ? "var(--color-crimson)" : "none"} stroke={wishlisted ? "var(--color-crimson)" : "currentColor"} strokeWidth="2.5" strokeLinecap="square" strokeLinejoin="miter" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-              {wishlisted ? "WISHLISTED ✓" : "WISHLIST KAR"}
+              {wishlisted ? "ADDED TO WISHLIST ✓" : "ADD TO WISHLIST"}
             </button>
           </div>
 
@@ -367,9 +367,9 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
       <div className="mobile-sticky-cta">
         <div className={`pdp-sticky${soldOut ? " single" : ""}`}>
           <button type="button" className={`pdp-btn pdp-bag${added ? " is-done" : ""}`} onClick={handleAddToBag} disabled={soldOut}>
-            {soldOut ? "SOLD OUT" : added ? "ADDED ✓" : "BAG IT"}
+            {soldOut ? "SOLD OUT" : added ? "ADDED ✓" : "ADD TO CART"}
           </button>
-          {!soldOut ? <button type="button" className="pdp-btn pdp-cop" onClick={handleCopItNow}>COP IT NOW</button> : null}
+          {!soldOut ? <button type="button" className="pdp-btn pdp-cop" onClick={handleCopItNow}>BUY NOW</button> : null}
         </div>
       </div>
 

@@ -1,4 +1,4 @@
-/* Product page buy buttons: BAG IT, COP IT NOW, WISHLIST KAR — responsive layout + hover / press / touch / focus states */
+/* Product page buy buttons: ADD TO CART, BUY NOW, ADD TO WISHLIST — responsive layout + hover / press / touch / focus states */
 .pdp-cta { display: grid; gap: 0.9rem; margin-bottom: 1.5rem; grid-template-columns: minmax(0, 1fr); }
 .pdp-cta .pdp-wish { grid-column: 1 / -1; }
 
@@ -12,9 +12,9 @@
 .pdp-btn:focus-visible, .pdp-wish:focus-visible { outline: 3px solid var(--color-lava); outline-offset: 3px; }
 .pdp-btn[disabled] { opacity: 0.5; cursor: not-allowed; box-shadow: none; transform: none; }
 
-/* BAG IT — navy, lava shadow */
+/* ADD TO CART — navy, lava shadow */
 .pdp-bag { background: var(--color-navy); color: var(--color-cream); box-shadow: 5px 5px 0 0 var(--color-lava); }
-/* COP IT NOW — warm bone, navy shadow */
+/* BUY NOW — warm bone, navy shadow */
 .pdp-cop { background: var(--color-bone); color: var(--color-navy); box-shadow: 5px 5px 0 0 var(--color-navy); }
 
 /* Real pointers get a lift on hover; touch screens skip it (no sticky "hover" after a tap) */
@@ -28,7 +28,7 @@
 .pdp-cop:not([disabled]):active { background: var(--color-lava); }
 .pdp-bag.is-done { background: var(--color-lava); color: var(--color-navy); }
 
-/* WISHLIST KAR — text button with a heart, full-width tap target */
+/* ADD TO WISHLIST — text button with a heart, full-width tap target */
 .pdp-wish {
   display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; min-height: 48px; padding: 0.6rem 1rem;
   background: transparent; border: 2px solid transparent; color: var(--color-navy); cursor: pointer;
@@ -46,7 +46,7 @@
 .pdp-wish.pop svg { animation: pdpHeart 0.35s ease; }
 @keyframes pdpHeart { 0% { transform: scale(1); } 40% { transform: scale(1.45); } 100% { transform: scale(1); } }
 
-/* Tablets (single-column product page): BAG IT and COP IT NOW share a row */
+/* Tablets (single-column product page): ADD TO CART and BUY NOW share a row */
 @media (min-width: 600px) and (max-width: 1023px) {
   .pdp-cta { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.1rem; }
 }
@@ -56,7 +56,7 @@
   .pdp-btn { padding-inline: 0.7rem; letter-spacing: 0.05em; }
 }
 
-/* Sticky bottom CTA on phones: BAG IT + COP IT NOW side by side */
+/* Sticky bottom CTA on phones: ADD TO CART + BUY NOW side by side */
 .mobile-sticky-cta .pdp-sticky { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
 .mobile-sticky-cta .pdp-btn { min-height: 50px; padding: 0.7rem 0.5rem; font-size: 0.8rem; box-shadow: 3px 3px 0 0 var(--color-lava); }
 .mobile-sticky-cta .pdp-cop { box-shadow: 3px 3px 0 0 var(--color-navy); }

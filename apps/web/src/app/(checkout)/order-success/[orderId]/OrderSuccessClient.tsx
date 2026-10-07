@@ -30,7 +30,7 @@ function OrderSuccessContent({ orderId }: OrderSuccessClientProps) {
   const fmt = (p: number) => `₹${(p / 100).toLocaleString("en-IN")}`;
 
   useEffect(() => {
-    // An express (COP IT NOW) order must not empty the shopper's bag.
+    // An express (BUY NOW) order must not empty the shopper's cart.
     const express = useBuyNowStore.getState();
     if (express.item) express.clear(); else clearCart();
     setWindowSize({ width: window.innerWidth, height: window.innerHeight });

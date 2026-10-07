@@ -36,7 +36,7 @@ const organizationJsonLd = {
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://cultraven.com",
   logo: `${process.env.NEXT_PUBLIC_SITE_URL || "https://cultraven.com"}/logo.png`,
   description:
-    "CULTRAVEN is a Gen-Z Indian streetwear brand for those who don't dress to fit in — they create their own identity. Oversized heavyweights, acid washes, mythic graphics.",
+    "CULTRAVEN is an Indian clothing brand selling oversized t-shirts, hoodies, cargo pants and streetwear online, with Cash on Delivery and easy 7-day returns.",
   slogan: "Wear Your Difference.",
   sameAs: [
     "https://www.instagram.com/cultraven",
@@ -55,13 +55,13 @@ const organizationJsonLd = {
 export const metadata = {
   metadataBase: new URL("https://cultraven.com"),
   title: {
-    default: "CULTRAVEN — Wear Your Difference | Gen Z Streetwear India",
+    default: "CULTRAVEN | Oversized T-Shirts, Hoodies & Cargo Pants",
     template: "%s | CULTRAVEN",
   },
   description:
-    "CULTRAVEN is India's boldest Gen-Z streetwear brand. Shop oversized essentials, acid-wash heavyweights, mythic graphic tees, and limited-edition drops. Free delivery above ₹1,999.",
+    "Shop oversized t-shirts, hoodies and cargo pants online at CULTRAVEN. Free delivery above ₹1,999, Cash on Delivery and easy 7-day returns.",
   keywords: [
-    "gen z streetwear india",
+    "buy oversized t-shirts online india",
     "oversized t-shirts india",
     "cultraven",
     "acid wash tshirt",
@@ -76,9 +76,9 @@ export const metadata = {
     type: "website",
     locale: "en_IN",
     siteName: "CULTRAVEN",
-    title: "CULTRAVEN — Wear Your Difference | Gen Z Streetwear India",
+    title: "CULTRAVEN | Oversized T-Shirts, Hoodies & Cargo Pants",
     description:
-      "A generation that doesn't dress to fit in. Shop CULTRAVEN — oversized heavyweights, acid-state washes, mythic graphics, and street-ready drops.",
+      "Shop oversized t-shirts, hoodies and cargo pants online. Free delivery above ₹1,999, Cash on Delivery and easy returns.",
     images: [
       {
         url: "/og-default.jpg",
@@ -93,7 +93,7 @@ export const metadata = {
     site: "@cultraven",
     title: "CULTRAVEN — Wear Your Difference",
     description:
-      "India's boldest Gen Z streetwear brand. Oversized. Washed. Heavy. Different.",
+      "Oversized t-shirts, hoodies & cargo pants. Free delivery above ₹1,999. Cash on Delivery & easy returns.",
   },
   robots: {
     index: true,

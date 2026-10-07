@@ -12,3 +12,6 @@ dist
 coverage
 *.tsbuildinfo
 
+
+# Backups written by apps/web/scripts/update-copy.mjs --apply (may contain live content)
+apps/web/scripts/copy-backup-*.json

@@ -2,7 +2,7 @@
 /**
  * Toast notification system.
  * Usage: import { toast } from "@/components/common/Toast"
- * Then call: toast.success("Added to bag!")
+ * Then call: toast.success("Added to cart!")
  *
  * Rendered globally in root layout via <ToastProvider />.
  */

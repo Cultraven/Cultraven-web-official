@@ -172,7 +172,7 @@ export default function AdminProductsPage() {
                 <tr>
                   <th style={{ width: 36 }}><input type="checkbox" className="adm-check" checked={allOn} onChange={toggleAll} aria-label="Select all" /></th>
                   <th>Product</th><th>Category</th><th className="num">Price</th><th className="num">Stock</th>
-                  <th title="Shows in homepage New Drop">New</th><th title="Shows in homepage Bestsellers">Best</th><th>Availability</th><th />
+                  <th title="Shows in homepage New Arrivals">New</th><th title="Shows in homepage Bestsellers">Best</th><th>Availability</th><th />
                 </tr>
               </thead>
               <tbody>

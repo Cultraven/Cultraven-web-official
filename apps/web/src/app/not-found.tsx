@@ -96,7 +96,7 @@ export default function NotFound() {
           maxWidth: "460px",
         }}
       >
-        This link doesn’t exist or has moved into the archives. Explore our active drops on the homepage.
+        This page doesn’t exist or may have been moved. Browse our latest products on the homepage.
       </p>
 
       <Link

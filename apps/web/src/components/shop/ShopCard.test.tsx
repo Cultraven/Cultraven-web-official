@@ -27,7 +27,7 @@ describe("ShopCard", () => {
     expect(screen.getByTestId("sc-price").textContent).toBe("₹333");
     expect(within(card).getByText("₹999")).toBeTruthy();
     expect(screen.getByTestId("sc-off").textContent).toBe("67% off");
-    expect(card.textContent).toContain("Size XXL, 3XL, 4XL, 5XL");
+    for (const sz of ["XXL", "3XL", "4XL", "5XL"]) expect(within(card).getByRole("button", { name: `Add size ${sz} to cart` })).toBeTruthy();
   });
 
   it("links the photo and the text to the product page", () => {
@@ -51,24 +51,24 @@ describe("ShopCard", () => {
 
   it("offers a size chip per size on hover and adds the chosen size at its own price", () => {
     render(<ShopCard product={{ ...product, sizes: ["M", "L", "XL"], pricePaise: 199900, mrpPaise: 299900, sizeOptions: [{ size: "XL", pricePaise: 219900, mrpPaise: 319900, soldOut: false, low: false }] }} />);
-    const group = screen.getByRole("group", { name: /Add .* to bag/ });
-    expect(within(group).getAllByRole("button").map((b) => b.textContent)).toEqual(["M", "L", "XL"]);
-    fireEvent.click(within(group).getByRole("button", { name: "Add size XL to bag" }));
+    const group = screen.getByRole("group", { name: /Add .* to cart/ });
+    expect(within(group).getAllByRole("button").map((b) => b.textContent)).toEqual(["M₹1,999", "L₹1,999", "XL₹2,199"]); // each chip shows its own price when sizes are priced differently
+    fireEvent.click(within(group).getByRole("button", { name: "Add size XL to cart" }));
     const items = useCartStore.getState().items;
     expect(items).toHaveLength(1);
     expect(items[0]).toMatchObject({ productId: "p1", slug: "raven-shirt", size: "XL", pricePaise: 219900, mrpPaise: 319900, quantity: 1 });
-    expect(within(group).getByText("Added to bag ✓")).toBeTruthy();
+    expect(within(group).getByText("Added to cart ✓")).toBeTruthy();
     // same size again → same line, quantity 2; a different size → a second line
-    fireEvent.click(within(group).getByRole("button", { name: "Add size XL to bag" }));
-    fireEvent.click(within(group).getByRole("button", { name: "Add size M to bag" }));
+    fireEvent.click(within(group).getByRole("button", { name: "Add size XL to cart" }));
+    fireEvent.click(within(group).getByRole("button", { name: "Add size M to cart" }));
     const after = useCartStore.getState().items;
     expect(after.find((i) => i.size === "XL")?.quantity).toBe(2);
     expect(after.find((i) => i.size === "M")?.pricePaise).toBe(199900);
   });
 
-  it("uses the same bag line as the product page (slug-size-COLOUR sku)", () => {
+  it("uses the same cart line as the product page (slug-size-COLOUR sku)", () => {
     render(<ShopCard product={{ ...product, sizes: ["M"], colors: [{ hex: "#000000", label: "Jet Black" }] }} />);
-    fireEvent.click(screen.getByRole("button", { name: "Add size M to bag" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add size M to cart" }));
     const item = useCartStore.getState().items[0];
     expect(item.sku).toBe("raven-shirt-M-JET-BLACK");
     expect(item.color).toBe("Jet Black");
@@ -80,15 +80,14 @@ describe("ShopCard", () => {
     expect(m.disabled).toBe(true);
     fireEvent.click(m);
     expect(useCartStore.getState().items).toHaveLength(0);
-    expect(screen.getByTestId("shop-card").textContent).toContain("Size L");
-    expect(screen.getByTestId("shop-card").textContent).not.toContain("Size M,");
+    expect((screen.getByRole("button", { name: "Add size L to cart" }) as HTMLButtonElement).disabled).toBe(false);
   });
 
   it("a product with no sizes is one 'Free Size' with a single add button", () => {
     render(<ShopCard product={{ ...product, sizes: [] }} />);
-    expect(screen.getByText("Add to bag")).toBeTruthy();
+    expect(screen.getByText("Add to cart")).toBeTruthy();
     expect(screen.getByTestId("shop-card").textContent).toContain("Free Size");
-    fireEvent.click(screen.getByRole("button", { name: "Add size Free Size to bag" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add size Free Size to cart" }));
     expect(useCartStore.getState().items[0]).toMatchObject({ size: "Free Size", pricePaise: 33300 });
   });
 
@@ -102,7 +101,7 @@ describe("ShopCard", () => {
     render(<ShopCard product={{ ...product, inStock: false }} />);
     expect(screen.getByText("SOLD OUT")).toBeTruthy();
     expect(screen.getByText("Currently unavailable")).toBeTruthy();
-    expect(screen.queryByRole("group", { name: /to bag/ })).toBeNull();
+    expect(screen.queryByRole("group", { name: /to cart/ })).toBeNull();
     expect(screen.getByTestId("shop-card").getAttribute("data-sold-out")).toBe("true");
   });
 

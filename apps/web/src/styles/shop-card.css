@@ -57,14 +57,14 @@
   .sc:focus-within .sc-size-row { max-height: 320px; padding-top: 9px; padding-bottom: 11px; border-top-width: 1.5px; }
 }
 /* on touch devices always show the size row (no hover available) */
-/* No fixed height here: 4 size chips wrap to two rows and the COP IT NOW button must never be clipped. */
+/* No fixed height here: 4 size chips wrap to two rows and the BUY NOW button must never be clipped. */
 @media (hover: none), (pointer: coarse) {
   .sc-size-row { max-height: none; overflow: visible; padding-top: 9px; padding-bottom: 11px; border-top-width: 1.5px; }
 }
 .sc-size-row-sold { background: transparent; }
 .sc-chips-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 .sc-chips-label { width: 100%; font: 800 9px/1 var(--font-sans); letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-gray); margin-bottom: 2px; }
-/* COP IT NOW — full-width second option */
+/* BUY NOW — full-width second option */
 .sc-cop-btn {
   display: flex; align-items: center; justify-content: center; width: 100%; min-height: 44px; padding: 0 10px;
   background: var(--color-navy); color: var(--color-cream); border: 2px solid var(--color-navy);
@@ -148,7 +148,7 @@
   .sc-color-label { width: 100%; }
   .sc-color-swatch { width: 18px; height: 18px; }
   .sc-color-swatches { gap: 5px; }
-  /* size chips share the row evenly (two per row) so the panel stays tidy and COP IT NOW sits right under them; text kept at 12px+ */
+  /* size chips share the row evenly (two per row) so the panel stays tidy and BUY NOW sits right under them; text kept at 12px+ */
   .sc-chips-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
   .sc-chips-label { grid-column: 1 / -1; width: auto; }
   .sc-chip { min-width: 0; width: 100%; height: 40px; }
