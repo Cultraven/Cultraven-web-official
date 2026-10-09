@@ -4,13 +4,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { safeRedirect } from "@/lib/safe-redirect";
+import { validateMobile } from "@/lib/address-validation";
 
 function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = safeRedirect(searchParams.get("redirect"), "/account");
 
-  const [form, setForm] = useState({ firstName: "", lastName: "", email: "", password: "", confirmPassword: "" });
+  const [form, setForm] = useState({ firstName: "", lastName: "", email: "", phone: "", password: "", confirmPassword: "" });
   const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -27,6 +28,8 @@ function RegisterForm() {
     if (!form.firstName.trim()) errors.firstName = "Required";
     if (!form.lastName.trim()) errors.lastName = "Required";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errors.email = "Valid email required";
+    const mobile = validateMobile(form.phone); // same rules the server applies
+    if (!mobile.ok) errors.phone = mobile.message;
     if (form.password.length < 8) errors.password = "Min 8 characters";
     else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(form.password)) errors.password = "Uppercase, lowercase & number required";
     if (form.password !== form.confirmPassword) errors.confirmPassword = "Passwords don't match";
@@ -44,7 +47,7 @@ function RegisterForm() {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ firstName: form.firstName.trim(), lastName: form.lastName.trim(), email: form.email.trim().toLowerCase(), password: form.password }),
+        body: JSON.stringify({ firstName: form.firstName.trim(), lastName: form.lastName.trim(), email: form.email.trim().toLowerCase(), phone: form.phone.trim(), password: form.password }),
       });
       if (res.ok) {
         router.push(redirect);
@@ -155,6 +158,18 @@ function RegisterForm() {
               <label htmlFor="reg-email" style={LABEL}>Email Address</label>
               <input id="reg-email" type="email" autoComplete="email" value={form.email} onChange={update("email")} disabled={loading} placeholder="you@example.com" style={inp("email")} />
               {fieldErrors.email && <p style={ERR}>{fieldErrors.email}</p>}
+            </div>
+
+            <div>
+              <label htmlFor="reg-phone" style={LABEL}>Mobile Number</label>
+              <div style={{ display: "flex" }}>
+                <span aria-hidden="true" style={{ display: "flex", alignItems: "center", padding: "0 0.9rem", borderTop: `2px solid ${fieldErrors.phone ? "var(--color-crimson)" : "var(--color-navy)"}`, borderBottom: `2px solid ${fieldErrors.phone ? "var(--color-crimson)" : "var(--color-navy)"}`, borderLeft: `2px solid ${fieldErrors.phone ? "var(--color-crimson)" : "var(--color-navy)"}`, borderRight: "none", backgroundColor: "var(--color-bone)", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.88rem", color: "var(--color-navy)" }}>+91</span>
+                <input id="reg-phone" type="tel" inputMode="numeric" autoComplete="tel-national" maxLength={20} required aria-required="true" aria-invalid={fieldErrors.phone ? true : undefined} value={form.phone} onChange={update("phone")} disabled={loading} placeholder="98765 43210" style={{ ...inp("phone"), flex: 1, minWidth: 0, width: "auto" }} />
+              </div>
+              {fieldErrors.phone
+                ? <p style={ERR}>{fieldErrors.phone}</p>
+                : <p style={{ ...ERR, color: "var(--color-gray)" }}>10 digits. We use it to reach you about your orders.</p>
+              }
             </div>
 
             <div>

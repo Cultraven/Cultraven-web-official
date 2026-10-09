@@ -47,7 +47,7 @@ const Row = React.memo(function Row({ u }: { u: UserRow }) {
 // ── Create Staff Modal ────────────────────────────────────────────────────────
 function CreateStaffModal({ onClose, onCreated }: { onClose: () => void; onCreated: () => void }) {
   const { toast } = useToast();
-  const [form, setForm] = useState({ firstName: "", lastName: "", email: "", password: "", role: "admin" });
+  const [form, setForm] = useState({ firstName: "", lastName: "", email: "", phone: "", password: "", role: "admin" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
@@ -103,6 +103,10 @@ function CreateStaffModal({ onClose, onCreated }: { onClose: () => void; onCreat
 
             <Field label="Email address" required>
               <input className="adm-input" type="email" value={form.email} onChange={set("email")} required placeholder="rahul@example.com" />
+            </Field>
+
+            <Field label="Mobile number" required hint="10 digits starting 6 to 9 — required for every account">
+              <input className="adm-input" type="tel" inputMode="numeric" value={form.phone} onChange={set("phone")} required maxLength={20} placeholder="98765 43210" autoComplete="off" />
             </Field>
 
             <Field label="Temporary password" required hint="Min. 8 characters — share this securely with the person">

@@ -6,6 +6,7 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { sendMail } from "@/lib/mailer";
 import { staffAccountCreatedEmail } from "@/lib/email-templates";
+import { MobileField } from "@/lib/address-schema";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +14,7 @@ const Schema = z.object({
   firstName: z.string().trim().min(1).max(50),
   lastName:  z.string().trim().min(1).max(50),
   email:     z.string().trim().email().max(254),
+  phone:     MobileField, // mandatory for every account, same rules as customer sign-up
   password:  z.string().min(8).max(128),
   role:      z.enum(["admin", "delivery", "customer"]),
 });
@@ -30,7 +32,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: parsed.error.errors[0]?.message ?? "Invalid input" }, { status: 422 });
   }
 
-  const { firstName, lastName, email, password, role } = parsed.data;
+  const { firstName, lastName, email, phone, password, role } = parsed.data;
 
   try {
     await connectToDatabase();
@@ -42,6 +44,7 @@ export async function POST(req: NextRequest) {
     const user = await User.create({
       firstName, lastName,
       email: email.toLowerCase(),
+      phone,
       passwordHash,
       role,
       status: "active",

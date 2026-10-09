@@ -6,7 +6,7 @@
  *
  * Security:
  * - Body parsed safely (size cap, JSON only, no $-operator / prototype keys) before zod
- * - Zod validation (email, names, password strength) with max lengths; only whitelisted fields reach the model
+ * - Zod validation (email, names, mandatory mobile number, password strength) with max lengths; only whitelisted fields reach the model
  *   and the role is always "customer" (no mass assignment)
  * - Rate limited: 3/min and 5/15min per IP
  * - HttpOnly + SameSite=Lax (+ Secure in production) cookie, no fallback signing secret
@@ -19,6 +19,7 @@ import { connectToDatabase } from "@/lib/db";
 import { User } from "@/lib/models/User";
 import { CUSTOMER_SESSION_COOKIE, CUSTOMER_SESSION_MAX_AGE_S, createCustomerSessionToken, sessionCookieOptions } from "@/lib/session-token";
 import { clientIp, isSameOrigin, parseJsonBody, rateLimit, retryHeaders, stripControlChars, stripTags } from "@/lib/sanitize";
+import { MobileField } from "@/lib/address-schema";
 
 const cleanName = (max: number, label: string) =>
   z.string().max(max * 2).transform((v) => stripTags(stripControlChars(v)).trim()).pipe(z.string().min(1, `${label} required`).max(max));
@@ -27,6 +28,8 @@ const RegisterSchema = z.object({
   firstName: cleanName(50, "First name"),
   lastName: cleanName(50, "Last name"),
   email: z.string().trim().max(254).email("Invalid email").toLowerCase(),
+  // Mandatory. Same rules as the delivery-address form: 10 digits starting 6-9, "+91 / 0 / spaces / dashes" accepted and stripped.
+  phone: MobileField,
   password: z
     .string()
     .min(8, "Password must be at least 8 characters")
@@ -54,7 +57,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Validation failed", issues: result.error.flatten().fieldErrors }, { status: 422 });
   }
 
-  const { firstName, lastName, email, password } = result.data;
+  const { firstName, lastName, email, phone, password } = result.data;
 
   try {
     await connectToDatabase();
@@ -69,7 +72,7 @@ export async function POST(req: NextRequest) {
     let user;
     try {
       // Explicit fields only: nothing from the request body is spread into the model.
-      user = await User.create({ firstName, lastName, email, passwordHash, role: "customer", emailVerified: false });
+      user = await User.create({ firstName, lastName, email, phone, passwordHash, role: "customer", emailVerified: false });
     } catch (e: any) {
       // Two simultaneous sign-ups for the same email: the unique index decides
       if (e?.code === 11000) return NextResponse.json({ error: "An account with this email already exists." }, { status: 409 });

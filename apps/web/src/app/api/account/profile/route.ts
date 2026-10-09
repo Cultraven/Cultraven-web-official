@@ -44,8 +44,12 @@ export async function PATCH(req: NextRequest) {
     if (!me) return unauthorized();
 
     const update: Record<string, any> = { $set: { firstName, lastName } };
-    if (phone === "") update.$unset = { phone: "" };
-    else if (phone !== undefined) update.$set.phone = phone;
+    if (phone === "") {
+      // A mobile number is mandatory at sign-up, so an account that has one can't remove it (older accounts without one stay as they are).
+      const current = await User.findOne({ _id: me.userId, deletedAt: null }).select("phone").lean<{ phone?: string } | null>();
+      if (current?.phone) return json({ error: "Validation failed", issues: { phone: ["Mobile number is required"] } }, 422);
+      update.$unset = { phone: "" };
+    } else if (phone !== undefined) update.$set.phone = phone;
 
     const u = await User.findOneAndUpdate({ _id: me.userId, deletedAt: null }, update, { new: true, runValidators: true })
       .select("firstName lastName email phone avatarUpdatedAt")

@@ -42,6 +42,7 @@ export default function ProfileClient({ initial }: { initial: ProfileInitial }) 
 
   // ── details ──
   const [d, setD] = useState({ firstName: initial.firstName, lastName: initial.lastName, phone: initial.phone });
+  const [hasPhone, setHasPhone] = useState(!!initial.phone); // once a number is saved it can't be removed
   const [dErr, setDErr] = useState<Record<string, string>>({});
   const [dBusy, setDBusy] = useState(false);
   const setDF = (k: keyof typeof d) => (e: React.ChangeEvent<HTMLInputElement>) => { setD((x) => ({ ...x, [k]: e.target.value })); setDErr((x) => ({ ...x, [k]: "" })); };
@@ -55,6 +56,7 @@ export default function ProfileClient({ initial }: { initial: ProfileInitial }) 
     else if (d.lastName.trim().length > 50) e.lastName = "Last name must be 50 characters or fewer";
     const pp = phoneProblem(d.phone);
     if (pp) e.phone = pp;
+    else if (hasPhone && !d.phone.trim()) e.phone = "Mobile number is required";
     setDErr(e);
     if (Object.keys(e).length) return;
     setDBusy(true);
@@ -65,6 +67,7 @@ export default function ProfileClient({ initial }: { initial: ProfileInitial }) 
         if (j.issues) setDErr(firstIssue(j.issues)); else say("bad", j.error || "Could not save your details.");
       } else {
         setD({ firstName: j.profile.firstName, lastName: j.profile.lastName, phone: j.profile.phone });
+        setHasPhone(!!j.profile.phone);
         say("ok", "Your details were saved.");
         notifyAccountChanged();
         router.refresh(); // refreshes the sidebar name
@@ -136,7 +139,7 @@ export default function ProfileClient({ initial }: { initial: ProfileInitial }) 
               <Field id="pf-last" label="Last name" err={dErr.lastName}>
                 <input id="pf-last" value={d.lastName} onChange={setDF("lastName")} autoComplete="family-name" maxLength={50} aria-invalid={dErr.lastName ? true : undefined} />
               </Field>
-              <Field id="pf-phone" label="Mobile number (optional)" err={dErr.phone} hint="10 digits, starting 6 to 9">
+              <Field id="pf-phone" label={hasPhone ? "Mobile number" : "Mobile number (please add yours)"} err={dErr.phone} hint="10 digits, starting 6 to 9">
                 <input id="pf-phone" type="tel" inputMode="numeric" value={d.phone} onChange={setDF("phone")} autoComplete="tel-national" maxLength={14} aria-invalid={dErr.phone ? true : undefined} />
               </Field>
               <Field id="pf-email" label="Email" hint="Your login email can't be changed here.">
