@@ -27,8 +27,10 @@ export async function SiteChrome({ children }: { children: ReactNode }) {
     }),
   };
 
+  // Master switch in Admin → Website content → Announcement bar. A record saved before the switch existed has no `enabled`, so it stays on.
+  const announcementOn = announcement.data?.enabled !== false;
   const announcementData = {
-    items: liveItems<any>(announcement.data?.items).map((i) => ({ id: i.id, text: i.text, link: i.link || undefined })),
+    items: !announcementOn ? [] : liveItems<any>(announcement.data?.items).map((i) => ({ id: i.id, text: i.text, link: i.link || undefined })),
     intervalMs: announcement.data?.intervalMs ?? 4000,
     bgColor: "var(--color-navy)",
     textColor: "var(--color-cream)",
@@ -43,6 +45,7 @@ export async function SiteChrome({ children }: { children: ReactNode }) {
 
   return (
     <>
+      <style>{`:root{--ann-h:${announcementData.items.length ? 36 : 0}px}`}</style>
       <AnnouncementBar data={announcementData as any} />
       <Header navMenu={navMenu as any} deliveryCity="Delhi" />
       <main id="main-content">

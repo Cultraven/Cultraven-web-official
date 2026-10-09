@@ -13,11 +13,11 @@
 import { isSafeMediaUrl } from "../hero";
 
 export type Field =
-  | { kind: "text" | "textarea" | "link" | "url" | "image" | "video" | "datetime"; key: string; label: string; required?: boolean; max?: number; help?: string }
+  | { kind: "text" | "textarea" | "link" | "url" | "image" | "video" | "datetime"; key: string; label: string; required?: boolean; max?: number; help?: string; /** ready-made wording offered in a dropdown; the box stays editable */ suggestions?: string[] }
   | { kind: "number"; key: string; label: string; min: number; max: number; default: number; help?: string }
-  | { kind: "boolean"; key: string; label: string; default?: boolean }
+  | { kind: "boolean"; key: string; label: string; default?: boolean; /** show as an on/off switch with help text instead of a plain checkbox */ switch?: boolean; help?: string }
   | { kind: "select"; key: string; label: string; options: string[]; default?: string; required?: boolean }
-  | { kind: "list"; key: string; label: string; itemTitleKey?: string; max?: number; fields: Field[]; help?: string };
+  | { kind: "list"; key: string; label: string; itemTitleKey?: string; max?: number; fields: Field[]; help?: string; /** ready-made wording for the title field, offered in an "Add a sample" dropdown */ samples?: string[] };
 
 export interface SectionDef {
   key: string;
@@ -31,17 +31,30 @@ export interface SectionDef {
 
 const active: Field = { kind: "boolean", key: "active", label: "Visible on website", default: true };
 
+/** Ready-made lines for the top announcement bar. Only the policy ones are standing facts; use the sale lines only while a sale is really running. */
+export const ANNOUNCEMENT_SAMPLES = [
+  "FREE SHIPPING ABOVE ₹1,999",
+  "CASH ON DELIVERY AVAILABLE",
+  "EASY 7-DAY RETURNS",
+  "NEW ARRIVALS ARE LIVE",
+  "NEW COLLECTION IS LIVE — SHOP NOW",
+  "SALE IS LIVE — LIMITED TIME ONLY",
+  "PREMIUM 260 GSM HEAVYWEIGHT COTTON",
+  "SECURE PAYMENTS — UPI, CARDS & NET BANKING",
+];
+
 export const SECTIONS: SectionDef[] = [
   {
     key: "site.announcement",
     group: "Site",
     label: "Announcement bar",
-    description: "Rotating messages at the very top of every page.",
+    description: "The scrolling strip at the very top of every page. Switch the whole strip on or off, and pick or write the messages it shows.",
     previewPath: "/",
     fields: [
+      { kind: "boolean", key: "enabled", label: "Show the announcement bar", default: true, switch: true, help: "Off hides the strip on every page. Your messages are kept, so you can switch it back on any time." },
       { kind: "number", key: "intervalMs", label: "Seconds between messages", min: 2000, max: 15000, default: 4000, help: "In milliseconds" },
-      { kind: "list", key: "items", label: "Messages", itemTitleKey: "text", max: 10, fields: [
-        { kind: "text", key: "text", label: "Message", required: true, max: 140 },
+      { kind: "list", key: "items", label: "Messages", itemTitleKey: "text", max: 10, samples: ANNOUNCEMENT_SAMPLES, fields: [
+        { kind: "text", key: "text", label: "Message", required: true, max: 140, suggestions: ANNOUNCEMENT_SAMPLES },
         { kind: "link", key: "link", label: "Link (optional)" },
         active,
       ] },

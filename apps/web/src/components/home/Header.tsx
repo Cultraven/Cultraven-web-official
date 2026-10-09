@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -52,6 +52,20 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
     return () => window.removeEventListener("scroll", onScroll);
   }, [isHomepage]);
 
+  // The homepage tucks the hero up under the transparent header by exactly the header's height (--hdr-h). Measuring it
+  // (border excluded, so scrolling doesn't nudge it) keeps the hero from ever covering the announcement bar.
+  const headerRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    const measure = () =>
+      document.documentElement.style.setProperty("--hdr-h", `${Math.round(el.offsetHeight - (parseFloat(getComputedStyle(el).borderBottomWidth) || 0))}px`);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   const transparent = isHomepage && !isScrolled;
 
   // Derived style tokens
@@ -63,6 +77,7 @@ export function Header({ navMenu, deliveryCity: _deliveryCity = "Mumbai" }: Head
   return (
     <>
       <header
+        ref={headerRef}
         className="site-header"
         data-tone={transparent ? "light" : "dark"}
         style={{

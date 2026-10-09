@@ -51,7 +51,7 @@ export function AnnouncementBar({ data }: AnnouncementBarProps) {
               alignItems: "center",
               gap: "2.5rem",
               paddingRight: "2.5rem",
-              fontSize: "11px",
+              fontSize: "12px",
               fontWeight: 700,
               fontFamily: "var(--font-sans)",
               letterSpacing: "0.16em",
@@ -66,7 +66,10 @@ export function AnnouncementBar({ data }: AnnouncementBarProps) {
 
       {/* Dismiss button */}
       <button
-        onClick={() => setDismissed(true)}
+        onClick={() => {
+          setDismissed(true);
+          document.documentElement.style.setProperty("--ann-h", "0px"); // the phone hero gets the strip's 36px back
+        }}
         aria-label="Dismiss announcement"
         style={{
           position: "absolute",
@@ -76,8 +79,8 @@ export function AnnouncementBar({ data }: AnnouncementBarProps) {
           zIndex: 10,
           width: "44px",
           height: "36px",
-          color: "rgba(245,241,232,0.5)",
-          background: "transparent",
+          color: "rgba(245,241,232,0.7)",
+          background: "linear-gradient(to right, transparent, var(--color-navy) 45%)", // the scrolling text fades out behind the ✕ instead of colliding with it
           border: "none",
           cursor: "pointer",
           display: "flex",

@@ -35,12 +35,25 @@ function MediaPreview({ src, video }: { src: string; video?: boolean }) {
 
 const FieldInput = memo(function FieldInput({ f, value, onChange, onError }: { f: Field; value: any; onChange: (v: any) => void; onError: (m: string) => void }) {
   switch (f.kind) {
-    case "boolean":
+    case "boolean": {
+      const on = value === undefined ? (f.default ?? false) : value === true; // a saved record from before this field existed shows the default
+      if (f.switch) {
+        return (
+          <div style={{ display: "flex", alignItems: "center", gap: 14, padding: "12px 14px", border: `1px solid ${on ? "var(--a-success)" : "var(--a-border-strong)"}`, background: on ? "var(--a-success-soft)" : "var(--a-surface-2)", borderRadius: "var(--a-radius)" }}>
+            <Switch checked={on} onChange={onChange} label={f.label} />
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontWeight: 700 }}>{f.label}: <span style={{ color: on ? "var(--a-success)" : "var(--a-muted)" }}>{on ? "ON" : "OFF"}</span></div>
+              {f.help ? <div className="adm-hint">{f.help}</div> : null}
+            </div>
+          </div>
+        );
+      }
       return (
         <label className="adm-check">
-          <input type="checkbox" checked={value === true} onChange={(e) => onChange(e.target.checked)} /> {f.label}
+          <input type="checkbox" checked={on} onChange={(e) => onChange(e.target.checked)} /> {f.label}
         </label>
       );
+    }
     case "select":
       return (
         <FormField label={f.label}>
@@ -89,6 +102,13 @@ const FieldInput = memo(function FieldInput({ f, value, onChange, onError }: { f
       return (
         <FormField label={f.label} required={f.required} hint={f.help}>
           <input className="adm-input" type={f.kind === "url" ? "url" : "text"} value={value ?? ""} maxLength={f.max ?? 2048} onChange={(e) => onChange(e.target.value)} placeholder={f.kind === "link" ? "/collections/all or https://…" : undefined} />
+          {f.suggestions?.length ? (
+            // Picking a sample fills the box above; it can still be edited freely afterwards.
+            <select className="adm-select" aria-label={`Pick a sample for ${f.label}`} value="" onChange={(e) => e.target.value && onChange(e.target.value)} style={{ marginTop: 6 }}>
+              <option value="">Pick a sample message… (or type your own above)</option>
+              {f.suggestions.map((s) => <option key={s} value={s}>{s}</option>)}
+            </select>
+          ) : null}
         </FormField>
       );
   }
@@ -98,7 +118,7 @@ function ObjectFields({ fields, value, onChange, onError }: { fields: Field[]; v
   return (
     <div className="adm-form-grid">
       {fields.map((f) => (
-        <div key={f.key} className={f.kind === "list" || f.kind === "textarea" || f.kind === "image" || f.kind === "video" ? "adm-span-all" : undefined}>
+        <div key={f.key} className={f.kind === "list" || f.kind === "textarea" || f.kind === "image" || f.kind === "video" || (f.kind === "boolean" && f.switch) ? "adm-span-all" : undefined}>
           <FieldInput f={f} value={value[f.key]} onChange={(v) => onChange({ ...value, [f.key]: v })} onError={onError} />
         </div>
       ))}
@@ -124,12 +144,26 @@ function ListEditor({ f, value, onChange, onError }: { f: Extract<Field, { kind:
     onChange([...value, item]);
     setOpen(item.id);
   };
+  // A ready-made line goes straight into the list (already filled in); it can still be edited afterwards.
+  const addSample = (text: string) => {
+    if (!f.itemTitleKey) return;
+    onChange([...value, { id: `new-${Date.now()}`, ...blank(f.fields), [f.itemTitleKey]: text }]);
+  };
 
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
         <span className="adm-label">{f.label} <span style={{ color: "var(--a-faint)", fontWeight: 500 }}>({value.length}{f.max ? ` / ${f.max}` : ""})</span></span>
-        <Button size="sm" icon="plus" onClick={add} disabled={!!f.max && value.length >= f.max}>Add</Button>
+        <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", justifyContent: "flex-end" }}>
+          {f.samples?.length && f.itemTitleKey ? (
+            <select className="adm-select" aria-label={`Add a sample ${f.label.toLowerCase()}`} value="" disabled={!!f.max && value.length >= f.max} style={{ width: "auto", maxWidth: 260 }}
+              onChange={(e) => { if (e.target.value) addSample(e.target.value); }}>
+              <option value="">Add a sample…</option>
+              {f.samples.map((s) => <option key={s} value={s}>{s}</option>)}
+            </select>
+          ) : null}
+          <Button size="sm" icon="plus" onClick={add} disabled={!!f.max && value.length >= f.max}>{f.samples?.length ? "Add your own" : "Add"}</Button>
+        </div>
       </div>
       {value.length === 0 ? <div className="adm-hint" style={{ marginBottom: 6 }}>Nothing here yet.</div> : null}
       <div className="adm-list">

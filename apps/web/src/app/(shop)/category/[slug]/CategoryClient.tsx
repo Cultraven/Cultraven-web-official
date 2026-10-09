@@ -257,7 +257,7 @@ function CategoryClientInner({ slug, categoryName }: CategoryClientProps) {
           </div>
         )}
 
-        <div style={{ display: "grid", gridTemplateColumns: filterOpen ? "240px 1fr" : "1fr", gap: "2rem", alignItems: "start", paddingBottom: "4rem" }} className="plp-grid">
+        <div style={{ display: "grid", gridTemplateColumns: filterOpen ? "240px 1fr" : "1fr", gap: "2rem", alignItems: "start", paddingBottom: "4rem" }} className="plp-layout">
 
           {/* ── Filter Panel ── */}
           {filterOpen && (
@@ -311,7 +311,7 @@ function CategoryClientInner({ slug, categoryName }: CategoryClientProps) {
           {/* ── Product Grid ── */}
           <div>
             {loading ? (
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1.5rem", paddingTop: "1.5rem" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1.5rem", paddingTop: "1.5rem" }} className="prod-grid" aria-busy="true">
                 {[...Array(8)].map((_, i) => (
                   <div key={i}>
                     <div style={{ aspectRatio: "3/4", backgroundColor: "var(--color-mist)", animation: "pulse 1.5s ease-in-out infinite" }} />
@@ -321,11 +321,22 @@ function CategoryClientInner({ slug, categoryName }: CategoryClientProps) {
                 ))}
               </div>
             ) : filtered.length === 0 ? (
-              <div style={{ textAlign: "center", padding: "5rem 2rem" }}>
-                <p style={{ fontFamily: "var(--font-heading)", fontSize: "1.5rem", color: "var(--color-navy)", marginBottom: "1rem" }}>No products found.</p>
-                <button onClick={clearAllFilters} style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-cream)", backgroundColor: "var(--color-navy)", border: "none", padding: "0.875rem 2rem", cursor: "pointer" }}>
-                  CLEAR FILTERS
-                </button>
+              <div style={{ textAlign: "center", padding: "4rem 1rem 5rem", maxWidth: "28rem", margin: "0 auto" }}>
+                <p style={{ fontFamily: "var(--font-heading)", fontSize: "1.5rem", color: "var(--color-navy)", marginBottom: "1rem" }}>
+                  {activeFiltersCount > 0 ? "No products found." : "No products here yet."}
+                </p>
+                {activeFiltersCount > 0 ? (
+                  <button onClick={clearAllFilters} style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-cream)", backgroundColor: "var(--color-navy)", border: "none", padding: "0.875rem 2rem", cursor: "pointer" }}>
+                    CLEAR FILTERS
+                  </button>
+                ) : (
+                  <>
+                    <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.85rem", lineHeight: 1.6, color: "var(--color-gray)", marginBottom: "1.5rem" }}>New styles are on the way. Have a look at what just landed.</p>
+                    <Link href="/collections/new-in" style={{ display: "inline-block", fontFamily: "var(--font-sans)", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-cream)", backgroundColor: "var(--color-navy)", padding: "0.875rem 2rem", textDecoration: "none" }}>
+                      SEE NEW ARRIVALS
+                    </Link>
+                  </>
+                )}
               </div>
             ) : (
               <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1.5rem", paddingTop: "1.5rem" }} className="prod-grid">

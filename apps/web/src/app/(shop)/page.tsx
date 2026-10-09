@@ -115,9 +115,9 @@ export default async function HomePage() {
 
   return (
     <div className="w-full">
-      {/* 1 — Hero. Negative margin tucks it behind the transparent header (≈65px on desktop). */}
+      {/* 1 — Hero. Negative margin tucks it behind the transparent header — exactly the header's own height (--hdr-h), so it never covers the announcement bar. */}
       {heroSlides.length > 0 ? (
-        <div style={{ marginTop: "-65px" }}>
+        <div style={{ marginTop: "calc(var(--hdr-h, 49px) * -1)" }}>
           <HeroBanner slides={heroSlides as any} />
         </div>
       ) : null}

@@ -5,6 +5,8 @@
    ═══════════════════════════════════════════════════════════════════════════════ */
 
 /* Tone tokens: "light" = transparent header over the hero photo (white text); "dark" = solid cream header (navy text). */
+:root { --hdr-h: 49px; }
+@media (min-width: 1024px) { :root { --hdr-h: 61px; } }
 .site-header { --hdr-hover: rgba(218, 178, 5, 0.3); --hdr-press: rgba(218, 178, 5, 0.58); --hdr-ul: var(--color-navy); }
 .site-header[data-tone="light"] { --hdr-hover: rgba(255, 255, 255, 0.22); --hdr-press: rgba(255, 255, 255, 0.4); --hdr-ul: var(--color-lava); }
 

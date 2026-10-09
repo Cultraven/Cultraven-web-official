@@ -36,6 +36,7 @@ const withIds = (prefix, items) => items.map((it, i) => ({ id: `${prefix}-${i + 
 
 const SECTIONS = {
   "site.announcement": {
+    enabled: true,
     intervalMs: 4000,
     items: withIds("ann", [
       { text: "NEW ARRIVALS ARE LIVE", link: "", active: true },

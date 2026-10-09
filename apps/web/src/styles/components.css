@@ -55,7 +55,7 @@
 /* ── app/(shop)/category/[slug]/CategoryClient.tsx ── */
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
         @media(max-width:1024px){.prod-grid{grid-template-columns:repeat(3,1fr)!important}}
-        @media(max-width:768px){.plp-grid{grid-template-columns:1fr!important}.filter-panel{position:relative!important;top:auto!important}}
+        @media(max-width:768px){.plp-layout{grid-template-columns:1fr!important}.filter-panel{position:relative!important;top:auto!important}}
         @media(max-width:640px){.prod-grid{grid-template-columns:repeat(2,1fr)!important; gap:1rem!important}}
 
 /* ── app/(shop)/collections/[slug]/CollectionClient.tsx ── */
@@ -471,8 +471,8 @@ html[data-menu-open] .chat-panel { display: none !important; }
 /* ── Hero: the whole image is visible on phones, exactly like the web version; copy + buttons stay above the bottom nav ── */
 .hero-bg { display: none; }
 @media (max-width: 768px) {
-  /* announcement bar (36px) and the fixed bottom nav (64px + safe area) are not part of the hero's visible space */
-  .hero-section { height: calc(100svh - 36px - 64px - env(safe-area-inset-bottom)) !important; min-height: 440px !important; max-height: 760px !important; }
+  /* announcement bar (36px, or 0 when it is switched off / dismissed) and the fixed bottom nav (64px + safe area) are not part of the hero's visible space */
+  .hero-section { height: calc(100svh - var(--ann-h, 36px) - 64px - env(safe-area-inset-bottom)) !important; min-height: 440px !important; max-height: 760px !important; }
   .hero-bg { display: block; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: blur(26px) saturate(1.08); transform: scale(1.25); }
   /* the image keeps its own proportions (never cropped) and its top/bottom edges melt into the blurred fill */
   .hero-img { position: absolute !important; inset: auto !important; left: 0 !important; top: 50% !important; transform: translateY(-50%); width: 100% !important; height: auto !important; max-height: 100% !important; object-fit: contain !important;
