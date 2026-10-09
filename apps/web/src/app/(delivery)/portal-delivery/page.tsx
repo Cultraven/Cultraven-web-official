@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import "@/components/admin/admin.css";
 import { Badge, Button, Card, EmptyState, Icon, TableSkeleton, useApi } from "@/components/admin/ui";
+import { STATUS_LABEL, statusSummary } from "@/lib/order-lifecycle";
 
 type Address = { name: string; line1: string; line2: string; city: string; state: string; pincode: string; phone: string };
 type OrderItem = { title: string; size: string; color: string; quantity: number };
@@ -22,16 +23,20 @@ const cap = (s: string) => s ? s.charAt(0).toUpperCase() + s.slice(1).replace(/_
 const fmtINR = (p: number) => "₹" + (p / 100).toLocaleString("en-IN");
 const fmtDate = (s: string) => s ? new Date(s).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "—";
 
+// Status names and button wording come from the same list customers see in order tracking (STATUS_LABEL), so a delivery partner,
+// the admin and the customer all read the same words. A partner only ever moves an order to "Out for delivery" or "Delivered";
+// "Delivery attempt failed" is kept as the one way to report that the customer couldn't be reached.
+const TO_OUT = { label: `Mark as ${STATUS_LABEL.out_for_delivery}`, status: "out_for_delivery", tone: "info" as const };
 const STATUS_NEXT: Record<string, { label: string; status: string; tone: "success" | "danger" | "info" }[]> = {
-  confirmed:         [{ label: "Mark Out for Delivery", status: "out_for_delivery", tone: "info" }],
-  packed:            [{ label: "Mark Out for Delivery", status: "out_for_delivery", tone: "info" }],
-  on_hold:           [{ label: "Mark Out for Delivery", status: "out_for_delivery", tone: "info" }],
-  shipped:           [{ label: "Mark Out for Delivery", status: "out_for_delivery", tone: "info" }],
+  confirmed:         [TO_OUT],
+  packed:            [TO_OUT],
+  on_hold:           [TO_OUT],
+  shipped:           [TO_OUT],
   out_for_delivery:  [
-    { label: "Mark Delivered ✓", status: "delivered", tone: "success" },
-    { label: "Mark Failed", status: "delivery_failed", tone: "danger" },
+    { label: `Mark as ${STATUS_LABEL.delivered} ✓`, status: "delivered", tone: "success" },
+    { label: STATUS_LABEL.delivery_failed, status: "delivery_failed", tone: "danger" },
   ],
-  delivery_failed:   [{ label: "Retry Delivery", status: "out_for_delivery", tone: "info" }],
+  delivery_failed:   [TO_OUT],
 };
 
 function OrderCard({ order, onStatusChange }: { order: DeliveryOrder; onStatusChange: (id: string, status: string) => Promise<void> }) {
@@ -49,7 +54,7 @@ function OrderCard({ order, onStatusChange }: { order: DeliveryOrder; onStatusCh
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
         <span style={{ fontWeight: 800, fontSize: "15px", fontFamily: "monospace" }}>{order.orderNumber}</span>
-        <Badge tone={STATUS_TONES[order.fulfillmentStatus] ?? "neutral"}>{cap(order.fulfillmentStatus)}</Badge>
+        <Badge tone={STATUS_TONES[order.fulfillmentStatus] ?? "neutral"}>{statusSummary(order.fulfillmentStatus)}</Badge>
         <span style={{ fontSize: "12px", color: "var(--a-muted)", marginLeft: "auto" }}>{fmtDate(order.createdAt)}</span>
       </div>
 
@@ -144,7 +149,7 @@ export default function DeliveryPortal() {
         body: JSON.stringify({ status }),
       });
       if (!res.ok) { const d = await res.json(); throw new Error(d.error ?? "Failed"); }
-      showToast(`Status updated to ${cap(status)}`, true);
+      showToast(`Status updated to ${statusSummary(status)}`, true);
       reload();
     } catch (e: any) {
       showToast(e.message ?? "Failed to update status", false);

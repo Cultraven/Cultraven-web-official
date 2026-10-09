@@ -135,13 +135,17 @@
   .acct-grid { grid-template-columns: 1fr; }
   .acct-side { position: static; }
   .acct-two { grid-template-columns: 1fr; }
-  .acct-nav { display: flex; overflow-x: auto; scrollbar-width: none; }
-  .acct-nav::-webkit-scrollbar { display: none; }
-  .acct-nav a, .acct-nav button { border-bottom: 0; border-right: 1px solid var(--color-line); white-space: nowrap; padding: 0.95rem 1.1rem; }
-  .acct-nav a:hover, .acct-nav button:hover, .acct-nav a[aria-current="page"] { padding-left: 1.1rem; }
+  /* Every account link stays visible: a grid (icon over label) instead of a sideways-scrolling strip that hid the last links. */
+  .acct-nav { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1px; background: var(--color-line); }
+  .acct-nav a, .acct-nav button { position: relative; flex-direction: column; justify-content: center; text-align: center; gap: 0.4rem; min-height: 68px; padding: 0.8rem 0.25rem; border: 0; background: #fff; white-space: normal; overflow-wrap: anywhere; font-size: 0.68rem; letter-spacing: 0.08em; line-height: 1.2; }
+  .acct-nav a:hover, .acct-nav button:hover, .acct-nav a[aria-current="page"] { padding-left: 0.25rem; }
   .acct-nav a[aria-current="page"] { box-shadow: inset 0 -4px 0 0 var(--color-lava); }
+  .acct-nav .acct-count { position: absolute; top: 6px; right: 6px; margin: 0; }
+  .acct-profile > div:not(.acct-avatar) { min-width: 0; flex: 1; }
+  .acct-profile span { max-width: none; }
 }
 @media (max-width: 560px) {
+  .acct-nav { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .acct-stats { grid-template-columns: 1fr; }
   .acct-form { grid-template-columns: 1fr; }
   .acct-order { grid-template-columns: auto minmax(0, 1fr); }

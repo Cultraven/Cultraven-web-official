@@ -24,6 +24,7 @@ const PATHS: Record<string, React.ReactNode> = {
   plus: <><path d="M12 5v14M5 12h14" /></>,
   search: <><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></>,
   chevron: <><path d="M9 6l6 6-6 6" /></>,
+  back: <><path d="M15 6l-6 6 6 6" /></>,
   up: <><path d="M6 15l6-6 6 6" /></>,
   down: <><path d="M6 9l6 6 6-6" /></>,
   edit: <><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z" /></>,

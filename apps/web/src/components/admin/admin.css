@@ -331,3 +331,67 @@
   .adm-input, .adm-select { height: 46px; }
   .adm-nav-item { min-height: 44px; }
 }
+
+/* ── Orders list: status chips wrap (all visible), Download menu, ticked rows ───────────────────────────── */
+.adm-seg.adm-seg-wrap { display: flex; flex-wrap: wrap; flex: 1 1 100%; overflow: visible; gap: 2px; }
+.adm-seg.adm-seg-wrap button { flex-shrink: 1; }
+.adm-menu { position: relative; display: inline-block; }
+.adm-menu-panel { position: absolute; right: 0; top: calc(100% + 6px); z-index: 60; min-width: 260px; background: #fff; border: 1px solid var(--a-border); border-radius: 10px; box-shadow: var(--a-shadow-lg); padding: 6px; }
+.adm-menu-h { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--a-muted); padding: 8px 10px 4px; }
+.adm-menu-panel button { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 10px; border: 0; background: none; border-radius: 7px; font-size: 13.5px; font-weight: 600; color: var(--a-text); cursor: pointer; text-align: left; }
+.adm-menu-panel button:hover:not(:disabled), .adm-menu-panel button:focus-visible { background: var(--a-surface-2); outline: none; }
+.adm-menu-panel button:disabled { opacity: 0.45; cursor: not-allowed; }
+.adm-menu-panel hr { border: 0; border-top: 1px solid var(--a-border); margin: 6px 0; }
+.adm-table tr[data-selected="true"] td { background: var(--a-accent-soft); }
+.adm-pick { width: 18px; height: 18px; accent-color: var(--a-brand); cursor: pointer; vertical-align: middle; }
+@media (max-width: 640px) {
+  .adm-menu-panel { position: fixed; left: 12px; right: 12px; top: auto; bottom: 12px; }
+  .adm-pick { width: 22px; height: 22px; }
+  .adm-seg.adm-seg-wrap button { min-height: 36px; padding: 0 10px; font-size: 12px; }
+}
+
+/* ── Back button in the admin top bar ───────────────────────────────────────────────────────────────────── */
+.adm-back { display: inline-flex; align-items: center; gap: 2px; height: 34px; padding: 0 12px 0 6px; flex-shrink: 0; border: 1px solid var(--a-border-strong); background: #fff; border-radius: 8px; font: inherit; font-size: 13px; font-weight: 600; color: var(--a-text); cursor: pointer; }
+.adm-back:hover { background: var(--a-surface-2); }
+.adm-back:focus-visible { outline: 2px solid var(--a-brand-2); outline-offset: 2px; }
+@media (max-width: 900px) { .adm-back { height: 40px; min-width: 40px; } }
+
+/* ── Narrow tables become stacked cards — by the width the TABLE has, not the screen (phones, tablets, "desktop site" mode,
+      and tables squeezed into a narrow column), so no column (status, total, action buttons…) ever hides off-screen. ── */
+.adm-table-wrap { container: admtab / inline-size; }
+/* Where a wide table can still scroll sideways, soft edge shadows show there is more to see. */
+.adm-table-wrap {
+  background:
+    linear-gradient(to right, #fff 30%, rgba(255, 255, 255, 0)) 0 0 / 40px 100% no-repeat local,
+    linear-gradient(to left, #fff 30%, rgba(255, 255, 255, 0)) 100% 0 / 40px 100% no-repeat local,
+    radial-gradient(farthest-side at 0 50%, rgba(15, 23, 42, 0.22), rgba(15, 23, 42, 0)) 0 0 / 14px 100% no-repeat scroll,
+    radial-gradient(farthest-side at 100% 50%, rgba(15, 23, 42, 0.22), rgba(15, 23, 42, 0)) 100% 0 / 14px 100% no-repeat scroll;
+}
+@container admtab (max-width: 860px) {
+  .adm-table:not([data-stack="off"]), .adm-table:not([data-stack="off"]) tbody { display: block; }
+  .adm-table:not([data-stack="off"]) thead { display: none; }
+  .adm-table:not([data-stack="off"]) tr { display: block; position: relative; padding: 12px 14px; border-bottom: 1px solid var(--a-border); }
+  .adm-table:not([data-stack="off"]) tbody tr:last-child { border-bottom: 0; }
+  .adm-table:not([data-stack="off"]) td { display: flex; align-items: center; justify-content: flex-end; gap: 10px; padding: 3px 0; border: 0; text-align: right; background: transparent; min-width: 0; }
+  .adm-table:not([data-stack="off"]) td::before { content: attr(data-label); flex: 0 0 auto; max-width: 42%; margin-right: auto; text-align: left; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--a-muted); }
+  .adm-table:not([data-stack="off"]) td[data-label=""]::before { display: none; }
+  .adm-table:not([data-stack="off"]) td > * { min-width: 0; }
+  .adm-table:not([data-stack="off"]) td[data-label=""] { justify-content: flex-start; }
+  .adm-table:not([data-stack="off"]) td:last-child[data-label=""] { justify-content: flex-end; padding-top: 8px; }
+  .adm-table:not([data-stack="off"]) td .adm-cell-title { max-width: none; white-space: normal; overflow-wrap: anywhere; text-align: right; }
+  .adm-table:not([data-stack="off"]) td .adm-cell-sub { overflow-wrap: anywhere; text-align: right; }
+  .adm-table:not([data-stack="off"]) td:has(> .adm-cell-title) { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 14px; align-items: center; }
+  .adm-table:not([data-stack="off"]) td:has(> .adm-cell-title)::before { grid-row: 1 / span 2; }
+  .adm-table:not([data-stack="off"]) td:has(> .adm-cell-title) > .adm-cell-title, .adm-table:not([data-stack="off"]) td:has(> .adm-cell-title) > .adm-cell-sub { grid-column: 2; }
+  .adm-table:not([data-stack="off"]) td:first-child:has(> input[type="checkbox"]) { position: absolute; top: 12px; right: 12px; padding: 0; width: auto !important; }
+  .adm-table:not([data-stack="off"]) td:first-child:has(> input.adm-check) { top: 2px; right: 2px; } /* that tick box is a 40px touch control with its own inner square */
+  .adm-table:not([data-stack="off"]) td:first-child > input[type="checkbox"]:not(.adm-check) { width: 22px; height: 22px; min-height: 0; margin: 0; }
+  .adm-table:not([data-stack="off"]) tr:has(> td:first-child > input[type="checkbox"]) > td:nth-child(2) { padding-right: 36px; }
+  .adm-table:not([data-stack="off"]) td:has(> .adm-cell-media) { display: block; text-align: left; }
+  .adm-table:not([data-stack="off"]) td:has(> .adm-cell-media)::before { display: none; }
+  .adm-table:not([data-stack="off"]) td:has(> .adm-cell-media) .adm-cell-title, .adm-table:not([data-stack="off"]) td:has(> .adm-cell-media) .adm-cell-sub { text-align: left; }
+  .adm-table:not([data-stack="off"]) tbody tr:hover td { background: transparent; }
+  .adm-table:not([data-stack="off"]) tr[data-selected="true"] { background: var(--a-accent-soft); }
+  .adm-table:not([data-stack="off"]) tr[data-selected="true"] td { background: transparent; }
+  .adm-table:not([data-stack="off"]) input, .adm-table:not([data-stack="off"]) select { max-width: 60%; }
+}

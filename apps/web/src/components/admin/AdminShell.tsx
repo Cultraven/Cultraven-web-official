@@ -73,6 +73,17 @@ function crumbsFor(pathname: string): string[] {
   return out;
 }
 
+/** The page "up" from here, for the Back button when there is no history to step back through (page opened or refreshed directly). */
+function parentOf(pathname: string): string {
+  const clean = pathname.replace(/\/+$/, "");
+  if (/^\/portal-secure\/products\/.+/.test(clean)) return "/portal-secure/products"; // new / edit / categories
+  if (/^\/portal-secure\/settings\/.+/.test(clean)) return "/portal-secure"; // settings has no index page
+  const parts = clean.split("/").filter(Boolean);
+  parts.pop();
+  const up = "/" + parts.join("/");
+  return up.startsWith("/portal-secure") ? up : "/portal-secure";
+}
+
 function isActive(pathname: string, href: string): boolean {
   if (href === "/portal-secure") return pathname === href;
   if (href === "/portal-secure/cms") return pathname === href;
@@ -80,7 +91,34 @@ function isActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(href + "/");
 }
 
+/**
+ * On phones the admin tables turn into stacked cards (see admin.css). Each cell needs its column's name as a label, taken from the
+ * table's header row, so this keeps every table's cells labelled as rows load or change.
+ */
+function useTableLabels() {
+  React.useEffect(() => {
+    let raf = 0;
+    const label = () => {
+      document.querySelectorAll<HTMLTableElement>(".adm-table").forEach((t) => {
+        const heads = Array.from(t.querySelectorAll("thead th")).map((th) => (((th as HTMLElement).innerText || th.textContent) ?? "").trim());
+        t.querySelectorAll("tbody tr").forEach((tr) =>
+          Array.from(tr.children).forEach((td, i) => {
+            const l = heads[i] && heads[i] !== "Actions" ? heads[i].split(" / ")[0] : ""; // "Name / Email" is labelled "Name" in a card
+            if (td.getAttribute("data-label") !== l) td.setAttribute("data-label", l);
+          }),
+        );
+      });
+    };
+    const run = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(label); };
+    run();
+    const mo = new MutationObserver(run);
+    mo.observe(document.getElementById("admin-main") ?? document.body, { childList: true, subtree: true });
+    return () => { mo.disconnect(); cancelAnimationFrame(raf); };
+  }, []);
+}
+
 export function AdminShell({ children }: { children: React.ReactNode }) {
+  useTableLabels();
   const pathname = usePathname() ?? "";
   const router = useRouter();
   const nav = useNav();
@@ -92,6 +130,16 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const avatarTs = meData?.avatarUpdatedAt ?? "";
 
   React.useEffect(() => { setSideOpen(false); }, [pathname]);
+
+  // Back button: after moving around inside the panel it steps back like the browser's Back; if this page was opened directly it goes up a level.
+  const visited = React.useRef(0);
+  const steppingBack = React.useRef(false);
+  React.useEffect(() => { if (steppingBack.current) steppingBack.current = false; else visited.current += 1; }, [pathname]);
+  const goBack = () => {
+    if (visited.current > 1 && window.history.length > 1) { visited.current -= 1; steppingBack.current = true; router.back(); return; }
+    router.push(parentOf(pathname));
+  };
+  const showBack = pathname.replace(/\/+$/, "") !== "/portal-secure"; // the dashboard is the top: nowhere to go back to
 
   const activeContentGroup = SECTIONS.find((s) => pathname === `/portal-secure/cms/${s.key}`)?.group;
 
@@ -169,6 +217,11 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               <button type="button" className="adm-hamburger" onClick={() => setSideOpen(true)} aria-label="Open navigation">
                 <Icon name="menu" size={20} />
               </button>
+              {showBack ? (
+                <button type="button" className="adm-back" onClick={goBack} aria-label="Go back">
+                  <Icon name="back" size={16} /><span>Back</span>
+                </button>
+              ) : null}
               <nav className="adm-crumbs" aria-label="Breadcrumb">
                 <span>Admin</span>
                 {crumbs.map((c, i) => (

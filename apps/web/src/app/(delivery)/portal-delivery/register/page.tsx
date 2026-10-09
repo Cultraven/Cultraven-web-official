@@ -2,6 +2,7 @@
 import { BrandLogo } from "@/components/common/BrandLogo";
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import "@/components/admin/admin.css";
 import { Button, Field } from "@/components/admin/ui";
 
@@ -152,6 +153,9 @@ export default function DeliveryRegisterPage() {
       <div style={{ background: "var(--a-surface)", borderBottom: "2px solid var(--a-border)", padding: "14px 20px", display: "flex", alignItems: "center", gap: 12 }}>
         <BrandLogo height={26} />
         <div style={{ fontSize: 12, color: "var(--a-muted)", fontWeight: 700 }}>Delivery Portal</div>
+        <div style={{ marginLeft: "auto" }}>
+          <Link href="/portal-delivery" style={{ display: "inline-flex", alignItems: "center", minHeight: 40, fontSize: 12, fontWeight: 700, color: "var(--a-brand-2)", textDecoration: "none" }}>← Back to orders</Link>
+        </div>
       </div>
 
       <div style={{ maxWidth: 680, margin: "0 auto", padding: "24px 16px 40px" }}>

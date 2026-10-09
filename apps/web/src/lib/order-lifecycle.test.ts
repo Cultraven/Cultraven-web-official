@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { canAdminTransition, cancelEligibility, returnEligibility, buildTimeline, ADMIN_TRANSITIONS, ORDER_STATUSES, isBackward } from "./order-lifecycle";
+import { canAdminTransition, cancelEligibility, returnEligibility, buildTimeline, ADMIN_TRANSITIONS, ORDER_STATUSES, isBackward, TRACKING_STAGES, STATUS_LABEL } from "./order-lifecycle";
 
 const DAY = 86_400_000;
 const now = Date.UTC(2026, 9, 10, 12);
@@ -136,4 +136,22 @@ describe("extra statuses: packed, on hold, delivery failed, returned to origin",
     expect(rto.at(-1)).toMatchObject({ key: "rto", state: "bad" });
   });
 });
+});
+
+describe("tracking stages (shared by customer tracking, the admin status menu and the delivery portal)", () => {
+  it("are exactly the steps a customer sees in tracking, in order", () => {
+    const steps = buildTimeline({ fulfillmentStatus: "processing", createdAt: ago(1) });
+    expect(steps.map((s) => s.key)).toEqual([...TRACKING_STAGES]);
+    expect(steps.map((s) => s.label)).toEqual(TRACKING_STAGES.map((s) => STATUS_LABEL[s]));
+  });
+  it("are all real statuses the admin can move between (so the menu is never empty by accident)", () => {
+    for (const s of TRACKING_STAGES) expect(ORDER_STATUSES).toContain(s);
+    expect(canAdminTransition("processing", "confirmed")).toBe(true);
+    expect(canAdminTransition("packed", "shipped")).toBe(true);
+    expect(canAdminTransition("shipped", "out_for_delivery")).toBe(true);
+    expect(canAdminTransition("out_for_delivery", "delivered")).toBe(true);
+  });
+  it("do not include the exception states (hold, failed, RTO, cancelled, return) — those are not tracking steps", () => {
+    for (const s of ["on_hold", "delivery_failed", "rto", "cancelled", "return_requested", "returned"] as const) expect(TRACKING_STAGES).not.toContain(s);
+  });
 });

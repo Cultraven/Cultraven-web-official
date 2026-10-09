@@ -106,7 +106,12 @@ export const RETURN_REASONS = ["Size doesn't fit", "Not as described / photos", 
 export interface HistoryEvent { status: string; note?: string; at: Date | string; by?: string }
 export interface TimelineStep { key: string; label: string; at?: string; state: "done" | "current" | "todo" | "bad"; note?: string }
 
-const FLOW: OrderStatus[] = ["processing", "confirmed", "packed", "shipped", "out_for_delivery", "delivered"];
+/**
+ * The steps a customer sees in order tracking, in order. The admin status menu and the delivery portal offer exactly these
+ * (with the same names from STATUS_LABEL) so all three screens always speak the same language.
+ */
+export const TRACKING_STAGES: readonly OrderStatus[] = ["processing", "confirmed", "packed", "shipped", "out_for_delivery", "delivered"];
+const FLOW = TRACKING_STAGES as OrderStatus[];
 
 /**
  * Tracking steps for the order page. Done steps carry the time they were reached (from statusHistory);
