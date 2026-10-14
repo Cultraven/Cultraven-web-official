@@ -5,7 +5,7 @@
  */
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { CONTACT_SUBJECTS, cleanOrderNumber, matchSubject, supportConfig, whatsappLink } from "@/lib/support";
+import { CONTACT_SUBJECTS, cleanOrderNumber, formatPhone, matchSubject, supportConfig, telLink, whatsappLink } from "@/lib/support";
 import { useAccountSession } from "@/components/account/useAccountSession";
 
 interface FormState {
@@ -519,6 +519,47 @@ export default function ContactPage() {
                 </p>
                 <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", color: "var(--color-gray)" }}>
                   support@cultraven.com — reply within 24 hours
+                </p>
+              </div>
+            </a>
+
+            {/* Call */}
+            <a
+              href={telLink(cfg)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "1.25rem",
+                padding: "1.25rem",
+                backgroundColor: "var(--color-mist)",
+                textDecoration: "none",
+                transition: "background-color 0.2s ease",
+              }}
+              onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = "var(--color-border)")}
+              onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.backgroundColor = "var(--color-mist)")}
+            >
+              <div
+                style={{
+                  width: "48px",
+                  height: "48px",
+                  borderRadius: "50%",
+                  backgroundColor: "var(--color-navy)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-cream)" strokeWidth="2">
+                  <path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 1.9.7 2.8a2 2 0 01-.5 2.1L8.1 9.9a16 16 0 006 6l1.3-1.3a2 2 0 012.1-.4c.9.3 1.8.6 2.8.7a2 2 0 011.7 2z" />
+                </svg>
+              </div>
+              <div>
+                <p style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.85rem", color: "var(--color-navy)", marginBottom: "3px" }}>
+                  Call us
+                </p>
+                <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", color: "var(--color-gray)" }}>
+                  {formatPhone(cfg.phone)} &mdash; call during business hours
                 </p>
               </div>
             </a>
