@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
   try {
     await connectToDatabase();
     const logs = (await EmailLog.find({}).sort({ createdAt: -1 }).limit(40).lean()) as any[];
-    return NextResponse.json({ logs: logs.map((l) => ({ id: String(l._id), kind: l.kind, to: l.to, subject: l.subject, status: l.status, error: l.error ?? "", orderId: l.orderId ?? "", at: l.createdAt })) }, { headers: { "Cache-Control": "no-store" } });
+    return NextResponse.json({ logs: logs.map((l) => ({ id: String(l._id), kind: l.kind, to: l.to, subject: l.subject, status: l.status, from: l.from ?? "", category: l.category ?? "", error: l.error ?? "", orderId: l.orderId ?? "", at: l.createdAt })) }, { headers: { "Cache-Control": "no-store" } });
   } catch {
     return NextResponse.json({ error: "Could not load the email log" }, { status: 500 });
   }

@@ -25,6 +25,7 @@ import { afterResponse } from "@/lib/password-reset";
 import { sendMail } from "@/lib/mailer";
 import { welcomeEmail } from "@/lib/email-templates";
 import { BUSINESS } from "@/lib/business";
+import { siteUrl } from "@/lib/site-url";
 
 const cleanName = (max: number, label: string) =>
   z.string().max(max * 2).transform((v) => stripTags(stripControlChars(v)).trim()).pipe(z.string().min(1, `${label} required`).max(max));
@@ -80,8 +81,7 @@ export async function POST(req: NextRequest) {
 
     // Welcome email after the response is sent; a mail problem never affects sign-up.
     afterResponse(async () => {
-      const site = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
-      await sendMail({ to: user.email, ...welcomeEmail({ firstName: user.firstName, siteUrl: site }), kind: "welcome", replyTo: BUSINESS.supportEmail });
+      await sendMail({ to: user.email, ...welcomeEmail({ firstName: user.firstName, siteUrl: siteUrl() }), kind: "welcome", replyTo: BUSINESS.supportEmail });
     });
 
     const token = createCustomerSessionToken(user._id.toString(), user.email, user.role);

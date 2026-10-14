@@ -5,6 +5,7 @@ import { User } from "@/lib/models/User";
 import { DeliveryKyc } from "@/lib/models/DeliveryKyc";
 import { sendMail } from "@/lib/mailer";
 import { deliveryKYCDecisionEmail } from "@/lib/email-templates";
+import { siteUrl as publicSiteUrl } from "@/lib/site-url";
 import { z } from "zod";
 
 export const dynamic = "force-dynamic";
@@ -45,7 +46,7 @@ export async function PATCH(
       return NextResponse.json({ error: "This verification request is no longer pending" }, { status: 409 });
     }
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://cultraven.com";
+    const siteUrl = publicSiteUrl();
     const loginUrl = `${siteUrl}/portal-delivery-access`;
     const tpl = deliveryKYCDecisionEmail({ firstName: user.firstName, approved: decision === "approved", note, loginUrl, siteUrl });
     sendMail({ to: user.email, ...tpl, kind: "delivery_kyc_decision" }).catch(() => {});

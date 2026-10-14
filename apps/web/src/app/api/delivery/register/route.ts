@@ -6,6 +6,7 @@ import { DeliveryKyc } from "@/lib/models/DeliveryKyc";
 import { Setting } from "@/lib/models/Setting";
 import { sendMail, getSmtpSettings } from "@/lib/mailer";
 import { deliveryKYCSubmittedEmail } from "@/lib/email-templates";
+import { siteUrl as publicSiteUrl } from "@/lib/site-url";
 import { z } from "zod";
 
 export const dynamic = "force-dynamic";
@@ -105,7 +106,7 @@ export async function POST(req: NextRequest) {
     await User.findByIdAndUpdate(payload.userId, { $set: { verificationStatus: "pending", verificationNote: null } });
 
     // Email the superadmin
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://cultraven.com";
+    const siteUrl = publicSiteUrl();
     const adminUrl = `${siteUrl}/portal-secure/delivery-verification`;
     const smtp = await getSmtpSettings();
     const adminEmails = smtp?.adminEmails ?? [];

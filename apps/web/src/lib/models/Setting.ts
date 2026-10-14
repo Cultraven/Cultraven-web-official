@@ -20,6 +20,9 @@ const EmailLogSchema = new mongoose.Schema(
     status: { type: String, enum: ["sent", "failed", "skipped"], required: true },
     error: { type: String, default: "" },
     orderId: { type: String, default: "" },
+    /** The address it was sent from (which mailbox), and the kind of email it was */
+    from: { type: String, default: "" },
+    category: { type: String, default: "" },
   },
   { timestamps: true }
 );

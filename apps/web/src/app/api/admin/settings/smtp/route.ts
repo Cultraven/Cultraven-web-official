@@ -3,6 +3,7 @@ import { z } from "zod";
 import { isAdminRequest } from "@/lib/admin-auth";
 import { getPublicSmtpSettings, saveSmtpSettings, parseEmailList, isEmail, defaultSecure } from "@/lib/mailer";
 import { clientIp, isSameOrigin, rateLimit, retryHeaders } from "@/lib/sanitize";
+import { isProfile, type MailProfile } from "@/lib/mail-routing";
 
 export const dynamic = "force-dynamic";
 const NO_STORE = { "Cache-Control": "no-store" };
@@ -17,14 +18,23 @@ const Body = z.object({
   pass: z.string().max(500).optional(),
   fromName: z.string().trim().min(1).max(80),
   fromEmail: z.string().trim().max(254).refine(isEmail, "From address is not a valid email"),
-  adminEmails: z.string().max(1000),
+  /** Orders mailbox only; left out = keep the stored alert addresses. */
+  adminEmails: z.string().max(1000).optional(),
 });
 
-/** GET — current settings. The password is never returned, only whether one is stored. */
+/** ?profile=orders (default) or support */
+function profileOf(req: NextRequest): MailProfile | null {
+  const p = req.nextUrl.searchParams.get("profile") ?? "orders";
+  return isProfile(p) ? p : null;
+}
+
+/** GET — current settings of one mailbox. The password is never returned, only whether one is stored. */
 export async function GET(req: NextRequest) {
   if (!isAdminRequest(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const profile = profileOf(req);
+  if (!profile) return NextResponse.json({ error: "Unknown mailbox" }, { status: 400 });
   try {
-    const s = await getPublicSmtpSettings();
+    const s = await getPublicSmtpSettings(profile);
     return NextResponse.json({ settings: s }, { headers: NO_STORE });
   } catch {
     return NextResponse.json({ error: "Could not load settings" }, { status: 500 });
@@ -35,6 +45,8 @@ export async function GET(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   if (!isAdminRequest(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   if (!isSameOrigin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const profile = profileOf(req);
+  if (!profile) return NextResponse.json({ error: "Unknown mailbox" }, { status: 400 });
   const rl = rateLimit(`smtp-settings:${clientIp(req)}`, 20, 60 * 1000);
   if (!rl.ok) return NextResponse.json({ error: "Too many requests" }, { status: 429, headers: retryHeaders(rl) });
   let raw: unknown;
@@ -45,8 +57,8 @@ export async function PUT(req: NextRequest) {
   try {
     await saveSmtpSettings({
       enabled: d.enabled, host: d.host, port: d.port, secure: d.secure ?? defaultSecure(d.port), user: d.user, pass: d.pass || undefined,
-      fromName: d.fromName.replace(/["\r\n]/g, ""), fromEmail: d.fromEmail, adminEmails: parseEmailList(d.adminEmails),
-    });
+      fromName: d.fromName.replace(/["\r\n]/g, ""), fromEmail: d.fromEmail, adminEmails: d.adminEmails === undefined ? undefined : parseEmailList(d.adminEmails),
+    }, profile);
     return NextResponse.json({ success: true }, { headers: NO_STORE });
   } catch (e) {
     const msg = e instanceof Error ? e.message : "";

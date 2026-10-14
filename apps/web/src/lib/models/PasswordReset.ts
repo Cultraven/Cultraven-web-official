@@ -14,10 +14,16 @@ const PasswordResetSchema = new Schema(
     expiresAt: { type: Date, required: true },
     usedAt: { type: Date, default: null },
     requestIp: { type: String, default: "" },
+    /**
+     * "<userId>:<purpose>" — there is ONE row per person and purpose, rewritten each time a new link is issued. That makes "only the
+     * newest link works" atomic even when two requests arrive at the same instant (a unique index lets only one row exist).
+     */
+    slot: { type: String },
   },
   { timestamps: { createdAt: true, updatedAt: false } }
 );
 PasswordResetSchema.index({ tokenHash: 1 }, { unique: true });
+PasswordResetSchema.index({ slot: 1 }, { unique: true, sparse: true }); // sparse: rows written before slots existed have none
 PasswordResetSchema.index({ userId: 1, purpose: 1 });
 PasswordResetSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 24 * 60 * 60 });
 

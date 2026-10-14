@@ -8,6 +8,7 @@ import { connectToDatabase } from "@/lib/db";
 import { Setting, EmailLog } from "@/lib/models/Setting";
 import { encryptSecret, decryptSecret } from "@/lib/secret-box";
 import { withInlineLogo } from "@/lib/email-logo";
+import { MAIL_PROFILES, pickProfile, cleanRouting, categoryOf, type MailProfile, type Routing } from "@/lib/mail-routing";
 
 export interface SmtpSettings {
   enabled: boolean;
@@ -45,11 +46,14 @@ function fromEnv(env: NodeJS.ProcessEnv = process.env): SmtpSettings | null {
   };
 }
 
-/** Settings saved by the admin (preferred) or the env fallback; null when email isn't configured. */
-export async function getSmtpSettings(): Promise<SmtpSettings | null> {
+/** Where each mailbox is stored. "smtp" is the original (Orders) record, so existing sites keep their settings. */
+export const SETTING_KEY: Record<MailProfile, string> = { orders: "smtp", support: "smtp-support" };
+
+/** Settings saved by the admin (preferred) or, for the Orders mailbox only, the env fallback; null when that mailbox isn't configured. */
+export async function getSmtpSettings(profile: MailProfile = "orders"): Promise<SmtpSettings | null> {
   try {
     await connectToDatabase();
-    const doc = (await Setting.findOne({ key: "smtp" }).lean()) as any;
+    const doc = (await Setting.findOne({ key: SETTING_KEY[profile] }).lean()) as any;
     const v = doc?.value;
     if (v?.host && v?.user) {
       const pass = decryptSecret(v.passEnc);
@@ -63,27 +67,50 @@ export async function getSmtpSettings(): Promise<SmtpSettings | null> {
   } catch (e) {
     console.error("[mailer] could not read SMTP settings:", e instanceof Error ? e.message : e);
   }
-  return fromEnv();
+  return profile === "orders" ? fromEnv() : null;
 }
 
-export async function getPublicSmtpSettings(): Promise<PublicSmtpSettings | null> {
-  const s = await getSmtpSettings();
+export async function getPublicSmtpSettings(profile: MailProfile = "orders"): Promise<PublicSmtpSettings | null> {
+  const s = await getSmtpSettings(profile);
   if (!s) return null;
   const { pass, ...rest } = s;
   return { ...rest, hasPassword: !!pass };
 }
 
 /** Save settings. An empty `pass` keeps the stored password. */
-export async function saveSmtpSettings(input: Omit<SmtpSettings, "pass"> & { pass?: string }) {
+export async function saveSmtpSettings(input: Omit<SmtpSettings, "pass" | "adminEmails"> & { pass?: string; adminEmails?: string[] }, profile: MailProfile = "orders") {
   await connectToDatabase();
-  const existing = (await Setting.findOne({ key: "smtp" }).lean()) as any;
+  const existing = (await Setting.findOne({ key: SETTING_KEY[profile] }).lean()) as any;
   const passEnc = input.pass ? encryptSecret(input.pass) : existing?.value?.passEnc;
   if (!passEnc) throw new Error("A password is required the first time");
+  // The team-alert addresses live with the Orders mailbox; leaving them out of a save keeps what is stored.
+  const adminEmails = profile === "orders" ? (input.adminEmails ?? existing?.value?.adminEmails ?? []) : [];
   await Setting.findOneAndUpdate(
-    { key: "smtp" },
-    { $set: { value: { enabled: input.enabled, host: input.host, port: input.port, secure: input.secure, user: input.user, passEnc, fromName: input.fromName, fromEmail: input.fromEmail, adminEmails: input.adminEmails } } },
+    { key: SETTING_KEY[profile] },
+    { $set: { value: { enabled: input.enabled, host: input.host, port: input.port, secure: input.secure, user: input.user, passEnc, fromName: input.fromName, fromEmail: input.fromEmail, adminEmails } } },
     { upsert: true }
   );
+}
+
+/** Which mailbox sends which kind of email (see lib/mail-routing.ts). */
+export async function getMailRouting(): Promise<Routing> {
+  try {
+    await connectToDatabase();
+    const doc = (await Setting.findOne({ key: "mail-routing" }).lean()) as any;
+    return cleanRouting(doc?.value);
+  } catch { return {}; }
+}
+
+export async function saveMailRouting(routing: Routing) {
+  await connectToDatabase();
+  await Setting.findOneAndUpdate({ key: "mail-routing" }, { $set: { value: cleanRouting(routing) } }, { upsert: true });
+}
+
+/** Replace the team-alert addresses (stored with the Orders mailbox). False when that mailbox is saved in the environment, not the admin. */
+export async function saveAlertEmails(list: string[]): Promise<boolean> {
+  await connectToDatabase();
+  const r = await Setting.updateOne({ key: SETTING_KEY.orders }, { $set: { "value.adminEmails": list } });
+  return r.matchedCount > 0;
 }
 
 export function buildTransport(s: SmtpSettings) {
@@ -96,15 +123,21 @@ export function buildTransport(s: SmtpSettings) {
 
 export interface MailInput { to: string; subject: string; html: string; text: string; kind: string; orderId?: string; replyTo?: string; attachments?: { filename: string; content: Buffer | Uint8Array; contentType: string }[] }
 
-async function log(entry: { kind: string; to: string; subject: string; status: "sent" | "failed" | "skipped"; error?: string; orderId?: string }) {
+async function log(entry: { kind: string; to: string; subject: string; status: "sent" | "failed" | "skipped"; error?: string; orderId?: string; from?: string; category?: string }) {
   try { await EmailLog.create({ ...entry, error: (entry.error ?? "").slice(0, 300) }); } catch { /* logging must never break sending */ }
 }
 
 /** Send one email. Resolves to { ok } — never rejects. Retries once on failure. */
 export async function sendMail(m: MailInput): Promise<{ ok: boolean; error?: string }> {
-  const s = await getSmtpSettings();
-  if (!s || !s.enabled) {
-    await log({ kind: m.kind, to: m.to, subject: m.subject, status: "skipped", error: s ? "Email disabled" : "SMTP not configured", orderId: m.orderId });
+  // Each kind of email goes out through the mailbox chosen for it (Admin → Settings → Email), else its default, else Orders.
+  const category = categoryOf(m.kind)?.id ?? "";
+  const [routing, ...boxes] = await Promise.all([getMailRouting(), ...MAIL_PROFILES.map((p) => getSmtpSettings(p))]);
+  const byProfile = new Map(MAIL_PROFILES.map((p, i) => [p, boxes[i]] as const));
+  const pick = pickProfile(m.kind, routing, new Set(MAIL_PROFILES.filter((p) => byProfile.get(p)?.enabled)));
+  const s = pick ? byProfile.get(pick.profile) ?? null : null;
+  if (!pick || !s) {
+    const orders = byProfile.get("orders");
+    await log({ kind: m.kind, to: m.to, subject: m.subject, status: "skipped", error: orders ? "Email disabled" : "SMTP not configured", orderId: m.orderId, category });
     return { ok: false, error: "SMTP not configured" };
   }
   // The header logo travels inside the email (inline attachment) so it never shows as a broken image.
@@ -114,15 +147,15 @@ export async function sendMail(m: MailInput): Promise<{ ok: boolean; error?: str
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
       const transport = buildTransport(s);
-      await transport.sendMail({ from: `"${s.fromName.replace(/"/g, "")}" <${s.fromEmail}>`, to: m.to, replyTo: m.replyTo, subject: m.subject, html, text: m.text, attachments });
-      await log({ kind: m.kind, to: m.to, subject: m.subject, status: "sent", orderId: m.orderId });
+      await transport.sendMail({ from: `"${s.fromName.replace(/"/g, "")}" <${s.fromEmail}>`, to: m.to, replyTo: m.replyTo || s.fromEmail, subject: m.subject, html, text: m.text, attachments });
+      await log({ kind: m.kind, to: m.to, subject: m.subject, status: "sent", orderId: m.orderId, from: s.fromEmail, category });
       return { ok: true };
     } catch (e: any) {
       lastError = String(e?.code || e?.responseCode || e?.message || "send failed");
       if (attempt === 0) await new Promise((r) => setTimeout(r, 1500));
     }
   }
-  await log({ kind: m.kind, to: m.to, subject: m.subject, status: "failed", error: lastError, orderId: m.orderId });
+  await log({ kind: m.kind, to: m.to, subject: m.subject, status: "failed", error: lastError, orderId: m.orderId, from: s.fromEmail, category });
   return { ok: false, error: lastError };
 }
 

@@ -48,8 +48,11 @@ const underThousand = (n: number) => [n >= 100 ? `${ONES[Math.floor(n / 100)]} H
 
 /** 504700 paise -> "Rupees Five Thousand Forty-Seven Only". */
 export function rupeesInWords(paise: number): string {
-  const total = Math.max(0, Math.round(Number(paise) || 0));
+  const n = Number(paise);
+  const total = Number.isFinite(n) ? Math.max(0, Math.round(n)) : 0;
   const rupees = Math.floor(total / 100), ps = total % 100;
+  // Beyond ₹1,000 crore the words stop being useful (and no order is that large): print the figure instead of failing.
+  if (rupees >= 10_000_000_000) return `Rupees ${rupees.toLocaleString("en-IN")} Only`;
   const parts = [
     [Math.floor(rupees / 10_000_000), "Crore"], [Math.floor((rupees % 10_000_000) / 100_000), "Lakh"], [Math.floor((rupees % 100_000) / 1000), "Thousand"],
   ].filter(([n]) => (n as number) > 0).map(([n, unit]) => `${underThousand(n as number)} ${unit}`);

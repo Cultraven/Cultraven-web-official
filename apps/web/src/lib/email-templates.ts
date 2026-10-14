@@ -29,6 +29,8 @@ export const orderNumber = (id: string) => `CR-${id.slice(-6).toUpperCase()}`;
 const NAVY = "#172554", GOLD = "#DAB205", CREAM = "#FAF9F6", BONE = "#EDE3CF", MUTED = "#555555", RED = "#B3261E", RULE = "#D5D0C2";
 const WRAP = "word-break:break-word;overflow-wrap:anywhere";
 /** Markup -> plain text for the inbox preview. Inline tags vanish ("<b>IST</b>." stays "IST."); block tags become a space. */
+/** One line of plain text: line breaks and runs of spaces become a single space. */
+const oneLine = (s: string) => String(s ?? "").replace(/[\r\n\u0085\u2028\u2029]+/g, " ").replace(/\s+/g, " ").trim();
 const stripTags = (h: string) => h.replace(/<\/?(?:b|i|u|strong|em|span|a|code)\b[^>]*>/gi, "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
 
 // ── Dates (always India time — that is what the customer's clock says) ─────────────
@@ -64,7 +66,8 @@ const etaText = (placed: Date | string) => { const e = estimatedDelivery(placed)
 // ── Contact details as real, tidy links (mail apps would otherwise paint their own blue ones) ─────
 
 const LINK = `color:${NAVY};text-decoration:underline`;
-const looksLikeEmail = (e: string) => /^[^\s@<>"']+@[^\s@<>"']+\.[^\s@<>"']+$/.test(e);
+/** Only plain, boring addresses become mailto: links. Characters like ? & % could otherwise add a Bcc or other header when the link is clicked. */
+const looksLikeEmail = (e: string) => /^[A-Za-z0-9._+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/.test(e);
 const mailLink = (e?: string) => (e && looksLikeEmail(e) ? `<a href="mailto:${escapeHtml(e)}" style="${LINK}">${escapeHtml(e)}</a>` : escapeHtml(e || "—"));
 /** Indian mobile numbers become tap-to-call "+91 98450 73921" links; anything else stays plain text. */
 function phoneDigits(p?: string): string {
@@ -260,7 +263,7 @@ export function customerOrderEmail(o: MailOrder, siteUrl: string, opts: { receip
     siteUrl
   );
   const text = [`Order confirmed — ${no}`, "", `Placed on: ${istDate(o.createdAt)}`, "", ...o.items.map((i) => `${i.title} (${[i.size, i.color].filter(Boolean).join(", ")}) x${i.quantity} — ${inr(i.pricePaise * i.quantity)}`), "", ...totalsRows(o).map(([k, v]) => `${k}: ${v}`), `TOTAL: ${inr(o.totalPaise)}`, "", "Delivering to:", ...addressLines(o.deliveryAddress), "", `Payment: ${payLine(o)}`, `Estimated delivery: ${etaText(o.createdAt)}`, "", "Where your order is:", ...trackerText(steps), "", `Your orders: ${siteUrl}/account/orders`, `Need help? Call or WhatsApp ${supportNumber()}, or reply to this email.`].join("\n");
-  return { subject, html, text };
+  return { subject: oneLine(subject), html, text };
 }
 
 export function adminOrderEmail(o: MailOrder, siteUrl: string) {
@@ -277,7 +280,7 @@ export function adminOrderEmail(o: MailOrder, siteUrl: string) {
     siteUrl
   );
   const text = [`New order ${no} — ${inr(o.totalPaise)}${cod ? " (COD)" : ""}`, "", ...o.items.map((i) => `${i.title} (${[i.size, i.color].filter(Boolean).join(", ")}) x${i.quantity}`), "", ...addressLines(o.deliveryAddress), `Email: ${o.deliveryAddress.email ?? "—"}`, `Payment: ${payLine(o)}`, "", `${siteUrl}/portal-secure/orders/${o.id}`].join("\n");
-  return { subject, html, text };
+  return { subject: oneLine(subject), html, text };
 }
 
 export function testEmail(siteUrl: string) {
@@ -363,7 +366,7 @@ export function orderStatusEmail(o: MailOrder, siteUrl: string, s: StatusEmailIn
     `<p style="margin:24px 0 0">${button(`${siteUrl}/account/orders/${o.id}`, "TRACK MY ORDER")}</p>`;
   const html = shell(`Order ${no}`, escapeHtml(copy), body, siteUrl);
   const text = [`${no}: ${label}`, copy, s.note ? `Note: ${s.note}` : "", s.courier ? `Courier: ${s.courier}` : "", s.trackingNumber ? `Tracking no.: ${s.trackingNumber}` : "", s.trackingUrl ?? "", "", ...(steps.length ? ["Order tracker:", ...trackerText(steps), ""] : []), `Track your order: ${siteUrl}/account/orders/${o.id}`, `Need help? Call or WhatsApp ${supportNumber()}, or reply to this email.`].filter((l) => l !== "").join("\n");
-  return { subject, html, text };
+  return { subject: oneLine(subject), html, text };
 }
 
 /** Admin alert when a customer cancels an order or asks for a return. */
@@ -382,7 +385,7 @@ export function adminCustomerActionEmail(o: MailOrder, siteUrl: string, kind: "c
     siteUrl
   );
   const text = `${subject}\nCustomer: ${o.deliveryAddress.name}\nReason: ${reason}\n${siteUrl}/portal-secure/orders/${o.id}`;
-  return { subject, html, text };
+  return { subject: oneLine(subject), html, text };
 }
 
 // ── Support (contact form) ──────────────────────────────────────────────────────
@@ -402,7 +405,7 @@ export function supportAdminEmail(m: SupportMail, siteUrl: string) {
     siteUrl
   );
   const text = `${subject}\n\nFrom: ${m.name} <${m.email}> ${m.phone || ""}\nOrder: ${m.orderRef || "-"}\n\n${m.message}\n\n${siteUrl}/portal-secure/support`;
-  return { subject, html, text };
+  return { subject: oneLine(subject), html, text };
 }
 
 /** Acknowledgement to the customer with their reference number. */
@@ -416,7 +419,7 @@ export function supportAckEmail(m: SupportMail, siteUrl: string, hours: string) 
     siteUrl
   );
   const text = `We got your message — ${m.ref}\n\nThanks ${m.name.split(" ")[0]}. We usually reply within 24 hours (${hours}).\n\nYour message:\n${m.message}\n\nHelp Center: ${siteUrl}/help\nNeed help sooner? Call or WhatsApp ${supportNumber()}`;
-  return { subject, html, text };
+  return { subject: oneLine(subject), html, text };
 }
 
 // ── Account & security emails ───────────────────────────────────────────────────
@@ -425,7 +428,7 @@ export function supportAckEmail(m: SupportMail, siteUrl: string, hours: string) 
 export function welcomeEmail(opts: { firstName: string; siteUrl: string }) {
   const { firstName, siteUrl } = opts;
   const perk = (title: string, text: string) => `<tr><td valign="top" style="padding:10px 0;border-bottom:1px solid ${BONE};font-size:14px;line-height:1.6"><b>${title}</b><br><span style="color:${MUTED}">${text}</span></td></tr>`;
-  const subject = `Welcome to CULTRAVEN, ${firstName}`;
+  const subject = oneLine(firstName) ? `Welcome to CULTRAVEN, ${firstName}` : "Welcome to CULTRAVEN";
   const html = shell(
     "Welcome to CULTRAVEN",
     `Hi ${escapeHtml(firstName)}, your account is ready. Here is what you can do with it:`,
@@ -435,7 +438,7 @@ export function welcomeEmail(opts: { firstName: string; siteUrl: string }) {
     siteUrl
   );
   const text = `Welcome to CULTRAVEN, ${firstName}\n\nYour account is ready.\n- Track every order step by step\n- ${RETURN_WINDOW_DAYS}-day easy returns\n- Faster checkout with saved addresses\n\nStart shopping: ${siteUrl}/shop\nNeed help? Call or WhatsApp ${supportNumber()}`;
-  return { subject, html, text };
+  return { subject: oneLine(subject), html, text };
 }
 
 /** The "Forgot password" email: a single-use link that expires. It never contains a password. */
@@ -455,7 +458,7 @@ export function passwordResetEmail(opts: { firstName: string; email: string; res
     siteUrl
   );
   const text = `Reset your CULTRAVEN password\n\nHi ${firstName}, we received a request to reset the password for your account (${maskEmail(email)}).\n\nChoose a new password here (works for ${expiresMinutes} minutes, one use):\n${resetUrl}\n\nDidn't ask for this? Ignore this email — your password will not change.\nNeed help? Call or WhatsApp ${supportNumber()}\n\nCULTRAVEN will never ask for your password, OTP or card details.`;
-  return { subject, html, text };
+  return { subject: oneLine(subject), html, text };
 }
 
 /** Security notice after a password changes (reset link, "change password" on the account page, or an administrator). */
@@ -472,7 +475,7 @@ export function passwordChangedEmail(opts: { firstName: string; changedAt: Date;
     siteUrl
   );
   const text = `Your CULTRAVEN password was changed\n\nHi ${firstName}, the password for your account was changed on ${istDateTime(changedAt)}. You have been signed out on your other devices.\n\nSign in: ${signInUrl}\n\nWasn't you? Reset your password now: ${resetUrl}\nOr call/WhatsApp ${supportNumber()}.`;
-  return { subject, html, text };
+  return { subject: oneLine(subject), html, text };
 }
 
 // ── Staff account emails ────────────────────────────────────────────────────────
@@ -497,7 +500,7 @@ export function staffAccountCreatedEmail(opts: {
     siteUrl
   );
   const text = `Your CULTRAVEN ${roleLabel} account\n\nHi ${firstName}, your account (${email}) has been created.\n\nChoose your password (link works for ${expiresHours} hours, one use):\n${setPasswordUrl}\n\nThen sign in: ${loginUrl}`;
-  return { subject, html, text };
+  return { subject: oneLine(subject), html, text };
 }
 
 /** Sent to super admin when a delivery partner submits their KYC. */
@@ -514,7 +517,7 @@ export function deliveryKYCSubmittedEmail(opts: {
     siteUrl
   );
   const text = `${partnerName} (${partnerEmail}) submitted KYC for delivery partner verification.\n\nReview: ${adminUrl}`;
-  return { subject, html, text };
+  return { subject: oneLine(subject), html, text };
 }
 
 /** Sent to the delivery partner after admin approves or rejects their KYC. */
@@ -535,5 +538,5 @@ export function deliveryKYCDecisionEmail(opts: {
   const text = approved
     ? `Hi ${firstName}, your delivery account has been approved! Sign in: ${loginUrl}`
     : `Hi ${firstName}, your delivery account verification was unsuccessful.${note ? ` Reason: ${note}.` : ""}\n\nResubmit: ${loginUrl}`;
-  return { subject, html, text };
+  return { subject: oneLine(subject), html, text };
 }

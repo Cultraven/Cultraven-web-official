@@ -16,6 +16,7 @@ import { isUserActive } from "@/lib/account-delete";
 import { sendMail } from "@/lib/mailer";
 import { passwordResetEmail, passwordChangedEmail } from "@/lib/email-templates";
 import { BUSINESS } from "@/lib/business";
+import { siteUrl } from "@/lib/site-url";
 
 export const RESET_TTL_MINUTES = 30;
 export const INVITE_TTL_HOURS = 48;
@@ -27,7 +28,6 @@ export const TOKEN_SHAPE = /^[A-Za-z0-9_-]{43}$/;
 export const hashToken = (token: string) => crypto.createHash("sha256").update(token).digest("hex");
 export const newToken = () => crypto.randomBytes(32).toString("base64url");
 
-export const siteUrl = () => (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
 export const resetLink = (token: string) => `${siteUrl()}/reset-password?token=${token}`;
 
 /** Where a person signs in after choosing a password. */
@@ -40,14 +40,23 @@ export const loginPathFor = (role?: string) => (role === "delivery" ? "/portal-d
  */
 export const canResetByEmail = (role?: string) => role === "customer" || role === "delivery";
 
-/** Create a fresh token for a user (older unused ones of the same kind are cancelled). Returns the raw token — it is never stored. */
+/**
+ * Create a fresh token for a user. Returns the raw token — it is never stored.
+ *
+ * Each person has one row per purpose ("slot") that is rewritten in a single atomic step, so the older link of the same kind stops
+ * working at that moment — even if two requests for the same person arrive at the same instant (the last write wins; the other
+ * email's link is simply dead). A staff invite and a forgot-password link are different purposes and can both be pending.
+ */
 export async function issueToken(userId: string, purpose: TokenPurpose, ip = ""): Promise<{ token: string; expiresAt: Date }> {
   await connectToDatabase();
-  await PasswordReset.deleteMany({ userId, purpose, usedAt: null });
   const token = newToken();
   const ttl = purpose === "invite" ? INVITE_TTL_HOURS * 3_600_000 : RESET_TTL_MINUTES * 60_000;
   const expiresAt = new Date(Date.now() + ttl);
-  await PasswordReset.create({ userId, tokenHash: hashToken(token), purpose, expiresAt, requestIp: ip.slice(0, 64) });
+  await PasswordReset.findOneAndUpdate(
+    { slot: `${userId}:${purpose}` },
+    { $set: { userId, purpose, tokenHash: hashToken(token), expiresAt, usedAt: null, requestIp: ip.slice(0, 64) } },
+    { upsert: true },
+  );
   return { token, expiresAt };
 }
 

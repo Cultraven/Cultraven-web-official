@@ -117,11 +117,14 @@ const FLOW = TRACKING_STAGES as OrderStatus[];
  * Tracking steps for the order page. Done steps carry the time they were reached (from statusHistory);
  * on hold / failed delivery / returned-to-origin / cancelled / return states are appended as a final step.
  */
+/** An ISO time, or undefined for a date that isn't one (a damaged record must not stop an email being sent). */
+const iso = (d: Date | string | number): string | undefined => { const t = new Date(d); return Number.isNaN(t.getTime()) ? undefined : t.toISOString(); };
+
 export function buildTimeline(o: { fulfillmentStatus: string; createdAt: Date | string; statusHistory?: HistoryEvent[] }): TimelineStep[] {
   const hist = o.statusHistory ?? [];
   const when = (s: string) => {
     const e = [...hist].reverse().find((h) => h.status === s);
-    return e ? new Date(e.at).toISOString() : undefined;
+    return e ? iso(e.at) : undefined;
   };
   const noteOf = (s: string) => [...hist].reverse().find((h) => h.status === s)?.note;
   const status = isOrderStatus(o.fulfillmentStatus) ? o.fulfillmentStatus : "processing";
@@ -138,7 +141,7 @@ export function buildTimeline(o: { fulfillmentStatus: string; createdAt: Date | 
   const steps: TimelineStep[] = FLOW.map((s, i) => ({
     key: s,
     label: STATUS_LABEL[s],
-    at: s === "processing" ? new Date(o.createdAt).toISOString() : when(s),
+    at: s === "processing" ? iso(o.createdAt) : when(s),
     state: sideStep ? (i <= reached ? "done" : "todo") : i < reached ? "done" : i === reached ? (status === "delivered" || returnFlow ? "done" : "current") : "todo",
   }));
   if (status === "cancelled") steps.push({ key: "cancelled", label: "Cancelled", at: when("cancelled"), state: "bad", note: noteOf("cancelled") });

@@ -10,8 +10,8 @@ import { getSmtpSettings, sendMail } from "@/lib/mailer";
 import { customerOrderEmail, adminOrderEmail, orderStatusEmail, adminCustomerActionEmail, orderNumber, type MailOrder, type StatusEmailInput } from "@/lib/email-templates";
 import { buildInvoicePdf } from "@/lib/invoice-pdf";
 import { buildTimeline } from "@/lib/order-lifecycle";
+import { siteUrl } from "@/lib/site-url";
 
-const siteUrl = () => (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
 
 /** Admin action: send the order confirmation (with receipt) to the customer again. Returns whether an email was attempted. */
 export async function resendOrderConfirmation(orderId: string): Promise<{ ok: boolean; reason?: string }> {
@@ -26,7 +26,7 @@ export async function resendOrderConfirmation(orderId: string): Promise<{ ok: bo
     let attachments: { filename: string; content: Uint8Array; contentType: string }[] | undefined;
     try { attachments = [{ filename: `CULTRAVEN-receipt-${orderNumber(mo.id)}.pdf`, content: await buildInvoicePdf({ ...mo, razorpayPaymentId: o.razorpayPaymentId }), contentType: "application/pdf" }]; } catch { /* send without it */ }
     const m = customerOrderEmail(mo, siteUrl(), { receiptAttached: !!attachments });
-    const r = await sendMail({ to: mo.deliveryAddress.email!, ...m, kind: "order-customer-resend", orderId: mo.id, replyTo: settings.fromEmail, attachments });
+    const r = await sendMail({ to: mo.deliveryAddress.email!, ...m, kind: "order-customer-resend", orderId: mo.id, attachments });
     return r.ok ? { ok: true } : { ok: false, reason: "The mail server refused it — see Settings → Email for details" };
   } catch (e) {
     console.error("[order-notify] resend failed:", e instanceof Error ? e.message : e);
@@ -55,7 +55,7 @@ export async function notifyOrderPlaced(orderId: string): Promise<void> {
       try { attachments = [{ filename: `CULTRAVEN-receipt-${orderNumber(mo.id)}.pdf`, content: await buildInvoicePdf({ ...mo, razorpayPaymentId: o.razorpayPaymentId }), contentType: "application/pdf" }]; }
       catch (e) { console.error("[order-notify] receipt PDF failed:", e instanceof Error ? e.message : e); }
       const m = customerOrderEmail(mo, siteUrl(), { receiptAttached: !!attachments });
-      jobs.push(sendMail({ to: mo.deliveryAddress.email, ...m, kind: "order-customer", orderId: mo.id, replyTo: settings?.fromEmail, attachments }));
+      jobs.push(sendMail({ to: mo.deliveryAddress.email, ...m, kind: "order-customer", orderId: mo.id, attachments }));
     }
     for (const to of settings?.adminEmails ?? []) {
       const m = adminOrderEmail(mo, siteUrl());
@@ -93,7 +93,7 @@ export async function notifyStatusChange(orderId: string, info: StatusEmailInput
       } catch { picks = []; }
     }
     const m = orderStatusEmail(mo, siteUrl(), { ...info, picks, timeline: info.timeline ?? buildTimeline({ fulfillmentStatus: o.fulfillmentStatus, createdAt: o.createdAt, statusHistory: (o.statusHistory ?? []).map((h: any) => ({ status: h.status, note: h.note, at: h.at, by: h.by })) }), courier: info.courier ?? o.courierName, trackingNumber: info.trackingNumber ?? o.trackingNumber, trackingUrl: info.trackingUrl ?? o.trackingUrl });
-    await sendMail({ to: mo.deliveryAddress.email!, ...m, kind: `order-status-${info.status}`, orderId: mo.id, replyTo: settings?.fromEmail });
+    await sendMail({ to: mo.deliveryAddress.email!, ...m, kind: `order-status-${info.status}`, orderId: mo.id });
   } catch (e) {
     console.error("[order-notify] status email failed:", e instanceof Error ? e.message : e);
   }
