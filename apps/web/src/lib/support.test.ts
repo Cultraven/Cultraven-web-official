@@ -4,7 +4,7 @@ import { supportConfig, whatsappLink, mailtoLink, contactLink, cleanOrderNumber,
 describe("support config + links", () => {
   it("uses env values when valid, safe defaults otherwise", () => {
     expect(supportConfig({ NEXT_PUBLIC_WHATSAPP_NUMBER: "+91 98450 73921", NEXT_PUBLIC_SUPPORT_EMAIL: "help@x.in" } as any)).toMatchObject({ whatsapp: "919845073921", email: "help@x.in" });
-    expect(supportConfig({ NEXT_PUBLIC_WHATSAPP_NUMBER: "abc", NEXT_PUBLIC_SUPPORT_EMAIL: "not-an-email" } as any)).toMatchObject({ whatsapp: "919999999999", email: "support@cultraven.com" });
+    expect(supportConfig({ NEXT_PUBLIC_WHATSAPP_NUMBER: "abc", NEXT_PUBLIC_SUPPORT_EMAIL: "not-an-email" } as any)).toMatchObject({ whatsapp: "918962212605", email: "support@cultraven.com" });
     expect(supportConfig({} as any).hours).toMatch(/IST/);
   });
   it("builds whatsapp / mailto / contact links with encoding", () => {
@@ -70,10 +70,13 @@ describe("matchSubject", () => {
 });
 
 describe("optional phone line", () => {
-  it("is off unless a valid number is configured", () => {
-    expect(supportConfig({} as any).phone).toBe("");
-    expect(supportConfig({ NEXT_PUBLIC_SUPPORT_PHONE: "12345" } as any).phone).toBe("");
-    expect(telLink(supportConfig({} as any))).toBe("");
+  it("is the registered support line (8962212605) unless a valid number is configured; example numbers are ignored", () => {
+    expect(supportConfig({} as any).phone).toBe("918962212605");
+    expect(supportConfig({} as any).whatsapp).toBe("918962212605");
+    expect(supportConfig({ NEXT_PUBLIC_SUPPORT_PHONE: "12345" } as any).phone).toBe("918962212605");
+    expect(supportConfig({ NEXT_PUBLIC_WHATSAPP_NUMBER: "919876543210", NEXT_PUBLIC_SUPPORT_PHONE: "919999999999" } as any)).toMatchObject({ whatsapp: "918962212605", phone: "918962212605" });
+    expect(telLink(supportConfig({} as any))).toBe("tel:+918962212605");
+    expect(formatPhone(supportConfig({} as any).phone)).toBe("+91 89622 12605");
   });
   it("accepts a number with spaces / plus and builds tel: + display text", () => {
     const cfg = supportConfig({ NEXT_PUBLIC_SUPPORT_PHONE: "+91 98450 73921" } as any);

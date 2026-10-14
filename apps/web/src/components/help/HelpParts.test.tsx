@@ -21,9 +21,12 @@ describe("ContactCards", () => {
     expect(hrefs.some((h) => h.startsWith("mailto:") && h.includes("CR-1A2B3C"))).toBe(true);
     expect(hrefs).toContain("/pages/contact?subject=Return+%2F+exchange&order=CR-1A2B3C");
     expect(hrefs).toContain("/help/faq");
-    expect(screen.queryByText("Call us")).toBeNull(); // no phone configured -> no Call us card
+    // The registered support line (8962212605) is the default, so the Call us card is always there with its number.
+    expect(screen.getByText("Call us")).toBeTruthy();
+    expect(hrefs).toContain("tel:+918962212605");
+    expect(screen.getByText(/\+91 89622 12605/)).toBeTruthy();
   });
-  it("adds a Call us card when a support phone is configured", () => {
+  it("a different support phone in the settings replaces it", () => {
     vi.stubEnv("NEXT_PUBLIC_SUPPORT_PHONE", "919845073921");
     render(<ContactCards />);
     expect(screen.getByText("Call us")).toBeTruthy();

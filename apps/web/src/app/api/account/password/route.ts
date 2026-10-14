@@ -7,6 +7,8 @@ import { NextRequest } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import { User } from "@/lib/models/User";
 import { activeCustomerFromRequest } from "@/lib/customer-auth";
+import { CUSTOMER_SESSION_COOKIE, CUSTOMER_SESSION_MAX_AGE_S, createCustomerSessionToken, sessionCookieOptions } from "@/lib/session-token";
+import { afterResponse, sendPasswordChangedEmail } from "@/lib/password-reset";
 import { ChangePasswordSchema } from "@/lib/profile-schema";
 import { hashPassword, verifyPassword } from "@/lib/password";
 import { json, unauthorized } from "@/lib/account-api";
@@ -43,9 +45,13 @@ export async function POST(req: NextRequest) {
     }
 
     const passwordHash = await hashPassword(newPassword);
-    await User.updateOne({ _id: me.userId, deletedAt: null }, { $set: { passwordHash } });
+    await User.updateOne({ _id: me.userId, deletedAt: null }, { $set: { passwordHash, passwordChangedAt: new Date() } });
     resetRateLimit(failKey);
-    return json({ ok: true });
+    afterResponse(() => sendPasswordChangedEmail(me.userId));
+    // Every older sign-in (other phones, other browsers) stops working; this device gets a fresh one so the person stays signed in.
+    const res = json({ ok: true });
+    res.cookies.set(CUSTOMER_SESSION_COOKIE, createCustomerSessionToken(me.userId, me.email, me.role || "customer"), sessionCookieOptions(CUSTOMER_SESSION_MAX_AGE_S));
+    return res;
   } catch (e) {
     console.error("[account/password]", e instanceof Error ? e.message : e);
     return json({ error: "Could not change your password. Please try again." }, 500);

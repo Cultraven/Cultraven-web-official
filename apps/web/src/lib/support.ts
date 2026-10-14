@@ -5,6 +5,7 @@
  */
 import { FREE_SHIPPING_THRESHOLD, SHIPPING_FEE, COD_FEE, COD_MAX_LIMIT } from "@/lib/constants";
 import { CANCEL_WINDOW_DAYS, RETURN_WINDOW_DAYS } from "@/lib/order-lifecycle";
+import { BUSINESS } from "@/lib/business";
 
 const inr = (paise: number) => `₹${(paise / 100).toLocaleString("en-IN")}`;
 
@@ -21,13 +22,17 @@ const publicEnv = () => ({
   NEXT_PUBLIC_SUPPORT_PHONE: process.env.NEXT_PUBLIC_SUPPORT_PHONE,
 });
 
+/** Example numbers that shipped in .env.example / old defaults: treated as "not set" so a copied placeholder never reaches a customer. */
+const PLACEHOLDER_NUMBERS = new Set(["919876543210", "919999999999"]);
+const realNumber = (v: string | undefined) => { const d = (v ?? "").replace(/\D/g, ""); return /^\d{10,15}$/.test(d) && !PLACEHOLDER_NUMBERS.has(d) ? d : ""; };
+
+/** Phone and WhatsApp default to the registered support line (lib/business.ts); the env settings only override it. */
 export function supportConfig(env: Record<string, string | undefined> = publicEnv()): SupportConfig {
-  const digits = (env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "").replace(/\D/g, "");
   return {
-    whatsapp: /^\d{10,15}$/.test(digits) ? digits : "919999999999",
+    whatsapp: realNumber(env.NEXT_PUBLIC_WHATSAPP_NUMBER) || BUSINESS.supportPhoneDigits,
     email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(env.NEXT_PUBLIC_SUPPORT_EMAIL ?? "") ? (env.NEXT_PUBLIC_SUPPORT_EMAIL as string) : "support@cultraven.com",
     hours: (env.NEXT_PUBLIC_SUPPORT_HOURS ?? "").trim().slice(0, 80) || "Mon–Sat, 10 AM – 7 PM IST",
-    phone: /^\d{10,15}$/.test((env.NEXT_PUBLIC_SUPPORT_PHONE ?? "").replace(/\D/g, "")) ? (env.NEXT_PUBLIC_SUPPORT_PHONE as string).replace(/\D/g, "") : "",
+    phone: realNumber(env.NEXT_PUBLIC_SUPPORT_PHONE) || BUSINESS.supportPhoneDigits,
   };
 }
 

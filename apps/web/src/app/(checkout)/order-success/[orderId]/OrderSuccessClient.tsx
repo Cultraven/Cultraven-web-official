@@ -9,6 +9,7 @@ import { useSearchParams } from "next/navigation";
 import { useCartStore } from "@/store/cart";
 import { useBuyNowStore } from "@/store/buyNow";
 import Confetti from "react-confetti";
+import { whatsappLink } from "@/lib/support";
 
 interface OrderSuccessClientProps {
   orderId: string;
@@ -87,7 +88,7 @@ function OrderSuccessContent({ orderId }: OrderSuccessClientProps) {
 
         <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.78rem", color: "var(--color-gray)", marginBottom: "2rem", lineHeight: 1.6 }}>
           🚀 Shipping & tracking updates via WhatsApp.{" "}
-          <a href="https://wa.me/919876543210" style={{ color: "var(--color-navy)", fontWeight: 700, display: "inline-flex", alignItems: "center", minHeight: "44px", padding: "0 0.25rem" }}>Contact us</a>{" "}or{" "}
+          <a href={whatsappLink("Hi CULTRAVEN, I need help with my order")} style={{ color: "var(--color-navy)", fontWeight: 700, display: "inline-flex", alignItems: "center", minHeight: "44px", padding: "0 0.25rem" }}>Contact us</a>{" "}or{" "}
           <a href="mailto:support@cultraven.com" style={{ color: "var(--color-navy)", fontWeight: 700, display: "inline-flex", alignItems: "center", minHeight: "44px", padding: "0 0.25rem" }}>support@cultraven.com</a>
         </p>
 

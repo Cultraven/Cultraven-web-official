@@ -1,13 +1,16 @@
 /**
  * POST /api/auth/forgot-password
- * Triggers a password reset email via the auth-service.
- * Always returns 200 for a well-formed request (prevents email enumeration); hostile / malformed bodies get 4xx.
+ * Emails a password-reset link (single-use, expires in 30 minutes) to the account with that address.
+ * Always returns 200 for a well-formed request, whether or not an account exists (prevents email enumeration); hostile / malformed
+ * bodies get 4xx. The email is prepared after the response is sent, so the answer is just as fast for unknown addresses.
  *
  * Rate limited per IP (3/hour) and per email (3/hour) so it can't be used to flood someone's inbox.
+ * Only customer and delivery-partner accounts can use it — see canResetByEmail in lib/password-reset.ts.
  */
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { clientIp, isSameOrigin, parseJsonBody, rateLimit } from "@/lib/sanitize";
+import { afterResponse, sendResetEmailFor } from "@/lib/password-reset";
 
 const BodySchema = z.object({
   email: z.string().trim().max(254).email("Invalid email").toLowerCase(),
@@ -32,20 +35,7 @@ export async function POST(req: NextRequest) {
   const emailOk = rateLimit(`forgot-email:${email}`, 3, HOUR).ok;
   if (!ipOk || !emailOk) return NextResponse.json({ ok: true }, { status: 200 });
 
-  // Fire-and-forget — don't await (prevents timing differences)
-  Promise.resolve().then(async () => {
-    try {
-      const authServiceUrl = process.env.AUTH_SERVICE_URL ?? "http://localhost:4001/api/v1";
-      await fetch(`${authServiceUrl}/auth/forgot-password`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-        signal: AbortSignal.timeout(5000),
-      });
-    } catch (err) {
-      console.error("[forgot-password] service error:", err instanceof Error ? err.message : err);
-    }
-  });
+  afterResponse(() => sendResetEmailFor(email, ip));
 
   return NextResponse.json({ ok: true }, { status: 200 });
 }

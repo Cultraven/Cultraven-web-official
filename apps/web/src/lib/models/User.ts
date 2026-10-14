@@ -32,6 +32,8 @@ export interface IUser extends Document {
   verificationStatus?: "unverified" | "pending" | "approved" | "rejected";
   /** Admin note shown to delivery partner on rejection. */
   verificationNote?: string | null;
+  /** When the password last changed. A sign-in session issued before this moment is no longer accepted. */
+  passwordChangedAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -109,6 +111,10 @@ const UserSchema = new Schema<IUser>(
       type: String,
       default: null,
     },
+    passwordChangedAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,
@@ -128,7 +134,7 @@ UserSchema.virtual("fullName").get(function (this: IUser) {
 });
 
 // Dev only: a hot-reloaded server keeps the previously compiled model, which would silently drop the soft-delete / avatar fields.
-if (process.env.NODE_ENV !== "production" && models.User && !models.User.schema.path("deletedAt")) {
+if (process.env.NODE_ENV !== "production" && models.User && !models.User.schema.path("passwordChangedAt")) {
   mongoose.deleteModel("User");
 }
 

@@ -20,6 +20,11 @@ import { User } from "@/lib/models/User";
 import { CUSTOMER_SESSION_COOKIE, CUSTOMER_SESSION_MAX_AGE_S, createCustomerSessionToken, sessionCookieOptions } from "@/lib/session-token";
 import { clientIp, isSameOrigin, parseJsonBody, rateLimit, retryHeaders, stripControlChars, stripTags } from "@/lib/sanitize";
 import { MobileField } from "@/lib/address-schema";
+import { PasswordPolicy } from "@/lib/password";
+import { afterResponse } from "@/lib/password-reset";
+import { sendMail } from "@/lib/mailer";
+import { welcomeEmail } from "@/lib/email-templates";
+import { BUSINESS } from "@/lib/business";
 
 const cleanName = (max: number, label: string) =>
   z.string().max(max * 2).transform((v) => stripTags(stripControlChars(v)).trim()).pipe(z.string().min(1, `${label} required`).max(max));
@@ -30,13 +35,7 @@ const RegisterSchema = z.object({
   email: z.string().trim().max(254).email("Invalid email").toLowerCase(),
   // Mandatory. Same rules as the delivery-address form: 10 digits starting 6-9, "+91 / 0 / spaces / dashes" accepted and stripped.
   phone: MobileField,
-  password: z
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .max(128)
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, "Password must contain uppercase, lowercase and a number")
-    // bcrypt only uses the first 72 bytes: refuse longer ones instead of silently truncating them
-    .refine((v) => Buffer.byteLength(v, "utf8") <= 72, "Password must be at most 72 characters"),
+  password: PasswordPolicy,
 });
 
 export async function POST(req: NextRequest) {
@@ -78,6 +77,12 @@ export async function POST(req: NextRequest) {
       if (e?.code === 11000) return NextResponse.json({ error: "An account with this email already exists." }, { status: 409 });
       throw e;
     }
+
+    // Welcome email after the response is sent; a mail problem never affects sign-up.
+    afterResponse(async () => {
+      const site = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
+      await sendMail({ to: user.email, ...welcomeEmail({ firstName: user.firstName, siteUrl: site }), kind: "welcome", replyTo: BUSINESS.supportEmail });
+    });
 
     const token = createCustomerSessionToken(user._id.toString(), user.email, user.role);
     const response = NextResponse.json({ ok: true, email: user.email, firstName: user.firstName }, { status: 201 });

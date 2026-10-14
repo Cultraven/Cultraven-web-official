@@ -4,6 +4,7 @@ import { connectToDatabase } from "@/lib/db";
 import { User } from "@/lib/models/User";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
+import { afterResponse, sendPasswordChangedEmail } from "@/lib/password-reset";
 
 export const dynamic = "force-dynamic";
 
@@ -38,6 +39,7 @@ export async function POST(req: NextRequest) {
 
     const hash = await bcrypt.hash(newPassword, 12);
     await User.findByIdAndUpdate(userId, { $set: { passwordHash: hash } });
+    afterResponse(() => sendPasswordChangedEmail(String(userId)));
 
     return NextResponse.json({ ok: true });
   } catch (err) {

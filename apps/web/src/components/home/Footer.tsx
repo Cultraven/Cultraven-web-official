@@ -13,6 +13,7 @@
 "use client";
 
 import { BrandLogo } from "@/components/common/BrandLogo";
+import { BUSINESS } from "@/lib/business";
 import React, { useState } from "react";
 import Link from "next/link";
 import type { FooterConfig } from "@shop/types";
@@ -148,10 +149,9 @@ export function Footer({ config }: FooterProps) {
             </p>
 
             <div style={{ marginBottom: "1.5rem", fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 700, color: "var(--color-smoke)", lineHeight: 1.6, textTransform: "uppercase" }}>
-              <p>CULTRAVEN CLOTHING PVT LTD</p>
-              <p>PLOT 42, AB ROAD, VIJAY NAGAR</p>
-              <p>INDORE, MADHYA PRADESH 452010</p>
-              <p>GSTIN: 23AABCB1234D1Z5</p>
+              <p>{BUSINESS.sellerName}</p>
+              {BUSINESS.addressLines.map((line) => <p key={line}>{line}</p>)}
+              <p>GSTIN: {BUSINESS.gstin}</p>
             </div>
 
             <a

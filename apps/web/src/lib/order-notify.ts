@@ -9,6 +9,7 @@ import { Product } from "@/lib/models/Product";
 import { getSmtpSettings, sendMail } from "@/lib/mailer";
 import { customerOrderEmail, adminOrderEmail, orderStatusEmail, adminCustomerActionEmail, orderNumber, type MailOrder, type StatusEmailInput } from "@/lib/email-templates";
 import { buildInvoicePdf } from "@/lib/invoice-pdf";
+import { buildTimeline } from "@/lib/order-lifecycle";
 
 const siteUrl = () => (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
 
@@ -91,7 +92,7 @@ export async function notifyStatusChange(orderId: string, info: StatusEmailInput
         picks = docs.filter((d) => !ids.has(String(d._id))).slice(0, 4).map((d) => ({ title: d.title, pricePaise: d.pricePaise, image: /^https?:\/\//.test(d.image ?? "") ? d.image : d.image ? `${siteUrl()}${d.image}` : undefined, url: `${siteUrl()}/products/${d.slug}` }));
       } catch { picks = []; }
     }
-    const m = orderStatusEmail(mo, siteUrl(), { ...info, picks, courier: info.courier ?? o.courierName, trackingNumber: info.trackingNumber ?? o.trackingNumber, trackingUrl: info.trackingUrl ?? o.trackingUrl });
+    const m = orderStatusEmail(mo, siteUrl(), { ...info, picks, timeline: info.timeline ?? buildTimeline({ fulfillmentStatus: o.fulfillmentStatus, createdAt: o.createdAt, statusHistory: (o.statusHistory ?? []).map((h: any) => ({ status: h.status, note: h.note, at: h.at, by: h.by })) }), courier: info.courier ?? o.courierName, trackingNumber: info.trackingNumber ?? o.trackingNumber, trackingUrl: info.trackingUrl ?? o.trackingUrl });
     await sendMail({ to: mo.deliveryAddress.email!, ...m, kind: `order-status-${info.status}`, orderId: mo.id, replyTo: settings?.fromEmail });
   } catch (e) {
     console.error("[order-notify] status email failed:", e instanceof Error ? e.message : e);

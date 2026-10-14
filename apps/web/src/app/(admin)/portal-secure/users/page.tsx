@@ -109,7 +109,7 @@ function CreateStaffModal({ onClose, onCreated }: { onClose: () => void; onCreat
               <input className="adm-input" type="tel" inputMode="numeric" value={form.phone} onChange={set("phone")} required maxLength={20} placeholder="98765 43210" autoComplete="off" />
             </Field>
 
-            <Field label="Temporary password" required hint="Min. 8 characters — share this securely with the person">
+            <Field label="Temporary password" required hint="Min. 8 characters. The person also gets an email with a secure link to choose their own password.">
               <input className="adm-input" value={form.password} onChange={set("password")} required placeholder="At least 8 characters" minLength={8} />
             </Field>
 

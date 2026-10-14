@@ -7,6 +7,7 @@ import nodemailer from "nodemailer";
 import { connectToDatabase } from "@/lib/db";
 import { Setting, EmailLog } from "@/lib/models/Setting";
 import { encryptSecret, decryptSecret } from "@/lib/secret-box";
+import { withInlineLogo } from "@/lib/email-logo";
 
 export interface SmtpSettings {
   enabled: boolean;
@@ -106,11 +107,14 @@ export async function sendMail(m: MailInput): Promise<{ ok: boolean; error?: str
     await log({ kind: m.kind, to: m.to, subject: m.subject, status: "skipped", error: s ? "Email disabled" : "SMTP not configured", orderId: m.orderId });
     return { ok: false, error: "SMTP not configured" };
   }
+  // The header logo travels inside the email (inline attachment) so it never shows as a broken image.
+  const { html, attachment: logo } = withInlineLogo(m.html);
+  const attachments = [...(logo ? [logo] : []), ...(m.attachments ?? []).map((a) => ({ filename: a.filename, content: Buffer.from(a.content), contentType: a.contentType }))];
   let lastError = "";
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
       const transport = buildTransport(s);
-      await transport.sendMail({ from: `"${s.fromName.replace(/"/g, "")}" <${s.fromEmail}>`, to: m.to, replyTo: m.replyTo, subject: m.subject, html: m.html, text: m.text, attachments: m.attachments?.map((a) => ({ filename: a.filename, content: Buffer.from(a.content), contentType: a.contentType })) });
+      await transport.sendMail({ from: `"${s.fromName.replace(/"/g, "")}" <${s.fromEmail}>`, to: m.to, replyTo: m.replyTo, subject: m.subject, html, text: m.text, attachments });
       await log({ kind: m.kind, to: m.to, subject: m.subject, status: "sent", orderId: m.orderId });
       return { ok: true };
     } catch (e: any) {

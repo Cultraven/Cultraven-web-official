@@ -4,6 +4,7 @@ import { User } from "@/lib/models/User";
 import { isSuperAdminRequest } from "@/lib/admin-auth";
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
+import { afterResponse, sendPasswordChangedEmail } from "@/lib/password-reset";
 
 export const dynamic = "force-dynamic";
 
@@ -22,8 +23,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   try {
     await connectToDatabase();
     const hash = await bcrypt.hash(password, 12);
-    const result = await User.findByIdAndUpdate(id, { passwordHash: hash }, { new: false }).select("_id").lean();
+    const result = await User.findByIdAndUpdate(id, { passwordHash: hash, passwordChangedAt: new Date() }, { new: false }).select("_id").lean();
     if (!result) return NextResponse.json({ error: "User not found" }, { status: 404 });
+    afterResponse(() => sendPasswordChangedEmail(id)); // the person is told, so an unexpected change gets noticed
     return NextResponse.json({ ok: true });
   } catch (err) {
     console.error("[admin/users/:id/password] POST failed:", err);

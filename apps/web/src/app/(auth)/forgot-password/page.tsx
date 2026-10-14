@@ -59,7 +59,7 @@ export default function ForgotPasswordPage() {
             </div>
             <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1.5rem", fontWeight: 400, color: "var(--color-navy)", textTransform: "uppercase", marginBottom: "0.75rem" }}>CHECK YOUR INBOX</h3>
             <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "var(--color-gray)", lineHeight: 1.7, marginBottom: "1.5rem" }}>
-              If an account with <strong style={{ color: "var(--color-navy)" }}>{email}</strong> exists, you&apos;ll receive a reset link shortly. Check your spam folder too.
+              If an account with <strong style={{ color: "var(--color-navy)" }}>{email}</strong> exists, you&apos;ll receive a reset link shortly. It works for 30 minutes. Check your spam folder too.
             </p>
             <Link href="/login" style={{ display: "inline-block", padding: "0.75rem 2rem", backgroundColor: "var(--color-navy)", color: "var(--color-cream)", fontFamily: "var(--font-sans)", fontWeight: 900, fontSize: "0.75rem", letterSpacing: "0.12em", textTransform: "uppercase", textDecoration: "none", boxShadow: "3px 3px 0px var(--color-lava)" }}>
               BACK TO LOGIN

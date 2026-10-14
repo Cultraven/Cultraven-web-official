@@ -66,6 +66,9 @@ export default function DeliveryLoginPage() {
               <Button type="submit" variant="primary" loading={loading} style={{ width: "100%", height: 40 }}>
                 {loading ? "Signing in…" : "Sign in"}
               </Button>
+              <Link href="/forgot-password" style={{ fontSize: 13, color: "var(--a-text, inherit)", textAlign: "center", fontWeight: 600 }}>
+                Forgot your password?
+              </Link>
               <Link href="/portal-access" style={{ fontSize: 13, color: "var(--a-text, inherit)", textAlign: "center", fontWeight: 600 }}>
                 Store admin? Sign in here →
               </Link>

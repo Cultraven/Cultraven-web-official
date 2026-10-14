@@ -7,6 +7,7 @@ import { z } from "zod";
 import { sendMail } from "@/lib/mailer";
 import { staffAccountCreatedEmail } from "@/lib/email-templates";
 import { MobileField } from "@/lib/address-schema";
+import { INVITE_TTL_HOURS, issueToken } from "@/lib/password-reset";
 
 export const dynamic = "force-dynamic";
 
@@ -56,8 +57,14 @@ export async function POST(req: NextRequest) {
       ? `${siteUrl}/portal-delivery-access`
       : `${siteUrl}/portal-access`;
 
-    const tpl = staffAccountCreatedEmail({ firstName, email: email.toLowerCase(), password, role, loginUrl, siteUrl });
-    sendMail({ to: email.toLowerCase(), ...tpl, kind: "staff_account_created" }).catch(() => {});
+    // The email carries a one-time "set your password" link, never the password itself.
+    try {
+      const { token } = await issueToken(user._id.toString(), "invite");
+      const tpl = staffAccountCreatedEmail({ firstName, email: email.toLowerCase(), setPasswordUrl: `${siteUrl}/reset-password?token=${token}`, expiresHours: INVITE_TTL_HOURS, role, loginUrl, siteUrl });
+      sendMail({ to: email.toLowerCase(), ...tpl, kind: "staff_account_created" }).catch(() => {});
+    } catch (e) {
+      console.error("[admin/users/create] could not prepare the set-password email:", e instanceof Error ? e.message : e);
+    }
 
     return NextResponse.json({ ok: true, id: user._id.toString() }, { status: 201 });
   } catch (err) {

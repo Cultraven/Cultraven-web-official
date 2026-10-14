@@ -7,7 +7,7 @@ import { isUserActive } from "@/lib/account-delete";
 
 export const CUSTOMER_COOKIE = "cultraven_session";
 
-export interface CustomerSession { userId: string; email: string; role?: string }
+export interface CustomerSession { userId: string; email: string; role?: string; /** When the session was issued (ms) */ iat?: number }
 
 /** Verifies the signed customer session token (HMAC). Never falls back to a default secret. */
 export function verifyCustomerToken(token: string | undefined | null): CustomerSession | null {
@@ -22,10 +22,16 @@ export function verifyCustomerToken(token: string | undefined | null): CustomerS
     const payload = JSON.parse(Buffer.from(encoded, "base64url").toString("utf-8"));
     if (payload.exp && payload.exp < Date.now()) return null;
     if (!payload.userId) return null;
-    return { userId: String(payload.userId), email: String(payload.email ?? ""), role: payload.role };
+    return { userId: String(payload.userId), email: String(payload.email ?? ""), role: payload.role, iat: typeof payload.iat === "number" ? payload.iat : undefined };
   } catch {
     return null;
   }
+}
+
+/** A password change signs every device out: a session issued before the change no longer counts. */
+export function signedInBeforePasswordChange(session: { iat?: number }, user: { passwordChangedAt?: Date | string | null } | null | undefined): boolean {
+  if (!user?.passwordChangedAt || typeof session.iat !== "number") return false;
+  return session.iat < new Date(user.passwordChangedAt).getTime();
 }
 
 /** Customer session from an API request's cookies (signature only — no database lookup; see activeCustomerFromRequest). */
@@ -47,8 +53,8 @@ export async function activeCustomerFromRequest(req: Request): Promise<CustomerS
   const session = customerFromRequest(req);
   if (!session || !mongoose.isValidObjectId(session.userId)) return null;
   await connectToDatabase();
-  const u = (await User.findById(session.userId).select("deletedAt status").lean()) as any;
-  return isUserActive(u) ? session : null;
+  const u = (await User.findById(session.userId).select("deletedAt status passwordChangedAt").lean()) as any;
+  return isUserActive(u) && !signedInBeforePasswordChange(session, u) ? session : null;
 }
 
 export interface CustomerProfile {
@@ -67,8 +73,9 @@ export async function getCurrentCustomer(): Promise<CustomerProfile | null> {
   if (!session) return null;
   try {
     await connectToDatabase();
-    const u = (await User.findById(session.userId).select("firstName lastName email avatarUpdatedAt deletedAt status").lean()) as any;
+    const u = (await User.findById(session.userId).select("firstName lastName email avatarUpdatedAt deletedAt status passwordChangedAt").lean()) as any;
     if (u && !isUserActive(u)) return null; // soft-deleted account: not signed in
+    if (u && signedInBeforePasswordChange(session, u)) return null; // the password changed since this device signed in
     if (!u) return { userId: session.userId, email: session.email, firstName: "", lastName: "", avatarVersion: null };
     return {
       userId: session.userId,
