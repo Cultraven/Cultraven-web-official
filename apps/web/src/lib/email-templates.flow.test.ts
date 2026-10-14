@@ -170,7 +170,7 @@ describe("password emails", () => {
     const w = welcomeEmail({ firstName: "Asha", siteUrl: SITE });
     expect(w.subject).toBe("Welcome to CULTRAVEN, Asha");
     expect(w.html).toContain("START SHOPPING");
-    expect(w.html).toContain('href="https://cultraven.com/shop"');
+    expect(w.html).toContain('href="https://cultraven.com/collections"');
     expect(w.html).toContain("Track every order");
   });
 });

@@ -434,10 +434,10 @@ export function welcomeEmail(opts: { firstName: string; siteUrl: string }) {
     `Hi ${escapeHtml(firstName)}, your account is ready. Here is what you can do with it:`,
     `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid ${BONE}">${perk("Track every order", "Follow each order step by step, from packed to delivered.")}${perk("Easy returns", `Not right? Return it within ${RETURN_WINDOW_DAYS} days from your orders page.`)}${perk("Faster checkout", "Save your addresses and favourites so next time takes seconds.")}</table>` +
       `<p style="margin:14px 0 0;padding:10px 12px;background:${BONE};border-left:4px solid ${GOLD};font-size:13px"><b>Free delivery</b> above ${inr(FREE_SHIPPING_THRESHOLD)} &middot; <b>Cash on Delivery</b> available</p>` +
-      `<p style="margin:24px 0 0">${button(`${siteUrl}/shop`, "START SHOPPING")} <a href="${escapeHtml(siteUrl)}/account" style="display:inline-block;padding:14px 8px;color:${NAVY};font-weight:900;font-size:13px">My account →</a></p>`,
+      `<p style="margin:24px 0 0">${button(`${siteUrl}/collections`, "START SHOPPING")} <a href="${escapeHtml(siteUrl)}/account" style="display:inline-block;padding:14px 8px;color:${NAVY};font-weight:900;font-size:13px">My account →</a></p>`,
     siteUrl
   );
-  const text = `Welcome to CULTRAVEN, ${firstName}\n\nYour account is ready.\n- Track every order step by step\n- ${RETURN_WINDOW_DAYS}-day easy returns\n- Faster checkout with saved addresses\n\nStart shopping: ${siteUrl}/shop\nNeed help? Call or WhatsApp ${supportNumber()}`;
+  const text = `Welcome to CULTRAVEN, ${firstName}\n\nYour account is ready.\n- Track every order step by step\n- ${RETURN_WINDOW_DAYS}-day easy returns\n- Faster checkout with saved addresses\n\nStart shopping: ${siteUrl}/collections\nNeed help? Call or WhatsApp ${supportNumber()}`;
   return { subject: oneLine(subject), html, text };
 }
 
