@@ -5,7 +5,7 @@ import { inspectToken } from "@/lib/password-reset";
 import ResetPasswordForm from "./ResetPasswordForm";
 
 // The link carries a secret token: keep it out of search engines, caches and the Referer header of any link clicked from here.
-export const metadata: Metadata = { title: "Choose a new password | CULTRAVEN", robots: { index: false, follow: false }, referrer: "no-referrer" };
+export const metadata: Metadata = { title: "Choose a new password", robots: { index: false, follow: false }, referrer: "no-referrer" };
 export const dynamic = "force-dynamic";
 
 const shell = { backgroundColor: "var(--color-cream)", minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem 1rem" } as const;

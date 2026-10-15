@@ -24,6 +24,11 @@ export default function robots(): MetadataRoute.Robots {
           "/cart",
           "/checkout/",
           "/search",
+          // staff sign-in pages and the one-time links: no reason for a search engine to list them
+          "/portal-access",
+          "/portal-delivery-access",
+          "/portal-secure",
+          "/reset-password",
         ],
       },
     ],

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { isAdminRequest } from "@/lib/admin-auth";
-import { getPublicSmtpSettings, saveSmtpSettings, parseEmailList, isEmail, defaultSecure } from "@/lib/mailer";
+import { getPublicSmtpSettings, getSmtpSettings, saveSmtpSettings, buildTransport, explainSmtpError, smtpDetail, parseEmailList, isEmail, defaultSecure } from "@/lib/mailer";
 import { clientIp, isSameOrigin, rateLimit, retryHeaders } from "@/lib/sanitize";
 import { isProfile, type MailProfile } from "@/lib/mail-routing";
 
@@ -54,12 +54,41 @@ export async function PUT(req: NextRequest) {
   const p = Body.safeParse(raw);
   if (!p.success) return NextResponse.json({ error: p.error.issues[0]?.message ?? "Invalid settings", issues: p.error.flatten().fieldErrors }, { status: 422 });
   const d = p.data;
+  // Two mistakes that silently break email: a browser filling in the admin sign-in password, and a Gmail password that isn't an App Password.
+  const isGoogle = /(^|\.)(gmail|google|googlemail)\.com$/i.test(d.host);
+  let pass = d.pass || undefined;
+  if (pass) {
+    if (process.env.ADMIN_PASSWORD && pass === process.env.ADMIN_PASSWORD) {
+      return NextResponse.json({ error: "That is your admin sign-in password, not the mailbox's. Clear the field and paste the mailbox's App Password." }, { status: 422 });
+    }
+    if (isGoogle) {
+      const compact = pass.replace(/\s+/g, "");
+      if (!/^[a-z]{16}$/i.test(compact)) {
+        return NextResponse.json({ error: "A Gmail App Password is exactly 16 letters (Google shows it as 4 groups of 4). Create one at Google Account → Security → App passwords." }, { status: 422 });
+      }
+      pass = compact;
+    }
+  }
   try {
     await saveSmtpSettings({
-      enabled: d.enabled, host: d.host, port: d.port, secure: d.secure ?? defaultSecure(d.port), user: d.user, pass: d.pass || undefined,
+      enabled: d.enabled, host: d.host, port: d.port, secure: d.secure ?? defaultSecure(d.port), user: d.user, pass,
       fromName: d.fromName.replace(/["\r\n]/g, ""), fromEmail: d.fromEmail, adminEmails: d.adminEmails === undefined ? undefined : parseEmailList(d.adminEmails),
     }, profile);
-    return NextResponse.json({ success: true }, { headers: NO_STORE });
+    // Try the login right away, so a wrong password is seen now and not when a customer's email fails.
+    let check: { ok: boolean | null; message?: string } = { ok: null };
+    if (d.enabled) {
+      const s = await getSmtpSettings(profile);
+      if (s) {
+        try {
+          await Promise.race([buildTransport(s).verify(), new Promise((_, rej) => setTimeout(() => rej(Object.assign(new Error("timeout"), { code: "ETIMEOUT" })), 8000))]);
+          check = { ok: true };
+        } catch (e: any) {
+          const code = String(e?.code || e?.responseCode || e?.message || "");
+          check = code === "ETIMEOUT" ? { ok: null, message: "Saved, but the mail server didn't answer in time — press Send test to check." } : { ok: false, message: explainSmtpError(code, smtpDetail(e)) };
+        }
+      }
+    }
+    return NextResponse.json({ success: true, check }, { headers: NO_STORE });
   } catch (e) {
     const msg = e instanceof Error ? e.message : "";
     if (/password is required/i.test(msg)) return NextResponse.json({ error: "Enter the SMTP password" }, { status: 422 });

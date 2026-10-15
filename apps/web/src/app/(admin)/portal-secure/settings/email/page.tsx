@@ -74,7 +74,9 @@ function MailboxEditor({ profile, info, onSaved }: { profile: MailProfile; info?
       const d = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(d.error || `HTTP ${r.status}`);
       setHasPassword(true); setExists(true); set("pass", "");
-      toast(`${PROFILE_LABEL[profile]} saved`);
+      if (d.check?.ok === false) { setResult({ ok: false, text: `Saved — but the mail server refused the login. ${d.check.message}` }); toast("Saved, but the login was refused — see the message below", "error"); }
+      else if (d.check?.ok === true) { setResult({ ok: true, text: `Saved, and the login to ${f.host} works.` }); toast(`${PROFILE_LABEL[profile]} saved — login works`); }
+      else { if (d.check?.message) setResult({ ok: false, text: d.check.message }); toast(`${PROFILE_LABEL[profile]} saved`); }
       onSaved();
     } catch (err: any) { toast(err.message, "error"); }
     finally { setSaving(false); }

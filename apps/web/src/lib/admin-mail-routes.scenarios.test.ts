@@ -14,6 +14,7 @@ const h = vi.hoisted(() => ({
   sent: [] as any[],
   dnsCalls: [] as string[],
   dnsFail: false,
+  verifyFail: null as null | { code: string; response?: string },
 }));
 
 vi.mock("@/lib/db", () => ({ connectToDatabase: async () => {} }));
@@ -35,7 +36,7 @@ vi.mock("@/lib/models/Setting", () => ({
   },
 }));
 vi.mock("@/lib/secret-box", () => ({ encryptSecret: (s: string) => `enc:${Buffer.from(s).toString("base64")}`, decryptSecret: (s: string) => (typeof s === "string" && s.startsWith("enc:") ? Buffer.from(s.slice(4), "base64").toString() : "") }));
-vi.mock("nodemailer", () => ({ default: { createTransport: (o: { auth: { user: string } }) => ({ verify: async () => {}, sendMail: async (m: any) => { h.sent.push({ ...m, smtpUser: o.auth.user }); } }) } }));
+vi.mock("nodemailer", () => ({ default: { createTransport: (o: { auth: { user: string } }) => ({ verify: async () => { if (h.verifyFail) throw Object.assign(new Error(h.verifyFail.code), h.verifyFail); }, sendMail: async (m: any) => { h.sent.push({ ...m, smtpUser: o.auth.user }); } }) } }));
 vi.mock("@/lib/mail-dns", async (orig) => {
   const real = await orig<typeof import("@/lib/mail-dns")>();
   return { ...real, checkMailDns: async (from: string) => { if (h.dnsFail) throw new Error("dns down"); h.dnsCalls.push(real.domainOf(from)); return { domain: real.domainOf(from), google: true, allGood: false, spf: { status: "missing", title: "SPF", message: "m" }, dkim: { status: "missing", title: "DKIM", message: "m" }, dmarc: { status: "missing", title: "DMARC", message: "m" }, mx: { status: "ok", records: ["1 smtp.google.com"] } }; } };
@@ -59,12 +60,12 @@ const call = (fn: (r: NextRequest) => Promise<Response>, path: string, over: { m
   if (over.origin !== null) headers.origin = over.origin ?? "http://localhost";
   return fn(new NextRequest(`http://localhost${path}`, { method: over.method ?? "GET", headers, body: over.body === undefined ? undefined : JSON.stringify(over.body) }));
 };
-const box = (user: string, name: string, extra: Record<string, unknown> = {}) => ({ enabled: true, host: "smtp.gmail.com", port: 465, secure: true, user, pass: `${user}-pw`, fromName: name, fromEmail: user, ...extra });
+const box = (user: string, name: string, extra: Record<string, unknown> = {}) => ({ enabled: true, host: "smtp.gmail.com", port: 465, secure: true, user, pass: user.startsWith("support") ? "supportpasswordx" : "orderspasswordab", fromName: name, fromEmail: user, ...extra });
 const ORDERS = box("orders@cultraven.com", "CULTRAVEN", { adminEmails: "team@cultraven.com" });
 const SUPPORT = box("support@cultraven.com", "CULTRAVEN Support");
 const saveBoth = async () => { await call(smtpPUT, "/api/admin/settings/smtp?profile=orders", { method: "PUT", body: ORDERS }); await call(smtpPUT, "/api/admin/settings/smtp?profile=support", { method: "PUT", body: SUPPORT }); };
 
-beforeEach(() => { h.store.clear(); h.logs.length = 0; h.aggRows.length = 0; h.sent.length = 0; h.dnsCalls.length = 0; h.dnsFail = false; vi.stubEnv("SESSION_SECRET", SECRET); for (const k of Object.keys(process.env)) if (k.startsWith("SMTP_")) vi.stubEnv(k, ""); });
+beforeEach(() => { h.store.clear(); h.logs.length = 0; h.aggRows.length = 0; h.sent.length = 0; h.dnsCalls.length = 0; h.dnsFail = false; h.verifyFail = null; vi.stubEnv("SESSION_SECRET", SECRET); for (const k of Object.keys(process.env)) if (k.startsWith("SMTP_")) vi.stubEnv(k, ""); });
 afterEach(() => vi.unstubAllEnvs());
 
 describe("scenario: who may use the Email settings", () => {
@@ -101,7 +102,7 @@ describe("scenario: saving the two mailboxes", () => {
     const s = await (await call(smtpGET, "/api/admin/settings/smtp?profile=support")).json();
     expect(o.settings).toMatchObject({ user: "orders@cultraven.com", hasPassword: true, adminEmails: ["team@cultraven.com"] });
     expect(s.settings).toMatchObject({ user: "support@cultraven.com", hasPassword: true, adminEmails: [] });
-    expect(JSON.stringify([o, s])).not.toMatch(/-pw/);
+    expect(JSON.stringify([o, s])).not.toMatch(/passwordab|passwordx/);
     expect((await call(smtpGET, "/api/admin/settings/smtp?profile=hacker")).status).toBe(400);
     expect((await call(smtpPUT, "/api/admin/settings/smtp?profile=hacker", { method: "PUT", body: ORDERS })).status).toBe(400);
   });
@@ -252,5 +253,88 @@ describe("scenario: the recent-emails list", () => {
     h.logs.push({ kind: "order-customer", to: "a@example.com", subject: "Hi", status: "sent" });
     const d = await (await call(logsGET, "/api/admin/email-logs")).json();
     expect(d.logs[0]).toMatchObject({ from: "", category: "" });
+  });
+});
+
+describe("scenario: a wrong login is caught the moment it is saved", () => {
+  const put = (body: Record<string, unknown>, profile = "orders") => call(smtpPUT, `/api/admin/settings/smtp?profile=${profile}`, { method: "PUT", body });
+
+  it("a working login is saved and reported as verified", async () => {
+    const r = await put(ORDERS);
+    expect(await r.json()).toEqual({ success: true, check: { ok: true } });
+  });
+  it("a login Google refuses is still saved (so nothing is lost) but the admin is told straight away, in plain words", async () => {
+    h.verifyFail = { code: "EAUTH", response: "535-5.7.8 Username and Password not accepted. https://support.google.com/mail/?p=BadCredentials abc - gsmtp" };
+    const r = await put(ORDERS);
+    const d = await r.json();
+    expect(r.status).toBe(200);
+    expect(d.success).toBe(true);
+    expect(d.check.ok).toBe(false);
+    expect(d.check.message).toMatch(/wrong or was revoked/);
+    expect(JSON.stringify(d)).not.toMatch(/orderspasswordab/);
+    expect(h.store.has("smtp")).toBe(true);
+  });
+  it("Google's 'new location' block is explained as such", async () => {
+    h.verifyFail = { code: "EAUTH", response: "534-5.7.14 <https://accounts.google.com/signin/continue> Please log in via your web browser and then try again." };
+    expect((await (await put(ORDERS)).json()).check.message).toMatch(/doesn't recognise/);
+  });
+  it("a mail server that doesn't answer in time doesn't hold up the save (the result is 'not confirmed', never a failure)", async () => {
+    vi.useFakeTimers({ now: Date.now() + 120_000 });
+    h.verifyFail = null;
+    const nm = await import("nodemailer");
+    const orig = nm.default.createTransport;
+    (nm.default as any).createTransport = () => ({ verify: () => new Promise(() => {}), sendMail: async () => {} });
+    const p = put(ORDERS);
+    await vi.advanceTimersByTimeAsync(9000);
+    const d = await (await p).json();
+    (nm.default as any).createTransport = orig;
+    vi.useRealTimers();
+    expect(d.success).toBe(true);
+    expect(d.check.ok).toBeNull();
+    expect(d.check.message).toMatch(/press Send test/);
+  });
+  it("a paused mailbox isn't tested", async () => {
+    h.verifyFail = { code: "EAUTH" };
+    expect((await (await put({ ...ORDERS, enabled: false })).json()).check).toEqual({ ok: null });
+  });
+  it("the admin sign-in password can't be saved as a mailbox password (a browser filling in the wrong field)", async () => {
+    vi.stubEnv("ADMIN_PASSWORD", "Sup3rSecretAdminPw!");
+    const r = await put({ ...ORDERS, host: "smtp.example.com", pass: "Sup3rSecretAdminPw!" });
+    expect(r.status).toBe(422);
+    expect((await r.json()).error).toMatch(/admin sign-in password/);
+    expect(h.store.size).toBe(0);
+  });
+  it("a Gmail password must be a 16-letter App Password; spaces are fine and are removed", async () => {
+    for (const bad of ["MyRegularPassw0rd!", "short", "abcd efgh ijkl", "abcdefghijklmnop1", "1234567890123456"]) {
+      const r = await put({ ...ORDERS, pass: bad });
+      expect(r.status).toBe(422);
+      expect((await r.json()).error).toMatch(/16 letters/);
+    }
+    expect(h.store.size).toBe(0);
+    expect((await put({ ...ORDERS, pass: "abcd efgh ijkl mnop" })).status).toBe(200);
+    // the stored (scrambled) password decodes to the 16 letters with no spaces
+    expect(Buffer.from(h.store.get("smtp").passEnc.replace("enc:", ""), "base64").toString()).toBe("abcdefghijklmnop");
+  });
+  it("other mail services keep their own password style (Brevo keys are long and mixed)", async () => {
+    const r = await put({ ...ORDERS, host: "smtp-relay.brevo.com", port: 587, secure: false, pass: "xsmtpsib-0a1B2c3D4e5F6g7H8i9J-AbCdEfGhIjKlMn" });
+    expect(r.status).toBe(200);
+  });
+  it("saving without a new password keeps the stored one and still checks the login", async () => {
+    await put(ORDERS);
+    h.verifyFail = { code: "EAUTH", response: "535-5.7.8 Username and Password not accepted" };
+    const d = await (await put({ ...ORDERS, pass: undefined, fromName: "CULTRAVEN Orders" })).json();
+    expect(d.check.ok).toBe(false);
+    expect(h.store.get("smtp").fromName).toBe("CULTRAVEN Orders");
+  });
+  it("Send test now also reports Google's own reply", async () => {
+    vi.useFakeTimers({ now: Date.now() + 7_200_000 });
+    await put(ORDERS);
+    h.verifyFail = { code: "EAUTH", response: "534-5.7.14 Please log in via your web browser" };
+    const r = await call(testPOST, "/api/admin/settings/smtp/test", { method: "POST", body: { to: "me@example.com" } });
+    const d = await r.json();
+    vi.useRealTimers();
+    expect(r.status).toBe(502);
+    expect(d.detail).toMatch(/5\.7\.14/);
+    expect(d.error).toMatch(/doesn't recognise/);
   });
 });
