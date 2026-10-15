@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAdminRequest } from "@/lib/admin-auth";
-import { getSmtpSettings, buildTransport, explainSmtpError, isEmail } from "@/lib/mailer";
+import { getSmtpSettings, buildTransport, explainSmtpError, smtpDetail, isEmail } from "@/lib/mailer";
 import { testEmail } from "@/lib/email-templates";
 import { withInlineLogo } from "@/lib/email-logo";
 import { isProfile } from "@/lib/mail-routing";
@@ -36,6 +36,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, message: `Test email sent to ${to}` });
   } catch (e: any) {
     const code = String(e?.code || e?.responseCode || e?.message || "");
-    return NextResponse.json({ ok: false, error: explainSmtpError(code), code: String(e?.code || e?.responseCode || "") }, { status: 502 });
+    return NextResponse.json({ ok: false, error: explainSmtpError(code, smtpDetail(e)), code: String(e?.code || e?.responseCode || ""), detail: smtpDetail(e) }, { status: 502 });
   }
 }

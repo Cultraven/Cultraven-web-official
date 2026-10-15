@@ -144,6 +144,7 @@ export async function sendMail(m: MailInput): Promise<{ ok: boolean; error?: str
   const { html, attachment: logo } = withInlineLogo(m.html);
   const attachments = [...(logo ? [logo] : []), ...(m.attachments ?? []).map((a) => ({ filename: a.filename, content: Buffer.from(a.content), contentType: a.contentType }))];
   let lastError = "";
+  let lastDetail = "";
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
       const transport = buildTransport(s);
@@ -152,15 +153,25 @@ export async function sendMail(m: MailInput): Promise<{ ok: boolean; error?: str
       return { ok: true };
     } catch (e: any) {
       lastError = String(e?.code || e?.responseCode || e?.message || "send failed");
+      lastDetail = smtpDetail(e);
       if (attempt === 0) await new Promise((r) => setTimeout(r, 1500));
     }
   }
-  await log({ kind: m.kind, to: m.to, subject: m.subject, status: "failed", error: lastError, orderId: m.orderId, from: s.fromEmail, category });
+  await log({ kind: m.kind, to: m.to, subject: m.subject, status: "failed", error: lastDetail ? `${lastError}: ${lastDetail}` : lastError, orderId: m.orderId, from: s.fromEmail, category });
   return { ok: false, error: lastError };
 }
 
-/** Plain-language reason for a failed SMTP test (never includes credentials). */
-export function explainSmtpError(code: string): string {
+/** The mail server's own words for a failure (a server reply never contains your password), shortened for the log and the admin screen. */
+export function smtpDetail(e: any): string {
+  return String(e?.response ?? "").replace(/\s+/g, " ").trim().slice(0, 240);
+}
+
+/** Plain-language reason for a failed SMTP test (never includes credentials). `detail` is the server's own reply, when there is one. */
+export function explainSmtpError(code: string, detail = ""): string {
+  // Google says exactly why it refused; say that, instead of the generic "wrong password".
+  if (/5\.7\.14|log in via your web browser|accounts\.google\.com\/signin/i.test(detail)) return "Google blocked this sign-in because it came from a server it doesn't recognise. Open the Google security alert for this mailbox and approve it (\"Yes, it was me\"), or send through a dedicated email service instead.";
+  if (/5\.7\.8|Username and Password not accepted|BadCredentials/i.test(detail)) return "Google says the username or App Password is wrong or was revoked. Create a new App Password for this mailbox and save it again.";
+  if (/5\.7\.9|Application-specific password required/i.test(detail)) return "Google needs an App Password for this account: turn on 2-Step Verification, then create an App Password and use that as the password.";
   if (/EAUTH|535|534|Invalid login|auth/i.test(code)) return "The mail server rejected the username or password. For Gmail, use a 16-character App Password (2-Step Verification must be on).";
   if (/ENOTFOUND|EDNS/i.test(code)) return "The SMTP host could not be found — check the host name.";
   if (/ECONNREFUSED|ETIMEDOUT|ESOCKET|ECONNECTION|timeout/i.test(code)) return "Could not connect. Check the host and port (465 with SSL, or 587 with STARTTLS) and that your host allows outbound SMTP.";

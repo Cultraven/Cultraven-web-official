@@ -35,7 +35,7 @@ vi.mock("nodemailer", () => ({
       sendMail: async (m: Record<string, unknown>) => {
         h.attempts++;
         const f = h.failures.shift();
-        if (f) throw Object.assign(new Error(f), { code: f });
+        if (f) { const [code, response] = f.split("|"); throw Object.assign(new Error(code), { code, ...(response ? { response } : {}) }); }
         h.sent.push({ ...m, smtpUser: opts.auth.user });
       },
     }),
@@ -252,5 +252,32 @@ describe("scenario: settings that live in the server environment (no admin recor
     vi.stubEnv("SMTP_HOST", "env.example.com"); vi.stubEnv("SMTP_USER", "env@example.com"); vi.stubEnv("SMTP_PASS", "env-pass");
     await saveSmtpSettings(ORDERS);
     expect((await getSmtpSettings())!.user).toBe("orders@cultraven.com");
+  });
+});
+
+describe("scenario: Google refuses the login — the admin is told the real reason", () => {
+  beforeEach(async () => { await saveSmtpSettings(ORDERS); vi.useFakeTimers(); });
+  const GOOGLE = {
+    blocked: "534-5.7.14 <https://accounts.google.com/signin/continue?sarp=1&scc=1> Please log in via your web browser and then try again. 5.7.14 https://support.google.com/mail/answer/78754 abc - gsmtp",
+    wrong: "535-5.7.8 Username and Password not accepted. For more information, go to 535 5.7.8 https://support.google.com/mail/?p=BadCredentials abc - gsmtp",
+    appPassword: "534-5.7.9 Application-specific password required. For more information, go to 534 5.7.9 https://support.google.com/mail/?p=InvalidSecondFactor abc - gsmtp",
+  };
+  it("the log keeps Google's own words next to the code", async () => {
+    h.failures.push(`EAUTH|${GOOGLE.blocked}`, `EAUTH|${GOOGLE.blocked}`);
+    const p = sendMail(mail("welcome")); await vi.advanceTimersByTimeAsync(1600); await p;
+    expect(h.logs[0].error).toMatch(/^EAUTH: 534-5\.7\.14 /);
+    expect(h.logs[0].error.length).toBeLessThanOrEqual(300);
+  });
+  it("explains each Google refusal in plain words", async () => {
+    const { explainSmtpError, smtpDetail } = await import("./mailer");
+    expect(explainSmtpError("EAUTH", GOOGLE.blocked)).toMatch(/doesn't recognise|approve/);
+    expect(explainSmtpError("EAUTH", GOOGLE.wrong)).toMatch(/wrong or was revoked/);
+    expect(explainSmtpError("EAUTH", GOOGLE.appPassword)).toMatch(/2-Step Verification/);
+    expect(explainSmtpError("EAUTH")).toMatch(/rejected the username or password/); // no detail: the old generic wording
+    expect(explainSmtpError("ECONNREFUSED", "")).toMatch(/Could not connect/);
+    expect(smtpDetail({ response: `${GOOGLE.blocked}\n\r\n   extra` })).not.toMatch(/[\r\n]/);
+    expect(smtpDetail({ response: "x".repeat(900) }).length).toBe(240);
+    expect(smtpDetail({})).toBe("");
+    expect(smtpDetail(null)).toBe("");
   });
 });
