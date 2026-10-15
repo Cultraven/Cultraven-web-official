@@ -8,8 +8,8 @@ Last checked against the live site: 15 Oct 2026.
 | Area | Live status |
 |---|---|
 | Website, checkout, admin, Razorpay/COD | Working (health check: database connected, no required setting missing) |
-| Email sending | Working. Only the **Orders** mailbox (orders@cultraven.com) is saved. |
-| Support mailbox (support@cultraven.com) | **Not set up yet** — contact-form, account and staff emails are sent from Orders until you do Step 2 |
+| Email sending | Working. Both mailboxes (Orders and Support) are saved on the live site, and the login for each was checked on 15 Oct 2026. |
+| Support mailbox (support@cultraven.com) | Set up — contact-form, account and staff emails are sent from it. Step 2 is only needed again if you change its password. |
 | Email authentication (SPF, DKIM, DMARC) | **Missing — this is why some emails don't reach the inbox.** Do Step 1 first. |
 | Support phone 8962212605 | Live in emails, receipt, Help Center, chat/WhatsApp and the Contact page |
 | Password reset, welcome email, password-changed email | Live |
@@ -100,7 +100,8 @@ Also check **Who receives the team alerts** (currently support@cultraven.com and
 
 ### 2d. Test each mailbox
 In each mailbox tab, type your Gmail address under **Send a test email from this mailbox** → **Send test**. It should arrive from the right name and address.
-If it fails the page explains why (wrong App Password, wrong port, etc.).
+If it fails the page explains why (wrong App Password, wrong port, etc.), including Google's own reply.
+Saving also tries the login straight away: you see **Saved, and the login to smtp.gmail.com works** or **Saved — but the mail server refused the login**. The page refuses your admin sign-in password and any Gmail password that is not a 16-letter App Password.
 
 ---
 
