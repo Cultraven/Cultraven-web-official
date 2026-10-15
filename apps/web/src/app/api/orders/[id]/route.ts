@@ -139,6 +139,10 @@ export async function PUT(req: NextRequest, { params }: Ctx) {
     if (shouldNotify && (changedStatus || trackingChanged)) {
       after(() => notifyStatusChange(id, { status, note: d.note }));
     }
+    // "Mark refunded" on an online-paid order: tell the customer the money has been sent back.
+    if (d.notify !== false && d.paymentStatus === "refunded" && cur.paymentStatus !== "refunded" && cur.paymentMethod === "razorpay") {
+      after(() => notifyStatusChange(id, { status: "refunded", refundPaise: cur.totalPaise }));
+    }
     return NextResponse.json({ success: true, order: { ...updated, allowedNext: ADMIN_TRANSITIONS[updated.fulfillmentStatus as keyof typeof ADMIN_TRANSITIONS] ?? [] } }, { headers: NO_STORE });
   } catch (err) {
     console.error("[orders/id] PUT failed:", err instanceof Error ? err.message : err);

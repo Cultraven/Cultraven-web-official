@@ -157,6 +157,19 @@ export async function sendMail(m: MailInput): Promise<{ ok: boolean; error?: str
       if (attempt === 0) await new Promise((r) => setTimeout(r, 1500));
     }
   }
+  // The chosen mailbox failed twice (a wrong or revoked password, Google blocking the login...). Before giving up, try the other mailbox once,
+  // so a customer's email isn't lost because of one broken login. A bad recipient address is not a reason to try again.
+  if (!/^(EENVELOPE|55[0-4])$/.test(lastError)) {
+    for (const p of MAIL_PROFILES) {
+      const alt = byProfile.get(p);
+      if (p === pick.profile || !alt?.enabled) continue;
+      try {
+        await buildTransport(alt).sendMail({ from: `"${alt.fromName.replace(/"/g, "")}" <${alt.fromEmail}>`, to: m.to, replyTo: m.replyTo || alt.fromEmail, subject: m.subject, html, text: m.text, attachments });
+        await log({ kind: m.kind, to: m.to, subject: m.subject, status: "sent", error: `Sent from ${alt.fromEmail} because ${s.fromEmail} failed (${lastError})`, orderId: m.orderId, from: alt.fromEmail, category });
+        return { ok: true };
+      } catch { /* fall through to the failure below */ }
+    }
+  }
   await log({ kind: m.kind, to: m.to, subject: m.subject, status: "failed", error: lastDetail ? `${lastError}: ${lastDetail}` : lastError, orderId: m.orderId, from: s.fromEmail, category });
   return { ok: false, error: lastError };
 }

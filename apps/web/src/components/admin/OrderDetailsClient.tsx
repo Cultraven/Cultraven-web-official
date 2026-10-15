@@ -388,7 +388,7 @@ export default function OrderDetailsClient({ id }: { id: string }) {
             {order.codFeePaise ? <Line k="COD fee" v={inr(order.codFeePaise)} /> : null}
             <Line k="Total" v={inr(order.totalPaise ?? 0)} strong />
             <div className="adm-actions" style={{ marginTop: 12 }}>
-              {refundDue ? <Button size="sm" variant="primary" disabled={saving} onClick={() => send({ paymentStatus: "refunded", note: "Refund issued" }, "Marked refunded")}>Mark refunded</Button> : null}
+              {refundDue ? <Button size="sm" variant="primary" disabled={saving} onClick={() => send({ paymentStatus: "refunded", note: "Refund issued", notify: emailCustomer }, `Marked refunded${emailCustomer ? " · customer notified" : ""}`)}>Mark refunded</Button> : null}
               {order.paymentStatus === "paid" && order.paymentMethod === "cod" && !refundDue ? <Button size="sm" disabled={saving} onClick={() => send({ paymentStatus: "pending" }, "Marked unpaid")}>Mark unpaid</Button> : null}
             </div>
           </Card>

@@ -306,11 +306,13 @@ const STATUS_COPY: Record<string, string> = {
   cancel_requested: "We've received your request to cancel. Because the order has already shipped, we're checking with the courier and will confirm very soon.",
   return_requested: "We've received your return request and will update you shortly.",
   returned: "Your return is complete. Any refund is processed to your original payment method within 5–7 business days.",
+  refunded: "Your refund has been issued to your original payment method. Banks usually take 5–7 business days to show it in your account.",
 };
 
 export interface EmailPick { title: string; pricePaise: number; image?: string; url: string }
 export interface StatusEmailInput {
   status: string; note?: string; courier?: string; trackingNumber?: string; trackingUrl?: string;
+  /** Amount refunded, shown on the "refunded" email */ refundPaise?: number;
   /** Products to suggest (used on cancellation emails) */ picks?: EmailPick[];
   /** The order's real tracking steps with the time each was reached (lib/order-lifecycle buildTimeline); worked out from `status` when omitted */ timeline?: TimelineStep[];
 }
@@ -345,12 +347,13 @@ const IN_TRANSIT = new Set(["processing", "confirmed", "packed", "shipped", "out
 /** Sent to the customer whenever the status of their order changes (admin action or their own cancel/return). */
 export function orderStatusEmail(o: MailOrder, siteUrl: string, s: StatusEmailInput) {
   const no = orderNumber(o.id);
-  const label = isOrderStatus(s.status) ? STATUS_LABEL[s.status] : s.status === "cancel_requested" ? "Cancellation requested" : s.status;
+  const label = isOrderStatus(s.status) ? STATUS_LABEL[s.status] : s.status === "cancel_requested" ? "Cancellation requested" : s.status === "refunded" ? "Refund issued" : s.status;
   const subject = `${no}: ${label}`;
   const copy = STATUS_COPY[s.status] ?? "There's an update on your order.";
   const steps = s.timeline ?? (isOrderStatus(s.status) ? buildTimeline({ fulfillmentStatus: s.status, createdAt: o.createdAt }) : []);
   const eta = IN_TRANSIT.has(s.status) ? estimatedDelivery(o.createdAt) : null;
   const rows: [string, string][] = [["Order no.", `<b>${no}</b>`], ["Status", `<b>${escapeHtml(label)}</b>`]];
+  if (s.status === "refunded" && s.refundPaise) rows.push(["Refund amount", `<b>${inr(s.refundPaise)}</b>`]);
   if (s.courier) rows.push(["Courier", escapeHtml(s.courier)]);
   if (s.trackingNumber) rows.push(["Tracking no.", `<b>${escapeHtml(s.trackingNumber)}</b>`]);
   if (eta && eta.to.getTime() > Date.now()) rows.push(["Arriving by", escapeHtml(etaShort(eta.to))]);
@@ -365,7 +368,7 @@ export function orderStatusEmail(o: MailOrder, siteUrl: string, s: StatusEmailIn
     h2("Delivering to") + addressHtml(o.deliveryAddress) +
     `<p style="margin:24px 0 0">${button(`${siteUrl}/account/orders/${o.id}`, "TRACK MY ORDER")}</p>`;
   const html = shell(`Order ${no}`, escapeHtml(copy), body, siteUrl);
-  const text = [`${no}: ${label}`, copy, s.note ? `Note: ${s.note}` : "", s.courier ? `Courier: ${s.courier}` : "", s.trackingNumber ? `Tracking no.: ${s.trackingNumber}` : "", s.trackingUrl ?? "", "", ...(steps.length ? ["Order tracker:", ...trackerText(steps), ""] : []), `Track your order: ${siteUrl}/account/orders/${o.id}`, `Need help? Call or WhatsApp ${supportNumber()}, or reply to this email.`].filter((l) => l !== "").join("\n");
+  const text = [`${no}: ${label}`, copy, s.note ? `Note: ${s.note}` : "", s.status === "refunded" && s.refundPaise ? `Refund amount: ${inr(s.refundPaise)}` : "", s.courier ? `Courier: ${s.courier}` : "", s.trackingNumber ? `Tracking no.: ${s.trackingNumber}` : "", s.trackingUrl ?? "", "", ...(steps.length ? ["Order tracker:", ...trackerText(steps), ""] : []), `Track your order: ${siteUrl}/account/orders/${o.id}`, `Need help? Call or WhatsApp ${supportNumber()}, or reply to this email.`].filter((l) => l !== "").join("\n");
   return { subject: oneLine(subject), html, text };
 }
 
