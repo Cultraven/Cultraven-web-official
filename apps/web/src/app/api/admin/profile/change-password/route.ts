@@ -7,6 +7,7 @@ import { z } from "zod";
 import { afterResponse, sendPasswordChangedEmail } from "@/lib/password-reset";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 30; // email is sent after the response: leave room for a slow mail server
 
 const Schema = z.object({
   currentPassword: z.string().min(1),

@@ -11,6 +11,7 @@ import { INVITE_TTL_HOURS, issueToken } from "@/lib/password-reset";
 import { siteUrl } from "@/lib/site-url";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 30; // email is sent after the response: leave room for a slow mail server
 
 const Schema = z.object({
   firstName: z.string().trim().min(1).max(50),

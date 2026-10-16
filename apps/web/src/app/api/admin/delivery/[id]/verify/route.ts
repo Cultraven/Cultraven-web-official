@@ -9,6 +9,7 @@ import { siteUrl as publicSiteUrl } from "@/lib/site-url";
 import { z } from "zod";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 30; // email is sent after the response: leave room for a slow mail server
 
 const Schema = z.object({
   decision: z.enum(["approved", "rejected"]),

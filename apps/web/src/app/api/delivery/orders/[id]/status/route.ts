@@ -8,6 +8,7 @@ import { parseJsonBody } from "@/lib/sanitize";
 import { notifyStatusChange } from "@/lib/order-notify";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 30; // email is sent after the response: leave room for a slow mail server
 
 // Delivery staff may only move to these statuses
 const ALLOWED = ["out_for_delivery", "delivered", "delivery_failed"] as const;

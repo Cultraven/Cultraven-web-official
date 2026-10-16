@@ -7,6 +7,7 @@ import { isProfile } from "@/lib/mail-routing";
 import { siteUrl } from "@/lib/site-url";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 30; // email is sent after the response: leave room for a slow mail server
 
 // Small in-memory throttle: a test send per 10 s is plenty and stops this being used to spam an address.
 let lastRun = 0;

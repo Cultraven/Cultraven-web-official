@@ -15,6 +15,7 @@ import { json, unauthorized } from "@/lib/account-api";
 import { isSameOrigin, parseJsonBody, rateLimitPeek, recordHit, resetRateLimit, retryHeaders } from "@/lib/sanitize";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 30; // email is sent after the response: leave room for a slow mail server
 
 const FAIL_WINDOW_MS = 15 * 60 * 1000;
 const MAX_FAILS = 8;

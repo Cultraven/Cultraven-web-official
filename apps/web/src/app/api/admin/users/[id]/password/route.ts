@@ -7,6 +7,7 @@ import mongoose from "mongoose";
 import { afterResponse, sendPasswordChangedEmail } from "@/lib/password-reset";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 30; // email is sent after the response: leave room for a slow mail server
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   if (!isSuperAdminRequest(req)) return NextResponse.json({ error: "Superadmin access required" }, { status: 403 });

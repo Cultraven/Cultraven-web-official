@@ -12,6 +12,8 @@ import { z } from "zod";
 import { clientIp, isSameOrigin, parseJsonBody, rateLimit } from "@/lib/sanitize";
 import { afterResponse, sendResetEmailFor } from "@/lib/password-reset";
 
+export const maxDuration = 30; // email is sent after the response: leave room for a slow mail server
+
 const BodySchema = z.object({
   email: z.string().trim().max(254).email("Invalid email").toLowerCase(),
 });

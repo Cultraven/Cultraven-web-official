@@ -9,6 +9,7 @@ import { releaseOrderStock } from "@/lib/inventory";
 import { notifyStatusChange, notifyAdminCustomerAction } from "@/lib/order-notify";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 30; // email is sent after the response: leave room for a slow mail server
 
 const Body = z.object({ reason: z.string().trim().min(3, "Please choose a reason").max(120), note: z.string().trim().min(10, "Please add a few details (at least 10 characters)").max(200, "Details are too long (max 200 characters)") });
 

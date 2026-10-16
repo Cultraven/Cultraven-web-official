@@ -30,6 +30,8 @@ import { customerFromRequest } from "@/lib/customer-auth";
 import { validateCoupon } from "@/lib/promotion-service";
 import { FREE_SHIPPING_THRESHOLD, SHIPPING_FEE, COD_FEE, COD_MAX_LIMIT } from "@/lib/constants";
 
+export const maxDuration = 30; // email is sent after the response: leave room for a slow mail server
+
 // ── Zod schema ────────────────────────────────────────────────────────────────
 const BodySchema = z.object({
   items: z.array(z.object({

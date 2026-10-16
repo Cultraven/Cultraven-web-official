@@ -17,6 +17,8 @@ import { z } from "zod";
 import { connectToDatabase } from "@/lib/db";
 import { Order } from "@/lib/models/Order";
 
+export const maxDuration = 30; // email is sent after the response: leave room for a slow mail server
+
 // Razorpay ids look like order_Abc123 / pay_Abc123; the signature is a hex HMAC. Anything else is junk.
 const VerifySchema = z.object({
   razorpay_order_id: z.string().min(1).max(64).regex(/^[A-Za-z0-9_]+$/),

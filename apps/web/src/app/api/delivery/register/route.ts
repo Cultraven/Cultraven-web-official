@@ -10,6 +10,7 @@ import { siteUrl as publicSiteUrl } from "@/lib/site-url";
 import { z } from "zod";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 30; // email is sent after the response: leave room for a slow mail server
 
 const KYC_IMG_MAX = 500 * 1024; // 500 KB decoded per image
 

@@ -13,6 +13,7 @@ import { notifySupportMessage } from "@/lib/support-notify";
 import { clientIp, isSameOrigin, parseJsonBody, rateLimit, retryHeaders, stripControlChars } from "@/lib/sanitize";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 30; // email is sent after the response: leave room for a slow mail server
 
 // Single-line fields lose control characters (CR/LF) so they can never forge log lines or mail headers.
 const oneLine = (max: number, min: number, tooShort: string, tooLong: string) =>

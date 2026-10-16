@@ -10,6 +10,7 @@ import { notifyStatusChange } from "@/lib/order-notify";
 import { releaseOrderStock } from "@/lib/inventory";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 30; // email is sent after the response: leave room for a slow mail server
 const NO_STORE = { "Cache-Control": "no-store" };
 type Ctx = { params: Promise<{ id: string }> };
 

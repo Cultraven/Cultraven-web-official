@@ -20,6 +20,8 @@ import { hashPassword, PasswordPolicy } from "@/lib/password";
 import { afterResponse, consumeToken, inspectToken, loginPathFor, releaseToken, sendPasswordChangedEmail, TOKEN_SHAPE } from "@/lib/password-reset";
 import { clientIp, isSameOrigin, parseJsonBody, rateLimit, resetRateLimit, retryHeaders } from "@/lib/sanitize";
 
+export const maxDuration = 30; // email is sent after the response: leave room for a slow mail server
+
 const BodySchema = z.object({ token: z.string().regex(TOKEN_SHAPE), password: PasswordPolicy });
 
 const DEAD_LINK = "This link has expired or was already used. Please request a new one.";

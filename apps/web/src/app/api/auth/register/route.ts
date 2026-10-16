@@ -27,6 +27,8 @@ import { welcomeEmail } from "@/lib/email-templates";
 import { BUSINESS } from "@/lib/business";
 import { siteUrl } from "@/lib/site-url";
 
+export const maxDuration = 30; // email is sent after the response: leave room for a slow mail server
+
 const cleanName = (max: number, label: string) =>
   z.string().max(max * 2).transform((v) => stripTags(stripControlChars(v)).trim()).pipe(z.string().min(1, `${label} required`).max(max));
 

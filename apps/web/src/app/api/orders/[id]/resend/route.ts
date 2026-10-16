@@ -4,6 +4,7 @@ import { validId } from "@/lib/order-view";
 import { resendOrderConfirmation } from "@/lib/order-notify";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 30; // email is sent after the response: leave room for a slow mail server
 
 // One resend per order per 15 seconds (in-memory) so the button can't be used to spam a customer.
 const last = new Map<string, number>();

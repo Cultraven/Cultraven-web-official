@@ -20,6 +20,8 @@ import { connectToDatabase } from "@/lib/db";
 import { Order } from "@/lib/models/Order";
 import { Product } from "@/lib/models/Product";
 
+export const maxDuration = 30; // email is sent after the response: leave room for a slow mail server
+
 // ── Webhook event shape (minimal — extend as needed) ──────────────────────────
 interface RazorpayWebhookPayload {
   event: string;
