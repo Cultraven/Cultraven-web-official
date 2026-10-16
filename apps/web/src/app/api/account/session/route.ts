@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
   try {
     await connectToDatabase();
     const u = (await User.findById(session.userId).select("firstName email avatarUpdatedAt deletedAt status").lean()) as any;
-    if (u && !isUserActive(u)) return clearSessionCookie(json({ signedIn: false })); // deleted elsewhere: drop the stale cookie
+    if (!u || !isUserActive(u)) return clearSessionCookie(json({ signedIn: false })); // deleted or deactivated elsewhere: drop the stale cookie
     const first = (u?.firstName || "").trim();
     const initial = (first || u?.email || session.email || "C").trim().charAt(0).toUpperCase() || "C";
     const version = u?.avatarUpdatedAt ? new Date(u.avatarUpdatedAt).getTime() : null;

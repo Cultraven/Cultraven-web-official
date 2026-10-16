@@ -122,6 +122,9 @@ function LoginForm() {
           {redirect.startsWith("/checkout") ? (
             <p role="status" className="auth-gate">One last step — sign in or create an account to place your order. Your item is saved.</p>
           ) : null}
+          {searchParams.get("notice") === "removed" ? (
+            <p role="status" className="auth-gate">That account is no longer active — it was deleted or deactivated. Sign in with another account, or <Link href="/register" style={{ fontWeight: 900, textDecoration: "underline" }}>create a new one</Link>.</p>
+          ) : null}
           <form onSubmit={handleLogin} noValidate style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
             <div>
               <label htmlFor="login-email" style={LABEL}>Email Address</label>

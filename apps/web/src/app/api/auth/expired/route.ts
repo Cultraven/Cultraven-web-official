@@ -11,6 +11,6 @@ export const dynamic = "force-dynamic";
 export async function GET(req: NextRequest) {
   const url = req.nextUrl.clone();
   url.pathname = "/login";
-  url.search = "";
+  url.search = "?notice=removed"; // the login page explains why the visitor was sent here
   return clearSessionCookie(NextResponse.redirect(url));
 }

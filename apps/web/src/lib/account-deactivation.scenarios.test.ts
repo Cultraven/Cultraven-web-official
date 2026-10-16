@@ -8,7 +8,7 @@ import crypto from "crypto";
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { NextRequest } from "next/server";
 
-const h = vi.hoisted(() => ({ users: new Map<string, any>(), dbDown: false, updates: [] as any[] }));
+const h = vi.hoisted(() => ({ users: new Map<string, any>(), dbDown: false, updates: [] as any[], cookie: "" }));
 
 vi.mock("@/lib/db", () => ({ connectToDatabase: async () => { if (h.dbDown) throw new Error("db down"); } }));
 const chain = (val: any) => { const c: any = { select: () => c, lean: async () => (val ? structuredClone(val) : null) }; return c; };
@@ -23,9 +23,12 @@ vi.mock("@/lib/models/User", () => ({
     },
   },
 }));
+vi.mock("next/headers", () => ({ cookies: async () => ({ get: (name: string) => (name === "cultraven_session" && h.cookie ? { value: h.cookie } : undefined) }) }));
 vi.mock("@/lib/models/Order", () => ({ Order: { find: () => ({ sort: () => ({ limit: () => ({ lean: async () => [] }) }) }) } }));
 
-import { currentCustomer } from "./customer-auth";
+import { currentCustomer, getCurrentCustomer } from "./customer-auth";
+import { GET as sessionGET } from "../app/api/account/session/route";
+import { GET as meGET } from "../app/api/account/me/route";
 import { GET as myOrders } from "../app/api/orders/me/route";
 import { POST as createOrder } from "../app/api/razorpay/create-order/route";
 import { PATCH as setStatus } from "../app/api/admin/users/[id]/status/route";
@@ -42,8 +45,8 @@ const req = (path: string, cookie: string | null, init: { method?: string; body?
 const deactivate = (id: string, status: unknown, cookie: string | null = adminCookie()) => setStatus(req(`/api/admin/users/${id}/status`, cookie, { method: "PATCH", body: { status } }), { params: Promise.resolve({ id }) });
 
 beforeEach(() => {
-  h.users.clear(); h.updates.length = 0; h.dbDown = false;
-  h.users.set(CUSTOMER, { role: "customer", status: "active", deletedAt: null });
+  h.users.clear(); h.updates.length = 0; h.dbDown = false; h.cookie = "";
+  h.users.set(CUSTOMER, { role: "customer", status: "active", deletedAt: null, firstName: "Asha", lastName: "Buyer", email: "buyer@example.com" });
   h.users.set(ADMIN_USER, { role: "admin", status: "active", deletedAt: null });
   vi.stubEnv("SESSION_SECRET", SECRET);
   vi.spyOn(console, "error").mockImplementation(() => {});
@@ -115,5 +118,38 @@ describe("scenario: the admin deactivates, then reactivates, a customer", () => 
     expect(h.users.get(ADMIN_USER).status).toBe("active");
     expect((await deactivate(ADMIN_USER, "deleted", adminCookie("superadmin"))).status).toBe(200);
     expect(h.users.get(ADMIN_USER).status).toBe("deleted");
+  });
+});
+
+describe("scenario: the account is removed while the customer is still signed in (open tab, old phone)", () => {
+  const token = () => customerCookie().replace("cultraven_session=", "");
+  const clearsCookie = (res: Response) => /cultraven_session=;|cultraven_session=; /.test(res.headers.get("set-cookie") ?? "") || /Max-Age=0/i.test(res.headers.get("set-cookie") ?? "");
+
+  it("an active account: the page helper returns the profile, the header says signed in, checkout prefill works", async () => {
+    h.cookie = token();
+    expect(await getCurrentCustomer()).toMatchObject({ userId: CUSTOMER, email: "buyer@example.com", firstName: "Asha" });
+    const s = await (await sessionGET(req("/api/account/session", customerCookie()))).json();
+    expect(s).toMatchObject({ signedIn: true, name: "Asha" });
+    const me = await meGET(req("/api/account/me", customerCookie()));
+    expect(me.status).toBe(200);
+  });
+  it.each([
+    ["deactivated by the admin", () => h.users.set(CUSTOMER, { status: "deleted", deletedAt: new Date() })],
+    ["deleted by the customer", () => h.users.set(CUSTOMER, { status: "active", deletedAt: new Date() })],
+    ["removed from the database altogether", () => h.users.delete(CUSTOMER)],
+  ])("%s: the account pages send them to log in, the header shows signed out and drops the cookie, checkout prefill is refused", async (_name, remove) => {
+    remove();
+    h.cookie = token();
+    expect(await getCurrentCustomer()).toBeNull(); // the page then redirects to /api/auth/expired -> /login
+    const session = await sessionGET(req("/api/account/session", customerCookie()));
+    expect(await session.json()).toEqual({ signedIn: false });
+    expect(clearsCookie(session)).toBe(true);
+    expect((await meGET(req("/api/account/me", customerCookie()))).status).toBe(401);
+  });
+  it("a database outage is not treated as 'signed out' by the header (it keeps what the cookie knows)", async () => {
+    h.dbDown = true;
+    h.cookie = token();
+    expect(await getCurrentCustomer()).toMatchObject({ userId: CUSTOMER, firstName: "" });
+    expect((await (await sessionGET(req("/api/account/session", customerCookie()))).json()).signedIn).toBe(true);
   });
 });

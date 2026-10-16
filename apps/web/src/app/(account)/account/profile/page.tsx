@@ -22,6 +22,8 @@ export default async function ProfilePage() {
     console.error("[account] profile page load failed:", e instanceof Error ? e.message : e);
   }
 
+  if (!failed && !u) redirect("/api/auth/expired"); // the account vanished since the page opened: back to login, not an error message
+
   if (failed || !u) {
     return (
       <>

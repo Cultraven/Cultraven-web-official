@@ -13,8 +13,8 @@ export async function GET(req: NextRequest) {
   try {
     await connectToDatabase();
     const u = (await User.findById(me.userId).select("firstName lastName email deletedAt status").lean()) as any;
-    if (u && !isUserActive(u)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    return NextResponse.json({ me: { email: u?.email ?? me.email, firstName: u?.firstName ?? "", lastName: u?.lastName ?? "" } }, { headers: { "Cache-Control": "no-store" } });
+    if (!u || !isUserActive(u)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ me: { email: u.email ?? me.email, firstName: u.firstName ?? "", lastName: u.lastName ?? "" } }, { headers: { "Cache-Control": "no-store" } });
   } catch {
     return NextResponse.json({ me: { email: me.email, firstName: "", lastName: "" } });
   }

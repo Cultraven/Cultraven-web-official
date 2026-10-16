@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getCurrentCustomer } from "@/lib/customer-auth";
 import { avatarUrl } from "@/lib/avatar-url";
 import { AccountNav } from "@/components/account/AccountNav";
+import { AccountSessionGuard } from "@/components/account/AccountSessionGuard";
 import { SiteChrome } from "@/components/home/SiteChrome";
 import "@/components/account/avatar.css";
 
@@ -21,6 +22,7 @@ export default async function AccountLayout({ children }: { children: ReactNode 
 
   return (
     <SiteChrome>
+    <AccountSessionGuard />
     <div className="acct">
       <div className="acct-grid">
         <aside className="acct-side" aria-label="Account">

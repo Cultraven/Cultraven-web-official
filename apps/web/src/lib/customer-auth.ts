@@ -89,7 +89,7 @@ export async function getCurrentCustomer(): Promise<CustomerProfile | null> {
     const u = (await User.findById(session.userId).select("firstName lastName email avatarUpdatedAt deletedAt status passwordChangedAt").lean()) as any;
     if (u && !isUserActive(u)) return null; // soft-deleted account: not signed in
     if (u && signedInBeforePasswordChange(session, u)) return null; // the password changed since this device signed in
-    if (!u) return { userId: session.userId, email: session.email, firstName: "", lastName: "", avatarVersion: null };
+    if (!u) return null; // the account no longer exists (e.g. removed from the database): not signed in, so the pages send the visitor to log in
     return {
       userId: session.userId,
       email: u.email,
