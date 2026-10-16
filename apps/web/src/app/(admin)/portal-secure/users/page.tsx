@@ -5,7 +5,7 @@ import { Alert, Badge, Button, Card, EmptyState, Field, Icon, LinkButton, PageHe
 
 type UserRow = {
   id: string; fullName: string; email: string; phone: string | null;
-  role: string; status: string; emailVerified: boolean; createdAt: string;
+  role: string; status: string; createdAt: string;
 };
 type Summary = { total: number; active: number; deleted: number; admins: number };
 type Me = { role: "admin" | "superadmin" };
@@ -37,7 +37,6 @@ const Row = React.memo(function Row({ u }: { u: UserRow }) {
       <td>{u.phone ?? "—"}</td>
       <td><Badge tone={ROLE_TONES[u.role] ?? "neutral"}>{u.role}</Badge></td>
       <td><Badge tone={STATUS_TONES[u.status] ?? "neutral"}>{u.status}</Badge></td>
-      <td><Badge tone={u.emailVerified ? "success" : "warn"}>{u.emailVerified ? "Verified" : "Unverified"}</Badge></td>
       <td>{fmtDate(u.createdAt)}</td>
       <td><LinkButton href={href} size="sm">View</LinkButton></td>
     </tr>
@@ -232,7 +231,6 @@ export default function UsersPage() {
                   <th scope="col">Phone</th>
                   <th scope="col">Role</th>
                   <th scope="col">Status</th>
-                  <th scope="col">Email</th>
                   <th scope="col">Joined</th>
                   <th scope="col"><span style={{ position: "absolute", left: -9999 }}>Actions</span></th>
                 </tr>

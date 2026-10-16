@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
 
     const [users, total] = await Promise.all([
       User.find(filter)
-        .select("firstName lastName email phone role status emailVerified createdAt updatedAt deletedAt avatarUpdatedAt")
+        .select("firstName lastName email phone role status createdAt updatedAt deletedAt avatarUpdatedAt")
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
@@ -55,7 +55,6 @@ export async function GET(req: NextRequest) {
         phone: u.phone ?? null,
         role: u.role ?? "customer",
         status: (u.status as string) || "active",
-        emailVerified: u.emailVerified ?? false,
         avatarUpdatedAt: u.avatarUpdatedAt ?? null,
         createdAt: u.createdAt,
         updatedAt: u.updatedAt,

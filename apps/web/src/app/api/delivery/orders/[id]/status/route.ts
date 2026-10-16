@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import { connectToDatabase } from "@/lib/db";
 import { Order } from "@/lib/models/Order";
 import { User } from "@/lib/models/User";
+import { isUserActive } from "@/lib/account-delete";
 import { isDeliveryRequest, isAdminRequest, getDeliveryPayload } from "@/lib/admin-auth";
 import { parseJsonBody } from "@/lib/sanitize";
 import { notifyStatusChange } from "@/lib/order-notify";
@@ -41,8 +42,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     // Like the order list, only approved delivery staff may change an order.
     if (!admin) {
       const me = getDeliveryPayload(req);
-      const u = me ? ((await User.findById(me.userId).select("verificationStatus").lean()) as any) : null;
-      if (!u || u.verificationStatus !== "approved") return NextResponse.json({ error: "Your delivery account is not approved yet" }, { status: 403 });
+      const u = me ? ((await User.findById(me.userId).select("verificationStatus deletedAt status").lean()) as any) : null;
+      if (!u || !isUserActive(u)) return NextResponse.json({ error: "Your delivery account has been deactivated" }, { status: 403 });
+      if (u.verificationStatus !== "approved") return NextResponse.json({ error: "Your delivery account is not approved yet" }, { status: 403 });
     }
 
     const cur = (await Order.findById(id).select("fulfillmentStatus paymentMethod paymentStatus").lean()) as any;

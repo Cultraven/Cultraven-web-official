@@ -2,7 +2,7 @@ import { NextRequest, NextResponse, after } from "next/server";
 import { z } from "zod";
 import { connectToDatabase } from "@/lib/db";
 import { Order } from "@/lib/models/Order";
-import { customerFromRequest } from "@/lib/customer-auth";
+import { currentCustomer } from "@/lib/customer-auth";
 import { returnEligibility, RETURN_WINDOW_DAYS } from "@/lib/order-lifecycle";
 import { validId } from "@/lib/order-view";
 import { notifyStatusChange, notifyAdminCustomerAction } from "@/lib/order-notify";
@@ -14,7 +14,7 @@ const Body = z.object({ reason: z.string().trim().min(3, "Please choose a reason
 
 /** POST — the customer asks to return a delivered order (within 7 days of delivery). The admin approves or rejects. */
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const me = customerFromRequest(req);
+  const me = await currentCustomer(req);
   if (!me) return NextResponse.json({ error: "Please sign in" }, { status: 401 });
   const { id } = await params;
   if (!validId(id)) return NextResponse.json({ error: "Order not found" }, { status: 404 });

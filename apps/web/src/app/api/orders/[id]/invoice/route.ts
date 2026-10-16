@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import { Order } from "@/lib/models/Order";
 import { isAdminRequest } from "@/lib/admin-auth";
-import { customerFromRequest } from "@/lib/customer-auth";
+import { currentCustomer } from "@/lib/customer-auth";
 import { buildInvoicePdf } from "@/lib/invoice-pdf";
 import { orderNumber } from "@/lib/email-templates";
 import { toMailOrder, validId } from "@/lib/order-view";
@@ -14,7 +14,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   const { id } = await params;
   if (!validId(id)) return NextResponse.json({ error: "Order not found" }, { status: 404 });
   const admin = isAdminRequest(req);
-  const me = admin ? null : customerFromRequest(req);
+  const me = admin ? null : await currentCustomer(req);
   if (!admin && !me) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   try {
     await connectToDatabase();

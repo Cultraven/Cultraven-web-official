@@ -3,7 +3,7 @@ import { z } from "zod";
 import { connectToDatabase } from "@/lib/db";
 import { Order } from "@/lib/models/Order";
 import { isAdminRequest } from "@/lib/admin-auth";
-import { customerFromRequest } from "@/lib/customer-auth";
+import { currentCustomer } from "@/lib/customer-auth";
 import { canAdminTransition, isOrderStatus, isBackward, ORDER_STATUSES, ADMIN_TRANSITIONS } from "@/lib/order-lifecycle";
 import { customerOrderView, validId } from "@/lib/order-view";
 import { notifyStatusChange } from "@/lib/order-notify";
@@ -22,7 +22,7 @@ export async function GET(req: NextRequest, { params }: Ctx) {
   // still gets the customer shape there (and the admin panel keeps getting the full order).
   const asCustomer = req.nextUrl.searchParams.get("view") === "customer";
   const admin = !asCustomer && isAdminRequest(req);
-  const me = admin ? null : customerFromRequest(req);
+  const me = admin ? null : await currentCustomer(req);
   if (!admin && !me) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   try {
     await connectToDatabase();

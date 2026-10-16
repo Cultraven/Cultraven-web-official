@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import { Address } from "@/lib/models/Address";
-import { customerFromRequest } from "@/lib/customer-auth";
+import { currentCustomer } from "@/lib/customer-auth";
 import { AddressInput, shape } from "@/lib/address-schema";
 import { apiError, isSameOrigin, readJsonBody, unprocessable } from "@/lib/address-api";
 
@@ -12,7 +12,7 @@ const MAX_ADDRESSES = 10;
 
 /** The signed-in customer's saved addresses. */
 export async function GET(req: Request) {
-  const me = customerFromRequest(req);
+  const me = await currentCustomer(req);
   if (!me) return apiError(401, "Unauthorized");
   try {
     await connectToDatabase();
@@ -27,7 +27,7 @@ export async function GET(req: Request) {
 /** Add an address. Body is validated by zod (strict types + India rules incl. pincode/state) before any query runs. */
 export async function POST(req: Request) {
   if (!isSameOrigin(req)) return apiError(403, "Forbidden");
-  const me = customerFromRequest(req);
+  const me = await currentCustomer(req);
   if (!me) return apiError(401, "Unauthorized");
 
   const raw = await readJsonBody(req);

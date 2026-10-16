@@ -8,7 +8,7 @@ import { NextRequest, NextResponse, after } from "next/server";
 import { z } from "zod";
 import { connectToDatabase } from "@/lib/db";
 import { SupportMessage, supportRef } from "@/lib/models/SupportMessage";
-import { customerFromRequest } from "@/lib/customer-auth";
+import { currentCustomer } from "@/lib/customer-auth";
 import { notifySupportMessage } from "@/lib/support-notify";
 import { clientIp, isSameOrigin, parseJsonBody, rateLimit, retryHeaders, stripControlChars } from "@/lib/sanitize";
 
@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
 
   try {
     await connectToDatabase();
-    const me = customerFromRequest(req);
+    const me = await currentCustomer(req);
     const doc = await SupportMessage.create({ name, email, phone: (phone ?? "").replace(/\s/g, ""), subject, message, orderRef: orderRef ?? "", userId: me?.userId ?? "" });
     const ref = supportRef(String(doc._id));
     after(() => notifySupportMessage(String(doc._id)));

@@ -21,7 +21,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     await connectToDatabase();
 
     const user = await User.findById(id)
-      .select("firstName lastName email phone role status emailVerified avatarUpdatedAt createdAt updatedAt deletedAt")
+      .select("firstName lastName email phone role status avatarUpdatedAt createdAt updatedAt deletedAt")
       .lean();
     if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
@@ -85,7 +85,6 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         phone: u.phone ?? null,
         role: u.role ?? "customer",
         status: (u.status as string) || "active",
-        emailVerified: u.emailVerified ?? false,
         avatarUpdatedAt: u.avatarUpdatedAt ?? null,
         createdAt: u.createdAt,
         updatedAt: u.updatedAt,

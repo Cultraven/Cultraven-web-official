@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import { Order } from "@/lib/models/Order";
-import { customerFromRequest } from "@/lib/customer-auth";
+import { currentCustomer } from "@/lib/customer-auth";
 import { customerOrderView } from "@/lib/order-view";
 
 export const dynamic = "force-dynamic";
 
 /** GET — the signed-in customer's orders (newest first) in the same trimmed shape as the order page. */
 export async function GET(req: NextRequest) {
-  const me = customerFromRequest(req);
+  const me = await currentCustomer(req);
   if (!me) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {

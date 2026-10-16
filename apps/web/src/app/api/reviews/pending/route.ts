@@ -3,14 +3,14 @@ import { connectToDatabase } from "@/lib/db";
 import { Order } from "@/lib/models/Order";
 import { Review } from "@/lib/models/Review";
 import { Product } from "@/lib/models/Product";
-import { customerFromRequest } from "@/lib/customer-auth";
+import { currentCustomer } from "@/lib/customer-auth";
 import { buildPending, PENDING_WINDOW_DAYS } from "@/lib/review-pending";
 
 export const dynamic = "force-dynamic";
 
 /** GET — delivered items the signed-in customer hasn't reviewed yet (powers the "How was it?" popup). Visitors get an empty list. */
 export async function GET(req: NextRequest) {
-  const me = customerFromRequest(req);
+  const me = await currentCustomer(req);
   if (!me) return NextResponse.json({ items: [] }, { headers: { "Cache-Control": "no-store" } });
   try {
     await connectToDatabase();

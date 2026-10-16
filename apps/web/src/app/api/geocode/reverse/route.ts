@@ -11,7 +11,7 @@
  * Map data (c) OpenStreetMap contributors, ODbL — the form shows the attribution.
  */
 import { NextResponse } from "next/server";
-import { customerFromRequest } from "@/lib/customer-auth";
+import { currentCustomer } from "@/lib/customer-auth";
 import { apiError, clientIp } from "@/lib/address-api";
 import { createRateLimiter, createSpacer, createTtlCache } from "@/lib/address-limits";
 import { coordCacheKey, mapNominatimToAddress, parseCoordinates, type GeocodeMapResult } from "@/lib/address-geocode";
@@ -29,7 +29,7 @@ const cache = createTtlCache<GeocodeMapResult>({ ttlMs: 60 * 60 * 1000, max: 500
 const NO_STORE = { "Cache-Control": "no-store" };
 
 export async function GET(req: Request) {
-  const me = customerFromRequest(req);
+  const me = await currentCustomer(req);
   if (!me) return apiError(401, "Please sign in to use your location", {}, NO_STORE);
 
   const u = new URL(req.url);

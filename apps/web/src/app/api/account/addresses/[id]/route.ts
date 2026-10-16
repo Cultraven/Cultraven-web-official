@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import mongoose from "mongoose";
 import { connectToDatabase } from "@/lib/db";
 import { Address } from "@/lib/models/Address";
-import { customerFromRequest } from "@/lib/customer-auth";
+import { currentCustomer } from "@/lib/customer-auth";
 import { AddressInput, shape } from "@/lib/address-schema";
 import { OBJECT_ID_RE, apiError, isSameOrigin, readJsonBody, unprocessable } from "@/lib/address-api";
 
@@ -15,7 +15,7 @@ type Ctx = { params: Promise<{ id: string }> };
  */
 async function guard(req: Request, ctx: Ctx) {
   if (!isSameOrigin(req)) return { error: apiError(403, "Forbidden") } as const; // state-changing: CSRF defence in depth (cookie is also SameSite=Lax)
-  const me = customerFromRequest(req);
+  const me = await currentCustomer(req);
   if (!me) return { error: apiError(401, "Unauthorized") } as const;
   const { id } = await ctx.params;
   if (typeof id !== "string" || !OBJECT_ID_RE.test(id) || !mongoose.isValidObjectId(id)) return { error: apiError(400, "Invalid id") } as const;

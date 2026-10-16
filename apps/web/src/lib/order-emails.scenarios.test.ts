@@ -318,6 +318,10 @@ describe("scenario: the courier updates the delivery", () => {
     expect((await courierPatch({ status: "delivered" }, adminCookie().replace("cultraven_admin_session", "cultraven_delivery_session"))).status).toBe(401);
     h.users.set("courier2", { verificationStatus: "pending" });
     expect((await courierPatch({ status: "delivered" }, courierCookie("courier2"))).status).toBe(403);
+    h.users.set("courier3", { verificationStatus: "approved", status: "deleted" }); // deactivated by the admin after signing in
+    h.users.set("courier4", { verificationStatus: "approved", deletedAt: new Date() });
+    expect((await courierPatch({ status: "delivered" }, courierCookie("courier3"))).status).toBe(403);
+    expect((await courierPatch({ status: "delivered" }, courierCookie("courier4"))).status).toBe(403);
     expect((await courierPatch({ status: "delivered" }, courierCookie("ghost"))).status).toBe(403);
     expect(h.orders.get(ID).fulfillmentStatus).toBe("shipped");
     expect(h.sent).toHaveLength(0);

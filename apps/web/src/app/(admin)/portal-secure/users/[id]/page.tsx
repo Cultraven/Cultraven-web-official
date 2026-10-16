@@ -9,7 +9,7 @@ import {
 type User = {
   id: string; fullName: string; firstName: string; lastName: string;
   email: string; phone: string | null; role: string; status: string;
-  emailVerified: boolean; avatarUpdatedAt: string | null;
+  avatarUpdatedAt: string | null;
   createdAt: string; updatedAt: string; deletedAt: string | null;
 };
 type Stats = { orderCount: number; orderTotalPaise: number };
@@ -202,7 +202,6 @@ export default function UserDetailPage() {
               ["Email", user.email],
               ["Phone", user.phone ?? "—"],
               ["Role", cap(user.role)],
-              ["Email verified", user.emailVerified ? "Yes" : "No"],
               ["Joined", fmtDate(user.createdAt)],
               ["Last updated", fmtDate(user.updatedAt)],
               user.deletedAt ? ["Deleted at", fmtDate(user.deletedAt)] : null,

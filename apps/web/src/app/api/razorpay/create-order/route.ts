@@ -26,7 +26,7 @@ import Razorpay from "razorpay";
 import { connectToDatabase } from "@/lib/db";
 import { Order } from "@/lib/models/Order";
 import { Product } from "@/lib/models/Product";
-import { customerFromRequest } from "@/lib/customer-auth";
+import { currentCustomer } from "@/lib/customer-auth";
 import { validateCoupon } from "@/lib/promotion-service";
 import { FREE_SHIPPING_THRESHOLD, SHIPPING_FEE, COD_FEE, COD_MAX_LIMIT } from "@/lib/constants";
 
@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
   if (!isSameOrigin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   // Checkout is for signed-in customers only (the page enforces it); the API must not accept anonymous "guest" orders either.
-  const customer = customerFromRequest(req);
+  const customer = await currentCustomer(req);
   if (!customer) return NextResponse.json({ error: "Please sign in to place your order.", code: "LOGIN_REQUIRED" }, { status: 401 });
 
   // Rate limiting

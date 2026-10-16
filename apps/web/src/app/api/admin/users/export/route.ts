@@ -29,12 +29,12 @@ export async function GET(req: NextRequest) {
     await connectToDatabase();
 
     const users = await User.find({})
-      .select("firstName lastName email phone role status emailVerified createdAt updatedAt deletedAt")
+      .select("firstName lastName email phone role status createdAt updatedAt deletedAt")
       .sort({ createdAt: -1 })
       .lean() as any[];
 
     if (fmt === "csv") {
-      const headers = ["ID", "First Name", "Last Name", "Email", "Phone", "Role", "Status", "Email Verified", "Joined", "Last Updated", "Deleted At"];
+      const headers = ["ID", "First Name", "Last Name", "Email", "Phone", "Role", "Status", "Joined", "Last Updated", "Deleted At"];
       const rows = users.map((u) => [
         u._id.toString(),
         u.firstName,
@@ -43,7 +43,6 @@ export async function GET(req: NextRequest) {
         u.phone ?? "",
         u.role,
         u.status,
-        u.emailVerified ? "Yes" : "No",
         u.createdAt ? new Date(u.createdAt).toISOString() : "",
         u.updatedAt ? new Date(u.updatedAt).toISOString() : "",
         u.deletedAt ? new Date(u.deletedAt).toISOString() : "",
@@ -68,7 +67,6 @@ export async function GET(req: NextRequest) {
         <td>${escapeHtml(u.phone ?? "—")}</td>
         <td>${escapeHtml(u.role)}</td>
         <td>${escapeHtml(u.status)}</td>
-        <td>${u.emailVerified ? "Yes" : "No"}</td>
         <td>${u.createdAt ? new Date(u.createdAt).toLocaleDateString("en-IN") : "—"}</td>
       </tr>`).join("");
 
@@ -101,7 +99,7 @@ export async function GET(req: NextRequest) {
 <table>
   <thead>
     <tr>
-      <th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Status</th><th>Verified</th><th>Joined</th>
+      <th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Status</th><th>Joined</th>
     </tr>
   </thead>
   <tbody>${rows}</tbody>

@@ -4,7 +4,7 @@ import { Review } from "@/lib/models/Review";
 import { Order } from "@/lib/models/Order";
 import { Product } from "@/lib/models/Product";
 import { User } from "@/lib/models/User";
-import { customerFromRequest } from "@/lib/customer-auth";
+import { currentCustomer } from "@/lib/customer-auth";
 import { ReviewWriteSchema, publicName, averageRating } from "@/lib/review-schema";
 import { syncProductRating } from "@/lib/reviews-server";
 import { z } from "zod";
@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
   try {
     await connectToDatabase();
     const reviews = (await Review.find({ slug }).sort({ createdAt: -1 }).limit(100).lean()) as any[];
-    const me = customerFromRequest(req);
+    const me = await currentCustomer(req);
     let canReview = false;
     let hasReviewed = false;
     if (me) {
@@ -63,7 +63,7 @@ export async function GET(req: NextRequest) {
 /** POST /api/reviews — signed-in customers who bought the product; one review per product. */
 export async function POST(req: NextRequest) {
   if (!isSameOrigin(req)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  const me = customerFromRequest(req);
+  const me = await currentCustomer(req);
   if (!me) return NextResponse.json({ error: "Please sign in to review" }, { status: 401 });
 
   // 5 / minute per person (and 20 / minute per IP) is plenty for writing a review and blocks scripted spam.

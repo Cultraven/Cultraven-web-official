@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import { isDeliveryRequest, isAdminRequest } from "@/lib/admin-auth";
 import mongoose from "mongoose";
+import { isUserActive } from "@/lib/account-delete";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +23,8 @@ export async function GET(req: NextRequest) {
       if (!payload) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
       const User = mongoose.models.User as any;
       if (User) {
-        const u = await User.findById(payload.userId).select("verificationStatus").lean() as any;
+        const u = await User.findById(payload.userId).select("verificationStatus deletedAt status").lean() as any;
+        if (u && !isUserActive(u)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         if (!u || u.verificationStatus !== "approved") {
           return NextResponse.json({ orders: [] });
         }

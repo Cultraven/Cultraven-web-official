@@ -57,6 +57,19 @@ export async function activeCustomerFromRequest(req: Request): Promise<CustomerS
   return isUserActive(u) && !signedInBeforePasswordChange(session, u) ? session : null;
 }
 
+/**
+ * For API routes: the signed-in customer, or null. Also null when the account was deactivated or deleted, or the password changed since this
+ * device signed in, so an old cookie can't keep placing orders. A database outage answers null too (fails closed; these routes need the database anyway).
+ */
+export async function currentCustomer(req: Request): Promise<CustomerSession | null> {
+  try {
+    return await activeCustomerFromRequest(req);
+  } catch (e) {
+    console.error("[customer-auth] session check failed:", e instanceof Error ? e.message : e);
+    return null;
+  }
+}
+
 export interface CustomerProfile {
   userId: string;
   email: string;
