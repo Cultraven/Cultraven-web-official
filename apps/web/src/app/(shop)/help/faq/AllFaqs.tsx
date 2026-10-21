@@ -41,7 +41,7 @@ export default function AllFaqs({ hover = true }: { hover?: boolean }) {
               {TOPICS.map((t) => <button key={t.slug} type="button" className="hc-pill" aria-pressed={topic === t.slug} onClick={() => setTopic(t.slug)}>{t.title} ({t.faqs.length})</button>)}
             </div>
             <div className="hc-bar">
-              <p className="hc-hint" data-on={hover ? "true" : "false"} style={{ margin: 0 }}>Hover over a question to preview the answer · click to keep it open</p>
+              <p className="hc-hint" data-on={hover ? "true" : "false"} style={{ margin: 0 }}>Tap a question to open it</p>
               <button type="button" className="hc-link" onClick={() => setExpandAll((v) => !v)} aria-pressed={expandAll}>{expandAll ? "Collapse all" : "Expand all"}</button>
             </div>
             {shown.map((t) => (

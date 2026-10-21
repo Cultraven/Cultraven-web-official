@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Shipping Information",
-  description: "CULTRAVEN shipping policy — delivery timelines, free shipping threshold, express delivery and tracking.",
+  description: "CULTRAVEN shipping policy — delivery timelines, free shipping threshold and tracking.",
 };
 
 const INFO_SECTIONS = [
@@ -12,7 +12,7 @@ const INFO_SECTIONS = [
   },
   {
     heading: "Delivery Timelines",
-    body: "Standard Delivery: 4–6 business days.\nExpress Delivery: 2–3 business days (₹199 additional).\nSame-day delivery available in Delhi NCR, Mumbai and Bengaluru for orders placed before 12 PM.",
+    body: "Standard Delivery: 4–6 business days after dispatch.\nFree delivery on orders above ₹1,999.",
   },
   {
     heading: "Order Processing",
@@ -43,7 +43,7 @@ export default function ShippingPage() {
       {/* Shipping highlights */}
       <div style={{ backgroundColor: "var(--color-mist)", padding: "2.5rem clamp(1.25rem,4vw,5rem)" }}>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "1.5rem" }} className="ship-grid">
-          {[{ icon: "🚚", label: "Free Shipping", sub: "On orders above ₹1,999" }, { icon: "⚡", label: "Express Available", sub: "2–3 business days" }, { icon: "📦", label: "Fast Processing", sub: "Within 24–48 hours" }, { icon: "📍", label: "Track Your Order", sub: "Real-time updates" }].map((item) => (
+          {[{ icon: "🚚", label: "Free Shipping", sub: "On orders above ₹1,999" }, { icon: "⚡", label: "Standard Delivery", sub: "4–6 business days" }, { icon: "📦", label: "Fast Processing", sub: "Within 24–48 hours" }, { icon: "📍", label: "Track Your Order", sub: "Real-time updates" }].map((item) => (
             <div key={item.label} style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "1.5rem" }}>
               <span style={{ fontSize: "2rem", marginBottom: "0.75rem" }}>{item.icon}</span>
               <p style={{ fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.78rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-navy)", marginBottom: "0.25rem" }}>{item.label}</p>
@@ -63,7 +63,7 @@ export default function ShippingPage() {
         ))}
         <div style={{ backgroundColor: "var(--color-navy)", padding: "2rem" }}>
           <p style={{ fontFamily: "var(--font-sans)", fontWeight: 700, fontSize: "0.78rem", color: "var(--color-cream)", marginBottom: "0.5rem" }}>Still have questions?</p>
-          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "rgba(245,241,232,0.7)", marginBottom: "1rem" }}>Our team is available Monday–Saturday, 10 AM – 6 PM IST.</p>
+          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "rgba(245,241,232,0.7)", marginBottom: "1rem" }}>Our team is available Monday–Saturday, 10 AM – 7 PM IST.</p>
           <a href="/contact" style={{ display: "inline-block", padding: "0.75rem 1.75rem", border: "2px solid var(--color-cream)", color: "var(--color-cream)", fontFamily: "var(--font-sans)", fontWeight: 800, fontSize: "0.7rem", letterSpacing: "0.14em", textTransform: "uppercase", textDecoration: "none" }}>CONTACT US</a>
         </div>
       </div>

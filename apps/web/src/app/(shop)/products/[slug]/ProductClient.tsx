@@ -51,7 +51,7 @@ export interface RelatedProduct { id: string; title: string; price: number; imag
 
 // Site-wide policy copy (not product data).
 const POLICY_ACCORDIONS = [
-  { id: "shipping", title: "Shipping", body: "Free shipping on orders above ₹1,999. Standard: 4–6 business days. Express: 2–3 business days. COD available on select pincodes. We ship across India." },
+  { id: "shipping", title: "Shipping", body: "Free shipping on orders above ₹1,999. Standard delivery: 4–6 business days. COD available on select pincodes. We ship across India." },
   { id: "returns", title: "Returns & Exchanges", body: "Easy 7-day returns. Items must be unworn, unwashed with original tags. Initiate a return from your account dashboard. Exchange for a different size available within 15 days." },
 ];
 
@@ -212,7 +212,7 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
                 <svg key={i} width="13" height="13" viewBox="0 0 24 24" fill={i < Math.floor(rating) ? "var(--color-crimson)" : (i < rating ? "var(--color-crimson)" : "none")} stroke="var(--color-crimson)" strokeWidth="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
               ))}
             </div>
-            <Link href="#reviews" style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", fontWeight: 600, color: "var(--color-gray)", textDecoration: "underline", padding: "12px 0" }}>{reviewCount} Reviews</Link>
+            <Link href="#reviews" style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", fontWeight: 600, color: "var(--color-gray)", textDecoration: "underline", padding: "12px 0" }}>{reviewCount} {reviewCount === 1 ? "review" : "reviews"}</Link>
           </div>
 
           {/* Price: follows the chosen size, and the total follows the quantity */}
@@ -302,7 +302,7 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
 
           {/* Trust strip */}
           <div style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap", marginBottom: "1.5rem" }}>
-            {[{ icon: "🔒", label: "SECURE PAYMENT" }, { icon: "🔄", label: "EASY RETURNS" }, { icon: "🚚", label: "FREE DELIVERY" }].map((t) => (
+            {[{ icon: "💵", label: "COD AVAILABLE" }, { icon: "🔄", label: "EASY RETURNS" }, { icon: "🚚", label: "FREE DELIVERY ₹1,999+" }].map((t) => (
               <div key={t.label} style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
                 <span style={{ fontSize: "1rem" }}>{t.icon}</span>
                 <span style={{ fontFamily: "var(--font-sans)", fontSize: "10px", fontWeight: 900, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--color-navy)" }}>{t.label}</span>

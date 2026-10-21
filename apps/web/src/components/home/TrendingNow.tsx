@@ -69,18 +69,16 @@ function TrendCard({ item }: { item: TrendItem }) {
           className="trend-img"
         />
 
-        {/* Bottom bar CTA */}
+        {/* Name: plain white text on the photo; a soft fade at the bottom keeps it readable */}
+        <div aria-hidden="true" className="trend-fade" />
         <div
           style={{
             position: "absolute",
-            bottom: "1.25rem",
+            zIndex: 1,
+            bottom: "1.1rem",
             left: "1.25rem",
             right: "1.25rem",
-            padding: "0.85rem 1rem",
-            backgroundColor: "var(--color-cream)",
-            border: "2px solid var(--color-navy)",
-            textAlign: "center",
-            transition: "background-color 0.2s ease",
+            textAlign: "left",
           }}
           className="trend-bar"
         >
@@ -88,10 +86,11 @@ function TrendCard({ item }: { item: TrendItem }) {
             style={{
               fontFamily: "var(--font-sans)",
               fontWeight: 900,
-              fontSize: "0.7rem",
-              letterSpacing: "0.14em",
+              fontSize: "0.85rem",
+              letterSpacing: "0.12em",
               textTransform: "uppercase",
-              color: "var(--color-navy)",
+              color: "#fff",
+              textShadow: "0 1px 8px rgba(0, 0, 0, 0.35)",
             }}
           >
             {item.title}

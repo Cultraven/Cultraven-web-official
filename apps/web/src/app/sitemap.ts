@@ -1,62 +1,36 @@
 /**
- * sitemap.ts — generates sitemap.xml for Googlebot.
- *
- * Includes:
- *   - Static marketing pages
- *   - All active product slugs (from catalog-service)
- *   - Category pages
- *
- * Next.js automatically serves this at /sitemap.xml
+ * sitemap.ts: sitemap.xml for Google.
+ * Lists the shop pages, every collection set up in Admin -> Website content -> Collections, and every product (read from the same database the shop uses).
  */
 
 import type { MetadataRoute } from "next";
+import { getCmsSection, getProducts } from "@/lib/cms/server";
+import { liveItems } from "@/lib/cms/registry";
+
+export const dynamic = "force-dynamic";
 
 const BASE = process.env.NEXT_PUBLIC_SITE_URL || "https://cultraven.com";
-
-interface ProductSlugPayload {
-  slugs: string[];
-}
-
-async function getProductSlugs(): Promise<string[]> {
-  try {
-    const serviceUrl =
-      process.env.CATALOG_SERVICE_URL ?? "http://localhost:4003/api/v1";
-    const res = await fetch(`${serviceUrl}/products/slugs`, {
-      next: { revalidate: 3600 },
-    });
-    if (!res.ok) return [];
-    const data = (await res.json()) as ProductSlugPayload;
-    return data.slugs;
-  } catch {
-    return [];
-  }
-}
+const ALWAYS = ["all", "new-in", "bestsellers"];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const productSlugs = await getProductSlugs();
+  const [products, collections] = await Promise.all([getProducts("all", 500), getCmsSection<any>("shop.collections")]);
+  const slugs = Array.from(new Set([...ALWAYS, ...liveItems<any>(collections.data?.items).map((c) => String(c.slug || "")).filter(Boolean)]));
 
   const staticPages: MetadataRoute.Sitemap = [
     { url: BASE, lastModified: new Date(), changeFrequency: "daily", priority: 1.0 },
-    { url: `${BASE}/collections/all`, changeFrequency: "daily", priority: 0.9 },
-    { url: `${BASE}/collections/new-in`, changeFrequency: "daily", priority: 0.9 },
-    { url: `${BASE}/collections/bestsellers`, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${BASE}/category/shirts`, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${BASE}/category/suits`, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${BASE}/category/blazers`, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${BASE}/category/tshirts`, changeFrequency: "weekly", priority: 0.7 },
-    { url: `${BASE}/category/jeans`, changeFrequency: "weekly", priority: 0.7 },
-    { url: `${BASE}/category/accessories`, changeFrequency: "weekly", priority: 0.7 },
+    ...slugs.map((slug) => ({ url: `${BASE}/collections/${slug}`, changeFrequency: "daily" as const, priority: slug === "all" || slug === "new-in" ? 0.9 : 0.8 })),
     { url: `${BASE}/pages/about`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${BASE}/pages/contact`, changeFrequency: "monthly", priority: 0.5 },
-    { url: `${BASE}/pages/faq`, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${BASE}/help`, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${BASE}/pages/size-guide`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${BASE}/pages/returns`, changeFrequency: "monthly", priority: 0.4 },
     { url: `${BASE}/pages/shipping`, changeFrequency: "monthly", priority: 0.4 },
     { url: `${BASE}/pages/privacy`, changeFrequency: "yearly", priority: 0.3 },
     { url: `${BASE}/pages/terms`, changeFrequency: "yearly", priority: 0.3 },
   ];
 
-  const productPages: MetadataRoute.Sitemap = productSlugs.map((slug) => ({
-    url: `${BASE}/products/${slug}`,
+  const productPages: MetadataRoute.Sitemap = (products.data ?? []).map((p) => ({
+    url: `${BASE}/products/${p.slug}`,
     changeFrequency: "weekly" as const,
     priority: 0.8,
   }));

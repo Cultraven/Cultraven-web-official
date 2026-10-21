@@ -42,11 +42,11 @@ describe("ShopCard", () => {
     expect(screen.queryByText("₹999")).toBeNull();
   });
 
-  it("shows 'Only few left' only when a size in stock is low", () => {
+  it("shows 'Only a few left' only when a size in stock is low", () => {
     const { rerender } = render(<ShopCard product={product} />);
-    expect(screen.queryByText("Only few left")).toBeNull();
+    expect(screen.queryByText("Only a few left")).toBeNull();
     rerender(<ShopCard product={{ ...product, sizeOptions: [{ size: "XXL", soldOut: false, low: true }] }} />);
-    expect(screen.getByText("Only few left")).toBeTruthy();
+    expect(screen.getByText("Only a few left")).toBeTruthy();
   });
 
   it("offers a size chip per size on hover and adds the chosen size at its own price", () => {

@@ -91,6 +91,7 @@ const config: NextConfig = {
       // Old FAQ / contact URLs → the Help Center (the old FAQ page had outdated policy text)
       { source: "/pages/about", destination: "/pages/our-heritage", permanent: true },
       { source: "/pages/faq", destination: "/help", permanent: true },
+      { source: "/collections", destination: "/collections/all", permanent: true },
       { source: "/faq", destination: "/help", permanent: true },
       { source: "/support", destination: "/help", permanent: true },
       { source: "/contact", destination: "/pages/contact", permanent: true },

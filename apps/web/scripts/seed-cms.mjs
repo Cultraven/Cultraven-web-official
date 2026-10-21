@@ -127,7 +127,7 @@ const SECTIONS = {
   },
   "site.trustBadges": {
     items: withIds("trust", [
-      { icon: "shipping", title: "Free Delivery ₹999+", subtitle: "Pan-India express dispatch", active: true },
+      { icon: "shipping", title: "Free Delivery ₹1,999+", subtitle: "Ships across India", active: true },
       { icon: "returns", title: "Easy 7-Day Returns", subtitle: "No questions asked", active: true },
       { icon: "secure", title: "100% Secure Checkout", subtitle: "UPI · Cards · Net Banking", active: true },
       { icon: "cod", title: "Cash On Delivery", subtitle: "Available across India", active: true },

@@ -48,7 +48,7 @@ export default function HelpCenter({ orderId, orderNumber, hover = true }: { ord
 
             <section className="hc-sec" id="faq">
               <h2 className="hc-h2">Popular questions</h2>
-              <p className="hc-hint" data-on={hover ? "true" : "false"}>Hover over a question to preview the answer · click to keep it open</p>
+              <p className="hc-hint" data-on={hover ? "true" : "false"}>Tap a question to open it</p>
               <FaqList from hover={hover} items={popular} />
               <Link href="/help/faq" className="hc-more">See all questions →</Link>
             </section>

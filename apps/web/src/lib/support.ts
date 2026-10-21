@@ -103,12 +103,12 @@ export const TOPICS: Topic[] = [
     blurb: `${RETURN_WINDOW_DAYS}-day easy returns, size exchanges`,
     icon: "refresh",
     faqs: [
-      { q: "What is your return policy?", a: `You can return an order within ${RETURN_WINDOW_DAYS} days of delivery. Items must be unworn, unwashed, and have the original tags. Sale items follow the same policy unless the product page says otherwise.` },
+      { q: "What is your return policy?", a: `You can return an order within ${RETURN_WINDOW_DAYS} days of delivery. Items must be unworn, unwashed, and have the original tags. Sale and clearance items can't be returned. If a piece arrives wrong or damaged, tell us and we'll sort it.` },
       { q: "How do I request a return?", a: "Account → Orders → open the delivered order → Return / exchange. Choose a reason, add a note, and submit. We review it and email you; once approved we arrange the pickup and refund." },
-      { q: "How do I exchange for a different size?", a: `Contact us within ${RETURN_WINDOW_DAYS} days of delivery with your order number and the size you want. If it's in stock we'll swap it; otherwise you can return the item for a refund.` },
+      { q: "How do I exchange for a different size?", a: `Contact us within 15 days of delivery with your order number and the size you want. If it's in stock we'll swap it; otherwise you can return the item for a refund.` },
       { q: "I received a damaged or wrong item.", a: "We're sorry! Raise a return right away from the order page, choose Received damaged or Wrong item received, and include a photo on WhatsApp so we can fast-track a replacement or refund." },
       { q: "When do I get my refund for a return?", a: "After the returned item reaches us and passes a quick check, the refund is issued to your original payment method within 5–7 business days. For Cash on Delivery orders we'll ask for your UPI ID or bank details." },
-      { q: "Can I return a sale or limited-edition item?", a: "Yes, unless the product page says it's final sale. Limited-edition items follow the same 7-day window." },
+      { q: "Can I return a sale or limited-edition item?", a: "Sale and clearance items can't be returned. Limited-edition items follow the normal 7-day return window. If a piece arrives wrong or damaged, tell us and we'll sort it." },
     ],
   },
   {

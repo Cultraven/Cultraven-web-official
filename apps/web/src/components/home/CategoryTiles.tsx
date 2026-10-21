@@ -111,7 +111,7 @@ function TileCard({ tile }: { tile: Tile }) {
         style={{ objectFit: "cover" }}
       />
 
-      {/* Label chip: cream plate with a navy border sits on the photo — no gradient or colour wash over the image. */}
+      {/* Label: plain white text on the photo (a soft fade at the bottom keeps it readable). */}
       <div className="cat-label">
         <p className="cat-label-title">{tile.title}</p>
         {tile.sub ? <p className="cat-label-sub">{tile.sub}</p> : null}
@@ -124,9 +124,10 @@ function TileCard({ tile }: { tile: Tile }) {
           position: "absolute",
           top: "1rem",
           right: "1rem",
-          backgroundColor: "var(--color-cream)",
+          backgroundColor: "var(--color-navy)",
           border: "2px solid var(--color-navy)",
-          color: "var(--color-navy)",
+          boxShadow: "3px 3px 0 0 var(--color-lava)",
+          color: "var(--color-cream)",
           fontFamily: "var(--font-sans)",
           fontWeight: 800,
           fontSize: "10px",

@@ -19,7 +19,7 @@ const FAQ: { patterns: string[]; answer: string }[] = [
   {
     patterns: ["shipping", "delivery", "ship", "deliver", "how long"],
     answer:
-      "We offer free shipping on orders above ₹1,999. Standard delivery takes 4–6 business days. Express delivery (₹199 extra) takes 2–3 business days.",
+      "We offer free shipping on orders above ₹1,999. Standard delivery takes 4–6 business days.",
   },
   {
     patterns: ["return", "exchange", "refund", "size wrong", "wrong size"],
@@ -59,7 +59,7 @@ const FAQ: { patterns: string[]; answer: string }[] = [
   {
     patterns: ["contact", "email", "phone", "support", "help", "customer care"],
     answer:
-      "Our support team is available Mon–Sat, 10 AM – 6 PM IST. Reach us via WhatsApp, Instagram DM, or email at support@cultraven.com.",
+      "Our support team is available Mon–Sat, 10 AM – 7 PM IST. Reach us via WhatsApp, Instagram DM, or email at support@cultraven.com.",
   },
 ];
 

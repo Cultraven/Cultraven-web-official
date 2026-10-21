@@ -1,7 +1,7 @@
 /**
  * CommunitySection — "WORN BY THE CULTURE" social/UGC grid.
  *
- * 6-image editorial grid of lifestyle photography.
+ * 6-image editorial bento grid of lifestyle photography (see .ugc-grid in styles/components.css).
  * Instagram handle CTA at the top right.
  * Clean mist (var(--color-mist)) background, no heavy UI chrome.
  */
@@ -111,12 +111,6 @@ export function CommunitySection({ content, images }: { content: CommunityConten
 
         {/* Image grid */}
         <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gridAutoRows: "clamp(140px, 18vw, 260px)",
-            gap: "0.75rem",
-          }}
           className="ugc-grid"
         >
           {images.map((img) => (

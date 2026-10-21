@@ -87,7 +87,7 @@ export function ShopCard({ product: p, priority = false }: { product: CardProduc
           ) : null}
           {v.varies ? <em>onwards</em> : null}
         </span>
-        {v.fewLeft ? <span className="sc-few">Only few left</span> : null}
+        {v.fewLeft ? <span className="sc-few">Only a few left</span> : null}
       </Link>
 
       {/* ── Color swatches — clickable, always visible when admin sets colors ── */}

@@ -77,7 +77,7 @@ export function ShopTheLookSection({ look }: { look: ShopLookData | null }) {
               marginBottom: "0.6rem",
             }}
           >
-            Get The Look
+            Fit check
           </span>
           <h2
             id="stl-heading"

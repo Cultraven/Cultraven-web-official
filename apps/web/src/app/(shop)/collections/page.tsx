@@ -1,19 +1,8 @@
-import React from "react";
-import type { Metadata } from "next";
-import { ComingSoon } from "@/components/ComingSoon";
-
-export const metadata: Metadata = {
-  title: "All Collections",
-  description: "Browse all CULTRAVEN collections: new arrivals, best sellers and everyday essentials.",
-};
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-static";
 
+/** There is no separate "all collections" page: send visitors (and Google) to the full shop. */
 export default function CollectionsPage() {
-  return (
-    <ComingSoon
-      page="All Collections"
-      description="Our full collections page is launching soon. Subscribe to get notified, or browse all products in the meantime."
-    />
-  );
+  redirect("/collections/all");
 }

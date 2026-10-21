@@ -42,7 +42,7 @@ export default async function HelpTopicPage({ params, searchParams }: Props) {
       <div className="hc-wrap">
         <section className="hc-sec">
           <h2 className="hc-h2">{t.faqs.length} questions</h2>
-          <p className="hc-hint" data-on="true">Hover over a question to preview the answer · click to keep it open</p>
+          <p className="hc-hint" data-on="true">Tap a question to open it</p>
           <FaqList items={t.faqs} />
         </section>
 

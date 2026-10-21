@@ -593,7 +593,7 @@ export default function ContactPage() {
                 lineHeight: 1.6,
               }}
             >
-              Monday – Saturday: 10 AM – 6 PM IST<br />
+              Monday – Saturday: 10 AM – 7 PM IST<br />
               Sunday: Closed (WhatsApp monitored)
             </p>
           </div>
