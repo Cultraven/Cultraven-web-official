@@ -12,7 +12,7 @@
 @media (hover: hover) and (pointer: fine) { .sc:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--color-navy); } }
 
 /* ── photo ── */
-.sc-media { position: relative; aspect-ratio: 3 / 4; overflow: hidden; background: var(--color-mist); border-bottom: 2px solid var(--color-navy); }
+.sc-media { position: relative; aspect-ratio: 4 / 5; overflow: hidden; background: var(--color-mist); border-bottom: 2px solid var(--color-navy); }
 .sc-photo { position: absolute; inset: 0; display: block; }
 .sc .sc-img { object-fit: cover; transition: opacity 0.35s ease, transform 0.45s ease; }
 .sc .sc-img-2 { opacity: 0; }
