@@ -26,6 +26,7 @@ import "@/styles/pdp-cta.css";
 import { effectiveSizes, priceForSize, priceRange, discountPercent, lineTotal, type PublicSizeOption } from "@/lib/size-pricing";
 import { useWishlisted } from "@/store/wishlist";
 import { toast } from "@/components/common/Toast";
+import { ReadMore } from "@/components/common/ReadMore";
 
 const fmt = (p: number) => `₹${(p / 100).toLocaleString("en-IN")}`;
 
@@ -317,7 +318,7 @@ export default function ProductDetailClient({ product, related }: { product: Pdp
         {ACCORDIONS.map((acc) => (
           <article key={acc.id} className="pdp-detail">
             <h2>{acc.title}</h2>
-            <p>{acc.body}</p>
+            <ReadMore lines={3}>{acc.body}</ReadMore>
           </article>
         ))}
       </section>

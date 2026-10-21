@@ -6,6 +6,7 @@
  */
 import React from "react";
 import Link from "next/link";
+import { ReadMore } from "@/components/common/ReadMore";
 
 export interface BrandStoryContent {
   eyebrow?: string;
@@ -118,7 +119,9 @@ export function BrandStorySection({ content }: { content: BrandStoryContent }) {
         </h2>
 
         {content.body ? (
-          <p
+          <ReadMore
+            lines={3}
+            tone="light"
             className="bs-body"
             style={{
               fontFamily: "var(--font-sans)",
@@ -131,7 +134,7 @@ export function BrandStorySection({ content }: { content: BrandStoryContent }) {
             }}
           >
             {content.body}
-          </p>
+          </ReadMore>
         ) : null}
 
         {content.ctaLabel && content.ctaHref ? (

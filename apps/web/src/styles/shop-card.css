@@ -57,10 +57,9 @@
   .sc:hover .sc-size-row,
   .sc:focus-within .sc-size-row { max-height: 320px; padding-top: 9px; padding-bottom: 11px; border-top-width: 1.5px; }
 }
-/* on touch devices always show the size row (no hover available) */
-/* No fixed height here: 4 size chips wrap to two rows and the BUY NOW button must never be clipped. */
+/* On touch devices the size chips and BUY NOW are not shown on the card (they made every card very tall): tap the card to pick a size on the product page. */
 @media (hover: none), (pointer: coarse) {
-  .sc-size-row { max-height: none; overflow: visible; padding-top: 9px; padding-bottom: 11px; border-top-width: 1.5px; }
+  .sc-size-row { display: none; }
 }
 .sc-size-row-sold { background: transparent; }
 .sc-chips-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }

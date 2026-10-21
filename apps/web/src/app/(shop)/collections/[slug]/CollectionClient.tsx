@@ -16,6 +16,7 @@ import type { PublicSizeOption } from "@/lib/size-pricing";
 import React, { useState, useMemo, Component } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { ReadMore } from "@/components/common/ReadMore";
 
 // ─── Error Boundary ────────────────────────────────────────────────────────────
 class PLPErrorBoundary extends Component<
@@ -192,7 +193,7 @@ function CollectionPageClientInner({
             ))}
           </nav>
           <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(3rem,8vw,6.5rem)", fontWeight: 400, color: "var(--color-cream)", lineHeight: 0.9, letterSpacing: "0.02em", marginBottom: "0.75rem", textTransform: "uppercase" }}>{collectionName}</h1>
-          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.9rem", color: "rgba(245,241,232,0.75)", maxWidth: "460px", lineHeight: 1.6 }}>{description}</p>
+          <ReadMore lines={2} tone="light" style={{ fontFamily: "var(--font-sans)", fontSize: "0.9rem", color: "rgba(245,241,232,0.75)", maxWidth: "460px", lineHeight: 1.6 }}>{description}</ReadMore>
           <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", fontWeight: 700, color: "rgba(245,241,232,0.55)", letterSpacing: "0.1em", textTransform: "uppercase", marginTop: "1rem" }}>{filtered.length} Products</p>
         </div>
       </div>
