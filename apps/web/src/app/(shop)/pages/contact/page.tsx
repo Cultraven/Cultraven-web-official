@@ -437,7 +437,7 @@ export default function ContactPage() {
 
             {/* Instagram */}
             <a
-              href="https://www.instagram.com/cultraven"
+              href="https://www.instagram.com/clutraven/"
               target="_blank"
               rel="noopener noreferrer"
               id="contact-instagram-cta"

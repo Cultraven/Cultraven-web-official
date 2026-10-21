@@ -118,8 +118,10 @@ const SECTIONS = {
       ]) },
     ]),
     socialLinks: withIds("social", [
-      { platform: "instagram", href: "https://www.instagram.com/cultraven" },
-      { platform: "youtube", href: "https://www.youtube.com/cultraven" },
+      { platform: "instagram", href: "https://www.instagram.com/clutraven/" },
+      { platform: "twitter", href: "https://x.com/cultraven_" },
+      { platform: "facebook", href: "https://www.facebook.com/profile.php?id=61595224413709" },
+      { platform: "reddit", href: "https://www.reddit.com/user/Cultraven_official/" },
       { platform: "pinterest", href: "https://www.pinterest.com/cultraven" },
     ]),
   },
@@ -164,7 +166,7 @@ const SECTIONS = {
   "home.community": {
     eyebrow: "Community",
     heading: "Styled by Our Customers",
-    instagramUrl: "https://www.instagram.com/cultraven",
+    instagramUrl: "https://www.instagram.com/clutraven/",
     ctaText: "Tag @cultraven to be featured",
     items: withIds("ugc", [
       { image: U("1515886657613-9f3515b0c78f", 600), alt: "CULTRAVEN community look — oversized tee", active: true },

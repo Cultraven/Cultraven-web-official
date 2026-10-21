@@ -12,7 +12,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { supportConfig } from "@/lib/support";
 
 const WHATSAPP_NUMBER = supportConfig().whatsapp; // the registered support line unless NEXT_PUBLIC_WHATSAPP_NUMBER overrides it
-const INSTAGRAM_HANDLE = process.env.NEXT_PUBLIC_INSTAGRAM_HANDLE ?? "cultraven";
+const INSTAGRAM_HANDLE = process.env.NEXT_PUBLIC_INSTAGRAM_HANDLE ?? "clutraven";
 
 // ── Simple FAQ chatbot knowledge base ────────────────────────────────────────
 const FAQ: { patterns: string[]; answer: string }[] = [

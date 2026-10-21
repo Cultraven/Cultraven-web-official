@@ -99,7 +99,7 @@ export const SECTIONS: SectionDef[] = [
         ] },
       ] },
       { kind: "list", key: "socialLinks", label: "Social links", itemTitleKey: "platform", max: 8, fields: [
-        { kind: "select", key: "platform", label: "Platform", required: true, options: ["instagram", "youtube", "pinterest", "facebook", "twitter", "whatsapp"] },
+        { kind: "select", key: "platform", label: "Platform", required: true, options: ["instagram", "twitter", "facebook", "reddit", "pinterest", "whatsapp"] },
         { kind: "url", key: "href", label: "Profile URL", required: true },
       ] },
     ],

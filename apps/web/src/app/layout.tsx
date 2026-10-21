@@ -39,10 +39,10 @@ const organizationJsonLd = {
     "CULTRAVEN is an Indian clothing brand selling oversized t-shirts, hoodies, cargo pants and streetwear online, with Cash on Delivery and easy 7-day returns.",
   slogan: "Wear Your Difference.",
   sameAs: [
-    "https://www.instagram.com/cultraven",
-    "https://www.facebook.com/cultraven",
-    "https://twitter.com/cultraven",
-    "https://www.youtube.com/cultraven",
+    "https://www.instagram.com/clutraven/",
+    "https://x.com/cultraven_",
+    "https://www.facebook.com/profile.php?id=61595224413709",
+    "https://www.reddit.com/user/Cultraven_official/",
   ],
   contactPoint: {
     "@type": "ContactPoint",

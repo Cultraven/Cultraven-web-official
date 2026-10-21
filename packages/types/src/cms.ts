@@ -144,6 +144,7 @@ export const FooterConfigSchema = z.object({
         "facebook",
         "twitter",
         "youtube",
+        "reddit",
         "linkedin",
         "pinterest",
       ]),
