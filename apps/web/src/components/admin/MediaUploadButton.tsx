@@ -1,8 +1,12 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button } from "./ui";
+import { friendlyUploadError, precheckFile, shrinkImage } from "@/lib/upload-client";
 
-/** Uploads a file through the authenticated /api/upload route and reports the stored URL. */
+/**
+ * Uploads a file through the authenticated /api/upload route and reports the stored URL.
+ * Plain-language messages: what happened, and what to do next (a new photo only goes live after "Save changes").
+ */
 export function MediaUploadButton({
   kind = "image",
   hasValue,
@@ -16,20 +20,35 @@ export function MediaUploadButton({
 }) {
   const ref = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
+  const [note, setNote] = useState<{ ok: boolean; text: string } | null>(null);
 
-  const upload = async (file: File) => {
+  useEffect(() => {
+    if (!note?.ok) return;
+    const t = window.setTimeout(() => setNote(null), 12000);
+    return () => window.clearTimeout(t);
+  }, [note]);
+
+  const fail = (text: string) => { setNote({ ok: false, text }); onError(text); };
+
+  const upload = async (picked: File) => {
+    setNote(null);
+    const pre = precheckFile(picked, kind);
+    if (!pre.ok) { fail(pre.message); if (ref.current) ref.current.value = ""; return; }
     setBusy(true);
     try {
+      const file = pre.shrink ? await shrinkImage(picked) : picked;
       const fd = new FormData();
       fd.append("file", file);
-      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      let res: Response;
+      try { res = await fetch("/api/upload", { method: "POST", body: fd }); } catch { fail(friendlyUploadError(0)); return; }
       const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data.url) onError(data.error || "Upload failed");
-      else if (kind === "image" && data.kind === "video") onError("A video was uploaded where an image is expected");
-      else if (kind === "video" && data.kind !== "video") onError("An image was uploaded where a video is expected");
-      else onUploaded(data.url);
-    } catch {
-      onError("Network error during upload");
+      if (!res.ok || !data.url) fail(friendlyUploadError(res.status, data.error));
+      else if (kind === "image" && data.kind === "video") fail("That is a video. Choose a photo here.");
+      else if (kind === "video" && data.kind !== "video") fail("That is a photo. Choose a video here.");
+      else {
+        onUploaded(data.url);
+        setNote({ ok: true, text: pre.shrink ? "Uploaded (the photo was made smaller to fit). Now press “Save changes” to show it on the website." : "Uploaded. Now press “Save changes” to show it on the website." });
+      }
     } finally {
       setBusy(false);
       if (ref.current) ref.current.value = "";
@@ -48,6 +67,7 @@ export function MediaUploadButton({
       <Button size="sm" icon={busy ? undefined : "upload"} loading={busy} onClick={() => ref.current?.click()}>
         {busy ? "Uploading…" : hasValue ? "Replace" : "Upload"}
       </Button>
+      {note ? <span role={note.ok ? "status" : "alert"} className="adm-hint" style={{ color: note.ok ? "var(--a-success)" : "var(--a-danger)", fontWeight: 600, flexBasis: "100%" }}>{note.text}</span> : null}
     </>
   );
 }

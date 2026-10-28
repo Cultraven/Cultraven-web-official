@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
 import crypto from "crypto";
 import { isAdminRequest } from "@/lib/admin-auth";
 import { clientIp, isSameOrigin, rateLimit, retryHeaders } from "@/lib/sanitize";
+import { saveMedia } from "@/lib/media-store";
 
 export const runtime = "nodejs";
 
@@ -12,6 +11,7 @@ export const runtime = "nodejs";
  *  - the real type comes from magic bytes; the client filename and MIME type are never used
  *  - the stored name is 128 random bits + an extension WE choose (no traversal, no overwrite, no guessing)
  *  - SVG / HTML / anything not in the allow-list is rejected (415), so nothing scriptable is ever served from /uploads
+ *  - files are stored in MongoDB GridFS and served by app/uploads/[name]/route.ts
  *  - size caps are enforced before and after reading the body
  */
 
@@ -87,9 +87,8 @@ export async function POST(req: Request) {
 
     // Name and extension are ours alone: nothing from the request reaches the path.
     const filename = `${crypto.randomBytes(16).toString("hex")}.${detected.ext}`;
-    const uploadDir = path.join(process.cwd(), "public", "uploads");
-    await mkdir(uploadDir, { recursive: true });
-    await writeFile(path.join(uploadDir, filename), buffer, { flag: "wx" });
+    // Saved in the database (GridFS), not on the server's disk: the disk is read-only and wiped on every deploy in production.
+    await saveMedia(filename, buffer);
 
     return NextResponse.json({ success: true, url: `/uploads/${filename}`, kind: detected.kind });
   } catch (error) {

@@ -10,6 +10,7 @@ import React, { memo, useEffect, useState } from "react";
 import { SECTION_MAP, validateFields, type Field } from "@/lib/cms/registry";
 import { MediaUploadButton } from "./MediaUploadButton";
 import { useLinkTargets } from "./useLinkTargets";
+import { friendlySaveError } from "@/lib/admin-messages";
 import { Alert, Button, Card, EmptyState, Field as FormField, Icon, LinkButton, PageHeader, Skeleton, Switch, useConfirm, useToast } from "./ui";
 
 type Obj = Record<string, any>;
@@ -331,9 +332,9 @@ export function SectionEditor({ sectionKey }: { sectionKey: string }) {
         setValue(d.data); // exactly what the database stored
         setDirty(false);
         toast("Saved — the website is updated");
-      } else setErrors(d.errors ?? [d.error || `Save failed (HTTP ${res.status})`]);
+      } else setErrors(d.errors ?? [friendlySaveError(res.status, d.error)]);
     } catch {
-      setErrors(["Network error — nothing was saved."]);
+      setErrors(["No connection, so nothing was saved. Check your internet and press Save changes again (your edits are still here)."]);
     }
     setSaving(false);
   };
