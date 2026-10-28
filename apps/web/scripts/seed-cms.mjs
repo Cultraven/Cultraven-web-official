@@ -223,9 +223,9 @@ const SECTIONS = {
     items: withIds("coll", [
       { slug: "new-in", name: "New In", description: "The freshest pieces from CULTRAVEN — new arrivals, updated fits and limited editions.", image: U("1503341455253-b2e723bb3dbb", 1400), active: true },
       { slug: "street", name: "Street", description: "A collection built for movement, individuality and everyday rebellion.", image: U("1515886657613-9f3515b0c78f", 1400), active: true },
-      { slug: "bestsellers", name: "Bestsellers", description: "The ones everyone keeps coming back for — our most loved styles.", image: U("1594938298603-c8148c4dae35", 1400), active: true },
+      { slug: "bestsellers", name: "Bestsellers", description: "The ones everyone keeps coming back for — our most loved styles.", image: U("1556821840-3a63f95609a7", 1400), active: true },
       { slug: "essentials", name: "Essentials", description: "Clean, heavyweight basics built to outlast every trend.", image: U("1583743814966-8936f5b7be1a", 1400), active: true },
-      { slug: "all", name: "All Products", description: "Every piece from CULTRAVEN — filter, sort and discover.", image: U("1529391409740-59f2cea08bc6", 1400), active: true },
+      { slug: "all", name: "All Products", description: "Every piece from CULTRAVEN — filter, sort and discover.", image: U("1489987707025-afc232f7ea0f", 1400), active: true },
     ]),
   },
   // Page banners: one entry per inner page so every page shows up in Admin -> Website content -> Page banners, ready for a photo.
