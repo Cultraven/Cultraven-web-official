@@ -81,7 +81,7 @@ export const metadata = {
       "Shop oversized t-shirts, hoodies and cargo pants online. Free delivery above ₹1,999, Cash on Delivery and easy returns.",
     images: [
       {
-        url: "/og-default.jpg",
+        url: "/brand/share",
         width: 1200,
         height: 630,
         alt: "CULTRAVEN — Wear Your Difference",
@@ -106,14 +106,8 @@ export const metadata = {
   },
   icons: {
     // PNG logo icons (?v= makes browsers drop a cached older tab icon). /favicon.ico stays on disk for crawlers that ask for it by default.
-    icon: [
-      { url: "/favicon-16.png?v=6", type: "image/png", sizes: "16x16" },
-      { url: "/favicon-32.png?v=6", type: "image/png", sizes: "32x32" },
-      { url: "/favicon-48.png?v=6", type: "image/png", sizes: "48x48" },
-      { url: "/icon-192.png?v=6", type: "image/png", sizes: "192x192" },
-      { url: "/icon.png?v=6", type: "image/png", sizes: "512x512" },
-    ],
-    apple: [{ url: "/apple-icon.png?v=6", type: "image/png", sizes: "180x180" }],
+    icon: [{ url: "/brand/favicon?v=7", type: "image/png" }],
+    apple: [{ url: "/brand/favicon?v=7" }],
   },
 };
 

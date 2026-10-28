@@ -4,7 +4,7 @@ import Image from "next/image";
 export function BrandLogo({ height = 40, tone = "dark", priority = false }: { height?: number; tone?: "dark" | "light"; priority?: boolean }) {
   return (
     <Image
-      src="/logo-horizontal.png"
+      src="/brand/logo-horizontal"
       alt="CULTRAVEN"
       width={Math.round((height * 1100) / 242)}
       height={height}

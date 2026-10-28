@@ -117,6 +117,20 @@ export const SECTIONS: SectionDef[] = [
     ],
   },
   {
+    key: "site.branding",
+    group: "Site",
+    label: "Logo & site images",
+    description: "Your logos, the little icon in the browser tab, and the picture shown when your site is shared on WhatsApp, Instagram or Google. Leave a box empty to keep the built-in image.",
+    previewPath: "/",
+    fields: [
+      { kind: "image", key: "logoHorizontal", label: "Main logo (wide: emblem + name)", help: "Shown at the top of every page and in the footer. A transparent PNG about 1100 x 240 pixels works best." },
+      { kind: "image", key: "logoStacked", label: "Stacked logo (emblem above name)", help: "Shown on the Login and Register pages." },
+      { kind: "image", key: "logoMark", label: "Small emblem only", help: "Shown on the password pages and in the admin corner. Square works best." },
+      { kind: "image", key: "favicon", label: "Browser tab icon", help: "A square PNG, at least 512 x 512 pixels. Browsers can take a day to show a new one." },
+      { kind: "image", key: "shareImage", label: "Share picture (WhatsApp / Google / social)", help: "1200 x 630 pixels. This is the picture people see when they share a link to your site." },
+    ],
+  },
+  {
     key: "site.nav",
     group: "Site",
     label: "Main navigation",

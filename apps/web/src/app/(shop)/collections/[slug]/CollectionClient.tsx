@@ -175,10 +175,10 @@ function CollectionPageClientInner({
       {/* ── Collection Hero ── */}
       <div style={{ position: "relative", height: "400px", overflow: "hidden", backgroundColor: "var(--color-mist)" }}>
         {heroImage ? <Image src={heroImage} alt={collectionName} fill style={{ objectFit: "cover" }} priority /> : null}
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(23,37,69,0.75) 0%, rgba(23,37,69,0.35) 60%, transparent 100%)" }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(23,37,69,0.88) 0%, rgba(23,37,69,0.6) 55%, rgba(23,37,69,0.2) 100%)" }} />
         <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "center", padding: "clamp(2rem,4vw,4rem)", paddingTop: "80px" }}>
           {/* Back button */}
-          <Link href="/collections" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", fontFamily: "var(--font-sans)", fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(245,241,232,0.65)", textDecoration: "none", marginBottom: "0.75rem" }}>
+          <Link href="/collections" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", fontFamily: "var(--font-sans)", fontSize: "12px", fontWeight: 800, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--color-cream)", textShadow: "0 1px 6px rgba(0,0,0,0.45)", textDecoration: "none", marginBottom: "0.75rem" }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square"><polyline points="15 18 9 12 15 6"/></svg>
             All Collections
           </Link>
@@ -186,14 +186,14 @@ function CollectionPageClientInner({
           <nav aria-label="Breadcrumb" style={{ marginBottom: "1rem", display: "flex", gap: "0.5rem", alignItems: "center" }}>
             {[{ label: "Home", href: "/" }, { label: "Collections", href: "/collections" }, { label: collectionName, href: "#" }].map((crumb, i, arr) => (
               <React.Fragment key={crumb.href}>
-                <Link href={crumb.href} style={{ fontFamily: "var(--font-sans)", fontSize: "11px", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: i === arr.length - 1 ? "var(--color-cream)" : "rgba(245,241,232,0.55)", textDecoration: "none" }}>{crumb.label}</Link>
-                {i < arr.length - 1 && <span style={{ color: "rgba(245,241,232,0.4)", fontSize: "10px" }}>/</span>}
+                <Link href={crumb.href} style={{ fontFamily: "var(--font-sans)", fontSize: "12px", fontWeight: 800, letterSpacing: "0.12em", textTransform: "uppercase", color: i === arr.length - 1 ? "var(--color-lava, #dab205)" : "var(--color-cream)", textShadow: "0 1px 6px rgba(0,0,0,0.45)", textDecoration: "none" }}>{crumb.label}</Link>
+                {i < arr.length - 1 && <span style={{ color: "rgba(245,241,232,0.8)", fontSize: "11px", fontWeight: 800 }}>/</span>}
               </React.Fragment>
             ))}
           </nav>
           <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(3rem,8vw,6.5rem)", fontWeight: 400, color: "var(--color-cream)", lineHeight: 0.9, letterSpacing: "0.02em", marginBottom: "0.75rem", textTransform: "uppercase" }}>{collectionName}</h1>
-          <ReadMore lines={2} tone="light" style={{ fontFamily: "var(--font-sans)", fontSize: "0.9rem", color: "rgba(245,241,232,0.75)", maxWidth: "460px", lineHeight: 1.6 }}>{description}</ReadMore>
-          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", fontWeight: 700, color: "rgba(245,241,232,0.55)", letterSpacing: "0.1em", textTransform: "uppercase", marginTop: "1rem" }}>{filtered.length} Products</p>
+          <ReadMore lines={2} tone="light" style={{ fontFamily: "var(--font-sans)", fontSize: "1rem", fontWeight: 600, color: "var(--color-cream)", textShadow: "0 1px 8px rgba(0,0,0,0.45)", maxWidth: "480px", lineHeight: 1.6 }}>{description}</ReadMore>
+          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.78rem", fontWeight: 800, color: "var(--color-cream)", textShadow: "0 1px 6px rgba(0,0,0,0.45)", letterSpacing: "0.12em", textTransform: "uppercase", marginTop: "1rem" }}>{filtered.length} Products</p>
         </div>
       </div>
 

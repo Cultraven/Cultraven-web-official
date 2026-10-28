@@ -23,7 +23,7 @@ export default async function ResetPasswordPage({ searchParams }: { searchParams
       <div style={card}>
         <div style={{ textAlign: "center", marginBottom: "2rem" }}>
           <Link href="/" style={{ display: "inline-block", textDecoration: "none", marginBottom: "1.5rem" }}>
-            <Image src="/logo-mark.png" alt="CULTRAVEN" width={46} height={46} style={{ objectFit: "contain", height: "46px", width: "auto" }} />
+            <Image src="/brand/logo-mark" alt="CULTRAVEN" width={46} height={46} style={{ objectFit: "contain", height: "46px", width: "auto" }} />
           </Link>
           <h1 style={heading}>
             {info ? (info.purpose === "invite" ? <>SET YOUR<br />PASSWORD.</> : <>NEW<br />PASSWORD.</>) : <>LINK<br />EXPIRED.</>}

@@ -228,6 +228,8 @@ const SECTIONS = {
       { slug: "all", name: "All Products", description: "Every piece from CULTRAVEN — filter, sort and discover.", image: U("1489987707025-afc232f7ea0f", 1400), active: true },
     ]),
   },
+  // Logo & site images: empty = the built-in images in /public.
+  "site.branding": { logoHorizontal: "", logoStacked: "", logoMark: "", favicon: "", shareImage: "" },
   // Page banners: one entry per inner page so every page shows up in Admin -> Website content -> Page banners, ready for a photo.
   "site.pageBanners": {
     items: withIds("banner", ["our-heritage", "lookbook", "journal", "contact", "size-guide", "terms", "privacy", "shipping", "returns"].map((page) => ({
