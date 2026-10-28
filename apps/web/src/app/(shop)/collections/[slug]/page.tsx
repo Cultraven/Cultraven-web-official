@@ -11,11 +11,12 @@ interface Props { params: Promise<{ slug: string }> }
 async function getMeta(slug: string) {
   const section = await getCmsSection<any>("shop.collections");
   const found = liveItems<any>(section.data?.items).find((c) => c.slug === slug);
-  if (found) return { name: found.name as string, description: (found.description as string) || "", image: (found.image as string) || "" };
+  if (found) return { name: found.name as string, description: (found.description as string) || "", image: (found.image as string) || "", products: Array.isArray(found.products) ? (found.products as string[]) : [] };
   return {
     name: slug.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" "),
     description: "",
     image: "",
+    products: [] as string[],
   };
 }
 
@@ -33,6 +34,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function CollectionPage({ params }: Props) {
   const { slug } = await params;
-  const { name, description, image } = await getMeta(slug);
-  return <CollectionClient collectionName={name} collectionSlug={slug} description={description} heroImage={image} />;
+  const { name, description, image, products } = await getMeta(slug);
+  return <CollectionClient collectionName={name} collectionSlug={slug} description={description} heroImage={image} productSlugs={products} />;
 }

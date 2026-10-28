@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import { CmsSection } from "@/lib/models/CmsSection";
 import { isAdminRequest } from "@/lib/admin-auth";
+import { Product } from "@/lib/models/Product";
+import { productSlugsIn } from "@/lib/cms/product-links";
 import { SECTION_MAP, validateFields } from "@/lib/cms/registry";
 import { hasOwn, isSameOrigin, parseJsonBody } from "@/lib/sanitize";
 
@@ -50,6 +52,13 @@ export async function PUT(req: Request, { params }: Ctx) {
 
   try {
     await connectToDatabase();
+    // A link to /products/<name> must point at a product that exists (otherwise visitors land on a "Product not found" page).
+    const slugs = Array.from(new Set(productSlugsIn(value)));
+    if (slugs.length) {
+      const found = new Set(((await Product.find({ slug: { $in: slugs } }).select("slug").lean()) as any[]).map((p) => p.slug));
+      const missing = slugs.filter((s) => !found.has(s));
+      if (missing.length) return NextResponse.json({ error: `There is no product at /products/${missing[0]}. Pick the product from the list so the link works.`, errors: missing.map((s) => `/products/${s}`) }, { status: 400 });
+    }
     await CmsSection.updateOne({ key }, { $set: { data: value } }, { upsert: true });
     const stored = (await CmsSection.findOne({ key }).lean()) as any;
     return NextResponse.json({ success: true, key, state: "ok", data: stored.data, updatedAt: stored.updatedAt });

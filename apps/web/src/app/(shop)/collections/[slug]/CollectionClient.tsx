@@ -17,6 +17,7 @@ import React, { useState, useMemo, Component } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ReadMore } from "@/components/common/ReadMore";
+import { productsForCollection } from "@/lib/collection-products";
 
 // ─── Error Boundary ────────────────────────────────────────────────────────────
 class PLPErrorBoundary extends Component<
@@ -65,6 +66,8 @@ interface Product {
   inStock: boolean;
   sizeOptions: PublicSizeOption[];
   isNewArrival: boolean;
+  slug: string;
+  isBestseller: boolean;
 }
 
 
@@ -88,11 +91,13 @@ function CollectionPageClientInner({
   collectionSlug,
   description,
   heroImage,
+  productSlugs = [],
 }: {
   collectionName: string;
   collectionSlug: string;
   description: string;
   heroImage: string;
+  productSlugs?: string[];
 }) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -108,6 +113,8 @@ function CollectionPageClientInner({
             id: p.id,
             title: p.title,
             href: `/products/${p.slug}`,
+            slug: p.slug,
+            isBestseller: p.isBestseller === true,
             image: p.image || "",
             hoverImage: p.hoverImage || p.image || "",
             pricePaise: p.pricePaise,
@@ -139,16 +146,8 @@ function CollectionPageClientInner({
 
   // Apply filters
   const filtered = useMemo(() => {
-    let list = [...products];
-    
-    // Filter by collection slug
-    if (collectionSlug === "new-in") {
-      list = list.filter(p => p.badge === "NEW" || p.badge === "LIMITED");
-    } else if (collectionSlug === "sale") {
-      list = list.filter(p => p.mrpPaise > p.pricePaise);
-    } else if (collectionSlug && collectionSlug !== "all") {
-      list = list.filter(p => p.category.toLowerCase() === collectionSlug.toLowerCase());
-    }
+    // Which products belong to this collection (ticked in the admin, or by category)
+    let list = [...productsForCollection(products, collectionSlug, productSlugs)];
 
     if (filterCategory.length) list = list.filter((p) => filterCategory.includes(p.category));
     if (filterSize.length) list = list.filter((p) => p.sizes.some((s) => filterSize.includes(s)));
@@ -159,7 +158,7 @@ function CollectionPageClientInner({
     else if (sort === "price-desc") list.sort((a, b) => b.pricePaise - a.pricePaise);
     else if (sort === "bestselling") list.sort((a, b) => b.reviewCount - a.reviewCount);
     return list;
-  }, [filterCategory, filterSize, filterFit, filterInStock, sort, products]);
+  }, [filterCategory, filterSize, filterFit, filterInStock, sort, products, collectionSlug, productSlugs]);
 
   const activeCount = filterCategory.length + filterSize.length + filterFit.length + (filterInStock ? 1 : 0);
 

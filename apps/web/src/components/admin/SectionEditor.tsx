@@ -9,6 +9,7 @@
 import React, { memo, useEffect, useState } from "react";
 import { SECTION_MAP, validateFields, type Field } from "@/lib/cms/registry";
 import { MediaUploadButton } from "./MediaUploadButton";
+import { useLinkTargets } from "./useLinkTargets";
 import { Alert, Button, Card, EmptyState, Field as FormField, Icon, LinkButton, PageHeader, Skeleton, Switch, useConfirm, useToast } from "./ui";
 
 type Obj = Record<string, any>;
@@ -98,10 +99,13 @@ const FieldInput = memo(function FieldInput({ f, value, onChange, onError }: { f
       );
     case "list":
       return <ListEditor f={f} value={Array.isArray(value) ? value : []} onChange={onChange} onError={onError} />;
+    case "products":
+      return <ProductPicker label={f.label} help={f.help} value={Array.isArray(value) ? value : []} onChange={onChange} />;
     default:
       return (
         <FormField label={f.label} required={f.required} hint={f.help}>
           <input className="adm-input" type={f.kind === "url" ? "url" : "text"} value={value ?? ""} maxLength={f.max ?? 2048} onChange={(e) => onChange(e.target.value)} placeholder={f.kind === "link" ? "/collections/all or https://…" : undefined} />
+          {f.kind === "link" ? <LinkPicker value={value ?? ""} onChange={onChange} /> : null}
           {f.suggestions?.length ? (
             // Picking a sample fills the box above; it can still be edited freely afterwards.
             <select className="adm-select" aria-label={`Pick a sample for ${f.label}`} value="" onChange={(e) => e.target.value && onChange(e.target.value)} style={{ marginTop: 6 }}>
@@ -114,14 +118,86 @@ const FieldInput = memo(function FieldInput({ f, value, onChange, onError }: { f
   }
 });
 
+/** A ticked list of the real products (used by Collections: which products appear on a collection page). */
+function ProductPicker({ label, help, value, onChange }: { label: string; help?: string; value: string[]; onChange: (v: string[]) => void }) {
+  const t = useLinkTargets();
+  const [q, setQ] = useState("");
+  if (!t) return <FormField label={label} span><div className="adm-hint">Loading products…</div></FormField>;
+  const picked = new Set(value);
+  const shown = t.products.filter((p) => !q.trim() || p.title.toLowerCase().includes(q.trim().toLowerCase()));
+  const unknown = value.filter((s) => !t.products.some((p) => p.slug === s));
+  return (
+    <FormField label={`${label} (${value.length} ticked)`} hint={help} span>
+      <input className="adm-input" type="search" placeholder="Search products…" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search products" />
+      <div style={{ display: "grid", gap: 6, marginTop: 8, maxHeight: 260, overflow: "auto", padding: 8, border: "1px solid var(--a-border)", borderRadius: "var(--a-radius)" }}>
+        {shown.map((p) => (
+          <label key={p.slug} className="adm-check" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <input type="checkbox" checked={picked.has(p.slug)} onChange={(e) => onChange(e.target.checked ? [...value, p.slug] : value.filter((s) => s !== p.slug))} />
+            {p.image ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={p.image} alt="" width={28} height={34} style={{ objectFit: "cover", borderRadius: 3 }} />
+            ) : null}
+            <span>{p.title}{p.inStock ? "" : " (sold out)"}</span>
+          </label>
+        ))}
+        {shown.length === 0 ? <div className="adm-hint">No product matches.</div> : null}
+      </div>
+      {unknown.length ? <div className="adm-hint" style={{ color: "var(--a-danger)", marginTop: 6 }}>{unknown.length} ticked product(s) no longer exist and are ignored: {unknown.join(", ")}</div> : null}
+    </FormField>
+  );
+}
+
+/** Under every link box: pick a real product, collection or page from a list, and a warning when a product link points at nothing. */
+function LinkPicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const t = useLinkTargets();
+  if (!t) return null;
+  const m = /^\/products\/([^/?#]+)/.exec(value);
+  const missing = !!m && !t.products.some((p) => p.slug === m[1]);
+  return (
+    <>
+      <select className="adm-select" aria-label="Pick a page or product" value="" onChange={(e) => e.target.value && onChange(e.target.value)} style={{ marginTop: 6 }}>
+        <option value="">Pick a product, collection or page… (or type above)</option>
+        <optgroup label="Products">{t.products.map((p) => <option key={p.slug} value={`/products/${p.slug}`}>{p.title}{p.inStock ? "" : " (sold out)"}</option>)}</optgroup>
+        <optgroup label="Collections">{t.collections.map((c) => <option key={c.href} value={c.href}>{c.label}</option>)}</optgroup>
+        <optgroup label="Pages">{t.pages.map((c) => <option key={c.href} value={c.href}>{c.label}</option>)}</optgroup>
+      </select>
+      {missing ? <div className="adm-hint" style={{ color: "var(--a-danger)", marginTop: 6 }}>No product has this address, so visitors would see a "Product not found" page. Pick one from the list above.</div> : null}
+    </>
+  );
+}
+
 function ObjectFields({ fields, value, onChange, onError }: { fields: Field[]; value: Obj; onChange: (v: Obj) => void; onError: (m: string) => void }) {
   return (
     <div className="adm-form-grid">
       {fields.map((f) => (
-        <div key={f.key} className={f.kind === "list" || f.kind === "textarea" || f.kind === "image" || f.kind === "video" || (f.kind === "boolean" && f.switch) ? "adm-span-all" : undefined}>
+        <div key={f.key} className={f.kind === "list" || f.kind === "products" || f.kind === "textarea" || f.kind === "image" || f.kind === "video" || (f.kind === "boolean" && f.switch) ? "adm-span-all" : undefined}>
           <FieldInput f={f} value={value[f.key]} onChange={(v) => onChange({ ...value, [f.key]: v })} onError={onError} />
         </div>
       ))}
+    </div>
+  );
+}
+
+/** "Fill this card from a product": copies the product's name, link, photo and alt text into the card. */
+function ProductFill({ map, onPick }: { map: NonNullable<Extract<Field, { kind: "list" }>["productFill"]>; onPick: (patch: Obj) => void }) {
+  const t = useLinkTargets();
+  if (!t) return null;
+  return (
+    <div style={{ marginBottom: 14 }}>
+      <select className="adm-select" aria-label="Fill this card from a product" value="" onChange={(e) => {
+        const p = t.products.find((x) => x.slug === e.target.value);
+        if (!p) return;
+        const patch: Obj = {};
+        if (map.title) patch[map.title] = p.title;
+        if (map.href) patch[map.href] = `/products/${p.slug}`;
+        if (map.image && p.image) patch[map.image] = p.image;
+        if (map.alt) patch[map.alt] = p.title;
+        onPick(patch);
+      }}>
+        <option value="">Fill this card from a product…</option>
+        {t.products.map((p) => <option key={p.slug} value={p.slug}>{p.title}</option>)}
+      </select>
+      <div className="adm-hint">Copies the product's name, page link and photo into this card. You can still change any of them afterwards.</div>
     </div>
   );
 }
@@ -193,6 +269,7 @@ function ListEditor({ f, value, onChange, onError }: { f: Extract<Field, { kind:
               </div>
               {isOpen ? (
                 <div className="adm-row-body">
+                  {f.productFill ? <ProductFill map={f.productFill} onPick={(patch) => onChange(value.map((x, k) => (k === i ? { ...x, ...patch } : x)))} /> : null}
                   <ObjectFields fields={f.fields.filter((x) => x.key !== "active")} value={item} onChange={(v) => onChange(value.map((x, k) => (k === i ? v : x)))} onError={onError} />
                 </div>
               ) : null}

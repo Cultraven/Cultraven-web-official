@@ -15,9 +15,10 @@ import { isSafeMediaUrl } from "../hero";
 export type Field =
   | { kind: "text" | "textarea" | "link" | "url" | "image" | "video" | "datetime"; key: string; label: string; required?: boolean; max?: number; help?: string; /** ready-made wording offered in a dropdown; the box stays editable */ suggestions?: string[] }
   | { kind: "number"; key: string; label: string; min: number; max: number; default: number; help?: string }
+  | { kind: "products"; key: string; label: string; max?: number; help?: string }
   | { kind: "boolean"; key: string; label: string; default?: boolean; /** show as an on/off switch with help text instead of a plain checkbox */ switch?: boolean; help?: string }
   | { kind: "select"; key: string; label: string; options: string[]; default?: string; required?: boolean }
-  | { kind: "list"; key: string; label: string; itemTitleKey?: string; max?: number; fields: Field[]; help?: string; /** ready-made wording for the title field, offered in an "Add a sample" dropdown */ samples?: string[] };
+  | { kind: "list"; key: string; label: string; itemTitleKey?: string; max?: number; fields: Field[]; help?: string; /** ready-made wording for the title field, offered in an "Add a sample" dropdown */ samples?: string[]; /** each card can be filled from a real product: which of the card's fields get the product's title, link, image and alt text */ productFill?: { title?: string; href?: string; image?: string; alt?: string } };
 
 export interface SectionDef {
   key: string;
@@ -238,7 +239,7 @@ export const SECTIONS: SectionDef[] = [
     previewPath: "/",
     fields: [
       { kind: "text", key: "heading", label: "Heading", max: 60 },
-      { kind: "list", key: "items", label: "Cards", itemTitleKey: "title", max: 9, fields: [
+      { kind: "list", key: "items", label: "Cards", itemTitleKey: "title", max: 9, productFill: { title: "title", href: "href", image: "image", alt: "alt" }, help: "Open a card and use 'Fill this card from a product' so the link always points at a real product page.", fields: [
         { kind: "text", key: "title", label: "Title", required: true, max: 60 },
         { kind: "link", key: "href", label: "Link", required: true },
         { kind: "image", key: "image", label: "Image", required: true },
@@ -427,6 +428,7 @@ export const SECTIONS: SectionDef[] = [
         { kind: "text", key: "name", label: "Name", required: true, max: 60 },
         { kind: "textarea", key: "description", label: "Description", max: 300 },
         { kind: "image", key: "image", label: "Banner image", required: true },
+        { kind: "products", key: "products", label: "Products in this collection", help: "Tick the products to show on this collection's page. Leave all unticked to show products whose category matches the URL slug." },
         active,
       ] },
     ],
@@ -505,6 +507,12 @@ export function validateFields(fields: Field[], input: unknown, path = ""): { va
           if (f.required) errors.push(`${at} is required`);
           out[f.key] = f.default ?? f.options[0];
         }
+        break;
+      }
+      case "products": {
+        const max = f.max ?? 100;
+        const arr = Array.isArray(raw) ? raw : [];
+        out[f.key] = Array.from(new Set(arr.filter((x): x is string => typeof x === "string").map((x) => x.trim()).filter((x) => /^[\w-]{1,100}$/.test(x)))).slice(0, max);
         break;
       }
       case "list": {
