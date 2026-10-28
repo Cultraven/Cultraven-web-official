@@ -228,6 +228,8 @@ const SECTIONS = {
       { slug: "all", name: "All Products", description: "Every piece from CULTRAVEN — filter, sort and discover.", image: U("1529391409740-59f2cea08bc6", 1400), active: true },
     ]),
   },
+  // Policy pages (Terms, Privacy, Shipping, Returns): the same wording the site falls back to, kept in one JSON file.
+  ...JSON.parse(fs.readFileSync(path.join(here, "../src/lib/cms/legal-defaults.json"), "utf8")),
   // Promotional banners are intentionally NOT seeded — the section stays hidden until an admin creates one.
 };
 

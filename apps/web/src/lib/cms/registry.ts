@@ -43,6 +43,48 @@ export const ANNOUNCEMENT_SAMPLES = [
   "SECURE PAYMENTS — UPI, CARDS & NET BANKING",
 ];
 
+const RICH_HELP = "Formatting: a blank line starts a new paragraph. Start a line with - for a bullet. **bold**, *italic*, and [link text](/pages/contact) or [email us](mailto:support@cultraven.com) for links.";
+
+/** The same editable layout for every policy page (Terms, Privacy, Shipping, Returns). Every word on those pages comes from here. */
+function policyFields(): Field[] {
+  return [
+    { kind: "text", key: "eyebrow", label: "Small label above the title", max: 40 },
+    { kind: "text", key: "title", label: "Page title", required: true, max: 80 },
+    { kind: "text", key: "subtitle", label: "Line under the title", max: 160 },
+    { kind: "textarea", key: "metaDescription", label: "Google description (SEO)", max: 200, help: "One or two sentences shown under the page title in Google results." },
+    { kind: "text", key: "updated", label: "Last updated text", max: 60, help: 'For example: "Last updated: October 2026". Change it whenever you edit the policy.' },
+    { kind: "boolean", key: "numbered", label: "Number the sections (1, 2, 3...)", default: false },
+    { kind: "textarea", key: "intro", label: "Opening note (highlighted box)", max: 800, help: RICH_HELP },
+    { kind: "list", key: "highlights", label: "Highlight boxes (row of short facts at the top)", itemTitleKey: "title", max: 6, fields: [
+      { kind: "text", key: "icon", label: "Emoji (optional)", max: 8 },
+      { kind: "text", key: "title", label: "Big text", required: true, max: 40 },
+      { kind: "text", key: "subtitle", label: "Small text", max: 80 },
+    ] },
+    { kind: "text", key: "stepsHeading", label: "Steps heading (optional)", max: 60 },
+    { kind: "list", key: "steps", label: "Steps (numbered boxes, optional)", itemTitleKey: "title", max: 8, fields: [
+      { kind: "text", key: "title", label: "Step title", required: true, max: 60 },
+      { kind: "textarea", key: "body", label: "Step text", max: 500, help: RICH_HELP },
+      active,
+    ] },
+    { kind: "list", key: "columns", label: "Do / don't lists (up to 2, optional)", itemTitleKey: "heading", max: 2, fields: [
+      { kind: "text", key: "heading", label: "Heading", required: true, max: 60 },
+      { kind: "select", key: "tone", label: "Style", options: ["good", "bad"], default: "good" },
+      { kind: "textarea", key: "items", label: "Items (one per line)", max: 2000 },
+    ] },
+    { kind: "list", key: "sections", label: "Sections", itemTitleKey: "heading", max: 40, help: "Each section has a heading and text. Drag to reorder, switch one off to hide it.", fields: [
+      { kind: "text", key: "heading", label: "Heading", required: true, max: 100 },
+      { kind: "textarea", key: "body", label: "Text", max: 6000, help: RICH_HELP },
+      active,
+    ] },
+    { kind: "text", key: "contactTitle", label: "Bottom box: heading", max: 80 },
+    { kind: "textarea", key: "contactText", label: "Bottom box: text", max: 300 },
+    { kind: "text", key: "contactLabel", label: "Bottom box: button 1 text", max: 40 },
+    { kind: "text", key: "contactHref", max: 300, help: "A page on this site (/pages/contact), a web link (https://...), or mailto:you@example.com", label: "Bottom box: button 1 link" },
+    { kind: "text", key: "contactLabel2", label: "Bottom box: button 2 text (optional)", max: 40 },
+    { kind: "text", key: "contactHref2", max: 300, help: "A page on this site (/pages/contact), a web link (https://...), or mailto:you@example.com", label: "Bottom box: button 2 link (optional)" },
+  ];
+}
+
 export const SECTIONS: SectionDef[] = [
   {
     key: "site.announcement",
@@ -307,6 +349,38 @@ export const SECTIONS: SectionDef[] = [
         { kind: "text", key: "desc", label: "Description", max: 160 },
       ] },
     ],
+  },
+  {
+    key: "page.terms",
+    group: "Pages",
+    label: "Terms & Conditions",
+    description: "Every word of the Terms & Conditions page.",
+    previewPath: "/pages/terms",
+    fields: policyFields(),
+  },
+  {
+    key: "page.privacy",
+    group: "Pages",
+    label: "Privacy Policy",
+    description: "Every word of the Privacy Policy page.",
+    previewPath: "/pages/privacy",
+    fields: policyFields(),
+  },
+  {
+    key: "page.shipping",
+    group: "Pages",
+    label: "Shipping policy",
+    description: "Every word of the Shipping page: fees, times, tracking, COD.",
+    previewPath: "/pages/shipping",
+    fields: policyFields(),
+  },
+  {
+    key: "page.returns",
+    group: "Pages",
+    label: "Returns & Exchanges policy",
+    description: "Every word of the Returns & Exchanges page: windows, steps, what can and cannot be returned, refunds.",
+    previewPath: "/pages/returns",
+    fields: policyFields(),
   },
   {
     key: "shop.collections",
