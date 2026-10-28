@@ -6,8 +6,7 @@
 import React, { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useCartStore } from "@/store/cart";
-import { useBuyNowStore } from "@/store/buyNow";
+import { settleCartAfterOrder } from "@/lib/after-purchase";
 import Confetti from "react-confetti";
 import { whatsappLink } from "@/lib/support";
 
@@ -17,7 +16,6 @@ interface OrderSuccessClientProps {
 
 function OrderSuccessContent({ orderId }: OrderSuccessClientProps) {
   const searchParams = useSearchParams();
-  const { clearCart } = useCartStore();
 
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
   const [showConfetti, setShowConfetti] = useState(false);
@@ -31,14 +29,13 @@ function OrderSuccessContent({ orderId }: OrderSuccessClientProps) {
   const fmt = (p: number) => `₹${(p / 100).toLocaleString("en-IN")}`;
 
   useEffect(() => {
-    // An express (BUY NOW) order must not empty the shopper's cart.
-    const express = useBuyNowStore.getState();
-    if (express.item) express.clear(); else clearCart();
+    // BUY NOW takes only the bought item out of the cart; a normal checkout empties it. Once per order.
+    settleCartAfterOrder(orderId);
     setWindowSize({ width: window.innerWidth, height: window.innerHeight });
     setShowConfetti(true);
     const timer = setTimeout(() => setShowConfetti(false), 6000);
     return () => clearTimeout(timer);
-  }, [clearCart]);
+  }, [orderId]);
 
   return (
     <div style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "2rem", paddingTop: "calc(2rem + 80px)" }}>

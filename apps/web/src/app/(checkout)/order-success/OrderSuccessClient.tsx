@@ -1,8 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { useCartStore } from "@/store/cart";
-import { useBuyNowStore } from "@/store/buyNow";
+import { settleCartAfterOrder } from "@/lib/after-purchase";
 import Confetti from "react-confetti";
 import "@/styles/orders.css";
 import { mailtoLink, supportConfig, whatsappLink } from "@/lib/support";
@@ -26,7 +25,6 @@ interface Props {
 }
 
 export default function OrderSuccessClient({ orderId, paymentId, isConfirmed, orderData, summary, emailOn }: Props) {
-  const { clearCart } = useCartStore();
 
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
   const [showConfetti, setShowConfetti] = useState(false);
@@ -36,9 +34,8 @@ export default function OrderSuccessClient({ orderId, paymentId, isConfirmed, or
   const fmt = (p: number) => `₹${(p / 100).toLocaleString("en-IN")}`;
 
   useEffect(() => {
-    // An express (BUY NOW) order must not empty the shopper's cart.
-    const express = useBuyNowStore.getState();
-    if (express.item) express.clear(); else clearCart();
+    // BUY NOW takes only the bought item out of the cart; a normal checkout empties it. Once per order, and only for a confirmed order.
+    if (isConfirmed && orderId) settleCartAfterOrder(orderId);
     setWindowSize({ width: window.innerWidth, height: window.innerHeight });
     
     if (isConfirmed) {
@@ -46,7 +43,7 @@ export default function OrderSuccessClient({ orderId, paymentId, isConfirmed, or
       const t = setTimeout(() => setShowConfetti(false), 6000);
       return () => clearTimeout(t);
     }
-  }, [clearCart, isConfirmed]);
+  }, [isConfirmed, orderId]);
 
   return (
     <div className="os-page" style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "clamp(1rem,3vw,2rem)", paddingTop: "calc(clamp(1rem,3vw,2rem) + 80px)" }}>
