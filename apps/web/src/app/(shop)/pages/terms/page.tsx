@@ -1,5 +1,6 @@
 import { PolicyPage } from "@/components/legal/PolicyPage";
 import { getPolicy, policyMetadata } from "@/lib/legal-pages";
+import { getPageBanner } from "@/lib/page-banners";
 
 export const dynamic = "force-dynamic";
 
@@ -9,5 +10,6 @@ export async function generateMetadata() {
 }
 
 export default async function TermsPage() {
-  return <PolicyPage data={await getPolicy("page.terms")} />;
+  const [data, banner] = await Promise.all([getPolicy("page.terms"), getPageBanner("terms")]);
+  return <PolicyPage data={data} banner={banner} />;
 }

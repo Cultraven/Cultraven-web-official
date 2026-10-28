@@ -85,6 +85,19 @@ function policyFields(): Field[] {
   ];
 }
 
+/** Inner pages that have a heading strip with an editable background photo. */
+export const PAGE_BANNER_PAGES = [
+  { slug: "our-heritage", label: "Our Story" },
+  { slug: "lookbook", label: "Lookbook" },
+  { slug: "journal", label: "Journal" },
+  { slug: "contact", label: "Contact Us" },
+  { slug: "size-guide", label: "Size Guide" },
+  { slug: "terms", label: "Terms & Conditions" },
+  { slug: "privacy", label: "Privacy Policy" },
+  { slug: "shipping", label: "Shipping policy" },
+  { slug: "returns", label: "Returns & Exchanges policy" },
+] as const;
+
 export const SECTIONS: SectionDef[] = [
   {
     key: "site.announcement",
@@ -335,7 +348,9 @@ export const SECTIONS: SectionDef[] = [
     description: "Story page hero, sections and values on /pages/our-heritage.",
     previewPath: "/pages/our-heritage",
     fields: [
-      { kind: "image", key: "heroImage", label: "Hero background image", required: true },
+      { kind: "image", key: "heroImage", label: "Hero background image (older setting; the Page banners section now controls it)" },
+      { kind: "text", key: "valuesEyebrow", label: "Values: small label", max: 40, help: "Default: What we stand for" },
+      { kind: "text", key: "valuesHeading", label: "Values: heading", max: 80, help: "Default: The CULTRAVEN Values" },
       { kind: "list", key: "sections", label: "Story sections", itemTitleKey: "heading", max: 10, fields: [
         { kind: "text", key: "tag", label: "Small label", max: 40 },
         { kind: "text", key: "heading", label: "Heading", required: true, max: 120 },
@@ -347,6 +362,24 @@ export const SECTIONS: SectionDef[] = [
       { kind: "list", key: "values", label: "Brand values", itemTitleKey: "title", max: 8, fields: [
         { kind: "text", key: "title", label: "Value", required: true, max: 30 },
         { kind: "text", key: "desc", label: "Description", max: 160 },
+      ] },
+    ],
+  },
+  {
+    key: "site.pageBanners",
+    group: "Pages",
+    label: "Page banners (background photos)",
+    description: "The big heading strip at the top of Our Story, Lookbook, Journal, Contact, Size Guide and the policy pages: its background photo, how dark it is, and (optionally) its small label, title and line of text.",
+    previewPath: "/pages/our-heritage",
+    fields: [
+      { kind: "list", key: "items", label: "Banners", itemTitleKey: "page", max: 20, help: "One banner per page. Leave the photo empty for a plain navy strip. Leave a text box empty to keep the page's own wording (the policy pages keep their wording in their own sections).", fields: [
+        { kind: "select", key: "page", label: "Which page", required: true, options: PAGE_BANNER_PAGES.map((p) => p.slug) },
+        { kind: "image", key: "image", label: "Background photo (optional)" },
+        { kind: "number", key: "overlay", label: "Darkness over the photo (0 = none, 90 = very dark)", min: 0, max: 90, default: 55, help: "Higher makes the white text easier to read." },
+        { kind: "text", key: "eyebrow", label: "Small label above the title (optional)", max: 60 },
+        { kind: "text", key: "title", label: "Title (optional)", max: 80 },
+        { kind: "text", key: "subtitle", label: "Line under the title (optional)", max: 200 },
+        active,
       ] },
     ],
   },

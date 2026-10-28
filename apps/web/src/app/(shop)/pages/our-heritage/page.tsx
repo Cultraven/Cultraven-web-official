@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getCmsSection } from "@/lib/cms/server";
 import { liveItems } from "@/lib/cms/registry";
+import { PageHero } from "@/components/common/PageHero";
 
 export const dynamic = "force-dynamic";
 
@@ -17,15 +18,7 @@ export default async function AboutPage() {
 
   return (
     <div style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh" }}>
-      {/* Hero */}
-      <div style={{ position: "relative", height: "70vh", minHeight: "400px", overflow: "hidden", backgroundColor: "var(--color-navy)", display: "flex", alignItems: "center" }}>
-        <div style={{ position: "absolute", inset: 0, backgroundImage: heroImage ? `url("${heroImage}")` : undefined, backgroundSize: "cover", backgroundPosition: "center", opacity: 0.4 }} aria-hidden="true" />
-        <div style={{ position: "relative", zIndex: 10, paddingInline: "clamp(1.25rem,4vw,5rem)" }}>
-          <p style={{ fontFamily: "var(--font-sans)", fontSize: "11px", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-crimson)", marginBottom: "1rem" }}>CULTRAVEN</p>
-          <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(3rem,8vw,7rem)", fontWeight: 600, color: "var(--color-cream)", lineHeight: 0.95, letterSpacing: "-0.02em" }}>Our Story</h1>
-          <p style={{ fontFamily: "var(--font-sans)", fontSize: "1rem", color: "rgba(245,241,232,0.7)", maxWidth: "500px", marginTop: "1.5rem", lineHeight: 1.7 }}>Premium oversized t-shirts, hoodies and streetwear from India.</p>
-        </div>
-      </div>
+      <PageHero slug="our-heritage" tall fallbackImage={heroImage} defaults={{ eyebrow: "CULTRAVEN", title: "Our Story", subtitle: "Premium oversized t-shirts, hoodies and streetwear from India." }} />
 
       {/* Sections */}
       {sections.map((sec: any, i: number) => (
@@ -43,8 +36,8 @@ export default async function AboutPage() {
 
       {/* Brand values */}
       <div style={{ backgroundColor: "var(--color-navy)", padding: "clamp(4rem,8vw,8rem) clamp(1.25rem,4vw,5rem)", textAlign: "center" }}>
-        <p style={{ fontFamily: "var(--font-sans)", fontSize: "11px", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-crimson)", marginBottom: "1.5rem" }}>What we stand for</p>
-        <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(2rem,5vw,4rem)", fontWeight: 600, color: "var(--color-cream)", marginBottom: "3rem" }}>The CULTRAVEN Values</h2>
+        <p style={{ fontFamily: "var(--font-sans)", fontSize: "11px", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-crimson)", marginBottom: "1.5rem" }}>{section.data?.valuesEyebrow || "What we stand for"}</p>
+        <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(2rem,5vw,4rem)", fontWeight: 600, color: "var(--color-cream)", marginBottom: "3rem" }}>{section.data?.valuesHeading || "The CULTRAVEN Values"}</h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "2rem" }} className="values-grid">
           {values.map((v) => (
             <div key={v.id} style={{ padding: "2rem", borderTop: "2px solid rgba(245,241,232,0.15)" }}>

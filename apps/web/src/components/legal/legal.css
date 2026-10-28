@@ -2,7 +2,10 @@
 .lg-page { background: var(--color-cream); min-height: 100dvh; color: var(--color-navy); }
 .lg-wrap { max-width: 1240px; margin: 0 auto; padding-inline: clamp(1.25rem, 4vw, 3rem); }
 
-.lg-hero { background: var(--color-navy); padding: clamp(3rem, 6vw, 5.5rem) 0; }
+.lg-hero { position: relative; overflow: hidden; background: var(--color-navy); padding: clamp(3rem, 6vw, 5.5rem) 0; }
+.lg-hero-bg { position: absolute; inset: 0; background-size: cover; background-position: center 30%; }
+.lg-hero-shade { position: absolute; inset: 0; }
+.lg-hero-in { position: relative; z-index: 1; }
 .lg-eyebrow { font: 800 11px/1 var(--font-sans); letter-spacing: 0.22em; text-transform: uppercase; color: var(--color-lava, #dab205); margin: 0 0 0.9rem; }
 .lg-hero h1 { font-family: var(--font-heading); font-weight: 600; font-size: clamp(2.2rem, 5.5vw, 4.4rem); line-height: 1.02; color: var(--color-cream); margin: 0; }
 .lg-sub { font: 500 clamp(0.95rem, 1.4vw, 1.1rem)/1.6 var(--font-sans); color: rgba(245, 241, 232, 0.75); margin: 1rem 0 0; max-width: 60ch; }

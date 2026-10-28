@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PageHero } from "@/components/common/PageHero";
 
 export const metadata: Metadata = {
   title: "Size Guide",
@@ -41,12 +42,7 @@ const FITS = [
 export default function SizeGuidePage() {
   return (
     <div style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh" }}>
-      {/* Header */}
-      <div style={{ backgroundColor: "var(--color-navy)", padding: "clamp(3rem,6vw,6rem) clamp(1.25rem,4vw,5rem)" }}>
-        <p style={{ fontFamily: "var(--font-sans)", fontSize: "11px", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-crimson)", marginBottom: "0.75rem" }}>FIT MATTERS</p>
-        <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(2.5rem,6vw,5rem)", fontWeight: 600, color: "var(--color-cream)", lineHeight: 1 }}>Size Guide</h1>
-        <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.9rem", color: "rgba(245,241,232,0.65)", marginTop: "1rem", maxWidth: "500px" }}>All measurements are in inches. Our garments are cut oversized — read the fit guide before selecting your size.</p>
-      </div>
+      <PageHero slug="size-guide" defaults={{ eyebrow: "FIT MATTERS", title: "Size Guide", subtitle: "All measurements are in inches. Our garments are cut oversized — read the fit guide before selecting your size." }} />
 
       <div style={{ padding: "clamp(3rem,6vw,6rem) clamp(1.25rem,4vw,5rem)" }}>
         {/* How to Measure */}

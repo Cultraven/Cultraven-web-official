@@ -126,40 +126,6 @@ export default function ContactPage() {
 
   return (
     <div style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh" }}>
-      {/* Hero */}
-      <div
-        style={{
-          backgroundColor: "var(--color-navy)",
-          padding: "clamp(3rem,6vw,6rem) clamp(1.25rem,4vw,5rem)",
-        }}
-      >
-        <p
-          style={{
-            fontFamily: "var(--font-sans)",
-            fontSize: "11px",
-            fontWeight: 800,
-            letterSpacing: "0.22em",
-            textTransform: "uppercase",
-            color: "var(--color-crimson)",
-            marginBottom: "0.75rem",
-          }}
-        >
-          We&apos;re Here
-        </p>
-        <h1
-          style={{
-            fontFamily: "var(--font-heading)",
-            
-            fontSize: "clamp(2.5rem,6vw,5rem)",
-            fontWeight: 600,
-            color: "var(--color-cream)",
-            lineHeight: 1,
-          }}
-        >
-          Contact Us
-        </h1>
-      </div>
-
       <div
         style={{
           padding: "clamp(3rem,6vw,5rem) clamp(1.25rem,4vw,5rem)",

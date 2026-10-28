@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "@/components/common/CmsImage";
 import { getCmsSection } from "@/lib/cms/server";
 import { liveItems } from "@/lib/cms/registry";
+import { PageHero } from "@/components/common/PageHero";
 
 export const dynamic = "force-dynamic";
 
@@ -23,11 +24,7 @@ export default async function JournalPage({ searchParams }: { searchParams: Prom
 
   return (
     <div style={{ backgroundColor: "var(--color-cream)", minHeight: "100dvh" }}>
-      {/* Header */}
-      <div style={{ backgroundColor: "var(--color-navy)", padding: "clamp(3rem,6vw,6rem) clamp(1.25rem,4vw,5rem)" }}>
-        <p style={{ fontFamily: "var(--font-sans)", fontSize: "11px", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-crimson)", marginBottom: "0.75rem" }}>STORIES & IDEAS</p>
-        <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(2.5rem,6vw,5rem)", fontWeight: 600, color: "var(--color-cream)", lineHeight: 1 }}>The Journal</h1>
-      </div>
+      <PageHero slug="journal" defaults={{ eyebrow: "STORIES & IDEAS", title: "The Journal" }} />
 
       {/* Category filter */}
       <div style={{ backgroundColor: "var(--color-mist)", padding: "1.25rem clamp(1.25rem,4vw,5rem)", display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>

@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "@/components/common/CmsImage";
 import { getCmsSection } from "@/lib/cms/server";
 import { liveItems } from "@/lib/cms/registry";
+import { PageHero } from "@/components/common/PageHero";
 
 export const dynamic = "force-dynamic";
 
@@ -18,18 +19,7 @@ export default async function LookbookPage() {
   return (
     <main style={{ backgroundColor: "var(--color-cream)", minHeight: "100vh" }}>
 
-      {/* ── Hero ── */}
-      <div style={{ backgroundColor: "var(--color-navy)", padding: "6rem clamp(1.25rem,5vw,5rem) 4rem", textAlign: "center" }}>
-        <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.65rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-lava)", marginBottom: "1rem" }}>
-          CULTRAVEN / VISUAL IDENTITY
-        </p>
-        <h1 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(3rem,7vw,6rem)", fontWeight: 400, color: "var(--color-cream)", textTransform: "uppercase", lineHeight: 1, marginBottom: "1.5rem" }}>
-          LOOKBOOK
-        </h1>
-        <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.88rem", color: "rgba(245,241,232,0.6)", maxWidth: "480px", margin: "0 auto", lineHeight: 1.7 }}>
-          Shot on the streets of India. Shop the looks you love.
-        </p>
-      </div>
+      <PageHero slug="lookbook" align="center" defaults={{ eyebrow: "CULTRAVEN / VISUAL IDENTITY", title: "Lookbook", subtitle: "Shot on the streets of India. Shop the looks you love." }} />
 
       {/* ── Looks Grid ── */}
       <section style={{ padding: "5rem clamp(1.25rem,5vw,5rem)" }}>

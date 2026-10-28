@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { PageHero } from "@/components/common/PageHero";
 
 export const metadata: Metadata = {
   title: "Contact Us",
@@ -8,5 +9,10 @@ export const metadata: Metadata = {
 };
 
 export default function ContactLayout({ children }: { children: ReactNode }) {
-  return children;
+  return (
+    <div style={{ backgroundColor: "var(--color-cream)" }}>
+      <PageHero slug="contact" defaults={{ eyebrow: "We're here", title: "Contact Us" }} />
+      {children}
+    </div>
+  );
 }

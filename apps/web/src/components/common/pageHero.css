@@ -1,0 +1,12 @@
+.ph { position: relative; overflow: hidden; background: var(--color-navy); padding: clamp(3rem, 6vw, 6rem) clamp(1.25rem, 4vw, 5rem); }
+.ph-tall { display: flex; align-items: center; min-height: clamp(340px, 52vh, 560px); }
+.ph-bg { position: absolute; inset: 0; background-size: cover; background-position: center 30%; }
+.ph-shade { position: absolute; inset: 0; }
+.ph-in { position: relative; z-index: 1; max-width: 1240px; width: 100%; margin: 0 auto; }
+.ph-center .ph-in { text-align: center; }
+.ph-eyebrow { font: 800 11px/1 var(--font-sans); letter-spacing: 0.22em; text-transform: uppercase; color: var(--color-lava, #dab205); margin: 0 0 0.9rem; }
+.ph h1 { font-family: var(--font-heading); font-weight: 600; font-size: clamp(2.4rem, 6vw, 5rem); line-height: 1; color: var(--color-cream); margin: 0; }
+.ph-tall h1 { font-size: clamp(2.8rem, 7vw, 6rem); letter-spacing: -0.02em; }
+.ph-sub { font: 400 clamp(0.95rem, 1.4vw, 1.05rem)/1.7 var(--font-sans); color: rgba(245, 241, 232, 0.78); margin: 1.1rem 0 0; max-width: 56ch; }
+.ph-center .ph-sub { margin-inline: auto; }
+@media (max-width: 640px) { .ph-tall { min-height: 300px; } }

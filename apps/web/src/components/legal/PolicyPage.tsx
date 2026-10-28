@@ -55,7 +55,7 @@ function CtaButton({ label, href, primary }: { label?: string; href?: string; pr
   return href.startsWith("/") ? <Link href={href} className={cls}>{label}</Link> : <a href={href} className={cls}>{label}</a>;
 }
 
-export function PolicyPage({ data }: { data: PolicyData }) {
+export function PolicyPage({ data, banner }: { data: PolicyData; banner?: { image?: string; overlay?: number } | null }) {
   const sections = (data.sections ?? []).filter((s) => s.active !== false && s.heading);
   const steps = (data.steps ?? []).filter((s) => s.active !== false && s.title);
   const columns = (data.columns ?? []).filter((c) => c.heading).slice(0, 2);
@@ -66,7 +66,9 @@ export function PolicyPage({ data }: { data: PolicyData }) {
   return (
     <div className="lg-page">
       <header className="lg-hero">
-        <div className="lg-wrap">
+        {banner?.image ? <div className="lg-hero-bg" style={{ backgroundImage: `url("${banner.image}")` }} aria-hidden="true" /> : null}
+        {banner?.image ? <div className="lg-hero-shade" style={{ background: `rgba(23, 37, 84, ${Math.min(90, Math.max(0, banner.overlay ?? 55)) / 100})` }} aria-hidden="true" /> : null}
+        <div className="lg-wrap lg-hero-in">
           {data.eyebrow ? <p className="lg-eyebrow">{data.eyebrow}</p> : null}
           <h1>{data.title}</h1>
           {data.subtitle ? <p className="lg-sub">{data.subtitle}</p> : null}
