@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 export interface LinkTargets {
-  products: { slug: string; title: string; image: string; inStock: boolean }[];
+  products: { slug: string; title: string; image: string; inStock: boolean; pricePaise: number; category: string; color: string }[];
   collections: { href: string; label: string }[];
   pages: { href: string; label: string }[];
 }

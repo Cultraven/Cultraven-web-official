@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { connectToDatabase } from "@/lib/db";
 import { ShopLook } from "@/lib/models/ShopLook";
+import { Product } from "@/lib/models/Product";
+import { productSlugsIn } from "@/lib/cms/product-links";
 import { isAdminRequest } from "@/lib/admin-auth";
 import { isSafeMediaUrl } from "@/lib/hero";
 import { isSameOrigin, parseJsonBody } from "@/lib/sanitize";
@@ -66,6 +68,14 @@ export async function PUT(req: Request) {
     if (!parsed.success) {
       const msg = parsed.error.issues[0]?.message;
       return NextResponse.json({ error: msg && /image URLs|Links must/.test(msg) ? msg : "Invalid data" }, { status: 400 });
+    }
+    // Every piece must link to a product that exists.
+    await connectToDatabase();
+    const slugs = Array.from(new Set(productSlugsIn(parsed.data.products.map((p) => p.href))));
+    if (slugs.length) {
+      const found = new Set(((await Product.find({ slug: { $in: slugs } }).select("slug").lean()) as any[]).map((p) => p.slug));
+      const missing = slugs.filter((s) => !found.has(s));
+      if (missing.length) return NextResponse.json({ error: `There is no product at /products/${missing[0]}. Pick the product from the list so the link works.` }, { status: 400 });
     }
     // Only validated, whitelisted fields reach the database (never the raw request object).
     const look = parsed.data;

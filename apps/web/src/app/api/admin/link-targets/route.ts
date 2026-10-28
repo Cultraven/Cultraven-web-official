@@ -31,7 +31,7 @@ export async function GET(req: Request) {
   try {
     await connectToDatabase();
     const [products, coll] = await Promise.all([
-      Product.find({}).sort({ createdAt: -1 }).limit(500).select("slug title image images pricePaise inStock").lean() as Promise<any[]>,
+      Product.find({}).sort({ createdAt: -1 }).limit(500).select("slug title image images pricePaise inStock category colors").lean() as Promise<any[]>,
       CmsSection.findOne({ key: "shop.collections" }).lean() as Promise<any>,
     ]);
     const collections = [
@@ -41,7 +41,7 @@ export async function GET(req: Request) {
       ...liveItems<any>(coll?.data?.items).filter((c) => c.slug && !["all", "new-in", "bestsellers"].includes(c.slug)).map((c) => ({ href: `/collections/${c.slug}`, label: String(c.name || c.slug) })),
     ];
     return NextResponse.json({
-      products: products.map((p) => ({ slug: p.slug, title: p.title, image: p.image || p.images?.[0] || "", inStock: p.inStock !== false })),
+      products: products.map((p) => ({ slug: p.slug, title: p.title, image: p.image || p.images?.[0] || "", inStock: p.inStock !== false, pricePaise: Number(p.pricePaise) || 0, category: String(p.category || ""), color: String(p.colors?.[0]?.label || "") })),
       collections,
       pages: PAGES,
     }, { headers: { "Cache-Control": "no-store" } });

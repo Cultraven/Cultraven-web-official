@@ -2,6 +2,7 @@
 /** Admin · Shop the Look — loads the saved database record; saving writes it back and shows what was stored. */
 import React, { useEffect, useState } from "react";
 import { MediaUploadButton } from "@/components/admin/MediaUploadButton";
+import { useLinkTargets } from "@/components/admin/useLinkTargets";
 import { Alert, Button, Card, EmptyState, Field, Icon, LinkButton, PageHeader, Skeleton, inr, useConfirm, useToast } from "@/components/admin/ui";
 
 interface LookProduct { id: string; title: string; category: string; href: string; image: string; pricePaise: number; color: string }
@@ -21,6 +22,7 @@ export default function AdminShopTheLookPage() {
   const [saving, setSaving] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const targets = useLinkTargets();
 
   useEffect(() => {
     fetch("/api/cms/shop-the-look", { cache: "no-store" })
@@ -117,6 +119,21 @@ export default function AdminShopTheLookPage() {
 
           {editingIdx !== null ? (
             <Card title={editingIdx === -1 ? "Add piece" : "Edit piece"}>
+              {targets ? (
+                <div style={{ marginBottom: 14 }}>
+                  <select className="adm-select" aria-label="Fill this piece from a product" value="" onChange={(e) => {
+                    const p = targets.products.find((x) => x.slug === e.target.value);
+                    if (p) setPf((cur) => ({ ...cur, title: p.title, href: `/products/${p.slug}`, image: p.image || cur.image, pricePaise: p.pricePaise, category: p.category.toUpperCase(), color: p.color }));
+                  }}>
+                    <option value="">Fill this piece from a product…</option>
+                    {targets.products.map((p) => <option key={p.slug} value={p.slug}>{p.title}</option>)}
+                  </select>
+                  <div className="adm-hint">Copies the product's name, price, photo and page link, so the link always points at a real product.</div>
+                </div>
+              ) : null}
+              {pf.href && /^\/products\//.test(pf.href) && targets && !targets.products.some((p) => pf.href === `/products/${p.slug}`) ? (
+                <div className="adm-hint" style={{ color: "var(--a-danger)", marginBottom: 10 }}>No product has this link, so visitors would see a "Product not found" page. Pick one from the list above.</div>
+              ) : null}
               <div className="adm-form-grid">
                 <Field label="Product title" required span><input className="adm-input" value={pf.title} onChange={(e) => setPf((p) => ({ ...p, title: e.target.value }))} placeholder="RAVEN OVERSIZED TEE — ACID BLACK" /></Field>
                 <Field label="Category label"><input className="adm-input" value={pf.category} onChange={(e) => setPf((p) => ({ ...p, category: e.target.value }))} placeholder="T-SHIRT" /></Field>
