@@ -2,6 +2,7 @@
  * BrandStorySection — editorial brand manifesto section.
  *
  * Full-width cinematic image (+ optional looping video) with dark overlay.
+ * With no image and no video it shows a plain brand look instead (navy, a faint design grid and the raven mark), so nothing borrowed is shown.
  * Every piece of copy, link and media comes from the database (home.brandStory).
  */
 import React from "react";
@@ -58,6 +59,35 @@ export function BrandStorySection({ content }: { content: BrandStoryContent }) {
         >
           <source src={content.videoUrl} type={videoType} />
         </video>
+      ) : null}
+
+      {/* No photo and no video: plain brand look (design grid + the raven mark, the logo the owner can replace in the admin) */}
+      {!content.image && !content.videoUrl ? (
+        <>
+          <div
+            className="bs-plain-grid"
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              inset: 0,
+              zIndex: 1,
+              backgroundImage: "linear-gradient(rgba(246,241,231,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(246,241,231,0.06) 1px, transparent 1px)",
+              backgroundSize: "56px 56px",
+              WebkitMaskImage: "linear-gradient(100deg, transparent 5%, #000 70%)",
+              maskImage: "linear-gradient(100deg, transparent 5%, #000 70%)",
+            }}
+          />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            className="bs-plain-mark"
+            src="/brand/logo-mark"
+            alt=""
+            aria-hidden="true"
+            loading="lazy"
+            decoding="async"
+            style={{ position: "absolute", zIndex: 1, right: "clamp(-5rem, 3vw, 6rem)", top: "50%", transform: "translateY(-50%)", width: "clamp(240px, 38vw, 560px)", height: "auto", opacity: 0.1, filter: "brightness(0) invert(1)", pointerEvents: "none", userSelect: "none" }}
+          />
+        </>
       ) : null}
 
       {/* Overlay — left-heavy for text legibility (full-area gradient on phones, see components.css) */}

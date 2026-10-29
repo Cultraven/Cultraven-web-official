@@ -168,8 +168,9 @@ const SECTIONS = {
     body: "260 GSM heavyweight cotton, pre-washed fits and easy 7-day returns. Free delivery above ₹1,999 and Cash on Delivery available across India.",
     ctaLabel: "ABOUT CULTRAVEN",
     ctaHref: "/pages/our-heritage",
-    image: U("1503341455253-b2e723bb3dbb", 1400),
-    videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-young-man-in-streetwear-standing-outdoors-42289-large.mp4",
+    // No stock photo or video: the section shows the plain CULTRAVEN look until the owner adds media in the admin.
+    image: "",
+    videoUrl: "",
   },
   // Lookbook and Journal start EMPTY: those pages show "coming soon" until real looks / articles are added in the admin.
   "page.lookbook": { items: [] },

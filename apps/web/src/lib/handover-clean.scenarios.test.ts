@@ -27,6 +27,11 @@ describe("seed script (pnpm db:seed)", () => {
     expect(seed).not.toMatch(/From ₹/);
   });
 
+  it("does not bring back the stock photo / stock video behind the brand story banner", () => {
+    expect(seed).not.toMatch(/mixkit|assets\.mixkit/i);
+    expect(seed).toMatch(/"home\.brandStory"[^]*image: "",\s*videoUrl: ""/);
+  });
+
   it("seeds the Social links section", () => {
     expect(seed).toContain('"site.social"');
   });

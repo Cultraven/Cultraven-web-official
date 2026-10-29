@@ -303,7 +303,7 @@ export const SECTIONS: SectionDef[] = [
       { kind: "textarea", key: "body", label: "Body text", max: 500 },
       { kind: "text", key: "ctaLabel", label: "Button text", max: 40 },
       { kind: "link", key: "ctaHref", label: "Button link" },
-      { kind: "image", key: "image", label: "Background image / poster", required: true },
+      { kind: "image", key: "image", label: "Background image / poster (optional)", help: "Leave the image and video empty for the plain CULTRAVEN look: navy background with the raven mark." },
       { kind: "video", key: "videoUrl", label: "Background video (optional, MP4/WebM)" },
     ],
   },
