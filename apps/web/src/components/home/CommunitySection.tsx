@@ -25,7 +25,10 @@ export interface CommunityContent {
 
 /** Content + photos come from the database (home.community). */
 export function CommunitySection({ content, images }: { content: CommunityContent; images: UGCImage[] }) {
-  if (images.length === 0) return <SectionComingSoon eyebrow={content.eyebrow} heading={content.heading || "Worn by the culture"} text="Photos from our community are coming soon. Tag us on Instagram to be featured." tone="mist" />;
+  if (images.length === 0) {
+    const insta = content.instagramUrl && /^https:\/\//i.test(content.instagramUrl) ? content.instagramUrl : "";
+    return <SectionComingSoon eyebrow={content.eyebrow} heading={content.heading || "Worn by the culture"} text="Our community photos are coming soon. Tag us on Instagram to be featured." tone="mist" shape="photos" cta={insta ? { label: "Follow on Instagram", href: insta } : undefined} />;
+  }
 
   return (
     <section

@@ -29,6 +29,30 @@ describe("home sections with nothing in them yet say 'coming soon'", () => {
     for (const h of ["New Arrivals", "Best Sellers", "Trending Now", "Worn by the culture", "Shop The Look"]) expect(screen.getByRole("heading", { name: h })).toBeTruthy();
     expect(container.querySelectorAll("[data-testid=card]")).toHaveLength(0);
   });
+  it("draws faint tiles in the shape of the real section: 4 cards, 6 photos, or a look + 2 pieces", () => {
+    const { container } = render(
+      <>
+        <NewDropSection content={{ heading: "New Arrivals" }} products={[]} />
+        <CommunitySection content={{ heading: "Worn by the culture" }} images={[]} />
+        <ShopTheLookSection look={null} />
+      </>
+    );
+    expect(container.querySelectorAll(".scs-cards .scs-ghost")).toHaveLength(4);
+    expect(container.querySelectorAll(".scs-photos .scs-ghost")).toHaveLength(6);
+    expect(container.querySelectorAll(".scs-look .scs-ghost")).toHaveLength(3);
+    // decoration only: hidden from screen readers
+    for (const g of Array.from(container.querySelectorAll(".scs-grid"))) expect(g.getAttribute("aria-hidden")).toBe("true");
+  });
+  it("Community offers a Follow on Instagram link only when the owner saved a safe https address", () => {
+    const { rerender } = render(<CommunitySection content={{ heading: "Worn", instagramUrl: "https://www.instagram.com/clutraven/" }} images={[]} />);
+    const a = screen.getByRole("link", { name: /follow on instagram/i }) as HTMLAnchorElement;
+    expect(a.href).toBe("https://www.instagram.com/clutraven/");
+    expect(a.rel).toContain("noopener");
+    rerender(<CommunitySection content={{ heading: "Worn", instagramUrl: "javascript:alert(1)" }} images={[]} />);
+    expect(screen.queryByRole("link", { name: /follow on instagram/i })).toBeNull();
+    rerender(<CommunitySection content={{ heading: "Worn" }} images={[]} />);
+    expect(screen.queryByRole("link", { name: /follow on instagram/i })).toBeNull();
+  });
   it("as soon as there is something to show, no coming-soon panel appears", () => {
     render(
       <>

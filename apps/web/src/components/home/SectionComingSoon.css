@@ -1,0 +1,86 @@
+/* SectionComingSoon: ghost tiles in the shape of the real section + a "Coming soon" badge. */
+.scs { padding: clamp(4rem, 7vw, 7rem) 0; border-bottom: 1px solid var(--color-line); }
+.scs-inner { padding-inline: clamp(1rem, 4vw, 5rem); }
+
+.scs-head { margin-bottom: 2.5rem; }
+.scs-eyebrow { display: block; font-family: var(--font-sans); font-size: 11px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: var(--color-lava); margin-bottom: 0.6rem; }
+.scs-heading { font-family: var(--font-heading); font-size: clamp(2.2rem, 4.5vw, 4rem); font-weight: 400; color: var(--color-navy); line-height: 0.95; letter-spacing: 0.02em; text-transform: uppercase; margin: 0; }
+
+.scs-stage { position: relative; }
+
+/* ── ghost tiles ───────────────────────────────────────────────────────────── */
+.scs-grid { display: grid; gap: 1.25rem; }
+.scs-ghost { min-width: 0; }
+.scs-media {
+  position: relative; overflow: hidden; border-radius: 4px;
+  background: rgba(23, 37, 84, 0.06); border: 1px solid rgba(23, 37, 84, 0.1);
+}
+.scs-media::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.6) 50%, transparent 70%);
+  transform: translateX(-100%); animation: scs-shimmer 2.8s ease-in-out infinite;
+}
+.scs-ghost:nth-child(2) .scs-media::after { animation-delay: 0.25s; }
+.scs-ghost:nth-child(3) .scs-media::after { animation-delay: 0.5s; }
+.scs-ghost:nth-child(4) .scs-media::after { animation-delay: 0.75s; }
+.scs-ghost:nth-child(5) .scs-media::after { animation-delay: 1s; }
+.scs-ghost:nth-child(6) .scs-media::after { animation-delay: 1.25s; }
+@keyframes scs-shimmer { 0% { transform: translateX(-100%); } 60%, 100% { transform: translateX(100%); } }
+
+.scs-line { height: 10px; border-radius: 999px; background: rgba(23, 37, 84, 0.08); margin-top: 0.85rem; }
+.scs-line-title { width: 72%; }
+.scs-line-price { width: 38%; margin-top: 0.55rem; }
+
+/* product cards: same 10/11 ratio as the real cards, 4 across */
+.scs-cards { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.scs-cards .scs-media { aspect-ratio: 10 / 11; }
+
+/* photo bento: 4 columns x 2 rows, two tall tiles */
+.scs-photos { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: clamp(130px, 17vw, 240px); }
+.scs-photos .scs-ghost, .scs-photos .scs-media { height: 100%; }
+.scs-photos .scs-ghost:nth-child(1) { grid-row: 1 / span 2; grid-column: 1; }
+.scs-photos .scs-ghost:nth-child(4) { grid-row: 1 / span 2; grid-column: 4; }
+.scs-photos .scs-ghost:nth-child(2) { grid-row: 1; grid-column: 2; }
+.scs-photos .scs-ghost:nth-child(3) { grid-row: 1; grid-column: 3; }
+.scs-photos .scs-ghost:nth-child(5) { grid-row: 2; grid-column: 2; }
+.scs-photos .scs-ghost:nth-child(6) { grid-row: 2; grid-column: 3; }
+
+/* look: one big look next to two pieces */
+.scs-look { grid-template-columns: 1.25fr 1fr; grid-template-rows: repeat(2, clamp(150px, 19vw, 280px)); }
+.scs-look .scs-ghost, .scs-look .scs-media { height: 100%; }
+.scs-look .scs-ghost:nth-child(1) { grid-row: 1 / span 2; }
+
+/* ── badge ─────────────────────────────────────────────────────────────────── */
+.scs-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 1rem; pointer-events: none; }
+.scs-badge {
+  pointer-events: auto; text-align: center; max-width: min(26rem, 100%);
+  background: var(--color-navy); color: var(--color-cream);
+  padding: 1.4rem 2rem 1.5rem; border-radius: 6px;
+  box-shadow: 0 18px 44px rgba(23, 37, 84, 0.28), 0 2px 0 var(--color-lava);
+}
+.scs-label { display: inline-flex; align-items: center; gap: 0.55rem; font-family: var(--font-sans); font-size: 12px; font-weight: 900; letter-spacing: 0.26em; text-transform: uppercase; color: var(--color-lava); }
+.scs-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--color-lava); box-shadow: 0 0 0 0 rgba(218, 178, 5, 0.6); animation: scs-pulse 2s ease-out infinite; }
+@keyframes scs-pulse { 0% { box-shadow: 0 0 0 0 rgba(218, 178, 5, 0.55); } 70%, 100% { box-shadow: 0 0 0 9px rgba(218, 178, 5, 0); } }
+.scs-text { font-family: var(--font-sans); font-size: 0.92rem; line-height: 1.55; color: rgba(246, 241, 231, 0.85); margin: 0.55rem 0 0; }
+.scs-cta { display: inline-flex; align-items: center; gap: 6px; margin-top: 0.9rem; font-family: var(--font-sans); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-lava); border-bottom: 1.5px solid var(--color-lava); padding-bottom: 2px; text-decoration: none; }
+.scs-cta:focus-visible { outline: 2px solid var(--color-cream); outline-offset: 3px; }
+
+/* ── tablet / phone ────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .scs-head { margin-bottom: 1.5rem; }
+  .scs-grid { gap: 0.75rem; }
+  .scs-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .scs-cards .scs-ghost:nth-child(n + 3) { display: none; }
+  .scs-photos { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: clamp(120px, 38vw, 220px); }
+  .scs-photos .scs-ghost:nth-child(n) { grid-row: auto; grid-column: auto; }
+  .scs-photos .scs-ghost:nth-child(1) { grid-row: span 2; }
+  .scs-photos .scs-ghost:nth-child(n + 4) { display: none; }
+  .scs-look { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(2, clamp(120px, 34vw, 200px)); }
+  /* phone: the badge sits over the bottom edge of the tiles instead of covering them */
+  .scs-overlay { position: relative; inset: auto; padding: 0 0.5rem; margin-top: -1.75rem; }
+  .scs-badge { width: 100%; padding: 1.1rem 1.25rem 1.2rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scs-media::after, .scs-dot { animation: none; }
+}

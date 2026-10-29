@@ -1,22 +1,72 @@
 /**
  * SectionComingSoon: what a home page section shows while the shop owner has not added anything to it yet
  * (no products, no photos, no cards). Everything that fills these sections is added in the admin panel.
+ *
+ * It keeps the section's real heading and draws faint "ghost" tiles in the same shape the real items will have
+ * (product cards, photo bento, or a look + two pieces), with a "Coming soon" badge on top.
  */
 import React from "react";
+import "./SectionComingSoon.css";
 
-export function SectionComingSoon({ eyebrow, heading, text = "New pieces are on the way. Check back soon.", tone = "cream" }: { eyebrow?: string; heading: string; text?: string; tone?: "cream" | "mist" }) {
+export type GhostShape = "cards" | "photos" | "look";
+const GHOST_COUNT: Record<GhostShape, number> = { cards: 4, photos: 6, look: 3 };
+
+export interface ComingSoonCta { label: string; href: string }
+
+export function SectionComingSoon({
+  eyebrow,
+  heading,
+  text = "New pieces are on the way. Check back soon.",
+  tone = "cream",
+  shape = "cards",
+  cta,
+}: {
+  eyebrow?: string;
+  heading: string;
+  text?: string;
+  tone?: "cream" | "mist";
+  shape?: GhostShape;
+  cta?: ComingSoonCta;
+}) {
   return (
     <section
-      className="cv-auto"
+      className="cv-auto scs"
       aria-label={`${heading} (coming soon)`}
-      style={{ backgroundColor: tone === "mist" ? "var(--color-mist)" : "var(--color-cream)", padding: "clamp(3rem,6vw,5.5rem) clamp(1rem,4vw,5rem)", borderBottom: "1px solid var(--color-line)" }}
+      style={{ backgroundColor: tone === "mist" ? "var(--color-mist)" : "var(--color-cream)" }}
     >
-      <div style={{ maxWidth: "1240px", margin: "0 auto" }}>
-        {eyebrow ? <p style={{ fontFamily: "var(--font-sans)", fontSize: "11px", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-crimson)", margin: "0 0 0.75rem" }}>{eyebrow}</p> : null}
-        <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "clamp(2rem,4.5vw,3.75rem)", fontWeight: 600, color: "var(--color-navy)", lineHeight: 1, margin: "0 0 1.75rem" }}>{heading}</h2>
-        <div style={{ border: "2px dashed rgba(23,37,84,0.25)", borderRadius: 12, padding: "clamp(2rem,5vw,3.5rem) 1.5rem", textAlign: "center" }}>
-          <p style={{ fontFamily: "var(--font-sans)", fontSize: "12px", fontWeight: 900, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-navy)", margin: "0 0 0.6rem" }}>Coming soon</p>
-          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.95rem", lineHeight: 1.6, color: "var(--color-gray)", margin: 0 }}>{text}</p>
+      <div className="scs-inner">
+        <div className="scs-head">
+          {eyebrow ? <span className="scs-eyebrow">{eyebrow}</span> : null}
+          <h2 className="scs-heading">{heading}</h2>
+        </div>
+
+        <div className="scs-stage">
+          <div className={`scs-grid scs-${shape}`} aria-hidden="true">
+            {Array.from({ length: GHOST_COUNT[shape] }, (_, i) => (
+              <div className="scs-ghost" key={i}>
+                <div className="scs-media" />
+                {shape === "cards" ? (
+                  <>
+                    <div className="scs-line scs-line-title" />
+                    <div className="scs-line scs-line-price" />
+                  </>
+                ) : null}
+              </div>
+            ))}
+          </div>
+
+          <div className="scs-overlay">
+            <div className="scs-badge" role="status">
+              <span className="scs-label"><span className="scs-dot" aria-hidden="true" />Coming soon</span>
+              <p className="scs-text">{text}</p>
+              {cta ? (
+                <a className="scs-cta" href={cta.href} target="_blank" rel="noopener noreferrer">
+                  {cta.label}
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                </a>
+              ) : null}
+            </div>
+          </div>
         </div>
       </div>
     </section>

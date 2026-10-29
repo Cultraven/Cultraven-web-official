@@ -36,7 +36,7 @@ export function ShopTheLookSection({ look }: { look: ShopLookData | null }) {
   const [allAdded, setAllAdded] = useState(false);
   const addItem = useCartStore((s) => s.addItem);
   const addItems = useCartStore((s) => s.addItems);
-  if (!look || look.products.length === 0) return <SectionComingSoon eyebrow="Fit check" heading="Shop The Look" text="Complete outfits to shop in one tap are coming soon." />;
+  if (!look || look.products.length === 0) return <SectionComingSoon eyebrow="Fit check" heading="Shop The Look" text="Complete outfits you can shop in one tap are coming soon." shape="look" />;
 
   const totalLookPrice = look.products.reduce((sum, p) => sum + p.pricePaise, 0);
 
