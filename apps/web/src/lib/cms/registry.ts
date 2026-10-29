@@ -156,7 +156,7 @@ export const SECTIONS: SectionDef[] = [
     key: "site.footer",
     group: "Site",
     label: "Footer",
-    description: "Footer link columns, social links and copyright line.",
+    description: "Footer link columns and the copyright line. (Social icons are in 'Social links'.)",
     previewPath: "/",
     fields: [
       { kind: "text", key: "copyrightText", label: "Copyright text", max: 120 },
@@ -168,9 +168,19 @@ export const SECTIONS: SectionDef[] = [
           { kind: "boolean", key: "openInNew", label: "Open in new tab" },
         ] },
       ] },
-      { kind: "list", key: "socialLinks", label: "Social links", itemTitleKey: "platform", max: 8, fields: [
-        { kind: "select", key: "platform", label: "Platform", required: true, options: ["instagram", "twitter", "facebook", "reddit", "pinterest", "whatsapp"] },
-        { kind: "url", key: "href", label: "Profile URL", required: true },
+    ],
+  },
+  {
+    key: "site.social",
+    group: "Site",
+    label: "Social links",
+    description: "Your Instagram, X (Twitter), Facebook, Reddit and Pinterest pages. They show as icons in the footer and are also used in the chat window, on the Contact page and in the business details Google reads. Add, change, hide or remove a page here and it updates everywhere.",
+    previewPath: "/",
+    fields: [
+      { kind: "list", key: "items", label: "Social pages", itemTitleKey: "platform", max: 8, help: "One entry per platform. Paste the full address of your page, for example https://www.instagram.com/yourname/", fields: [
+        { kind: "select", key: "platform", label: "Platform", required: true, options: ["instagram", "twitter", "facebook", "reddit", "pinterest"] },
+        { kind: "url", key: "href", label: "Page address", required: true, help: "Must start with https://" },
+        active,
       ] },
     ],
   },

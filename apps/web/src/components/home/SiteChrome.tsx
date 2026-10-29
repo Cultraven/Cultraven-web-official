@@ -12,12 +12,14 @@ import { PageBackBar } from "@/components/common/PageBackBar";
 import { ReviewPrompt } from "@/components/reviews/ReviewPrompt";
 import { getCmsSection } from "@/lib/cms/server";
 import { liveItems } from "@/lib/cms/registry";
+import { resolveSocialLinks } from "@/lib/cms/social";
 
 export async function SiteChrome({ children }: { children: ReactNode }) {
-  const [announcement, nav, footer] = await Promise.all([
+  const [announcement, nav, footer, social] = await Promise.all([
     getCmsSection<any>("site.announcement"),
     getCmsSection<any>("site.nav"),
     getCmsSection<any>("site.footer"),
+    getCmsSection<any>("site.social"),
   ]);
 
   const navMenu = {
@@ -38,7 +40,7 @@ export async function SiteChrome({ children }: { children: ReactNode }) {
 
   const footerData = {
     columns: (footer.data?.columns ?? []).map((c: any) => ({ id: c.id, heading: c.heading, links: c.links ?? [] })),
-    socialLinks: footer.data?.socialLinks ?? [],
+    socialLinks: resolveSocialLinks(social, footer),
     copyrightText: footer.data?.copyrightText ?? "",
     badgeLogos: [],
   };

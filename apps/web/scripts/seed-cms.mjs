@@ -5,10 +5,12 @@
  * Admin Panel and the public website read these records from MongoDB. No component
  * imports this file.
  *
+ * It seeds NO sample products, reviews, orders, trending cards, community photos or "Shop the look":
+ * those stay empty (the site shows "Coming soon") until the owner adds them in the admin.
+ *
  * Safe to run repeatedly: every record is inserted only if it does not exist yet
  * ($setOnInsert / "only if empty"), so admin edits are never overwritten.
- *   --force   overwrite existing CMS sections + reseed hero / shop-the-look
- *             (products are never overwritten)
+ *   --force   overwrite existing CMS sections + reseed the hero slide (this REPLACES what the owner saved in the admin)
  *   --dry-run print what would be written, touch nothing
  */
 import dns from "node:dns";
@@ -39,7 +41,6 @@ const SECTIONS = {
     enabled: true,
     intervalMs: 4000,
     items: withIds("ann", [
-      { text: "NEW ARRIVALS ARE LIVE", link: "", active: true },
       { text: "FREE SHIPPING ABOVE ₹1,999", link: "", active: true },
       { text: "CASH ON DELIVERY AVAILABLE", link: "", active: true },
       { text: "EASY 7-DAY RETURNS", link: "", active: true },
@@ -71,11 +72,6 @@ const SECTIONS = {
         label: "COLLECTIONS", href: "", active: true,
         columns: withIds("navcol-drops", [
           { heading: "Collections", items: withIds("navlink-col", [
-            { label: "Dharma // EP01", href: "/collections/dharma", isNew: true },
-            { label: "Dragon Blood", href: "/collections/dragon-blood", isNew: false },
-            { label: "Acid State", href: "/collections/acid-state", isNew: false },
-            { label: "Lava Stripe", href: "/collections/lava-stripe", isNew: false },
-            { label: "Core Essentials", href: "/collections/core", isNew: false },
             { label: "All Collections", href: "/collections", isNew: false },
           ]) },
           { heading: "Explore", items: withIds("navlink-exp", [
@@ -117,12 +113,14 @@ const SECTIONS = {
         { label: "Contact", href: "/pages/contact", openInNew: false },
       ]) },
     ]),
-    socialLinks: withIds("social", [
-      { platform: "instagram", href: "https://www.instagram.com/cultraven._/" },
-      { platform: "twitter", href: "https://x.com/cultraven_" },
-      { platform: "facebook", href: "https://www.facebook.com/profile.php?id=61595224413709" },
-      { platform: "reddit", href: "https://www.reddit.com/user/Cultraven_official/" },
-      { platform: "pinterest", href: "https://www.pinterest.com/cultraven" },
+  },
+  // Social pages: edited in Admin -> Website content -> Social links (footer icons, chat window, contact page, Google business data).
+  "site.social": {
+    items: withIds("social", [
+      { platform: "instagram", href: "https://www.instagram.com/cultraven._/", active: true },
+      { platform: "twitter", href: "https://x.com/cultraven_", active: true },
+      { platform: "facebook", href: "https://www.facebook.com/profile.php?id=61595224413709", active: true },
+      { platform: "reddit", href: "https://www.reddit.com/user/Cultraven_official/", active: true },
     ]),
   },
   "site.trustBadges": {
@@ -147,35 +145,22 @@ const SECTIONS = {
   },
   "home.categoryTiles": {
     items: withIds("tile", [
-      { title: "Oversized Tees", sub: "From ₹1,499", href: "/collections/t-shirts", image: U("1583743814966-8936f5b7be1a"), size: "tall", active: true },
-      { title: "Hoodies", sub: "From ₹2,499", href: "/collections/hoodies", image: U("1556821840-3a63f95609a7"), size: "normal", active: true },
-      { title: "Cargos & Jeans", sub: "From ₹1,999", href: "/collections/cargos", image: U("1594938298603-c8148c4dae35"), size: "normal", active: true },
-      { title: "Outerwear", sub: "From ₹3,499", href: "/collections/outerwear", image: U("1551028719-00167b16eac5"), size: "wide", active: true },
+      { title: "Oversized Tees", sub: "", href: "/collections/t-shirts", image: U("1583743814966-8936f5b7be1a"), size: "tall", active: true },
+      { title: "Hoodies", sub: "", href: "/collections/hoodies", image: U("1556821840-3a63f95609a7"), size: "normal", active: true },
+      { title: "Cargos & Jeans", sub: "", href: "/collections/cargos", image: U("1594938298603-c8148c4dae35"), size: "normal", active: true },
+      { title: "Outerwear", sub: "", href: "/collections/outerwear", image: U("1551028719-00167b16eac5"), size: "wide", active: true },
     ]),
   },
   "home.newDrop": { eyebrow: "Just In", heading: "New Arrivals", ctaLabel: "View All New In", ctaHref: "/collections/new-in" },
   "home.bestsellers": { eyebrow: "Most Loved", heading: "Best Sellers" },
-  "home.trending": {
-    heading: "Trending Now",
-    items: withIds("trend", [
-      { title: "Dragon Blood Graphic Tee", href: "/products/dragon-blood-graphic-charcoal", image: U("1503341455253-b2e723bb3dbb", 800), alt: "Dragon Blood Graphic Tee", active: true },
-      { title: "Dharma EP01 Graphic Hoodie", href: "/products/dharma-graphic-hoodie-stone", image: U("1556821840-3a63f95609a7", 800), alt: "Dharma EP01 Graphic Hoodie", active: true },
-      { title: "Raven Multi-Pocket Cargo", href: "/products/raven-cargo-military-olive", image: U("1552374196-1ab2a1c593e8", 800), alt: "Raven Multi-Pocket Cargo", active: true },
-    ]),
-  },
+  // Trending and Community start EMPTY: the home page shows "Coming soon" until real cards / photos are added in the admin.
+  "home.trending": { heading: "Trending Now", items: [] },
   "home.community": {
     eyebrow: "Community",
-    heading: "Styled by Our Customers",
+    heading: "Worn by the culture",
     instagramUrl: "https://www.instagram.com/cultraven._/",
-    ctaText: "Tag @cultraven to be featured",
-    items: withIds("ugc", [
-      { image: U("1515886657613-9f3515b0c78f", 600), alt: "CULTRAVEN community look — oversized tee", active: true },
-      { image: U("1509631179647-0177331693ae", 600), alt: "CULTRAVEN community look — streetwear", active: true },
-      { image: U("1556821840-3a63f95609a7", 600), alt: "CULTRAVEN community — editorial", active: true },
-      { image: U("1503341455253-b2e723bb3dbb", 600), alt: "CULTRAVEN cargo look", active: true },
-      { image: U("1515886657613-9f3515b0c78f", 600), alt: "CULTRAVEN graphic tee", active: true },
-      { image: U("1583743814966-8936f5b7be1a", 600), alt: "CULTRAVEN hoodie street style", active: true },
-    ]),
+    ctaText: "Tag @cultraven._ to be featured",
+    items: [],
   },
   "home.brandStory": {
     eyebrow: "WHY CULTRAVEN",
@@ -207,9 +192,7 @@ const SECTIONS = {
   "shop.collections": {
     items: withIds("coll", [
       { slug: "new-in", name: "New In", description: "The freshest pieces from CULTRAVEN — new arrivals, updated fits and limited editions.", image: U("1503341455253-b2e723bb3dbb", 1400), active: true },
-      { slug: "street", name: "Street", description: "A collection built for movement, individuality and everyday rebellion.", image: U("1515886657613-9f3515b0c78f", 1400), active: true },
       { slug: "bestsellers", name: "Bestsellers", description: "The ones everyone keeps coming back for — our most loved styles.", image: U("1556821840-3a63f95609a7", 1400), active: true },
-      { slug: "essentials", name: "Essentials", description: "Clean, heavyweight basics built to outlast every trend.", image: U("1583743814966-8936f5b7be1a", 1400), active: true },
       { slug: "all", name: "All Products", description: "Every piece from CULTRAVEN — filter, sort and discover.", image: U("1489987707025-afc232f7ea0f", 1400), active: true },
     ]),
   },
@@ -233,10 +216,10 @@ const HERO = {
   srcDesktop: U("1583743814966-8936f5b7be1a", 1600),
   srcMobile: U("1583743814966-8936f5b7be1a", 800),
   posterSrc: "",
-  altText: "CULTRAVEN DHARMA Collection — Oversized T-Shirts & Hoodies",
-  eyebrow: "Dharma Series EP 01",
+  altText: "CULTRAVEN — Oversized T-Shirts & Hoodies",
+  eyebrow: "",
   headline: "WEAR YOUR DIFFERENCE.",
-  subheadline: "DHARMA EP01 — 260 GSM heavyweight cotton with premium screen-prints. Free delivery above ₹1,999.",
+  subheadline: "260 GSM heavyweight cotton with premium screen-prints. Free delivery above ₹1,999.",
   ctaLabel: "SHOP NOW",
   ctaHref: "/collections/new-in",
   objectPosition: "center center",
@@ -248,38 +231,7 @@ const HERO = {
   sortOrder: 0,
 };
 
-const SHOP_LOOK = {
-  lookLabel: "LOOK 01",
-  modelImage: U("1515886657613-9f3515b0c78f"),
-  products: [
-    { id: "look-1", title: "RAVEN OVERSIZED TEE — ACID BLACK", category: "T-SHIRT", href: "/products/raven-oversized-tee-acid-black", image: U("1583743814966-8936f5b7be1a", 200), pricePaise: 199900, color: "Acid Black" },
-    { id: "look-2", title: "CARGO WIDE LEG — MILITARY OLIVE", category: "CARGO", href: "/products/cargo-wide-leg-military-olive", image: U("1576566588028-4147f3842f27", 200), pricePaise: 349900, color: "Military Olive" },
-    { id: "look-3", title: "ESSENTIALS HOODIE — WASHED NAVY", category: "HOODIE", href: "/products/essentials-hoodie-washed-navy", image: U("1556821840-3a63f95609a7", 200), pricePaise: 319900, color: "Washed Navy" },
-  ],
-};
-
-// ─── Products (catalog) ──────────────────────────────────────────────────────
-
-const DESC = "260 GSM heavyweight cotton with an oversized fit, pre-washed texture and premium screen-printed graphics.";
-const SIZES = ["S", "M", "L", "XL"];
-const P = (slug, title, category, image, hoverImage, pricePaise, mrpPaise, colors, extra = {}) => ({
-  slug, title, category, image, hoverImage, images: [image, hoverImage], pricePaise, mrpPaise, colors,
-  description: DESC, sizes: SIZES, fit: "oversized", inStock: true, stockCount: 50,
-  isNewArrival: false, isBestseller: false, ...extra,
-});
-const PRODUCTS = [
-  P("raven-oversized-tee-acid-black", "Raven Oversized Tee — Acid Black", "tees", U("1583743814966-8936f5b7be1a", 700), U("1503341455253-b2e723bb3dbb", 700), 199900, 249900, [{ hex: "#0A0A0A", label: "Acid Black" }, { hex: "#2C2C2C", label: "Charcoal" }, { hex: "#DAB205", label: "Flame" }], { isNewArrival: true }),
-  P("dharma-graphic-hoodie-stone", "Dharma Graphic Hoodie — Stone Wash", "hoodies", U("1556821840-3a63f95609a7", 700), U("1512411933099-b1d5565538e1", 700), 299900, 399900, [{ hex: "#EDE3CF", label: "Stone" }, { hex: "#172554", label: "Navy" }, { hex: "#7A7468", label: "Ash" }], { isNewArrival: true }),
-  P("raven-cargo-military-olive", "Raven Cargo — Military Olive", "bottoms", U("1552374196-1ab2a1c593e8", 700), U("1620799140408-edc6dcb6d633", 700), 249900, 299900, [{ hex: "#556B2F", label: "Olive" }, { hex: "#172554", label: "Navy" }, { hex: "#0A0A0A", label: "Black" }], { isNewArrival: true, badge: "LIMITED" }),
-  P("acid-state-sweatshirt-washed-grey", "Acid State Sweatshirt — Washed Grey", "hoodies", U("1578681994506-b8f463449011", 700), U("1503342394128-c104d54dba01", 700), 249900, 299900, [{ hex: "#9CA3AF", label: "Washed Grey" }, { hex: "#0A0A0A", label: "Black" }, { hex: "#EDE3CF", label: "Cream" }], { isNewArrival: true }),
-  P("classic-oversized-tee-black", "Classic Oversized Tee — Black", "tees", U("1503341455253-b2e723bb3dbb", 600), U("1583743814966-8936f5b7be1a", 600), 189900, 189900, [{ hex: "#0A0A0A", label: "Black" }, { hex: "#FAF9F6", label: "White" }, { hex: "#172554", label: "Navy" }], { isBestseller: true, badge: "BESTSELLER" }),
-  P("dragon-blood-graphic-charcoal", "Dragon Blood Graphic — Charcoal", "tees", U("1515886657613-9f3515b0c78f", 600), U("1556821840-3a63f95609a7", 600), 249900, 299900, [{ hex: "#2C2C2C", label: "Charcoal" }, { hex: "#172554", label: "Navy" }], { isBestseller: true, badge: "BESTSELLER" }),
-  P("essentials-hoodie-washed-navy", "Essentials Hoodie — Washed Navy", "hoodies", U("1594938298603-c8148c4dae35", 600), U("1578768079052-aa76e52ff62e", 600), 319900, 399900, [{ hex: "#172554", label: "Washed Navy" }, { hex: "#0A0A0A", label: "Jet Black" }, { hex: "#7A7468", label: "Ash" }], { isBestseller: true, rating: 4 }),
-  P("lava-stripe-cargo-sand", "Lava Stripe Cargo — Sand", "bottoms", U("1594938298603-c8148c4dae35", 600), U("1576566588028-4147f3842f27", 600), 379900, 499900, [{ hex: "#C4A882", label: "Sand" }, { hex: "#556B2F", label: "Olive" }, { hex: "#0A0A0A", label: "Black" }], { isBestseller: true, badge: "LOW STOCK" }),
-  P("acid-state-sweatshirt-stone", "Acid State Sweatshirt — Stone", "hoodies", U("1515886657613-9f3515b0c78f", 600), U("1521572163474-6864f9cf17ab", 600), 259900, 319900, [{ hex: "#EDE3CF", label: "Stone" }, { hex: "#9CA3AF", label: "Washed Grey" }], { isBestseller: true, rating: 4 }),
-  P("relaxed-shirt-white", "Cultraven Relaxed Shirt — White", "shirts", U("1585487000160-6ebcfceb0d03", 600), U("1515886657613-9f3515b0c78f", 600), 299900, 299900, [{ hex: "#FFFFFF", label: "White" }, { hex: "#EDE3CF", label: "Cream" }], { isBestseller: true, fit: "relaxed" }),
-  P("cargo-wide-leg-military-olive", "Cargo Wide Leg — Military Olive", "bottoms", U("1576566588028-4147f3842f27", 700), U("1552374196-1ab2a1c593e8", 700), 349900, 499900, [{ hex: "#556B2F", label: "Military Olive" }], { fit: "baggy" }),
-];
+// No sample Shop the Look and no sample products are seeded: add them in the admin (Admin -> Products, Admin -> Shop the look).
 
 // ─── Run ─────────────────────────────────────────────────────────────────────
 
@@ -287,7 +239,7 @@ async function main() {
   const summary = [];
   if (DRY) {
     console.log("[dry-run] would seed sections:", Object.keys(SECTIONS).join(", "));
-    console.log(`[dry-run] would seed ${PRODUCTS.length} products, 1 hero slide, 1 shop-the-look`);
+    console.log("[dry-run] would seed 1 hero slide (no products, no shop-the-look)");
     return;
   }
   if (!process.env.MONGODB_URI) throw new Error("MONGODB_URI is not set (apps/web/.env)");
@@ -324,22 +276,6 @@ async function main() {
     summary.push("hero: slide created");
   } else summary.push(`hero: kept (${heroCount} slide(s) exist)`);
   await db.collection("heroconfigs").updateOne({ key: "homepage" }, { $setOnInsert: { key: "homepage", mode: "slideshow", createdAt: now, updatedAt: now } }, { upsert: true });
-
-  // Shop the look
-  const lookCount = await db.collection("shoplooks").countDocuments();
-  if (lookCount === 0 || FORCE) {
-    if (FORCE) await db.collection("shoplooks").deleteMany({});
-    await db.collection("shoplooks").insertOne({ ...SHOP_LOOK, createdAt: now, updatedAt: now });
-    summary.push("shop-the-look: created");
-  } else summary.push("shop-the-look: kept");
-
-  // Products — upsert by slug, NEVER overwrite an existing product
-  let created = 0;
-  for (const p of PRODUCTS) {
-    const res = await db.collection("products").updateOne({ slug: p.slug }, { $setOnInsert: { ...p, createdAt: now, updatedAt: now } }, { upsert: true });
-    if (res.upsertedCount) created++;
-  }
-  summary.push(`products: ${created} created, ${PRODUCTS.length - created} already existed`);
 
   console.log("\nSeed complete:\n - " + summary.join("\n - "));
   await mongoose.disconnect();

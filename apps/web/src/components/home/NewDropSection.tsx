@@ -22,7 +22,7 @@ export interface NewDropContent { eyebrow?: string; heading: string; ctaLabel?: 
 
 /** Heading comes from home.newDrop; products are the database products flagged "New arrival". */
 export function NewDropSection({ content, products }: { content: NewDropContent; products: DropProduct[] }) {
-  if (products.length === 0) return <SectionComingSoon eyebrow={content.eyebrow} heading={content.heading} text="New arrivals are on the way. Check back soon." />;
+  if (products.length === 0) return <SectionComingSoon eyebrow={content.eyebrow} heading={content.heading} text="New arrivals are on the way. Leave your email and we will tell you the moment they drop." featured notify />;
 
   return (
     <section

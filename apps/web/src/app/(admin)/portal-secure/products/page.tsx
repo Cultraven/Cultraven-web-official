@@ -162,7 +162,7 @@ export default function AdminProductsPage() {
         {loading ? (
           <TableSkeleton rows={7} cols={6} />
         ) : filtered.length === 0 ? (
-          <EmptyState title={products.length ? "No products match" : "No products yet"} description={products.length ? "Try a different search or filter." : "Add your first product, or run `pnpm db:seed` for sample data."}>
+          <EmptyState title={products.length ? "No products match" : "No products yet"} description={products.length ? "Try a different search or filter." : "Add your first product to start selling."}>
             {!products.length ? <LinkButton href="/portal-secure/products/new" variant="primary" icon="plus">Add product</LinkButton> : null}
           </EmptyState>
         ) : (

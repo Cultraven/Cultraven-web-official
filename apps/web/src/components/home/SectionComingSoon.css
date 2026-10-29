@@ -1,31 +1,49 @@
-/* SectionComingSoon: ghost tiles in the shape of the real section + a "Coming soon" badge. */
-.scs { padding: clamp(4rem, 7vw, 7rem) 0; border-bottom: 1px solid var(--color-line); }
+/* SectionComingSoon: drop-teaser look. Numbered placeholder tiles + a navy "Coming soon" bar (+ optional ribbon and Notify me form). */
+.scs { padding: clamp(4rem, 7vw, 7rem) 0; border-bottom: 1px solid var(--color-line); overflow: hidden; }
 .scs-inner { padding-inline: clamp(1rem, 4vw, 5rem); }
 
 .scs-head { margin-bottom: 2.5rem; }
 .scs-eyebrow { display: block; font-family: var(--font-sans); font-size: 11px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: var(--color-lava); margin-bottom: 0.6rem; }
 .scs-heading { font-family: var(--font-heading); font-size: clamp(2.2rem, 4.5vw, 4rem); font-weight: 400; color: var(--color-navy); line-height: 0.95; letter-spacing: 0.02em; text-transform: uppercase; margin: 0; }
 
-.scs-stage { position: relative; }
+/* ── ribbon (featured sections only) ───────────────────────────────────────── */
+.scs-ribbon { margin-top: calc(-1 * clamp(4rem, 7vw, 7rem)); margin-bottom: clamp(2.5rem, 4vw, 3.5rem); background: var(--color-navy); border-bottom: 2px solid var(--color-lava); overflow: hidden; white-space: nowrap; }
+.scs-ribbon-track { display: inline-flex; width: max-content; animation: scs-marquee 38s linear infinite; padding: 0.7rem 0; }
+.scs-ribbon-item { display: inline-flex; align-items: center; gap: 1.1rem; padding-right: 1.1rem; font-family: var(--font-sans); font-size: 12px; font-weight: 800; letter-spacing: 0.26em; text-transform: uppercase; color: rgba(246, 241, 231, 0.85); }
+.scs-ribbon-item b { color: var(--color-lava); font-weight: 900; }
+.scs-ribbon-item i { color: var(--color-lava); font-style: normal; font-size: 10px; }
+@keyframes scs-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-/* ── ghost tiles ───────────────────────────────────────────────────────────── */
+/* ── placeholder tiles ─────────────────────────────────────────────────────── */
 .scs-grid { display: grid; gap: 1.25rem; }
 .scs-ghost { min-width: 0; }
 .scs-media {
-  position: relative; overflow: hidden; border-radius: 4px;
-  background: rgba(23, 37, 84, 0.06); border: 1px solid rgba(23, 37, 84, 0.1);
+  position: relative; overflow: hidden; border-radius: 6px;
+  border: 1px solid rgba(23, 37, 84, 0.12);
+  background-color: rgba(23, 37, 84, 0.04);
+  /* faint design-grid lines, like a tech-pack sheet */
+  background-image:
+    linear-gradient(165deg, rgba(23, 37, 84, 0.07), rgba(23, 37, 84, 0.015) 70%),
+    linear-gradient(rgba(23, 37, 84, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(23, 37, 84, 0.05) 1px, transparent 1px);
+  background-size: auto, 26px 26px, 26px 26px;
+  display: flex; align-items: center; justify-content: center;
 }
 .scs-media::after {
-  content: ""; position: absolute; inset: 0;
-  background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.6) 50%, transparent 70%);
-  transform: translateX(-100%); animation: scs-shimmer 2.8s ease-in-out infinite;
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.55) 50%, transparent 70%);
+  transform: translateX(-100%); animation: scs-shimmer 3.2s ease-in-out infinite;
 }
-.scs-ghost:nth-child(2) .scs-media::after { animation-delay: 0.25s; }
-.scs-ghost:nth-child(3) .scs-media::after { animation-delay: 0.5s; }
-.scs-ghost:nth-child(4) .scs-media::after { animation-delay: 0.75s; }
-.scs-ghost:nth-child(5) .scs-media::after { animation-delay: 1s; }
-.scs-ghost:nth-child(6) .scs-media::after { animation-delay: 1.25s; }
-@keyframes scs-shimmer { 0% { transform: translateX(-100%); } 60%, 100% { transform: translateX(100%); } }
+.scs-ghost:nth-child(2) .scs-media::after { animation-delay: 0.3s; }
+.scs-ghost:nth-child(3) .scs-media::after { animation-delay: 0.6s; }
+.scs-ghost:nth-child(4) .scs-media::after { animation-delay: 0.9s; }
+.scs-ghost:nth-child(5) .scs-media::after { animation-delay: 1.2s; }
+.scs-ghost:nth-child(6) .scs-media::after { animation-delay: 1.5s; }
+@keyframes scs-shimmer { 0% { transform: translateX(-100%); } 55%, 100% { transform: translateX(100%); } }
+
+.scs-mark { width: 34%; max-width: 120px; height: auto; opacity: 0.13; filter: grayscale(1); user-select: none; pointer-events: none; }
+.scs-chip { position: absolute; top: 10px; left: 10px; padding: 3px 8px; border-radius: 999px; border: 1px solid rgba(23, 37, 84, 0.25); background: rgba(246, 241, 231, 0.75); font-family: var(--font-sans); font-size: 9px; font-weight: 900; letter-spacing: 0.2em; text-transform: uppercase; color: var(--color-navy); }
+.scs-idx { position: absolute; right: 12px; bottom: 8px; font-family: var(--font-heading); font-size: clamp(1.6rem, 3vw, 2.4rem); line-height: 1; letter-spacing: 0.04em; color: transparent; -webkit-text-stroke: 1px rgba(23, 37, 84, 0.28); }
 
 .scs-line { height: 10px; border-radius: 999px; background: rgba(23, 37, 84, 0.08); margin-top: 0.85rem; }
 .scs-line-title { width: 72%; }
@@ -50,20 +68,35 @@
 .scs-look .scs-ghost, .scs-look .scs-media { height: 100%; }
 .scs-look .scs-ghost:nth-child(1) { grid-row: 1 / span 2; }
 
-/* ── badge ─────────────────────────────────────────────────────────────────── */
-.scs-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 1rem; pointer-events: none; }
-.scs-badge {
-  pointer-events: auto; text-align: center; max-width: min(26rem, 100%);
-  background: var(--color-navy); color: var(--color-cream);
-  padding: 1.4rem 2rem 1.5rem; border-radius: 6px;
-  box-shadow: 0 18px 44px rgba(23, 37, 84, 0.28), 0 2px 0 var(--color-lava);
+/* ── "Coming soon" bar ─────────────────────────────────────────────────────── */
+.scs-bar {
+  margin-top: 1.25rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem 2rem; flex-wrap: wrap;
+  background: var(--color-navy); color: var(--color-cream); border-radius: 10px; padding: 1.1rem 1.5rem;
+  box-shadow: 0 2px 0 var(--color-lava), 0 14px 34px rgba(23, 37, 84, 0.16);
 }
+.scs-bar-text { min-width: 0; flex: 1 1 18rem; }
 .scs-label { display: inline-flex; align-items: center; gap: 0.55rem; font-family: var(--font-sans); font-size: 12px; font-weight: 900; letter-spacing: 0.26em; text-transform: uppercase; color: var(--color-lava); }
-.scs-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--color-lava); box-shadow: 0 0 0 0 rgba(218, 178, 5, 0.6); animation: scs-pulse 2s ease-out infinite; }
+.scs-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--color-lava); animation: scs-pulse 2s ease-out infinite; }
 @keyframes scs-pulse { 0% { box-shadow: 0 0 0 0 rgba(218, 178, 5, 0.55); } 70%, 100% { box-shadow: 0 0 0 9px rgba(218, 178, 5, 0); } }
-.scs-text { font-family: var(--font-sans); font-size: 0.92rem; line-height: 1.55; color: rgba(246, 241, 231, 0.85); margin: 0.55rem 0 0; }
-.scs-cta { display: inline-flex; align-items: center; gap: 6px; margin-top: 0.9rem; font-family: var(--font-sans); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-lava); border-bottom: 1.5px solid var(--color-lava); padding-bottom: 2px; text-decoration: none; }
+.scs-text { font-family: var(--font-sans); font-size: 0.92rem; line-height: 1.5; color: rgba(246, 241, 231, 0.85); margin: 0.35rem 0 0; }
+.scs-bar-action { flex: 0 1 26rem; min-width: min(100%, 17rem); }
+
+.scs-cta { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-sans); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-lava); border-bottom: 1.5px solid var(--color-lava); padding-bottom: 2px; text-decoration: none; white-space: nowrap; }
 .scs-cta:focus-visible { outline: 2px solid var(--color-cream); outline-offset: 3px; }
+
+/* ── Notify me form ────────────────────────────────────────────────────────── */
+/* The email box keeps the storefront's own input look (globals.css); only its size is set here. The button is type="button" so the global navy submit style does not apply. */
+.scs-form { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.scs-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.scs-input { flex: 1 1 10rem; min-width: 0; height: 48px; padding: 0 1rem; }
+.scs-input::placeholder { color: rgba(23, 37, 84, 0.5); font-weight: 600; }
+.scs-btn { height: 48px; padding: 0 1.5rem; border: 0; border-radius: 0; cursor: pointer; background: var(--color-lava); color: var(--color-navy); font-family: var(--font-sans); font-size: 0.74rem; font-weight: 900; letter-spacing: 0.16em; text-transform: uppercase; transition: transform 0.15s ease, filter 0.15s ease; }
+.scs-btn:hover:not(:disabled) { filter: brightness(1.07); transform: translateY(-1px); }
+.scs-btn:active:not(:disabled) { transform: translateY(0); }
+.scs-btn:disabled { opacity: 0.7; cursor: progress; }
+.scs-btn:focus-visible { outline: 2px solid var(--color-cream); outline-offset: 2px; }
+.scs-err { flex-basis: 100%; margin: 0.1rem 0 0; font-family: var(--font-sans); font-size: 0.78rem; color: #ffb4a8; }
+.scs-done { display: flex; align-items: center; gap: 0.55rem; margin: 0; font-family: var(--font-sans); font-size: 0.9rem; font-weight: 700; color: var(--color-lava); }
 
 /* ── tablet / phone ────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
@@ -76,11 +109,11 @@
   .scs-photos .scs-ghost:nth-child(1) { grid-row: span 2; }
   .scs-photos .scs-ghost:nth-child(n + 4) { display: none; }
   .scs-look { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(2, clamp(120px, 34vw, 200px)); }
-  /* phone: the badge sits over the bottom edge of the tiles instead of covering them */
-  .scs-overlay { position: relative; inset: auto; padding: 0 0.5rem; margin-top: -1.75rem; }
-  .scs-badge { width: 100%; padding: 1.1rem 1.25rem 1.2rem; }
+  .scs-bar { padding: 1rem 1.1rem 1.1rem; }
+  .scs-bar-action { flex-basis: 100%; }
+  .scs-ribbon-item { font-size: 11px; letter-spacing: 0.2em; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .scs-media::after, .scs-dot { animation: none; }
+  .scs-media::after, .scs-dot, .scs-ribbon-track { animation: none; }
 }

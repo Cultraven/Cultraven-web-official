@@ -1,5 +1,5 @@
 import React from "react";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("next/link", () => ({ default: ({ href, children, ...rest }: any) => <a href={String(href)} {...rest}>{children}</a> }));
@@ -12,7 +12,7 @@ import { TrendingNow } from "./TrendingNow";
 import { CommunitySection } from "./CommunitySection";
 import { ShopTheLookSection } from "./ShopTheLookSection";
 
-afterEach(() => cleanup());
+afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 
 describe("home sections with nothing in them yet say 'coming soon'", () => {
   it("New Drop, Bestsellers, Trending, Community and Shop the Look each show a coming-soon panel with their own heading", () => {
@@ -25,7 +25,7 @@ describe("home sections with nothing in them yet say 'coming soon'", () => {
         <ShopTheLookSection look={null} />
       </>
     );
-    expect(screen.getAllByText("Coming soon")).toHaveLength(5);
+    expect(screen.getAllByRole("status")).toHaveLength(5); // one "Coming soon" bar per empty section
     for (const h of ["New Arrivals", "Best Sellers", "Trending Now", "Worn by the culture", "Shop The Look"]) expect(screen.getByRole("heading", { name: h })).toBeTruthy();
     expect(container.querySelectorAll("[data-testid=card]")).toHaveLength(0);
   });
@@ -62,5 +62,80 @@ describe("home sections with nothing in them yet say 'coming soon'", () => {
     );
     expect(screen.queryByText("Coming soon")).toBeNull();
     expect(screen.getByText("Real tee")).toBeTruthy();
+  });
+});
+
+describe("the drop-teaser look", () => {
+  const renderAll = () =>
+    render(
+      <>
+        <NewDropSection content={{ heading: "New Arrivals", eyebrow: "Just in" }} products={[]} />
+        <BestsellersSection content={{ heading: "Best Sellers" }} products={[]} />
+        <TrendingNow heading="Trending Now" items={[]} />
+        <CommunitySection content={{ heading: "Worn by the culture" }} images={[]} />
+        <ShopTheLookSection look={null} />
+      </>
+    );
+
+  it("only the New Drop section gets the scrolling ribbon and the Notify me form (five stacked forms would be noise)", () => {
+    const { container } = renderAll();
+    expect(container.querySelectorAll(".scs-ribbon")).toHaveLength(1);
+    expect(screen.getAllByRole("button", { name: /notify me/i })).toHaveLength(1);
+    expect(container.querySelector(".scs-ribbon")?.getAttribute("aria-hidden")).toBe("true");
+  });
+
+  it("every placeholder tile says Soon, is numbered, and carries the brand mark (hidden from screen readers)", () => {
+    const { container } = render(<NewDropSection content={{ heading: "New Arrivals" }} products={[]} />);
+    const tiles = Array.from(container.querySelectorAll(".scs-cards .scs-ghost"));
+    expect(tiles.map((t) => t.querySelector(".scs-idx")?.textContent)).toEqual(["01", "02", "03", "04"]);
+    for (const t of tiles) {
+      expect(t.querySelector(".scs-chip")?.textContent).toBe("Soon");
+      const mark = t.querySelector("img.scs-mark") as HTMLImageElement;
+      expect(mark.getAttribute("alt")).toBe("");
+      expect(mark.getAttribute("src")).toBe("/brand/logo-mark"); // the logo the owner can replace in the admin
+    }
+  });
+});
+
+describe("Notify me form", () => {
+  const fill = (email: string) => {
+    render(<NewDropSection content={{ heading: "New Arrivals" }} products={[]} />);
+    fireEvent.change(screen.getByLabelText(/email address/i), { target: { value: email } });
+  };
+
+  it("saves the address to the newsletter list and thanks the visitor", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ message: "Subscribed" }) });
+    vi.stubGlobal("fetch", fetchMock);
+    fill("  Fan@Example.com ");
+    fireEvent.click(screen.getByRole("button", { name: /notify me/i }));
+    expect(await screen.findByText(/you.re on the list/i)).toBeTruthy();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(url).toBe("/api/newsletter");
+    expect(init.method).toBe("POST");
+    expect(JSON.parse(init.body)).toEqual({ email: "fan@example.com" });
+  });
+
+  it("does not send anything for an empty or invalid address", () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    fill("not-an-email");
+    fireEvent.click(screen.getByRole("button", { name: /notify me/i }));
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("shows the server's message when it says no (for example too many attempts) and lets them try again", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: false, status: 429, json: async () => ({ message: "Too many subscription attempts. Please try again tomorrow." }) }));
+    fill("fan@example.com");
+    fireEvent.click(screen.getByRole("button", { name: /notify me/i }));
+    expect((await screen.findByRole("alert")).textContent).toMatch(/too many subscription attempts/i);
+    expect(screen.getByRole("button", { name: /notify me/i })).toBeTruthy();
+  });
+
+  it("explains a lost connection in plain words", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("offline")));
+    fill("fan@example.com");
+    fireEvent.click(screen.getByRole("button", { name: /notify me/i }));
+    await waitFor(() => expect(screen.getByRole("alert").textContent).toMatch(/no connection/i));
   });
 });

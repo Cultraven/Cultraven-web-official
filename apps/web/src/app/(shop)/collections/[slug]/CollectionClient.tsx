@@ -12,6 +12,7 @@
 "use client";
 
 import { ShopCard, ShopCardSkeleton } from "@/components/shop/ShopCard";
+import { ComingSoonPanel } from "@/components/home/SectionComingSoon";
 import type { PublicSizeOption } from "@/lib/size-pricing";
 import React, { useState, useMemo, Component } from "react";
 import Image from "next/image";
@@ -250,10 +251,7 @@ function CollectionPageClientInner({
                 {Array.from({ length: 8 }, (_, i) => <ShopCardSkeleton key={i} />)}
               </div>
             ) : products.length === 0 ? (
-              <div style={{ textAlign: "center", padding: "5rem 1.5rem", border: "2px dashed rgba(23,37,84,0.25)", borderRadius: 12 }}>
-                <p style={{ fontFamily: "var(--font-sans)", fontSize: "12px", fontWeight: 900, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-navy)", marginBottom: "0.6rem" }}>Coming soon</p>
-                <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.95rem", color: "var(--color-gray)", margin: 0 }}>New pieces are on the way. Check back soon.</p>
-              </div>
+              <ComingSoonPanel text="New pieces are on the way. Leave your email and we will tell you the moment they drop." notify idPrefix="notify-collection" />
             ) : filtered.length === 0 ? (
               <div style={{ textAlign: "center", padding: "6rem 2rem" }}>
                 <p style={{ fontFamily: "var(--font-heading)", fontSize: "2rem", fontWeight: 400, color: "var(--color-navy)", marginBottom: "1rem" }}>NO PRODUCTS FOUND.</p>

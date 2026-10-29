@@ -10,11 +10,10 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { supportConfig } from "@/lib/support";
-import { BUSINESS } from "@/lib/business";
+import { useInstagramUrl } from "@/components/common/SocialLinksContext";
+import { profileName } from "@/lib/cms/social";
 
 const WHATSAPP_NUMBER = supportConfig().whatsapp; // the registered support line unless NEXT_PUBLIC_WHATSAPP_NUMBER overrides it
-const INSTAGRAM_URL = BUSINESS.instagramUrl;
-const INSTAGRAM_HANDLE = new URL(INSTAGRAM_URL).pathname.replace(/\//g, ""); // "cultraven._"
 
 // ── Simple FAQ chatbot knowledge base ────────────────────────────────────────
 const FAQ: { patterns: string[]; answer: string }[] = [
@@ -84,6 +83,9 @@ interface Message {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export function ChatWidget() {
+  // The Instagram page comes from Admin -> Website content -> Social links ("" when removed there).
+  const instagramUrl = useInstagramUrl();
+  const instagramHandle = profileName(instagramUrl);
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState<"channels" | "chat">("channels");
   const [messages, setMessages] = useState<Message[]>([
@@ -312,8 +314,9 @@ export function ChatWidget() {
               </p>
 
               {/* Instagram */}
+              {instagramUrl ? (
               <a
-                href={INSTAGRAM_URL}
+                href={instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 id="chat-instagram-link"
@@ -379,7 +382,7 @@ export function ChatWidget() {
                         color: "var(--color-smoke)",
                       }}
                     >
-                      @{INSTAGRAM_HANDLE}
+                      @{instagramHandle}
                     </p>
                   </div>
                 </div>
@@ -387,6 +390,7 @@ export function ChatWidget() {
                   <polyline points="9 18 15 12 9 6" />
                 </svg>
               </a>
+              ) : null}
 
               {/* WhatsApp */}
               <a

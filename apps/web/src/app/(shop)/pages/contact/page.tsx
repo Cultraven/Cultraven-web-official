@@ -7,7 +7,8 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { CONTACT_SUBJECTS, cleanOrderNumber, formatPhone, matchSubject, supportConfig, telLink, whatsappLink } from "@/lib/support";
 import { useAccountSession } from "@/components/account/useAccountSession";
-import { BUSINESS } from "@/lib/business";
+import { useInstagramUrl } from "@/components/common/SocialLinksContext";
+import { profileName } from "@/lib/cms/social";
 
 interface FormState {
   name: string;
@@ -32,6 +33,7 @@ function validate(form: FormState): Partial<Record<keyof FormState, string>> {
 }
 
 export default function ContactPage() {
+  const instagramUrl = useInstagramUrl(); // from Admin -> Website content -> Social links ("" when removed there)
   const [form, setForm] = useState<FormState>({
     name: "",
     email: "",
@@ -403,8 +405,9 @@ export default function ContactPage() {
             </a>
 
             {/* Instagram */}
+            {instagramUrl ? (
             <a
-              href={BUSINESS.instagramUrl}
+              href={instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
               id="contact-instagram-cta"
@@ -443,10 +446,11 @@ export default function ContactPage() {
                   Instagram DM
                 </p>
                 <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", color: "var(--color-gray)" }}>
-                  @cultraven — usually replies within a few hours
+                  @{profileName(instagramUrl)} — usually replies within a few hours
                 </p>
               </div>
             </a>
+            ) : null}
 
             {/* Email */}
             <a

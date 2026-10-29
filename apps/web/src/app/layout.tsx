@@ -5,6 +5,9 @@ import { ChatWidgetGate } from "@/components/common/ChatWidgetGate";
 import { StoreRehydrator } from "@/components/common/StoreRehydrator";
 import { ToastProvider } from "@/components/common/Toast";
 import { BUSINESS } from "@/lib/business";
+import { getCmsSection } from "@/lib/cms/server";
+import { resolveSocialLinks } from "@/lib/cms/social";
+import { SocialLinksProvider } from "@/components/common/SocialLinksContext";
 
 // ─── Font loading (next/font — zero layout shift) ─────────────────────────────
 const archivo = Archivo({
@@ -28,8 +31,8 @@ const notoDeva = Noto_Sans_Devanagari({
   preload: false,
 });
 
-// ─── JSON-LD — Organization ───────────────────────────────────────────────────
-const organizationJsonLd = {
+// ─── JSON-LD — Organization (the social pages come from Admin -> Social links) ─
+const organizationJsonLd = (sameAs: string[]) => ({
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "CULTRAVEN",
@@ -39,12 +42,7 @@ const organizationJsonLd = {
   description:
     "CULTRAVEN is an Indian clothing brand selling oversized t-shirts, hoodies, cargo pants and streetwear online, with Cash on Delivery and easy 7-day returns.",
   slogan: "Wear Your Difference.",
-  sameAs: [
-    BUSINESS.instagramUrl,
-    "https://x.com/cultraven_",
-    "https://www.facebook.com/profile.php?id=61595224413709",
-    "https://www.reddit.com/user/Cultraven_official/",
-  ],
+  sameAs,
   email: BUSINESS.supportEmail,
   address: {
     "@type": "PostalAddress",
@@ -62,7 +60,7 @@ const organizationJsonLd = {
     areaServed: "IN",
     availableLanguage: ["English", "Hindi"],
   },
-};
+});
 
 // ─── JSON-LD — WebSite (names the site for search results) ────────────────────
 const websiteJsonLd = {
@@ -138,7 +136,9 @@ export const metadata = {
 export const viewport = { themeColor: "#172554" };
 
 // ─── Root Layout ──────────────────────────────────────────────────────────────
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const [social, footer] = await Promise.all([getCmsSection<any>("site.social"), getCmsSection<any>("site.footer")]);
+  const socialLinks = resolveSocialLinks(social, footer, { fallbackToDefaults: true });
   return (
     <html
       lang="en-IN"
@@ -149,7 +149,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {/* JSON-LD — Organization */}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd(socialLinks.map((l) => l.href))) }}
         />
         {/* JSON-LD — WebSite */}
         <script
@@ -182,11 +182,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
       </head>
       <body suppressHydrationWarning>
-        <ToastProvider>
-          <StoreRehydrator />
-          {children}
-          <ChatWidgetGate />
-        </ToastProvider>
+        <SocialLinksProvider links={socialLinks}>
+          <ToastProvider>
+            <StoreRehydrator />
+            {children}
+            <ChatWidgetGate />
+          </ToastProvider>
+        </SocialLinksProvider>
       </body>
     </html>
   );
