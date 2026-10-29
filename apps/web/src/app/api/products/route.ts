@@ -4,6 +4,7 @@ import { Product } from "@/lib/models/Product";
 import { isAdminRequest } from "@/lib/admin-auth";
 import { ProductWriteSchema } from "@/lib/product-schema";
 import { normalizeProduct } from "@/lib/products";
+import { applyReviewStats } from "@/lib/review-stats";
 import { escapeRegex, isSameOrigin, parseJsonBody } from "@/lib/sanitize";
 
 export const dynamic = "force-dynamic";
@@ -24,12 +25,11 @@ export async function GET(req: NextRequest) {
     const docs = await Product.find(query).sort({ createdAt: -1 }).limit(limit).lean();
     // Inventory counts + timestamps are only exposed to an authenticated admin.
     const admin = isAdminRequest(req);
-    return NextResponse.json({
-      products: docs.map((d: any) => ({
-        ...normalizeProduct(d, { admin }),
-        ...(admin ? { stockCount: Number(d.stockCount) || 0, updatedAt: d.updatedAt ?? null } : {}),
-      })),
-    });
+    const list = await applyReviewStats(docs.map((d: any) => ({
+      ...normalizeProduct(d, { admin }),
+      ...(admin ? { stockCount: Number(d.stockCount) || 0, updatedAt: d.updatedAt ?? null } : {}),
+    })));
+    return NextResponse.json({ products: list });
   } catch (error) {
     console.error("[products] GET failed:", error);
     return NextResponse.json({ error: "Products unavailable", products: [] }, { status: 503 });

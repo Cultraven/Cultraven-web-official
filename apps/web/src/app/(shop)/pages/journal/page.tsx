@@ -4,6 +4,7 @@ import Image from "@/components/common/CmsImage";
 import { getCmsSection } from "@/lib/cms/server";
 import { liveItems } from "@/lib/cms/registry";
 import { PageHero } from "@/components/common/PageHero";
+import { ComingSoon } from "@/components/ComingSoon";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +19,9 @@ export default async function JournalPage({ searchParams }: { searchParams: Prom
   const { category } = await searchParams;
   const activeCat = CATEGORIES.includes((category ?? "").toUpperCase()) ? (category as string).toUpperCase() : "ALL";
   const section = await getCmsSection<any>("page.journal");
-  const ARTICLES = liveItems<any>(section.data?.items).filter((a) => activeCat === "ALL" || String(a.category).toUpperCase() === activeCat);
+  const ALL_ARTICLES = liveItems<any>(section.data?.items);
+  if (ALL_ARTICLES.length === 0) return <ComingSoon page="The Journal" description="Stories, style notes and culture from CULTRAVEN are coming soon. Leave your email and we will tell you when the first one is out." />;
+  const ARTICLES = ALL_ARTICLES.filter((a) => activeCat === "ALL" || String(a.category).toUpperCase() === activeCat);
   const featured = ARTICLES[0];
   const rest = ARTICLES.slice(1);
 

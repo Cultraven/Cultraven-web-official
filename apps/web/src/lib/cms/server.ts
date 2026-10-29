@@ -23,6 +23,7 @@ import { ShopLook } from "@/lib/models/ShopLook";
 import { Product } from "@/lib/models/Product";
 import { normalizeProduct, type PublicProduct } from "@/lib/products";
 import { normalizeMode, selectLiveSlides } from "@/lib/hero";
+import { applyReviewStats } from "@/lib/review-stats";
 
 export type CmsState = "ok" | "empty" | "error";
 export interface CmsResult<T> { state: CmsState; data: T | null }
@@ -103,7 +104,7 @@ const loadProducts = cache(async (flag: string, limit: number): Promise<PublicPr
   await connectToDatabase();
   const query = flag === "all" ? {} : { [flag]: true };
   const docs = await Product.find(query).select("-description").sort({ createdAt: -1 }).limit(limit).lean();
-  return jsonSafe(docs.map((d: any) => normalizeProduct(d)));
+  return jsonSafe(await applyReviewStats(docs.map((d: any) => normalizeProduct(d))));
 });
 
 export async function getProducts(flag: "isNewArrival" | "isBestseller" | "all", limit = 12): Promise<CmsResult<PublicProduct[]>> {
@@ -119,7 +120,7 @@ export async function getProducts(flag: "isNewArrival" | "isBestseller" | "all",
 const loadProductBySlug = cache(async (slug: string): Promise<PublicProduct | null> => {
   await connectToDatabase();
   const doc = await Product.findOne({ slug }).lean();
-  return doc ? jsonSafe(normalizeProduct(doc)) : null;
+  return doc ? jsonSafe((await applyReviewStats([normalizeProduct(doc)]))[0]) : null;
 });
 
 export async function getProductBySlug(slug: string): Promise<CmsResult<PublicProduct>> {

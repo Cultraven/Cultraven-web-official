@@ -1,15 +1,17 @@
 /**
  * POST /api/newsletter
  *
- * Subscribes an email address.
+ * Subscribes an email address (saved in MongoDB, collection "newslettersubscribers").
  * Validates email with Zod.
  * Rate-limited: 3 subscriptions per IP per 24 hours (and 2 per minute).
- * Checks for duplicate submissions.
+ * Signing up twice is harmless and answers the same way (so nobody can check who is subscribed).
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { clientIp, isSameOrigin, parseJsonBody, rateLimit, retryHeaders } from "@/lib/sanitize";
+import { connectToDatabase } from "@/lib/db";
+import { NewsletterSubscriber } from "@/lib/models/NewsletterSubscriber";
 
 const BodySchema = z.object({
   email: z.string().trim().max(254, "Please enter a valid email address").email("Please enter a valid email address").toLowerCase(),
@@ -17,10 +19,6 @@ const BodySchema = z.object({
 
 const RATE_LIMIT = 3;
 const WINDOW_MS = 24 * 60 * 60 * 1000; // 24 hours
-
-// In-memory duplicate check (use Redis/DB in production). Bounded so a flood of fake addresses can't exhaust memory.
-const MAX_REMEMBERED = 10_000;
-const subscribedEmails = new Set<string>();
 
 export async function POST(request: NextRequest) {
   if (!isSameOrigin(request)) return NextResponse.json({ message: "Forbidden" }, { status: 403 });
@@ -48,24 +46,15 @@ export async function POST(request: NextRequest) {
 
   const { email } = parsed.data;
 
-  // Check duplicate
-  if (subscribedEmails.has(email)) {
-    // Return 200 — don't reveal whether email is subscribed (privacy)
+  try {
+    await connectToDatabase();
+    // Insert if new; an address already on the list is left exactly as it was.
+    await NewsletterSubscriber.updateOne({ email }, { $setOnInsert: { email, source: "website" } }, { upsert: true });
     return NextResponse.json({ message: "Subscribed" }, { status: 200 });
+  } catch (e) {
+    console.error("[newsletter] could not save:", e instanceof Error ? e.message : e);
+    return NextResponse.json({ message: "We could not save your email just now. Please try again in a moment." }, { status: 503 });
   }
-
-  if (subscribedEmails.size >= MAX_REMEMBERED) {
-    // Drop the oldest entry (Set keeps insertion order)
-    const oldest = subscribedEmails.values().next().value;
-    if (oldest !== undefined) subscribedEmails.delete(oldest);
-  }
-  subscribedEmails.add(email);
-
-  // TODO: In production, call notification-service or mailing provider (e.g. Mailchimp, Resend).
-  // Example: await mailProvider.subscribe({ email, listId: process.env.NEWSLETTER_LIST_ID });
-  console.info(`[newsletter] New subscription: ${email} from IP: ${ip}`);
-
-  return NextResponse.json({ message: "Subscribed" }, { status: 200 });
 }
 
 export async function GET() {

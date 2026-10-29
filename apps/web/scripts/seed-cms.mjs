@@ -186,24 +186,9 @@ const SECTIONS = {
     image: U("1503341455253-b2e723bb3dbb", 1400),
     videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-young-man-in-streetwear-standing-outdoors-42289-large.mp4",
   },
-  "page.lookbook": {
-    items: withIds("look", [
-      { season: "AW 2026", title: "RAVEN IN THE CITY", desc: "Oversized graphics, cargo layers, lava accents. Made for everyday city wear.", image: U("1583743814966-8936f5b7be1a", 800), href: "/collections/dharma", products: withIds("lkp1", [{ name: "Dharma EP01 Tee" }, { name: "Raven Cargo" }, { name: "Lava Stripe Hoodie" }]), active: true },
-      { season: "AW 2026", title: "ACID STATE", desc: "Washed-out finishes, heavyweight cotton, zero compromise.", image: U("1503341455253-b2e723bb3dbb", 800), href: "/collections/acid-state", products: withIds("lkp2", [{ name: "Acid State Wash Tee" }, { name: "Wide-Leg Cargo" }, { name: "Dragon Blood Hoodie" }]), active: true },
-      { season: "SS 2026", title: "CORE ESSENTIALS", desc: "Stripped back. Built to last. The CULTRAVEN uniform.", image: U("1556821840-3a63f95609a7", 800), href: "/collections/core", products: withIds("lkp3", [{ name: "260 GSM Blank Tee" }, { name: "Cult Wide-Leg Jeans" }, { name: "Core Sweat" }]), active: true },
-      { season: "SS 2026", title: "DRAGON BLOOD", desc: "Mythic screen-print meets heavyweight silence.", image: U("1552374196-1ab2a1c593e8", 800), href: "/collections/dragon-blood", products: withIds("lkp4", [{ name: "Dragon Blood Graphic Tee" }, { name: "Raven Black Cargo" }, { name: "Oversized Coach" }]), active: true },
-    ]),
-  },
-  "page.journal": {
-    items: withIds("art", [
-      { title: "The Rise of the Oversized Silhouette in Indian Streetwear", category: "STYLE", date: "Sep 2026", image: U("1503341455253-b2e723bb3dbb", 800), excerpt: "How the oversized drop-shoulder became the defining shape of a generation's wardrobe.", slug: "oversized-silhouette-indian-streetwear", active: true },
-      { title: "What Fabric Weight Actually Means for Your Wardrobe", category: "FASHION", date: "Aug 2026", image: U("1583743814966-8936f5b7be1a", 800), excerpt: "The difference between 160 GSM, 200 GSM and 260 GSM — and why it matters.", slug: "fabric-weight-wardrobe", active: true },
-      { title: "Delhi Street Culture: The Photographers Shaping Indian Fashion", category: "CULTURE", date: "Aug 2026", image: U("1515886657613-9f3515b0c78f", 800), excerpt: "Meet the photographers documenting India's growing streetwear scene.", slug: "delhi-street-culture-photographers", active: true },
-      { title: "Building a Capsule Wardrobe Around Streetwear Basics", category: "STYLE", date: "Jul 2026", image: U("1529391409740-59f2cea08bc6", 800), excerpt: "Five essentials that work together and anchor everything else.", slug: "capsule-wardrobe-streetwear-basics", active: true },
-      { title: "Acid Wash: A History of the Process That Never Goes Out of Style", category: "FASHION", date: "Jul 2026", image: U("1594938298603-c8148c4dae35", 800), excerpt: "From 1980s rock culture to today's streetwear — why acid wash endures.", slug: "acid-wash-history", active: true },
-      { title: "Music and Fashion: The Playlist That's Defining This Season", category: "MUSIC", date: "Jun 2026", image: U("1515886657613-9f3515b0c78f", 800), excerpt: "The tracks behind the CULTRAVEN AW2026 campaign shoot.", slug: "music-fashion-playlist", active: true },
-    ]),
-  },
+  // Lookbook and Journal start EMPTY: those pages show "coming soon" until real looks / articles are added in the admin.
+  "page.lookbook": { items: [] },
+  "page.journal": { items: [] },
   "page.heritage": {
     heroImage: U("1558618666-fcd25c85cd64", 1920),
     sections: withIds("hsec", [
@@ -279,7 +264,7 @@ const DESC = "260 GSM heavyweight cotton with an oversized fit, pre-washed textu
 const SIZES = ["S", "M", "L", "XL"];
 const P = (slug, title, category, image, hoverImage, pricePaise, mrpPaise, colors, extra = {}) => ({
   slug, title, category, image, hoverImage, images: [image, hoverImage], pricePaise, mrpPaise, colors,
-  description: DESC, sizes: SIZES, fit: "oversized", rating: 5, reviewCount: 0, inStock: true, stockCount: 50,
+  description: DESC, sizes: SIZES, fit: "oversized", inStock: true, stockCount: 50,
   isNewArrival: false, isBestseller: false, ...extra,
 });
 const PRODUCTS = [
@@ -287,12 +272,12 @@ const PRODUCTS = [
   P("dharma-graphic-hoodie-stone", "Dharma Graphic Hoodie — Stone Wash", "hoodies", U("1556821840-3a63f95609a7", 700), U("1512411933099-b1d5565538e1", 700), 299900, 399900, [{ hex: "#EDE3CF", label: "Stone" }, { hex: "#172554", label: "Navy" }, { hex: "#7A7468", label: "Ash" }], { isNewArrival: true }),
   P("raven-cargo-military-olive", "Raven Cargo — Military Olive", "bottoms", U("1552374196-1ab2a1c593e8", 700), U("1620799140408-edc6dcb6d633", 700), 249900, 299900, [{ hex: "#556B2F", label: "Olive" }, { hex: "#172554", label: "Navy" }, { hex: "#0A0A0A", label: "Black" }], { isNewArrival: true, badge: "LIMITED" }),
   P("acid-state-sweatshirt-washed-grey", "Acid State Sweatshirt — Washed Grey", "hoodies", U("1578681994506-b8f463449011", 700), U("1503342394128-c104d54dba01", 700), 249900, 299900, [{ hex: "#9CA3AF", label: "Washed Grey" }, { hex: "#0A0A0A", label: "Black" }, { hex: "#EDE3CF", label: "Cream" }], { isNewArrival: true }),
-  P("classic-oversized-tee-black", "Classic Oversized Tee — Black", "tees", U("1503341455253-b2e723bb3dbb", 600), U("1583743814966-8936f5b7be1a", 600), 189900, 189900, [{ hex: "#0A0A0A", label: "Black" }, { hex: "#FAF9F6", label: "White" }, { hex: "#172554", label: "Navy" }], { isBestseller: true, badge: "BESTSELLER", reviewCount: 248 }),
-  P("dragon-blood-graphic-charcoal", "Dragon Blood Graphic — Charcoal", "tees", U("1515886657613-9f3515b0c78f", 600), U("1556821840-3a63f95609a7", 600), 249900, 299900, [{ hex: "#2C2C2C", label: "Charcoal" }, { hex: "#172554", label: "Navy" }], { isBestseller: true, badge: "BESTSELLER", reviewCount: 184 }),
-  P("essentials-hoodie-washed-navy", "Essentials Hoodie — Washed Navy", "hoodies", U("1594938298603-c8148c4dae35", 600), U("1578768079052-aa76e52ff62e", 600), 319900, 399900, [{ hex: "#172554", label: "Washed Navy" }, { hex: "#0A0A0A", label: "Jet Black" }, { hex: "#7A7468", label: "Ash" }], { isBestseller: true, rating: 4, reviewCount: 132 }),
-  P("lava-stripe-cargo-sand", "Lava Stripe Cargo — Sand", "bottoms", U("1594938298603-c8148c4dae35", 600), U("1576566588028-4147f3842f27", 600), 379900, 499900, [{ hex: "#C4A882", label: "Sand" }, { hex: "#556B2F", label: "Olive" }, { hex: "#0A0A0A", label: "Black" }], { isBestseller: true, badge: "LOW STOCK", reviewCount: 97 }),
-  P("acid-state-sweatshirt-stone", "Acid State Sweatshirt — Stone", "hoodies", U("1515886657613-9f3515b0c78f", 600), U("1521572163474-6864f9cf17ab", 600), 259900, 319900, [{ hex: "#EDE3CF", label: "Stone" }, { hex: "#9CA3AF", label: "Washed Grey" }], { isBestseller: true, rating: 4, reviewCount: 76 }),
-  P("relaxed-shirt-white", "Cultraven Relaxed Shirt — White", "shirts", U("1585487000160-6ebcfceb0d03", 600), U("1515886657613-9f3515b0c78f", 600), 299900, 299900, [{ hex: "#FFFFFF", label: "White" }, { hex: "#EDE3CF", label: "Cream" }], { isBestseller: true, fit: "relaxed", reviewCount: 61 }),
+  P("classic-oversized-tee-black", "Classic Oversized Tee — Black", "tees", U("1503341455253-b2e723bb3dbb", 600), U("1583743814966-8936f5b7be1a", 600), 189900, 189900, [{ hex: "#0A0A0A", label: "Black" }, { hex: "#FAF9F6", label: "White" }, { hex: "#172554", label: "Navy" }], { isBestseller: true, badge: "BESTSELLER" }),
+  P("dragon-blood-graphic-charcoal", "Dragon Blood Graphic — Charcoal", "tees", U("1515886657613-9f3515b0c78f", 600), U("1556821840-3a63f95609a7", 600), 249900, 299900, [{ hex: "#2C2C2C", label: "Charcoal" }, { hex: "#172554", label: "Navy" }], { isBestseller: true, badge: "BESTSELLER" }),
+  P("essentials-hoodie-washed-navy", "Essentials Hoodie — Washed Navy", "hoodies", U("1594938298603-c8148c4dae35", 600), U("1578768079052-aa76e52ff62e", 600), 319900, 399900, [{ hex: "#172554", label: "Washed Navy" }, { hex: "#0A0A0A", label: "Jet Black" }, { hex: "#7A7468", label: "Ash" }], { isBestseller: true, rating: 4 }),
+  P("lava-stripe-cargo-sand", "Lava Stripe Cargo — Sand", "bottoms", U("1594938298603-c8148c4dae35", 600), U("1576566588028-4147f3842f27", 600), 379900, 499900, [{ hex: "#C4A882", label: "Sand" }, { hex: "#556B2F", label: "Olive" }, { hex: "#0A0A0A", label: "Black" }], { isBestseller: true, badge: "LOW STOCK" }),
+  P("acid-state-sweatshirt-stone", "Acid State Sweatshirt — Stone", "hoodies", U("1515886657613-9f3515b0c78f", 600), U("1521572163474-6864f9cf17ab", 600), 259900, 319900, [{ hex: "#EDE3CF", label: "Stone" }, { hex: "#9CA3AF", label: "Washed Grey" }], { isBestseller: true, rating: 4 }),
+  P("relaxed-shirt-white", "Cultraven Relaxed Shirt — White", "shirts", U("1585487000160-6ebcfceb0d03", 600), U("1515886657613-9f3515b0c78f", 600), 299900, 299900, [{ hex: "#FFFFFF", label: "White" }, { hex: "#EDE3CF", label: "Cream" }], { isBestseller: true, fit: "relaxed" }),
   P("cargo-wide-leg-military-olive", "Cargo Wide Leg — Military Olive", "bottoms", U("1576566588028-4147f3842f27", 700), U("1552374196-1ab2a1c593e8", 700), 349900, 499900, [{ hex: "#556B2F", label: "Military Olive" }], { fit: "baggy" }),
 ];
 

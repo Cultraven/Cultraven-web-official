@@ -1,7 +1,10 @@
 import React from "react";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 export default function TokensPreview() {
+  // Developer-only preview: not part of the live website.
+  if (process.env.NODE_ENV === "production") notFound();
   return (
     <div className="min-h-screen bg-[var(--color-stone)] text-[var(--color-raven)] p-8 pb-24 font-sans">
       <div className="max-w-4xl mx-auto space-y-16">

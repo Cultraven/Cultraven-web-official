@@ -4,6 +4,7 @@ import Image from "@/components/common/CmsImage";
 import { getCmsSection } from "@/lib/cms/server";
 import { liveItems } from "@/lib/cms/registry";
 import { PageHero } from "@/components/common/PageHero";
+import { ComingSoon } from "@/components/ComingSoon";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +16,7 @@ export const metadata: Metadata = {
 export default async function LookbookPage() {
   const section = await getCmsSection<any>("page.lookbook");
   const LOOKS = liveItems<any>(section.data?.items);
+  if (LOOKS.length === 0) return <ComingSoon page="Lookbook" description="Our first lookbook is coming soon. Leave your email and we will tell you when it drops." />;
 
   return (
     <main style={{ backgroundColor: "var(--color-cream)", minHeight: "100vh" }}>

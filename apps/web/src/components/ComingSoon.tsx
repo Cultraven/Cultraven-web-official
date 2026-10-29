@@ -24,10 +24,24 @@ export function ComingSoon({
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: FormEvent) => {
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!email) return;
-    setSubmitted(true);
+    if (!email || sending) return;
+    setSending(true);
+    setError("");
+    try {
+      const res = await fetch("/api/newsletter", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: email.trim().toLowerCase() }) });
+      const d = await res.json().catch(() => ({}));
+      if (res.ok) setSubmitted(true);
+      else setError(d.message || "Could not sign you up. Please try again.");
+    } catch {
+      setError("No connection. Please check your internet and try again.");
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
