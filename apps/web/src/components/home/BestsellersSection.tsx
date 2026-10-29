@@ -11,6 +11,7 @@ import React, { useRef } from "react";
 import Link from "next/link";
 import { ShopCard } from "@/components/shop/ShopCard";
 import type { CardProduct } from "@/lib/card-info";
+import { SectionComingSoon } from "./SectionComingSoon";
 
 export interface BestProduct extends CardProduct {
   badge?: "BESTSELLER" | "LOW STOCK";
@@ -23,7 +24,7 @@ export interface BestsellersContent { eyebrow?: string; heading: string }
 /** Heading comes from home.bestsellers; products are the database products flagged "Bestseller". */
 export function BestsellersSection({ content, products }: { content: BestsellersContent; products: BestProduct[] }) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  if (products.length === 0) return null;
+  if (products.length === 0) return <SectionComingSoon eyebrow={content.eyebrow} heading={content.heading} text="Our bestsellers will appear here once orders start coming in." tone="mist" />;
 
   const scroll = (dir: "left" | "right") => {
     const el = scrollRef.current;

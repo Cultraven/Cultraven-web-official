@@ -9,6 +9,7 @@
 import React from "react";
 import Link from "next/link";
 import { ShopCard } from "@/components/shop/ShopCard";
+import { SectionComingSoon } from "./SectionComingSoon";
 import type { CardProduct } from "@/lib/card-info";
 
 export interface DropProduct extends CardProduct {
@@ -21,7 +22,7 @@ export interface NewDropContent { eyebrow?: string; heading: string; ctaLabel?: 
 
 /** Heading comes from home.newDrop; products are the database products flagged "New arrival". */
 export function NewDropSection({ content, products }: { content: NewDropContent; products: DropProduct[] }) {
-  if (products.length === 0) return null;
+  if (products.length === 0) return <SectionComingSoon eyebrow={content.eyebrow} heading={content.heading} text="New arrivals are on the way. Check back soon." />;
 
   return (
     <section

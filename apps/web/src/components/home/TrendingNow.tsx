@@ -1,11 +1,12 @@
 import React from "react";
 import Image from "@/components/common/CmsImage";
 import Link from "next/link";
+import { SectionComingSoon } from "./SectionComingSoon";
 export interface TrendItem { id: string; title: string; href: string; image: string; alt?: string }
 
 /** Heading + cards come from the database (home.trending). */
 export function TrendingNow({ heading, items }: { heading?: string; items: TrendItem[] }) {
-  if (items.length === 0) return null;
+  if (items.length === 0) return <SectionComingSoon heading={heading || "Trending Now"} text="What everyone is wearing will show up here soon." />;
   return (
     <section
       className="cv-auto"

@@ -8,6 +8,7 @@
 import React from "react";
 import Image from "@/components/common/CmsImage";
 import Link from "next/link";
+import { SectionComingSoon } from "./SectionComingSoon";
 
 export interface UGCImage {
   id: string;
@@ -24,7 +25,7 @@ export interface CommunityContent {
 
 /** Content + photos come from the database (home.community). */
 export function CommunitySection({ content, images }: { content: CommunityContent; images: UGCImage[] }) {
-  if (images.length === 0) return null;
+  if (images.length === 0) return <SectionComingSoon eyebrow={content.eyebrow} heading={content.heading || "Worn by the culture"} text="Photos from our community are coming soon. Tag us on Instagram to be featured." tone="mist" />;
 
   return (
     <section

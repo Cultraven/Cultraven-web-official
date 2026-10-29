@@ -249,6 +249,11 @@ function CollectionPageClientInner({
               <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "1.25rem" }} className="plp-grid" aria-busy="true">
                 {Array.from({ length: 8 }, (_, i) => <ShopCardSkeleton key={i} />)}
               </div>
+            ) : products.length === 0 ? (
+              <div style={{ textAlign: "center", padding: "5rem 1.5rem", border: "2px dashed rgba(23,37,84,0.25)", borderRadius: 12 }}>
+                <p style={{ fontFamily: "var(--font-sans)", fontSize: "12px", fontWeight: 900, letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--color-navy)", marginBottom: "0.6rem" }}>Coming soon</p>
+                <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.95rem", color: "var(--color-gray)", margin: 0 }}>New pieces are on the way. Check back soon.</p>
+              </div>
             ) : filtered.length === 0 ? (
               <div style={{ textAlign: "center", padding: "6rem 2rem" }}>
                 <p style={{ fontFamily: "var(--font-heading)", fontSize: "2rem", fontWeight: 400, color: "var(--color-navy)", marginBottom: "1rem" }}>NO PRODUCTS FOUND.</p>
@@ -258,12 +263,6 @@ function CollectionPageClientInner({
               <>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "1.25rem" }} className="plp-grid">
                   {filtered.map((p, i) => <ShopCard key={p.id} product={p} priority={i < 4} />)}
-                </div>
-                {/* Load More */}
-                <div style={{ display: "flex", justifyContent: "center", marginTop: "4rem" }}>
-                  <button className="btn-primary" style={{ padding: "16px 40px", fontSize: "14px" }}>
-                    LOAD MORE
-                  </button>
                 </div>
               </>
             )}

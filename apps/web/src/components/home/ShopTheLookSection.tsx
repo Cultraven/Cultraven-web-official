@@ -11,6 +11,7 @@ import React, { useState } from "react";
 import Image from "@/components/common/CmsImage";
 import Link from "next/link";
 import { useCartStore } from "@/store/cart";
+import { SectionComingSoon } from "./SectionComingSoon";
 
 interface LookProduct {
   id: string;
@@ -35,7 +36,7 @@ export function ShopTheLookSection({ look }: { look: ShopLookData | null }) {
   const [allAdded, setAllAdded] = useState(false);
   const addItem = useCartStore((s) => s.addItem);
   const addItems = useCartStore((s) => s.addItems);
-  if (!look || look.products.length === 0) return null;
+  if (!look || look.products.length === 0) return <SectionComingSoon eyebrow="Fit check" heading="Shop The Look" text="Complete outfits to shop in one tap are coming soon." />;
 
   const totalLookPrice = look.products.reduce((sum, p) => sum + p.pricePaise, 0);
 
