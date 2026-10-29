@@ -15,6 +15,8 @@ export const BUSINESS = {
   /** Customer support line (calls + WhatsApp). Digits with the country code, so it can feed tel: and wa.me links directly. */
   supportPhoneDigits: "918962212605",
   website: "https://cultraven.com",
+  /** The brand's Instagram page (footer/contact links, chat widget and the search-engine "sameAs" list all read this). */
+  instagramUrl: "https://www.instagram.com/cultraven._/",
 } as const;
 
 export const businessAddress = (sep = ", ") => BUSINESS.addressLines.join(sep);

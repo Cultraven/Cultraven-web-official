@@ -7,6 +7,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { CONTACT_SUBJECTS, cleanOrderNumber, formatPhone, matchSubject, supportConfig, telLink, whatsappLink } from "@/lib/support";
 import { useAccountSession } from "@/components/account/useAccountSession";
+import { BUSINESS } from "@/lib/business";
 
 interface FormState {
   name: string;
@@ -403,7 +404,7 @@ export default function ContactPage() {
 
             {/* Instagram */}
             <a
-              href="https://www.instagram.com/clutraven/"
+              href={BUSINESS.instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
               id="contact-instagram-cta"

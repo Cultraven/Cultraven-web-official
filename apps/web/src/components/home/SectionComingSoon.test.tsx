@@ -44,9 +44,9 @@ describe("home sections with nothing in them yet say 'coming soon'", () => {
     for (const g of Array.from(container.querySelectorAll(".scs-grid"))) expect(g.getAttribute("aria-hidden")).toBe("true");
   });
   it("Community offers a Follow on Instagram link only when the owner saved a safe https address", () => {
-    const { rerender } = render(<CommunitySection content={{ heading: "Worn", instagramUrl: "https://www.instagram.com/clutraven/" }} images={[]} />);
+    const { rerender } = render(<CommunitySection content={{ heading: "Worn", instagramUrl: "https://www.instagram.com/cultraven._/" }} images={[]} />);
     const a = screen.getByRole("link", { name: /follow on instagram/i }) as HTMLAnchorElement;
-    expect(a.href).toBe("https://www.instagram.com/clutraven/");
+    expect(a.href).toBe("https://www.instagram.com/cultraven._/");
     expect(a.rel).toContain("noopener");
     rerender(<CommunitySection content={{ heading: "Worn", instagramUrl: "javascript:alert(1)" }} images={[]} />);
     expect(screen.queryByRole("link", { name: /follow on instagram/i })).toBeNull();

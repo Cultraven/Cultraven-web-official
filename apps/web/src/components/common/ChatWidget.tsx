@@ -10,9 +10,11 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import { supportConfig } from "@/lib/support";
+import { BUSINESS } from "@/lib/business";
 
 const WHATSAPP_NUMBER = supportConfig().whatsapp; // the registered support line unless NEXT_PUBLIC_WHATSAPP_NUMBER overrides it
-const INSTAGRAM_HANDLE = process.env.NEXT_PUBLIC_INSTAGRAM_HANDLE ?? "clutraven";
+const INSTAGRAM_URL = BUSINESS.instagramUrl;
+const INSTAGRAM_HANDLE = new URL(INSTAGRAM_URL).pathname.replace(/\//g, ""); // "cultraven._"
 
 // ── Simple FAQ chatbot knowledge base ────────────────────────────────────────
 const FAQ: { patterns: string[]; answer: string }[] = [
@@ -311,7 +313,7 @@ export function ChatWidget() {
 
               {/* Instagram */}
               <a
-                href={`https://www.instagram.com/${INSTAGRAM_HANDLE}`}
+                href={INSTAGRAM_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 id="chat-instagram-link"

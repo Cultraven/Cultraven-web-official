@@ -273,8 +273,9 @@ export const SECTIONS: SectionDef[] = [
       { kind: "text", key: "heading", label: "Heading", max: 80 },
       { kind: "url", key: "instagramUrl", label: "Instagram URL" },
       { kind: "text", key: "ctaText", label: "Tag line", max: 80 },
-      { kind: "list", key: "items", label: "Photos", itemTitleKey: "alt", max: 12, fields: [
+      { kind: "list", key: "items", label: "Photos", itemTitleKey: "alt", max: 12, help: "Add one photo per Instagram post (a screenshot or the post's picture). Paste the post link so a tap opens the post on Instagram. Until you add photos, visitors see 'Coming soon'.", fields: [
         { kind: "image", key: "image", label: "Image", required: true },
+        { kind: "url", key: "href", label: "Instagram post link (optional)", help: "Example: https://www.instagram.com/p/AbC123/" },
         { kind: "text", key: "alt", label: "Alt text", max: 160 },
         active,
       ] },

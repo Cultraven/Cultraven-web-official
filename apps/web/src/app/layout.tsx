@@ -4,6 +4,7 @@ import "@/styles/globals.css";
 import { ChatWidgetGate } from "@/components/common/ChatWidgetGate";
 import { StoreRehydrator } from "@/components/common/StoreRehydrator";
 import { ToastProvider } from "@/components/common/Toast";
+import { BUSINESS } from "@/lib/business";
 
 // ─── Font loading (next/font — zero layout shift) ─────────────────────────────
 const archivo = Archivo({
@@ -39,16 +40,38 @@ const organizationJsonLd = {
     "CULTRAVEN is an Indian clothing brand selling oversized t-shirts, hoodies, cargo pants and streetwear online, with Cash on Delivery and easy 7-day returns.",
   slogan: "Wear Your Difference.",
   sameAs: [
-    "https://www.instagram.com/clutraven/",
+    BUSINESS.instagramUrl,
     "https://x.com/cultraven_",
     "https://www.facebook.com/profile.php?id=61595224413709",
     "https://www.reddit.com/user/Cultraven_official/",
   ],
+  email: BUSINESS.supportEmail,
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: BUSINESS.addressLines[0],
+    addressLocality: "Indore",
+    addressRegion: "Madhya Pradesh",
+    postalCode: "452005",
+    addressCountry: "IN",
+  },
   contactPoint: {
     "@type": "ContactPoint",
     contactType: "customer service",
-    availableLanguage: "English",
+    telephone: `+${BUSINESS.supportPhoneDigits}`,
+    email: BUSINESS.supportEmail,
+    areaServed: "IN",
+    availableLanguage: ["English", "Hindi"],
   },
+};
+
+// ─── JSON-LD — WebSite (names the site for search results) ────────────────────
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "CULTRAVEN",
+  alternateName: "Cultraven Clothing",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://cultraven.com",
+  inLanguage: "en-IN",
 };
 
 // ─── Default Metadata ─────────────────────────────────────────────────────────
@@ -68,8 +91,8 @@ export const metadata = {
     "heavyweight streetwear",
     "graphic tees india",
     "streetwear brand india",
-    "dharma collection",
-    "dragon blood tshirt",
+    "oversized hoodies india",
+    "cargo pants india",
     "wear your difference",
   ],
   openGraph: {
@@ -90,7 +113,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    site: "@cultraven",
+    site: "@cultraven_",
     title: "CULTRAVEN — Wear Your Difference",
     description:
       "Oversized t-shirts, hoodies & cargo pants. Free delivery above ₹1,999. Cash on Delivery & easy returns.",
@@ -111,11 +134,14 @@ export const metadata = {
   },
 };
 
+/** Colours the phone's browser bar in the brand navy. */
+export const viewport = { themeColor: "#172554" };
+
 // ─── Root Layout ──────────────────────────────────────────────────────────────
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
-      lang="en"
+      lang="en-IN"
       className={`${archivo.variable} ${hanken.variable} ${notoDeva.variable}`}
       suppressHydrationWarning
     >
@@ -124,6 +150,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        {/* JSON-LD — WebSite */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
         {/* Analytics: nothing loads until the visitor consents (cookie banner dispatches "cookie_consent") */}
         <script

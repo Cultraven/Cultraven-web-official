@@ -258,6 +258,16 @@
 .ugc-grid > :nth-child(1) { grid-column: span 2; grid-row: span 2; }
 .ugc-grid > :nth-child(3) { grid-row: span 2; }
 .ugc-grid > :nth-child(5), .ugc-grid > :nth-child(6) { grid-column: span 2; }
+/* Fewer than 6 photos: simple layouts with no holes (data-count is set by CommunitySection) */
+.ugc-grid[data-count="1"] { grid-template-columns: 1fr; grid-auto-rows: clamp(240px, 42vw, 560px); }
+.ugc-grid[data-count="2"] { grid-template-columns: repeat(2, 1fr); grid-auto-rows: clamp(260px, 36vw, 560px); }
+.ugc-grid[data-count="3"] { grid-template-columns: repeat(3, 1fr); grid-auto-rows: clamp(240px, 32vw, 480px); }
+.ugc-grid[data-count="4"] { grid-template-columns: repeat(4, 1fr); grid-auto-rows: clamp(220px, 28vw, 440px); }
+.ugc-grid[data-count="5"] { grid-template-columns: repeat(6, 1fr); grid-auto-rows: clamp(200px, 26vw, 400px); }
+.ugc-grid[data-count="5"] > :nth-child(-n + 2) { grid-column: span 3; }
+.ugc-grid[data-count="5"] > :nth-child(n + 3) { grid-column: span 2; }
+.ugc-grid[data-count="1"] > :nth-child(n), .ugc-grid[data-count="2"] > :nth-child(n), .ugc-grid[data-count="3"] > :nth-child(n), .ugc-grid[data-count="4"] > :nth-child(n) { grid-column: auto; grid-row: auto; }
+.ugc-grid[data-count="5"] > :nth-child(n) { grid-row: auto; }
 @media (max-width: 768px) {
   /* Phones: two columns, two tall tiles in a zig-zag (1 on the left, 4 on the right) so full-length photos are not cut into wide strips. */
   .ugc-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: clamp(140px, 42vw, 200px); }
@@ -269,6 +279,11 @@
   .ugc-grid > :nth-child(5) { grid-column: 1; grid-row: 3; }
   .ugc-grid > :nth-child(6) { grid-column: 1; grid-row: 4; }
   .ugc-grid img { object-position: 50% 8% !important; }
+  /* 1-5 photos on a phone: two columns; with an odd count the first photo runs full width */
+  .ugc-grid[data-count="1"] { grid-template-columns: 1fr; grid-auto-rows: clamp(260px, 90vw, 420px); }
+  .ugc-grid[data-count="2"], .ugc-grid[data-count="3"], .ugc-grid[data-count="4"], .ugc-grid[data-count="5"] { grid-template-columns: repeat(2, 1fr); grid-auto-rows: clamp(200px, 56vw, 300px); }
+  .ugc-grid[data-count="2"] > :nth-child(n), .ugc-grid[data-count="3"] > :nth-child(n), .ugc-grid[data-count="4"] > :nth-child(n), .ugc-grid[data-count="5"] > :nth-child(n) { grid-column: auto; grid-row: auto; }
+  .ugc-grid[data-count="3"] > :nth-child(1), .ugc-grid[data-count="5"] > :nth-child(1) { grid-column: 1 / -1; }
 }
 
 /* ── components/home/EditorialBanner.tsx ── */

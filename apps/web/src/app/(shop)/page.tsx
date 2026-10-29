@@ -109,7 +109,7 @@ export default async function HomePage() {
   }));
 
   const trendItems = liveItems<any>(trending.data?.items).map((i) => ({ id: i.id, title: i.title, href: i.href, image: i.image, alt: i.alt }));
-  const ugcImages = liveItems<any>(community.data?.items).map((i) => ({ id: i.id, src: i.image, alt: i.alt || "" }));
+  const ugcImages = liveItems<any>(community.data?.items).map((i) => ({ id: i.id, src: i.image, alt: i.alt || "", href: i.href || "" }));
   const banners = liveItems<any>(promo.data?.items);
   const badges = liveItems<any>(trust.data?.items).map((b) => ({ id: b.id, icon: b.icon, title: b.title, subtitle: b.subtitle || undefined }));
 

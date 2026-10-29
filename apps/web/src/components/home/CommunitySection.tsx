@@ -14,6 +14,28 @@ export interface UGCImage {
   id: string;
   src: string;
   alt: string;
+  /** Link to the Instagram post this photo shows (optional). */
+  href?: string;
+}
+
+/** "https://www.instagram.com/cultraven._/" -> "@CULTRAVEN._". Falls back to @CULTRAVEN when the address is not an Instagram profile. */
+export function instagramHandle(url?: string): string {
+  try {
+    const u = new URL(url || "");
+    if (u.protocol === "https:" && /(^|\.)instagram\.com$/i.test(u.hostname)) {
+      const first = u.pathname.split("/").filter(Boolean)[0] || "";
+      if (/^[A-Za-z0-9._]{1,30}$/.test(first) && !["p", "reel", "reels", "tv", "explore", "stories"].includes(first.toLowerCase())) return `@${first.toUpperCase()}`;
+    }
+  } catch { /* not a URL */ }
+  return "@CULTRAVEN";
+}
+
+/** A tile only links out to an https address on instagram.com (anything else the admin typed is ignored). */
+export function safeInstagramLink(url?: string): string {
+  try {
+    const u = new URL(url || "");
+    return u.protocol === "https:" && /(^|\.)instagram\.com$/i.test(u.hostname) ? u.toString() : "";
+  } catch { return ""; }
 }
 
 export interface CommunityContent {
@@ -29,6 +51,7 @@ export function CommunitySection({ content, images }: { content: CommunityConten
     const insta = content.instagramUrl && /^https:\/\//i.test(content.instagramUrl) ? content.instagramUrl : "";
     return <SectionComingSoon eyebrow={content.eyebrow} heading={content.heading || "Worn by the culture"} text="Our community photos are coming soon. Tag us on Instagram to be featured." tone="mist" shape="photos" cta={insta ? { label: "Follow on Instagram", href: insta } : undefined} />;
   }
+  const handle = instagramHandle(content.instagramUrl);
 
   return (
     <section
@@ -109,16 +132,17 @@ export function CommunitySection({ content, images }: { content: CommunityConten
               <circle cx="12" cy="12" r="4" />
               <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
             </svg>
-            @CULTRAVEN
+            {handle}
           </Link>
         </div>
 
-        {/* Image grid */}
+        {/* Image grid: with fewer than 6 photos, data-count switches to a layout with no holes (see .ugc-grid in styles/components.css) */}
         <div
           className="ugc-grid"
+          data-count={Math.min(images.length, 6)}
         >
           {images.map((img) => (
-            <UGCTile key={img.id} image={img} />
+            <UGCTile key={img.id} image={img} handle={handle} />
           ))}
         </div>
 
@@ -165,15 +189,20 @@ export function CommunitySection({ content, images }: { content: CommunityConten
 
 // ─── Single UGC Tile ───────────────────────────────────────────────────────────
 
-function UGCTile({ image }: { image: UGCImage }) {
+function UGCTile({ image, handle }: { image: UGCImage; handle: string }) {
+  const post = safeInstagramLink(image.href);
+  const Tile: any = post ? "a" : "div";
+  const linkProps = post ? { href: post, target: "_blank", rel: "noopener noreferrer", "aria-label": `View this post on Instagram${image.alt ? `: ${image.alt}` : ""}` } : {};
   return (
-    <div
+    <Tile
+      {...linkProps}
       className="hv"
       style={{
         position: "relative",
+        display: "block",
         overflow: "hidden",
         backgroundColor: "var(--color-border)",
-        cursor: "pointer",
+        cursor: post ? "pointer" : "default",
       }}
     >
       <Image
@@ -221,10 +250,10 @@ function UGCTile({ image }: { image: UGCImage }) {
               color: "var(--color-cream)",
             }}
           >
-            @CULTRAVEN
+            {handle}
           </p>
         </div>
       </div>
-    </div>
+    </Tile>
   );
 }

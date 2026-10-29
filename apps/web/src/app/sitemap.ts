@@ -19,9 +19,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     { url: BASE, lastModified: new Date(), changeFrequency: "daily", priority: 1.0 },
     ...slugs.map((slug) => ({ url: `${BASE}/collections/${slug}`, changeFrequency: "daily" as const, priority: slug === "all" || slug === "new-in" ? 0.9 : 0.8 })),
-    { url: `${BASE}/pages/about`, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${BASE}/pages/our-heritage`, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${BASE}/pages/lookbook`, changeFrequency: "weekly", priority: 0.5 },
+    { url: `${BASE}/pages/journal`, changeFrequency: "weekly", priority: 0.5 },
     { url: `${BASE}/pages/contact`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${BASE}/help`, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${BASE}/help/faq`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${BASE}/pages/size-guide`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${BASE}/pages/returns`, changeFrequency: "monthly", priority: 0.4 },
     { url: `${BASE}/pages/shipping`, changeFrequency: "monthly", priority: 0.4 },
