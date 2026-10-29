@@ -6,6 +6,7 @@
  * renders nothing — no content is ever fabricated.
  *
  *   1.  HeroBanner (hero slides)        6.  BrandStory
+ *       + HeroRibbon (scrolling strip under the hero, switchable in the admin)
  *   2.  NewDrop (products flagged new)  7.  TrendingNow
  *   3.  CategoryTiles                   8.  PromoBanners (scheduled)
  *   4.  Bestsellers                     9.  Community
@@ -15,6 +16,7 @@ import type { Metadata } from "next";
 import { getCmsSection, getHeroSlides, getProducts, getShopLook } from "@/lib/cms/server";
 import { liveItems } from "@/lib/cms/registry";
 import { HeroBanner } from "@/components/home/HeroBanner";
+import { HeroRibbon } from "@/components/home/HeroRibbon";
 import { NewDropSection } from "@/components/home/NewDropSection";
 import { CategoryTiles } from "@/components/home/CategoryTiles";
 import { BestsellersSection } from "@/components/home/BestsellersSection";
@@ -35,9 +37,10 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const [hero, strip, tiles, newDropCopy, newDrops, bestCopy, bestsellers, look, story, trending, promo, community, trust] =
+  const [hero, ribbon, strip, tiles, newDropCopy, newDrops, bestCopy, bestsellers, look, story, trending, promo, community, trust] =
     await Promise.all([
       getHeroSlides(),
+      getCmsSection<any>("home.heroRibbon"),
       getCmsSection<any>("home.categoryStrip"),
       getCmsSection<any>("home.categoryTiles"),
       getCmsSection<any>("home.newDrop"),
@@ -121,6 +124,9 @@ export default async function HomePage() {
           <HeroBanner slides={heroSlides as any} />
         </div>
       ) : null}
+
+      {/* 1b — Hero ribbon: scrolling strip under the hero (Admin -> Website content -> Hero ribbon; switch on/off there) */}
+      <HeroRibbon content={ribbon.data} />
 
       {/* 2 — New Drop */}
       {newDropCopy.data ? <NewDropSection content={newDropCopy.data} products={dropProducts} /> : null}

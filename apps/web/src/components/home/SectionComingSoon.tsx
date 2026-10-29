@@ -6,7 +6,6 @@
  *  - numbered placeholder tiles in the shape of the real items (product cards, photo bento, or a look + two pieces),
  *    each carrying the brand mark and a "Soon" tag
  *  - a navy bar underneath that says "Coming soon" (and, when `notify` is set, lets people leave an email to be told when it drops)
- *  - `featured` adds a scrolling "Coming soon" ribbon across the top of the section
  */
 import React from "react";
 import "./SectionComingSoon.css";
@@ -67,7 +66,6 @@ export function SectionComingSoon({
   tone = "cream",
   shape = "cards",
   cta,
-  featured = false,
   notify = false,
 }: {
   eyebrow?: string;
@@ -76,25 +74,15 @@ export function SectionComingSoon({
   tone?: "cream" | "mist";
   shape?: GhostShape;
   cta?: ComingSoonCta;
-  /** Adds the scrolling ribbon on top (use it on one section of a page, not all of them). */
-  featured?: boolean;
   /** Shows the "Notify me" email form in the bar. */
   notify?: boolean;
 }) {
-  const ribbon = Array.from({ length: 10 }, (_, i) => (
-    <span key={i} className="scs-ribbon-item"><b>Coming soon</b><i aria-hidden="true">✦</i><span>{heading}</span><i aria-hidden="true">✦</i></span>
-  ));
   return (
     <section
-      className={`cv-auto scs${featured ? " scs-featured" : ""}`}
+      className="cv-auto scs"
       aria-label={`${heading} (coming soon)`}
       style={{ backgroundColor: tone === "mist" ? "var(--color-mist)" : "var(--color-cream)" }}
     >
-      {featured ? (
-        <div className="scs-ribbon" aria-hidden="true">
-          <div className="scs-ribbon-track">{ribbon}{ribbon}</div>
-        </div>
-      ) : null}
       <div className="scs-inner">
         <div className="scs-head">
           {eyebrow ? <span className="scs-eyebrow">{eyebrow}</span> : null}

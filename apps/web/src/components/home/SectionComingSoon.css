@@ -1,18 +1,10 @@
-/* SectionComingSoon: drop-teaser look. Numbered placeholder tiles + a navy "Coming soon" bar (+ optional ribbon and Notify me form). */
+/* SectionComingSoon: drop-teaser look. Numbered placeholder tiles + a navy "Coming soon" bar (+ optional Notify me form). */
 .scs { padding: clamp(4rem, 7vw, 7rem) 0; border-bottom: 1px solid var(--color-line); overflow: hidden; }
 .scs-inner { padding-inline: clamp(1rem, 4vw, 5rem); }
 
 .scs-head { margin-bottom: 2.5rem; }
 .scs-eyebrow { display: block; font-family: var(--font-sans); font-size: 11px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: var(--color-lava); margin-bottom: 0.6rem; }
 .scs-heading { font-family: var(--font-heading); font-size: clamp(2.2rem, 4.5vw, 4rem); font-weight: 400; color: var(--color-navy); line-height: 0.95; letter-spacing: 0.02em; text-transform: uppercase; margin: 0; }
-
-/* ── ribbon (featured sections only) ───────────────────────────────────────── */
-.scs-ribbon { margin-top: calc(-1 * clamp(4rem, 7vw, 7rem)); margin-bottom: clamp(2.5rem, 4vw, 3.5rem); background: var(--color-navy); border-bottom: 2px solid var(--color-lava); overflow: hidden; white-space: nowrap; }
-.scs-ribbon-track { display: inline-flex; width: max-content; animation: scs-marquee 38s linear infinite; padding: 0.7rem 0; }
-.scs-ribbon-item { display: inline-flex; align-items: center; gap: 1.1rem; padding-right: 1.1rem; font-family: var(--font-sans); font-size: 12px; font-weight: 800; letter-spacing: 0.26em; text-transform: uppercase; color: rgba(246, 241, 231, 0.85); }
-.scs-ribbon-item b { color: var(--color-lava); font-weight: 900; }
-.scs-ribbon-item i { color: var(--color-lava); font-style: normal; font-size: 10px; }
-@keyframes scs-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
 /* ── placeholder tiles ─────────────────────────────────────────────────────── */
 .scs-grid { display: grid; gap: 1.25rem; }
@@ -111,9 +103,8 @@
   .scs-look { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(2, clamp(120px, 34vw, 200px)); }
   .scs-bar { padding: 1rem 1.1rem 1.1rem; }
   .scs-bar-action { flex-basis: 100%; }
-  .scs-ribbon-item { font-size: 11px; letter-spacing: 0.2em; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .scs-media::after, .scs-dot, .scs-ribbon-track { animation: none; }
+  .scs-media::after, .scs-dot { animation: none; }
 }

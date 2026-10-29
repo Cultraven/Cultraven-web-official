@@ -232,6 +232,22 @@ export const SECTIONS: SectionDef[] = [
     ],
   },
   {
+    key: "home.heroRibbon",
+    group: "Homepage",
+    label: "Hero ribbon",
+    description: "The scrolling strip right under the hero banner (for example NEW DROP ✦ COMING SOON). Switch it on or off, pick its colour and speed, and edit the words it scrolls.",
+    previewPath: "/",
+    fields: [
+      { kind: "boolean", key: "enabled", label: "Show the ribbon", default: true, switch: true, help: "Off hides the ribbon on the home page. Your messages are kept, so you can switch it back on any time." },
+      { kind: "select", key: "tone", label: "Colour", options: ["Navy", "Gold"], default: "Navy" },
+      { kind: "number", key: "seconds", label: "Seconds for one full scroll", min: 10, max: 120, default: 40, help: "A bigger number scrolls slower." },
+      { kind: "list", key: "items", label: "Messages", itemTitleKey: "text", max: 10, help: "Short words work best, for example NEW DROP, FREE DELIVERY ABOVE ₹1,999, COMING SOON. Hide a message with its switch, or remove it.", fields: [
+        { kind: "text", key: "text", label: "Message", required: true, max: 40 },
+        active,
+      ] },
+    ],
+  },
+  {
     key: "home.newDrop",
     group: "Homepage",
     label: "New Arrivals section",

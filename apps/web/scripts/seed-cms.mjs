@@ -151,6 +151,16 @@ const SECTIONS = {
       { title: "Outerwear", sub: "", href: "/collections/outerwear", image: U("1551028719-00167b16eac5"), size: "wide", active: true },
     ]),
   },
+  // Scrolling strip under the hero banner: Admin -> Website content -> Hero ribbon (on/off switch, colour, speed, messages).
+  "home.heroRibbon": {
+    enabled: true,
+    tone: "Navy",
+    seconds: 40,
+    items: withIds("ribbon", [
+      { text: "NEW DROP", active: true },
+      { text: "COMING SOON", active: true },
+    ]),
+  },
   "home.newDrop": { eyebrow: "Just In", heading: "New Arrivals", ctaLabel: "View All New In", ctaHref: "/collections/new-in" },
   "home.bestsellers": { eyebrow: "Most Loved", heading: "Best Sellers" },
   // Trending and Community start EMPTY: the home page shows "Coming soon" until real cards / photos are added in the admin.

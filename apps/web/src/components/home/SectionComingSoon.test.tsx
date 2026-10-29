@@ -77,11 +77,10 @@ describe("the drop-teaser look", () => {
       </>
     );
 
-  it("only the New Drop section gets the scrolling ribbon and the Notify me form (five stacked forms would be noise)", () => {
+  it("only the New Drop section gets the Notify me form (five stacked forms would be noise), and no empty section brings its own ribbon", () => {
     const { container } = renderAll();
-    expect(container.querySelectorAll(".scs-ribbon")).toHaveLength(1);
     expect(screen.getAllByRole("button", { name: /notify me/i })).toHaveLength(1);
-    expect(container.querySelector(".scs-ribbon")?.getAttribute("aria-hidden")).toBe("true");
+    expect(container.querySelector(".scs-ribbon")).toBeNull(); // the scrolling ribbon now lives under the hero and is managed in Admin -> Hero ribbon
   });
 
   it("every placeholder tile says Soon, is numbered, and carries the brand mark (hidden from screen readers)", () => {

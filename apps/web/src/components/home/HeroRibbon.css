@@ -1,0 +1,24 @@
+/* HeroRibbon: scrolling strip under the hero banner. */
+.hr-ribbon { position: relative; overflow: hidden; white-space: nowrap; border-bottom: 2px solid transparent; }
+.hr-navy { background: var(--color-navy); border-bottom-color: var(--color-lava); color: rgba(246, 241, 231, 0.9); }
+.hr-gold { background: var(--color-lava); border-bottom-color: var(--color-navy); color: var(--color-navy); }
+
+.hr-track { display: inline-flex; width: max-content; padding: 0.72rem 0; animation: hr-marquee 40s linear infinite; will-change: transform; }
+.hr-ribbon:hover .hr-track { animation-play-state: paused; }
+.hr-item { display: inline-flex; align-items: center; gap: 1.1rem; padding-right: 1.1rem; font-family: var(--font-sans); font-size: 12px; font-weight: 800; letter-spacing: 0.26em; text-transform: uppercase; }
+.hr-item i { font-style: normal; font-size: 10px; }
+.hr-navy .hr-item i { color: var(--color-lava); }
+.hr-navy .hr-item:nth-child(odd) span { color: var(--color-lava); }
+.hr-gold .hr-item i { color: var(--color-navy); }
+@keyframes hr-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* the real text for screen readers (the moving copy is hidden from them) */
+.hr-sr { position: absolute; width: 1px; height: 1px; margin: 0; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; list-style: none; }
+
+@media (max-width: 768px) {
+  .hr-item { font-size: 11px; letter-spacing: 0.2em; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hr-track { animation: none; }
+}
