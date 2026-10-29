@@ -133,10 +133,10 @@ describe("scenario: saving the two mailboxes", () => {
 });
 
 describe("scenario: the 'which mailbox sends what' overview", () => {
-  it("before anything is set up: six kinds of email, none sending", async () => {
+  it("before anything is set up: seven kinds of email, none sending", async () => {
     const d = await (await call(routingGET, "/api/admin/settings/mail-routing")).json();
     expect(d.profiles.map((p: any) => [p.id, p.configured])).toEqual([["orders", false], ["support", false]]);
-    expect(d.categories).toHaveLength(6);
+    expect(d.categories).toHaveLength(7);
     expect(d.categories.every((c: any) => c.using === null)).toBe(true);
   });
   it("with only Orders: order kinds use it; the others are 'covered by Orders' and flagged", async () => {

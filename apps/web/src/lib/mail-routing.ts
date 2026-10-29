@@ -39,6 +39,8 @@ export const MAIL_CATEGORIES: readonly MailCategory[] = [
     when: "A new order arrives, or a customer cancels an order or asks for a return.", examples: "“New order CR-1A2B3C — ₹4,047 (COD)”" },
   { id: "support", label: "Contact-form messages", audience: "The customer, and your team", defaultProfile: "support", match: /^support-/, sample: "support-ack",
     when: "Someone sends the Contact us form: they get an acknowledgement and your team gets the message.", examples: "“We got your message — HLP-1A2B3C”" },
+  { id: "notify", label: "Drop-alert sign-ups", audience: "The visitor, and your team", defaultProfile: "support", match: /^notify-/, sample: "notify-welcome",
+    when: "Someone leaves their email in a “Notify me” box or the footer: they get a thank-you and your team is told (see Admin → Subscribers).", examples: "“You're on the list — CULTRAVEN”" },
   { id: "account", label: "Account & password emails", audience: "The customer", defaultProfile: "support", match: /^(welcome|password-)/, sample: "welcome",
     when: "A customer signs up (welcome), uses “Forgot password” (reset link), or their password changes (security notice).", examples: "“Welcome to CULTRAVEN”, “Reset your CULTRAVEN password”" },
   { id: "staff", label: "Staff & delivery partners", audience: "Staff, delivery partners, your team", defaultProfile: "support", match: /^(staff_|delivery_kyc)/, sample: "staff_account_created",

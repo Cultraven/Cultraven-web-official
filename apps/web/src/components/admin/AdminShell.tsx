@@ -24,6 +24,7 @@ function useNav(): NavGroup[] {
             { label: "Users & Roles", href: "/portal-secure/users", icon: "user" },
           { label: "Delivery verification", href: "/portal-secure/delivery-verification", icon: "user" },
           { label: "Support inbox", href: "/portal-secure/support", icon: "mail" },
+          { label: "Subscribers", href: "/portal-secure/subscribers", icon: "user" },
         ],
       },
       {
@@ -67,7 +68,10 @@ function crumbsFor(pathname: string): string[] {
     if (parts[1]) out.push("User details");
   } else if (first === "delivery-verification") {
     out.push("Delivery verification");
-  } else if (first === "profile") {
+  } else if (first === "subscribers") {
+    out.push("Subscribers");
+  } else if (first === "support") {
+    out.push("Support inbox");
     out.push("My profile");
   } else out.push(first);
   return out;

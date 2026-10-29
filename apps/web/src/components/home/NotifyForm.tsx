@@ -7,7 +7,7 @@ import React, { useState } from "react";
 
 type Status = "idle" | "sending" | "done" | "error";
 
-export function NotifyForm({ idPrefix = "notify" }: { idPrefix?: string }) {
+export function NotifyForm({ idPrefix = "notify", interest = "" }: { idPrefix?: string; interest?: string }) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState("");
@@ -17,7 +17,7 @@ export function NotifyForm({ idPrefix = "notify" }: { idPrefix?: string }) {
     setStatus("sending");
     setMessage("");
     try {
-      const res = await fetch("/api/newsletter", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: email.trim().toLowerCase() }) });
+      const res = await fetch("/api/newsletter", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: email.trim().toLowerCase(), interest, page: typeof window !== "undefined" ? window.location.pathname : "" }) });
       const data = await res.json().catch(() => ({}));
       if (res.ok) { setStatus("done"); return; }
       setStatus("error");

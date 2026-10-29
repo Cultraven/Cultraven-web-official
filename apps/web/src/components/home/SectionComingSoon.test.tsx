@@ -113,7 +113,7 @@ describe("Notify me form", () => {
     const [url, init] = fetchMock.mock.calls[0];
     expect(url).toBe("/api/newsletter");
     expect(init.method).toBe("POST");
-    expect(JSON.parse(init.body)).toEqual({ email: "fan@example.com" });
+    expect(JSON.parse(init.body)).toEqual({ email: "fan@example.com", interest: "New Arrivals", page: "/" }); // saved with what they asked about and the page they were on
   });
 
   it("does not send anything for an empty or invalid address", () => {

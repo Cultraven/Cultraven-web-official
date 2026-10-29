@@ -18,7 +18,7 @@ const GHOST_COUNT: Record<GhostShape, number> = { cards: 4, photos: 6, look: 3 }
 export interface ComingSoonCta { label: string; href: string }
 
 /** Tiles + the "Coming soon" bar. Used by the home sections and by empty collection pages. */
-export function ComingSoonPanel({ text, shape = "cards", cta, notify = false, idPrefix = "notify" }: { text: string; shape?: GhostShape; cta?: ComingSoonCta; notify?: boolean; idPrefix?: string }) {
+export function ComingSoonPanel({ text, shape = "cards", cta, notify = false, idPrefix = "notify", interest = "" }: { text: string; shape?: GhostShape; cta?: ComingSoonCta; notify?: boolean; idPrefix?: string; /** What the visitor is asking to hear about; saved with the email and shown in Admin -> Subscribers. */ interest?: string }) {
   return (
     <div className="scs-panel">
       <div className={`scs-grid scs-${shape}`} aria-hidden="true">
@@ -46,7 +46,7 @@ export function ComingSoonPanel({ text, shape = "cards", cta, notify = false, id
           <p className="scs-text">{text}</p>
         </div>
         {notify ? (
-          <div className="scs-bar-action"><NotifyForm idPrefix={idPrefix} /></div>
+          <div className="scs-bar-action"><NotifyForm idPrefix={idPrefix} interest={interest} /></div>
         ) : cta ? (
           <div className="scs-bar-action">
             <a className="scs-cta" href={cta.href} target="_blank" rel="noopener noreferrer">
@@ -100,7 +100,7 @@ export function SectionComingSoon({
           {eyebrow ? <span className="scs-eyebrow">{eyebrow}</span> : null}
           <h2 className="scs-heading">{heading}</h2>
         </div>
-        <ComingSoonPanel text={text} shape={shape} cta={cta} notify={notify} idPrefix={`notify-${heading.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} />
+        <ComingSoonPanel text={text} shape={shape} cta={cta} notify={notify} interest={heading} idPrefix={`notify-${heading.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`} />
       </div>
     </section>
   );

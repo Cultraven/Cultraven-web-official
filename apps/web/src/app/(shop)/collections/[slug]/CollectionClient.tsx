@@ -251,7 +251,7 @@ function CollectionPageClientInner({
                 {Array.from({ length: 8 }, (_, i) => <ShopCardSkeleton key={i} />)}
               </div>
             ) : products.length === 0 ? (
-              <ComingSoonPanel text="New pieces are on the way. Leave your email and we will tell you the moment they drop." notify idPrefix="notify-collection" />
+              <ComingSoonPanel text="New pieces are on the way. Leave your email and we will tell you the moment they drop." notify interest={`Collection: ${collectionName}`} idPrefix="notify-collection" />
             ) : filtered.length === 0 ? (
               <div style={{ textAlign: "center", padding: "6rem 2rem" }}>
                 <p style={{ fontFamily: "var(--font-heading)", fontSize: "2rem", fontWeight: 400, color: "var(--color-navy)", marginBottom: "1rem" }}>NO PRODUCTS FOUND.</p>

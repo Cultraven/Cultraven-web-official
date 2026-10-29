@@ -8,8 +8,7 @@ import fs from "fs";
 import path from "path";
 import {
   customerOrderEmail, adminOrderEmail, testEmail, orderStatusEmail, adminCustomerActionEmail, supportAdminEmail, supportAckEmail, welcomeEmail,
-  passwordResetEmail, passwordChangedEmail, staffAccountCreatedEmail, deliveryKYCSubmittedEmail, deliveryKYCDecisionEmail, type MailOrder,
-} from "./email-templates";
+  passwordResetEmail, passwordChangedEmail, staffAccountCreatedEmail, deliveryKYCSubmittedEmail, deliveryKYCDecisionEmail, type MailOrder, notifyWelcomeEmail, notifyAdminEmail } from "./email-templates";
 import { ORDER_STATUSES } from "./order-lifecycle";
 
 const SITE = "https://cultraven.com";
@@ -49,6 +48,8 @@ const everyEmail: [string, string][] = [
   ["support alert", supportAdminEmail(sm, SITE).html],
   ["support acknowledgement", supportAckEmail(sm, SITE, "Mon–Sat, 10 AM – 7 PM IST").html],
   ["welcome", welcomeEmail({ firstName: "Asha", siteUrl: SITE }).html],
+  ["drop-alert thank-you", notifyWelcomeEmail({ interest: "New Drop", siteUrl: SITE }).html],
+  ["drop-alert team alert", notifyAdminEmail({ email: "fan@example.com", interest: "New Drop", page: "/", total: 3, siteUrl: SITE }).html],
   ["password reset", passwordResetEmail({ firstName: "Asha", email: "asha@example.com", resetUrl: token, expiresMinutes: 30, requestedAt: new Date(), siteUrl: SITE }).html],
   ["password changed", passwordChangedEmail({ firstName: "Asha", changedAt: new Date(), signInUrl: `${SITE}/login`, resetUrl: `${SITE}/forgot-password`, siteUrl: SITE }).html],
   ...(["admin", "delivery"] as const).map((role) => [`staff account (${role})`, staffAccountCreatedEmail({ firstName: "Ravi", email: "r@x.com", setPasswordUrl: token, expiresHours: 48, role, loginUrl: `${SITE}${role === "delivery" ? "/portal-delivery-access" : "/portal-access"}`, siteUrl: SITE }).html] as [string, string]),

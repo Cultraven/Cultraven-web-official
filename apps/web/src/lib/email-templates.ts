@@ -425,6 +425,40 @@ export function supportAckEmail(m: SupportMail, siteUrl: string, hours: string) 
   return { subject: oneLine(subject), html, text };
 }
 
+// ── Drop-alert sign-ups ("Notify me" boxes and the footer form) ─────────────────
+
+/** Thank-you to someone who asked to be told when new pieces drop. */
+export function notifyWelcomeEmail(opts: { interest?: string; siteUrl: string }) {
+  const { siteUrl } = opts;
+  const what = oneLine(opts.interest || "") || "the next drop";
+  const subject = "You're on the list — CULTRAVEN";
+  const html = shell(
+    "You're on the list",
+    `Thanks for signing up. We'll email you the moment <b>${escapeHtml(what)}</b> goes live — you'll hear it from us first.`,
+    `<p style="margin:0 0 14px;padding:10px 12px;background:${BONE};border-left:4px solid ${GOLD};font-size:13px"><b>Free delivery</b> above ${inr(FREE_SHIPPING_THRESHOLD)} &middot; <b>Cash on Delivery</b> available &middot; ${RETURN_WINDOW_DAYS}-day easy returns</p>` +
+      `<p style="margin:20px 0 0">${button(`${siteUrl}/collections/new-in`, "SEE WHAT'S NEW")}</p>` +
+      `<p style="margin:22px 0 0;font-size:12px;line-height:1.7;color:${MUTED}">You get this because this address was entered on cultraven.com. Not you, or you would rather not hear from us? Just reply to this email with "unsubscribe" and we will remove you.</p>`,
+    siteUrl
+  );
+  const text = `You're on the list — CULTRAVEN\n\nThanks for signing up. We'll email you the moment ${what} goes live.\n\nSee what's new: ${siteUrl}/collections/new-in\n\nNot you, or want out? Reply to this email with "unsubscribe" and we will remove you.\nNeed help? Call or WhatsApp ${supportNumber()}`;
+  return { subject, html, text };
+}
+
+/** Alert to the team: someone new asked to be notified. */
+export function notifyAdminEmail(opts: { email: string; interest?: string; page?: string; total: number; siteUrl: string }) {
+  const { siteUrl, total } = opts;
+  const subject = oneLine(`New sign-up for drop alerts — ${opts.email}`);
+  const html = teamShell(
+    "New sign-up for drop alerts",
+    `${escapeHtml(opts.email)} asked to be told when new pieces drop.`,
+    details([["Email", mailLink(opts.email)], ["Interested in", escapeHtml(oneLine(opts.interest || "") || "General")], ["Signed up on", escapeHtml(oneLine(opts.page || "") || "—")], ["People on the list", String(total)]]) +
+      `<p style="margin:20px 0 0">${button(`${siteUrl}/portal-secure/subscribers`, "OPEN SUBSCRIBERS")}</p>`,
+    siteUrl
+  );
+  const text = `${subject}\n\nEmail: ${opts.email}\nInterested in: ${oneLine(opts.interest || "") || "General"}\nSigned up on: ${oneLine(opts.page || "") || "-"}\nPeople on the list: ${total}\n\n${siteUrl}/portal-secure/subscribers`;
+  return { subject, html, text };
+}
+
 // ── Account & security emails ───────────────────────────────────────────────────
 
 /** Welcome email right after a customer creates their account. */
