@@ -156,6 +156,7 @@ const SECTIONS = {
     enabled: true,
     tone: "Navy",
     seconds: 40,
+    dismissible: true,
     items: withIds("ribbon", [
       { text: "NEW DROP", active: true },
       { text: "COMING SOON", active: true },

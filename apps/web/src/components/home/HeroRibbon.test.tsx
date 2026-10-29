@@ -1,13 +1,13 @@
 import React from "react";
-import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
 
 import { HeroRibbon } from "./HeroRibbon";
 import { SECTIONS, validateFields } from "@/lib/cms/registry";
 
-afterEach(() => cleanup());
+afterEach(() => { cleanup(); sessionStorage.clear(); vi.restoreAllMocks(); });
 
 const items = [{ id: "1", text: "NEW DROP", active: true }, { id: "2", text: "COMING SOON", active: true }];
 
@@ -64,6 +64,50 @@ describe("hero ribbon", () => {
   });
 });
 
+describe("close (✕) button", () => {
+  const closeBtn = () => screen.queryByRole("button", { name: /close this ribbon/i });
+
+  it("is there by default, like the top announcement bar's ✕, and the owner can switch it off", () => {
+    render(<HeroRibbon content={{ enabled: true, items }} />);
+    expect(closeBtn()).not.toBeNull();
+    cleanup();
+    const { container } = render(<HeroRibbon content={{ enabled: true, dismissible: false, items }} />);
+    expect(closeBtn()).toBeNull();
+    expect(container.querySelector(".hr-ribbon")).not.toBeNull(); // the ribbon itself stays
+  });
+
+  it("closing it removes the ribbon, and it stays closed for the rest of the visit", () => {
+    const { container, unmount } = render(<HeroRibbon content={{ enabled: true, items }} />);
+    fireEvent.click(closeBtn()!);
+    expect(container.innerHTML).toBe("");
+    unmount();
+    const again = render(<HeroRibbon content={{ enabled: true, items }} />); // e.g. coming back to the home page
+    expect(again.container.innerHTML).toBe("");
+  });
+
+  it("new messages bring it back for people who closed the old one", () => {
+    const first = render(<HeroRibbon content={{ enabled: true, items }} />);
+    fireEvent.click(closeBtn()!);
+    first.unmount();
+    const changed = render(<HeroRibbon content={{ enabled: true, items: [{ text: "SALE IS LIVE", active: true }] }} />);
+    expect(changed.container.querySelector(".hr-ribbon")).not.toBeNull();
+  });
+
+  it("works even when the browser blocks storage (private mode): it closes now and may show again next visit", () => {
+    vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => { throw new Error("blocked"); });
+    vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => { throw new Error("blocked"); });
+    const { container } = render(<HeroRibbon content={{ enabled: true, items }} />);
+    expect(container.querySelector(".hr-ribbon")).not.toBeNull();
+    fireEvent.click(closeBtn()!);
+    expect(container.innerHTML).toBe("");
+  });
+
+  it("the button is a real, labelled button that does not submit anything", () => {
+    render(<HeroRibbon content={{ enabled: true, items }} />);
+    expect(closeBtn()!.getAttribute("type")).toBe("button");
+  });
+});
+
 describe("hero ribbon in the admin", () => {
   const sec = SECTIONS.find((s) => s.key === "home.heroRibbon")!;
   it("is its own section under Homepage with an on/off switch, colour, speed and a messages list", () => {
@@ -72,11 +116,12 @@ describe("hero ribbon in the admin", () => {
     const byKey = Object.fromEntries(sec.fields.map((f: any) => [f.key, f]));
     expect(byKey.enabled).toMatchObject({ kind: "boolean", switch: true });
     expect(byKey.tone.options).toEqual(["Navy", "Gold"]);
+    expect(byKey.dismissible).toMatchObject({ kind: "boolean", switch: true, default: true }); // the ✕ close button switch
     expect(byKey.seconds).toMatchObject({ kind: "number", min: 10, max: 120 });
     expect(byKey.items.fields.map((f: any) => f.key)).toEqual(["text", "active"]);
   });
   it("saves a normal ribbon, and refuses an empty message or one that is too long", () => {
-    expect(validateFields(sec.fields, { enabled: true, tone: "Gold", seconds: 30, items: [{ text: "NEW DROP", active: true }] }).errors).toEqual([]);
+    expect(validateFields(sec.fields, { enabled: true, tone: "Gold", seconds: 30, dismissible: false, items: [{ text: "NEW DROP", active: true }] }).errors).toEqual([]);
     expect(validateFields(sec.fields, { enabled: false, tone: "Navy", seconds: 40, items: [] }).errors).toEqual([]);
     expect(validateFields(sec.fields, { enabled: true, items: [{ text: "", active: true }] }).errors.length).toBeGreaterThan(0);
     expect(validateFields(sec.fields, { enabled: true, items: [{ text: "x".repeat(41), active: true }] }).errors.length).toBeGreaterThan(0);

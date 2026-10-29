@@ -12,6 +12,14 @@
 .hr-gold .hr-item i { color: var(--color-navy); }
 @keyframes hr-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
+/* ✕ close button at the right end, like the top announcement bar: the scrolling words fade out behind it */
+.hr-close { position: absolute; right: 0; top: 0; bottom: 0; width: 48px; display: flex; align-items: center; justify-content: center; border: 0; cursor: pointer; z-index: 2; }
+.hr-navy .hr-close { color: rgba(245, 241, 232, 0.75); background: linear-gradient(to right, transparent, var(--color-navy) 45%); }
+.hr-gold .hr-close { color: var(--color-navy); background: linear-gradient(to right, transparent, var(--color-lava) 45%); }
+.hr-close:hover { color: var(--color-cream); }
+.hr-gold .hr-close:hover { color: #000; }
+.hr-close:focus-visible { outline: 2px solid currentColor; outline-offset: -4px; }
+
 /* the real text for screen readers (the moving copy is hidden from them) */
 .hr-sr { position: absolute; width: 1px; height: 1px; margin: 0; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; list-style: none; }
 
