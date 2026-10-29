@@ -145,9 +145,9 @@ const SECTIONS = {
   },
   "home.categoryTiles": {
     items: withIds("tile", [
-      { title: "Oversized Tees", sub: "", href: "/collections/t-shirts", image: U("1583743814966-8936f5b7be1a"), size: "tall", active: true },
+      { title: "Oversized Tees", sub: "", href: "/collections/t-shirts", image: U("1521572163474-6864f9cf17ab"), size: "tall", active: true },
       { title: "Hoodies", sub: "", href: "/collections/hoodies", image: U("1556821840-3a63f95609a7"), size: "normal", active: true },
-      { title: "Cargos & Jeans", sub: "", href: "/collections/cargos", image: U("1594938298603-c8148c4dae35"), size: "normal", active: true },
+      { title: "Cargos & Jeans", sub: "", href: "/collections/cargos", image: U("1529391409740-59f2cea08bc6"), size: "normal", active: true },
       { title: "Outerwear", sub: "", href: "/collections/outerwear", image: U("1551028719-00167b16eac5"), size: "wide", active: true },
     ]),
   },
