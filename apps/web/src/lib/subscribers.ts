@@ -49,4 +49,25 @@ export function toCsv(rows: SubscriberRow[]): string {
   return "﻿" + [head.join(","), ...lines].join("\r\n") + "\r\n";
 }
 
+/**
+ * The key that decides "is this the same person already on the list?".
+ * Gmail treats a.b@gmail.com, ab@gmail.com and ab+promo@gmail.com as ONE inbox, so those collapse to the same key (and googlemail.com = gmail.com).
+ * Every other provider is only lower-cased: we never assume that "+tag" or dots mean the same mailbox there.
+ */
+export function canonicalEmail(email: string): string {
+  const e = String(email ?? "").trim().toLowerCase();
+  const at = e.lastIndexOf("@");
+  if (at < 1) return e;
+  let local = e.slice(0, at);
+  let domain = e.slice(at + 1);
+  if (domain === "gmail.com" || domain === "googlemail.com") {
+    domain = "gmail.com";
+    local = local.split("+")[0].replace(/\./g, "");
+  }
+  return `${local}@${domain}`;
+}
+
+/** MongoDB's "duplicate key" error: two sign-ups for the same person landing at the same instant. */
+export const isDuplicateKeyError = (e: unknown): boolean => Boolean(e && typeof e === "object" && ((e as any).code === 11000 || /E11000/.test(String((e as any).message ?? ""))));
+
 export const escapeRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

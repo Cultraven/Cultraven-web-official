@@ -7,6 +7,8 @@ import mongoose from "mongoose";
 const NewsletterSubscriberSchema = new mongoose.Schema(
   {
     email: { type: String, required: true, unique: true, lowercase: true, trim: true, maxlength: 254 },
+    /** Same-person key (see canonicalEmail): one row per real inbox, even if typed with dots, +tags or other capitals. Unique, so the database itself refuses a duplicate. */
+    canonical: { type: String, unique: true, sparse: true, lowercase: true, trim: true, maxlength: 254 },
     /** "website" (visitor), "admin" (added by hand in the admin). */
     source: { type: String, default: "website", maxlength: 40 },
     /** What they asked to hear about, e.g. "New Drop" or "Collection: Hoodies". Empty = general. */

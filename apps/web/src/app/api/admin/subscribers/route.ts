@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { connectToDatabase } from "@/lib/db";
 import { NewsletterSubscriber } from "@/lib/models/NewsletterSubscriber";
+import { addSubscriber } from "@/lib/subscriber-store";
 import { isAdminRequest } from "@/lib/admin-auth";
 import { isObjectIdString, isSameOrigin, parseJsonBody, stripControlChars } from "@/lib/sanitize";
 import { escapeRegex, interestField, toRow } from "@/lib/subscribers";
@@ -55,12 +56,9 @@ export async function POST(req: NextRequest) {
   if (!p.success) return NextResponse.json({ error: p.error.issues[0]?.message ?? "Invalid request" }, { status: 422 });
   try {
     await connectToDatabase();
-    const res = await NewsletterSubscriber.updateOne(
-      { email: p.data.email },
-      { $setOnInsert: { email: p.data.email, source: "admin", interest: p.data.interest ?? "", note: p.data.note ?? "", page: "", status: "subscribed" } },
-      { upsert: true }
-    );
-    if (!res?.upsertedCount) return NextResponse.json({ error: "That email is already on the list." }, { status: 409 });
+    // Same duplicate-proof path as the public sign-up (a.b@gmail.com and ab+x@gmail.com count as the same inbox).
+    const { created } = await addSubscriber({ email: p.data.email, interest: p.data.interest, note: p.data.note, source: "admin" });
+    if (!created) return NextResponse.json({ error: "That email is already on the list." }, { status: 409 });
     const doc = (await NewsletterSubscriber.findOne({ email: p.data.email }).lean()) as any;
     return NextResponse.json({ success: true, subscriber: toRow(doc) }, { status: 201 });
   } catch {

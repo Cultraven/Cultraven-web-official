@@ -5,9 +5,18 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { NextRequest } from "next/server";
 
 const h = vi.hoisted(() => ({ subs: new Map<string, any>(), dbDown: false, reviews: [] as { slug: string; rating: number }[], cms: {} as Record<string, any> }));
+vi.mock("next/server", async (orig) => ({ ...(await orig<typeof import("next/server")>()), after: () => {} })); // the sign-up emails are scheduled with after(); not under test here
 vi.mock("@/lib/db", () => ({ connectToDatabase: async () => { if (h.dbDown) throw new Error("db down"); } }));
 vi.mock("@/lib/models/NewsletterSubscriber", () => ({
-  NewsletterSubscriber: { updateOne: async (q: any, u: any) => { if (!h.subs.has(q.email)) h.subs.set(q.email, u.$setOnInsert); } },
+  NewsletterSubscriber: {
+    // "insert if this address is new" (the route looks people up by email or same-person key); other updates are no-ops here
+    updateOne: async (q: any, u: any, o: any = {}) => {
+      const email = u.$setOnInsert?.email ?? q.email;
+      if (!email || h.subs.has(email) || !o.upsert) return { upsertedCount: 0, modifiedCount: 0 };
+      h.subs.set(email, u.$setOnInsert);
+      return { upsertedCount: 1, modifiedCount: 0 };
+    },
+  },
 }));
 vi.mock("@/lib/models/Review", () => ({
   Review: {

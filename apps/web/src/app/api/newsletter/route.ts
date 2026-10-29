@@ -12,7 +12,7 @@ import { NextRequest, NextResponse, after } from "next/server";
 import { z } from "zod";
 import { clientIp, isSameOrigin, parseJsonBody, rateLimit, retryHeaders } from "@/lib/sanitize";
 import { connectToDatabase } from "@/lib/db";
-import { NewsletterSubscriber } from "@/lib/models/NewsletterSubscriber";
+import { addSubscriber } from "@/lib/subscriber-store";
 import { interestField, pageField } from "@/lib/subscribers";
 import { notifyNewSubscriber } from "@/lib/subscriber-notify";
 
@@ -56,15 +56,10 @@ export async function POST(request: NextRequest) {
 
   try {
     await connectToDatabase();
-    // Insert if new; an address already on the list is left exactly as it was.
-    const res = await NewsletterSubscriber.updateOne({ email }, { $setOnInsert: { email, source: "website", interest, page, status: "subscribed" } }, { upsert: true });
-    let isNew = Boolean(res?.upsertedCount);
-    if (!isNew) {
-      // Marked "unsubscribed" earlier and asking again: subscribe them again.
-      const back = await NewsletterSubscriber.updateOne({ email, status: "unsubscribed" }, { $set: { status: "subscribed", interest, page } });
-      isNew = Boolean(back?.modifiedCount);
-    }
-    if (isNew) after(() => notifyNewSubscriber({ email, interest, page }));
+    // One row per real inbox: a repeat (even typed with other capitals, Gmail dots or +tags) is left exactly as it was and emails nobody.
+    // Someone the team marked "unsubscribed" who asks again is subscribed again.
+    const { created, resubscribed } = await addSubscriber({ email, interest, page, source: "website", resubscribe: true });
+    if (created || resubscribed) after(() => notifyNewSubscriber({ email, interest, page }));
     return NextResponse.json({ message: "Subscribed" }, { status: 200 });
   } catch (e) {
     console.error("[newsletter] could not save:", e instanceof Error ? e.message : e);

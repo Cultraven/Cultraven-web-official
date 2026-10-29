@@ -16,10 +16,13 @@ const h = vi.hoisted(() => ({
   team: ["team@cultraven.com"] as string[],
   mailFail: false,
   dbDown: false,
+  raceOnce: false,
 }));
 
-const matches = (row: any, q: Record<string, any>) =>
+const matches = (row: any, q: Record<string, any>): boolean =>
   Object.entries(q).every(([k, v]) => {
+    if (k === "$or") return (v as any[]).some((c) => matches(row, c));
+    if (v && typeof v === "object" && "$exists" in v) return (row[k] !== undefined) === Boolean(v.$exists);
     if (k === "_id" && v && typeof v === "object" && "$in" in v) return v.$in.map(String).includes(String(row._id));
     if (v && typeof v === "object" && "$ne" in v) return row[k] !== v.$ne;
     if (v && typeof v === "object" && "$regex" in v) return new RegExp(v.$regex).test(String(row[k]));
@@ -43,7 +46,12 @@ vi.mock("@/lib/models/NewsletterSubscriber", () => ({
     updateOne: async (q: any, u: any, opts: any = {}) => {
       const row = h.rows.find((r) => matches(r, q));
       if (row) { Object.assign(row, u.$set ?? {}); return { matchedCount: 1, modifiedCount: u.$set ? 1 : 0, upsertedCount: 0 }; }
-      if (opts.upsert && u.$setOnInsert) { h.rows.push({ _id: crypto.randomBytes(12).toString("hex"), createdAt: new Date(Date.now() + h.rows.length), ...u.$setOnInsert }); return { matchedCount: 0, modifiedCount: 0, upsertedCount: 1 }; }
+      if (opts.upsert && u.$setOnInsert) {
+        const doc = u.$setOnInsert;
+        // the unique indexes on email and canonical: the database refuses a second row (this is what stops two simultaneous sign-ups)
+        if (h.raceOnce || h.rows.some((r) => r.email === doc.email || (doc.canonical !== undefined && r.canonical === doc.canonical))) { h.raceOnce = false; throw Object.assign(new Error("E11000 duplicate key error"), { code: 11000 }); }
+        h.rows.push({ _id: crypto.randomBytes(12).toString("hex"), createdAt: new Date(Date.now() + h.rows.length), ...u.$setOnInsert }); return { matchedCount: 0, modifiedCount: 0, upsertedCount: 1 };
+      }
       return { matchedCount: 0, modifiedCount: 0, upsertedCount: 0 };
     },
     find: (q: any) => query(h.rows.filter((r) => matches(r, q))),
@@ -63,6 +71,7 @@ import { POST as signup, GET as signupGET } from "../app/api/newsletter/route";
 import { GET as adminGET, POST as adminPOST, PATCH as adminPATCH, DELETE as adminDELETE } from "../app/api/admin/subscribers/route";
 import { GET as exportGET } from "../app/api/admin/subscribers/export/route";
 import { categoryOf } from "./mail-routing";
+import { canonicalEmail } from "./subscribers";
 
 const SECRET = "scenario-session-secret-0123456789abcdef";
 const cookie = (role: "admin" | "superadmin" | "customer" = "admin", exp = Date.now() + 3_600_000) => {
@@ -80,9 +89,9 @@ const call = (fn: (r: NextRequest) => Promise<Response>, p: string, over: Over =
 const visitor = (body: unknown, over: Over = {}) => call(signup, "/api/newsletter", { method: "POST", body, ...over });
 const admin = (fn: (r: NextRequest) => Promise<Response>, over: Over = {}, p = "/api/admin/subscribers") => call(fn, p, { cookie: cookie(), ...over });
 const flush = async () => { const jobs = h.afterJobs.splice(0); await Promise.all(jobs.map((j) => j())); };
-const seed = (email: string, extra: Record<string, unknown> = {}) => { const r = { _id: crypto.randomBytes(12).toString("hex"), email, status: "subscribed", interest: "", page: "", source: "website", note: "", createdAt: new Date(Date.now() + h.rows.length), ...extra }; h.rows.push(r); return r; };
+const seed = (email: string, extra: Record<string, unknown> = {}) => { const r = { _id: crypto.randomBytes(12).toString("hex"), email, canonical: canonicalEmail(email), status: "subscribed", interest: "", page: "", source: "website", note: "", createdAt: new Date(Date.now() + h.rows.length), ...extra }; h.rows.push(r); return r; };
 
-beforeEach(() => { h.rows = []; h.sent.length = 0; h.afterJobs.length = 0; h.team = ["team@cultraven.com"]; h.mailFail = false; h.dbDown = false; vi.stubEnv("SESSION_SECRET", SECRET); vi.spyOn(console, "error").mockImplementation(() => {}); });
+beforeEach(() => { h.raceOnce = false; h.rows = []; h.sent.length = 0; h.afterJobs.length = 0; h.team = ["team@cultraven.com"]; h.mailFail = false; h.dbDown = false; vi.stubEnv("SESSION_SECRET", SECRET); vi.spyOn(console, "error").mockImplementation(() => {}); });
 afterEach(() => { vi.unstubAllEnvs(); vi.restoreAllMocks(); });
 
 describe("a visitor signs up", () => {
@@ -175,6 +184,73 @@ describe("a visitor signs up", () => {
     expect(res.status).toBe(503);
     expect((await res.json()).message).toMatch(/could not save/i);
     expect((await signupGET()).status).toBe(405);
+  });
+});
+
+describe("no duplicate records", () => {
+  it("the same Gmail inbox typed in different ways is one person: one row, one thank-you, one team alert", async () => {
+    for (const e of ["jitesh.b@gmail.com", "JiteshB@Gmail.com", "jit.esh.b+promo@gmail.com", "jiteshb+drop@googlemail.com"]) expect((await visitor({ email: e })).status).toBe(200);
+    await flush();
+    expect(h.rows).toHaveLength(1);
+    expect(h.rows[0].email).toBe("jitesh.b@gmail.com"); // the first address they typed is the one we keep and write to
+    expect(h.sent.filter((m) => m.kind === "notify-welcome")).toHaveLength(1);
+    expect(h.sent.filter((m) => m.kind === "notify-admin")).toHaveLength(1);
+  });
+
+  it("other providers are not guessed at: a+tag@example.com and a@example.com stay two people", async () => {
+    await visitor({ email: "a+tag@example.com" });
+    await visitor({ email: "a@example.com" });
+    await visitor({ email: "a.b@example.com" });
+    await visitor({ email: "ab@example.com" });
+    expect(h.rows.map((r) => r.email).sort()).toEqual(["a+tag@example.com", "a.b@example.com", "a@example.com", "ab@example.com"]);
+  });
+
+  it("five sign-ups for the same address at the same instant make one row and one pair of emails", async () => {
+    const results = await Promise.all(Array.from({ length: 5 }, () => visitor({ email: "rush@example.com", interest: "New Drop" })));
+    expect(results.map((r) => r.status)).toEqual([200, 200, 200, 200, 200]);
+    await flush();
+    expect(h.rows).toHaveLength(1);
+    expect(h.sent.filter((m) => m.kind === "notify-welcome")).toHaveLength(1);
+    expect(h.sent.filter((m) => m.kind === "notify-admin")).toHaveLength(1);
+  });
+
+  it("when the database itself refuses a second row (two requests collided), the visitor still sees success and nobody is emailed twice", async () => {
+    seed("first@example.com");
+    h.raceOnce = true;
+    const res = await visitor({ email: "second@example.com" }); // pretend another request saved this person a moment earlier
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ message: "Subscribed" });
+    await flush();
+    expect(h.sent).toHaveLength(0);
+    expect(h.rows).toHaveLength(1);
+  });
+
+  it("a row saved before the same-person key existed is still recognised, and gets its key", async () => {
+    seed("old.timer@gmail.com", { canonical: undefined });
+    expect(h.rows[0].canonical).toBeUndefined();
+    await visitor({ email: "old.timer@gmail.com" });
+    await visitor({ email: "oldtimer+x@gmail.com" });
+    await flush();
+    expect(h.rows).toHaveLength(1);
+    expect(h.sent).toHaveLength(0);
+  });
+
+  it("adding by hand refuses someone already on the list, including an alias of their inbox", async () => {
+    seed("fan@gmail.com");
+    for (const e of ["fan@gmail.com", "FAN@gmail.com", "f.a.n+vip@gmail.com"]) {
+      const res = await admin(adminPOST, { method: "POST", body: { email: e } });
+      expect(res.status).toBe(409);
+      expect((await res.json()).error).toMatch(/already on the list/i);
+    }
+    expect(h.rows).toHaveLength(1);
+  });
+
+  it("someone unsubscribed who signs up again under another spelling of their inbox is subscribed again, not duplicated", async () => {
+    seed("back@gmail.com", { status: "unsubscribed" });
+    await visitor({ email: "b.ack+again@gmail.com" });
+    await flush();
+    expect(h.rows).toHaveLength(1);
+    expect(h.rows[0].status).toBe("subscribed");
   });
 });
 
