@@ -17,7 +17,7 @@ export type Field =
   | { kind: "number"; key: string; label: string; min: number; max: number; default: number; help?: string }
   | { kind: "products"; key: string; label: string; max?: number; help?: string }
   | { kind: "boolean"; key: string; label: string; default?: boolean; /** show as an on/off switch with help text instead of a plain checkbox */ switch?: boolean; help?: string }
-  | { kind: "select"; key: string; label: string; options: string[]; default?: string; required?: boolean }
+  | { kind: "select"; key: string; label: string; options: string[]; default?: string; required?: boolean; help?: string }
   | { kind: "list"; key: string; label: string; itemTitleKey?: string; max?: number; fields: Field[]; help?: string; /** ready-made wording for the title field, offered in an "Add a sample" dropdown */ samples?: string[]; /** each card can be filled from a real product: which of the card's fields get the product's title, link, image and alt text */ productFill?: { title?: string; href?: string; image?: string; alt?: string } };
 
 export interface SectionDef {
@@ -227,6 +227,7 @@ export const SECTIONS: SectionDef[] = [
         { kind: "link", key: "href", label: "Link", required: true },
         { kind: "image", key: "image", label: "Image", required: true },
         { kind: "select", key: "size", label: "Tile size", options: ["normal", "tall", "wide"], default: "normal" },
+        { kind: "select", key: "focus", label: "Which part of the photo to show", options: ["Auto", "Top", "Middle", "Bottom"], default: "Auto", help: "The tile crops the photo to fit. Pick Bottom to show trousers or shoes, Top for faces and hoods, Middle for the centre. Auto lets the site decide." },
         active,
       ] },
     ],

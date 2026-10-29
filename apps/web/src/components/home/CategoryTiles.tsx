@@ -4,7 +4,10 @@ import Link from "next/link";
 import "./CategoryTiles.css";
 
 export interface StripItem { id: string; label: string; href: string; accent?: boolean }
-export interface Tile { id: string; title: string; sub?: string; href: string; image: string; size?: "normal" | "tall" | "wide" }
+export interface Tile { id: string; title: string; sub?: string; href: string; image: string; size?: "normal" | "tall" | "wide"; /** Which part of the photo stays in view when it is cropped: Top, Middle or Bottom (Auto/empty = the site decides). */ focus?: string }
+
+/** Admin choice -> CSS object-position. Anything else (including "Auto") leaves the site default. */
+export const TILE_FOCUS: Record<string, string> = { Top: "50% 12%", Middle: "50% 50%", Bottom: "50% 88%" };
 
 /** Strip + tiles are loaded from the database (home.categoryStrip / home.categoryTiles). */
 export function CategoryTiles({ strip, tiles }: { strip: StripItem[]; tiles: Tile[] }) {
@@ -94,6 +97,7 @@ function TileCard({ tile }: { tile: Tile }) {
       href={tile.href}
       className={`cat-tile hv cat-tile-${tile.size ?? "normal"}`}
       style={{
+        ...(tile.focus && TILE_FOCUS[tile.focus] ? ({ "--cat-pos": TILE_FOCUS[tile.focus] } as React.CSSProperties) : {}),
         position: "relative",
         display: "block",
         overflow: "hidden",

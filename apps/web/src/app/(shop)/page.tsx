@@ -74,7 +74,7 @@ export default async function HomePage() {
   }));
 
   const stripItems = liveItems<any>(strip.data?.items).map((i) => ({ id: i.id, label: i.label, href: i.href, accent: i.accent }));
-  const tileItems = liveItems<any>(tiles.data?.items).map((i) => ({ id: i.id, title: i.title, sub: i.sub, href: i.href, image: i.image, size: i.size }));
+  const tileItems = liveItems<any>(tiles.data?.items).map((i) => ({ id: i.id, title: i.title, sub: i.sub, href: i.href, image: i.image, size: i.size, focus: i.focus }));
 
   const dropProducts = (newDrops.data ?? []).map((p) => ({
     id: p.id,

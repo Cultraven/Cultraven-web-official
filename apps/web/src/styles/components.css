@@ -524,5 +524,6 @@ html[data-menu-open] .chat-panel { display: none !important; }
 @media (max-width: 768px) {
   .rm[data-open="false"] { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: var(--rm-lines, 3); overflow: hidden; }
   /* People photos: keep faces and heads in the frame (the default centre crop cuts them off in tall or square boxes). */
-  .ugc-grid img, .trend-card img, .cat-tile img, .sc .sc-img { object-position: 50% 18% !important; }
+  .ugc-grid img, .trend-card img, .sc .sc-img { object-position: 50% 18% !important; }
+  .cat-tile img { object-position: var(--cat-pos, 50% 18%) !important; } /* category tiles: the admin's Top / Middle / Bottom choice wins, else this head-friendly default */
 }

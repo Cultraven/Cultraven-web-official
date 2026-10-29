@@ -58,7 +58,7 @@ const FieldInput = memo(function FieldInput({ f, value, onChange, onError }: { f
     }
     case "select":
       return (
-        <FormField label={f.label}>
+        <FormField label={f.label} hint={f.help}>
           <select className="adm-select" value={value ?? f.default ?? f.options[0]} onChange={(e) => onChange(e.target.value)}>
             {f.options.map((o) => <option key={o} value={o}>{o}</option>)}
           </select>
